@@ -7,7 +7,9 @@ public class Melee : MonoBehaviour
 {
     [SerializeField] private FirstPersonPlayer player;
     
+
     public float wpnSpeed = 10;
+    private float lookSLow;
 
     private Vector3 wpnPos;
     private float lookX;
@@ -51,5 +53,9 @@ public class Melee : MonoBehaviour
 
     }
 
+    void Parry()
+    {
+
+    }
 
 }
