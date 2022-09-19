@@ -73,7 +73,7 @@ Transform:
   m_GameObject: {fileID: 1713460839480086255}
   m_LocalRotation: {x: 0, y: -0.17785764, z: 0, w: 0.98405623}
   m_LocalPosition: {x: 0, y: -0.3, z: 1}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children:
   - {fileID: 96927226283740778}
   m_Father: {fileID: 560242003}
@@ -86,7 +86,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713460839480086255}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 2524342215456974474, guid: 0b66cb71182c4d245b233312956ccfea, type: 3}
 --- !u!23 &3374191031942806729
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -155,8 +155,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5856888590028903698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.2, y: 0.1, z: 0.75}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
   m_Father: {fileID: 1421264835654627655}
   m_RootOrder: 0
@@ -289,12 +289,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  velocity: {x: 0, y: 0, z: 0}
+  jumpHeight: 3
   normalSpeed: 5
   dodgeSpeed: 10
   sensitivityY: 1000
   sensitivityX: 1000
   camera: {fileID: 8130342014811607102}
-  motion: {x: 0, y: 0, z: 0}
 --- !u!1 &8130342014811607099
 GameObject:
   m_ObjectHideFlags: 0
