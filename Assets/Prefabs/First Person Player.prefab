@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 560242003}
-  - component: {fileID: 1275119347284092461}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -32,20 +31,6 @@ Transform:
   m_Father: {fileID: 8130342014811607102}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1275119347284092461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 560242002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29d11d4e6c4302147ace4dd44d1107f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 9115893765258289899}
-  wpnSpeed: 3000
 --- !u!1 &1713460839480086255
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,14 +56,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713460839480086255}
-  m_LocalRotation: {x: 0, y: -0.17785764, z: 0, w: 0.98405623}
-  m_LocalPosition: {x: 0, y: -0.3, z: 1}
+  m_LocalRotation: {x: 0, y: -0.08715578, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children:
   - {fileID: 96927226283740778}
   m_Father: {fileID: 560242003}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -20.49, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -10, z: 0}
 --- !u!33 &5793065394234528029
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -141,7 +126,7 @@ GameObject:
   - component: {fileID: 6777786124914248359}
   - component: {fileID: 4201603065914061664}
   m_Layer: 0
-  m_Name: Knife
+  m_Name: Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,8 +140,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5856888590028903698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0.1, z: 0.75}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalPosition: {x: 0.25, y: 2.5, z: 0.9}
+  m_LocalScale: {x: 0.5, y: 4, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1421264835654627655}
   m_RootOrder: 0
@@ -168,7 +153,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5856888590028903698}
-  m_Mesh: {fileID: 4898376589914736847, guid: 3ec572874386e0345bc8c2b4d75fbd64, type: 3}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &6777786124914248359
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -234,8 +219,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8130342014543497415}
+  - component: {fileID: 146038001}
   - component: {fileID: 1148621022490971377}
   - component: {fileID: 9115893765258289899}
+  - component: {fileID: 4281021780420915703}
   m_Layer: 0
   m_Name: First Person Player
   m_TagString: Player
@@ -258,6 +245,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &146038001
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8130342014543497414}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 57395f2c718dcda4fb956d3a77360c6a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!143 &1148621022490971377
 CharacterController:
   m_ObjectHideFlags: 0
@@ -293,9 +299,22 @@ MonoBehaviour:
   jumpHeight: 3
   normalSpeed: 5
   dodgeSpeed: 10
-  sensitivityY: 1000
-  sensitivityX: 1000
+  sensitivityY: 100
+  sensitivityX: 100
   camera: {fileID: 8130342014811607102}
+--- !u!114 &4281021780420915703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8130342014543497414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c582bf978567af54f9172caeb8341a2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  threshold: 0.5
 --- !u!1 &8130342014811607099
 GameObject:
   m_ObjectHideFlags: 0
