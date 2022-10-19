@@ -28,7 +28,7 @@ public class MeleeSystem2 : MonoBehaviour
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        player.sensitivity.x *= wpnSensitivity;
+        player.sensitivity *= wpnSensitivity;
     }
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
