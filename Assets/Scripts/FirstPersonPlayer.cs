@@ -10,7 +10,7 @@ public class FirstPersonPlayer : MonoBehaviour
     public float jumpHeight = 3;
     public float normalSpeed = 5;
     public float dodgeSpeed = 10;
-    public float sensitivity = 100f;
+    public Vector2 sensitivity = new Vector2(100f,100);
 
     public Transform camera;
 
@@ -71,11 +71,11 @@ public class FirstPersonPlayer : MonoBehaviour
         float x = actions.Look.ReadValue<Vector2>().x;
         float y = actions.Look.ReadValue<Vector2>().y;
         //Looking up/down with camera
-        xRot -= y * sensitivity * Time.deltaTime;
+        xRot -= y * sensitivity.y * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
         camera.localEulerAngles = new Vector3(xRot, 0, 0);
         //Looking left right with player body
-        yRot += x * sensitivity * Time.deltaTime;
+        yRot += x * sensitivity.x * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 

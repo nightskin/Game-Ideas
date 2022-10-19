@@ -122,7 +122,7 @@ MonoBehaviour:
   jumpHeight: 3
   normalSpeed: 5
   dodgeSpeed: 10
-  sensitivity: 500
+  sensitivity: {x: 500, y: 500}
   camera: {fileID: 42695576157200118}
 --- !u!114 &3503353443107702521
 MonoBehaviour:
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c582bf978567af54f9172caeb8341a2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wpnSensitivity: 0.1
+  wpnSensitivity: 0
   weapon: {fileID: 512590238791676727}
   animator: {fileID: 8156391354315375271}
 --- !u!1 &42695576157200106
