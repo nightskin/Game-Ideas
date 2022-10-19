@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    [SerializeField] private Vector3 velocity;
+    private float speed;
+    private Vector3 velocity;
 
     public float jumpHeight = 3;
     public float normalSpeed = 5;
     public float dodgeSpeed = 10;
-    public float sensitivityY = 100f;
-    public float sensitivityX = 100f;
+    public float sensitivity = 100f;
+
     public Transform camera;
 
     public Controls controls;
@@ -71,11 +71,12 @@ public class FirstPersonPlayer : MonoBehaviour
         float x = actions.Look.ReadValue<Vector2>().x;
         float y = actions.Look.ReadValue<Vector2>().y;
         //Looking up/down with camera
-        xRot -= y * sensitivityX * Time.deltaTime;
+        xRot -= y * sensitivity * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
         camera.localEulerAngles = new Vector3(xRot, 0, 0);
         //Looking left right with player body
-        yRot += x * sensitivityY * Time.deltaTime;
+        yRot += x * sensitivity * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
+
 }
