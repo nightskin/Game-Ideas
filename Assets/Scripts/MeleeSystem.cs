@@ -9,9 +9,9 @@ public class MeleeSystem : MonoBehaviour
     [SerializeField] Transform weapon;
     [SerializeField] Transform arm;
 
-    float rot;
+    float atkAngle;
     bool parry;
-    bool atk;
+    bool isAttacking;
     Vector2 defSensitivity;
     FirstPersonPlayer player;
     public Animator animator;
@@ -24,43 +24,41 @@ public class MeleeSystem : MonoBehaviour
         player = GetComponent<FirstPersonPlayer>();
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
-        player.actions.Parry.performed += Parry_performed;
         defSensitivity = player.sensitivity;
     }
 
-    private void Parry_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        
-    }
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        atk = true;
         player.sensitivity *= wpnSensitivity;
+        isAttacking = true;
     }
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        atk = false;
         player.sensitivity = defSensitivity;
+        isAttacking = false;
     }
 
     void Update()
     {
-        //prevents slashing animations from repeating
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
         {
             animator.SetInteger("r", 0);
         }
 
 
-        if (atk)
+        if(isAttacking)
         {
             look = player.actions.Look.ReadValue<Vector2>();
-            rot = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
-            rot = 45 * Mathf.Round(rot / 45);
-            animator.SetInteger("r", (int)rot);
+            atkAngle = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
+            atkAngle = 45 * Mathf.Round(atkAngle / 45);
+            animator.SetInteger("r", (int)atkAngle);
         }
+
+
+
+
     }
 
 }
