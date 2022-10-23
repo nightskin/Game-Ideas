@@ -5,8 +5,4 @@ using UnityEngine;
 public class WeaponCollision : MonoBehaviour
 {
 
-    private void OnCollisionEnter(Collision other)
-    {
-            
-    }
 }

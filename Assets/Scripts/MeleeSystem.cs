@@ -5,12 +5,6 @@ using UnityEngine;
 public class MeleeSystem : MonoBehaviour
 {
     [Range(0, 1)] public float wpnSensitivity;
-    public enum meleeSystemType
-    { 
-        CONTINUOUS,
-        NON_CONTINOUS
-    }
-    public meleeSystemType meleeSystem;
 
     [SerializeField] Transform weapon;
     [SerializeField] Transform arm;
@@ -47,42 +41,26 @@ public class MeleeSystem : MonoBehaviour
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(meleeSystem == meleeSystemType.NON_CONTINOUS)
-        {
-
-            look = player.actions.Look.ReadValue<Vector2>();
-            rot = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
-            rot = 45 * Mathf.Round(rot / 45);
-            animator.SetInteger("r", (int)rot);
-        }
-
         atk = false;
         player.sensitivity = defSensitivity;
     }
 
     void Update()
     {
-        if(meleeSystem == meleeSystemType.NON_CONTINOUS)
+        //prevents slashing animations from repeating
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
         {
-            //prevents slashing animations from repeating
-            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-            {
-                animator.SetInteger("r", 0);
-            }
-        }
-        if(meleeSystem == meleeSystemType.CONTINUOUS)
-        {
-            if(atk)
-            {
-                look = player.actions.Look.ReadValue<Vector2>();
-                rot = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
-                rot = 45 * Mathf.Round(rot / 45);
-                animator.SetInteger("r", (int)rot);
-            }
+            animator.SetInteger("r", 0);
         }
 
 
-
+        if (atk)
+        {
+            look = player.actions.Look.ReadValue<Vector2>();
+            rot = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
+            rot = 45 * Mathf.Round(rot / 45);
+            animator.SetInteger("r", (int)rot);
+        }
     }
 
 }
