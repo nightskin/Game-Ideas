@@ -5,18 +5,15 @@ using UnityEngine;
 public class MeleeSystem : MonoBehaviour
 {
     [Range(0, 1)] public float wpnSensitivity;
-
-    [SerializeField] Transform weapon;
-    [SerializeField] Transform arm;
-
-    float atkAngle;
-    bool parry;
+    [SerializeField] Transform armPivot;
+    [SerializeField] float atkAngle;
+    
     bool isAttacking;
     Vector2 defSensitivity;
     FirstPersonPlayer player;
     public Animator animator;
 
-    Vector2 look;
+    Vector2 axis = new Vector2();
     RaycastHit hit;
 
     void Start()
@@ -42,19 +39,21 @@ public class MeleeSystem : MonoBehaviour
 
     void Update()
     {
-        if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+
+
+        if (isAttacking)
+        {
+            axis = player.actions.Look.ReadValue<Vector2>();
+            if(axis.x  != 0 && axis.y != 0) atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
+            armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+            animator.SetInteger("r", 180);
+        }
+        else
         {
             animator.SetInteger("r", 0);
+            armPivot.localEulerAngles = new Vector3(0, 0, 0);
         }
 
-
-        if(isAttacking)
-        {
-            look = player.actions.Look.ReadValue<Vector2>();
-            atkAngle = Mathf.Atan2(look.x, look.y) * Mathf.Rad2Deg;
-            atkAngle = 45 * Mathf.Round(atkAngle / 45);
-            animator.SetInteger("r", (int)atkAngle);
-        }
 
 
 
