@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 823638539032530660}
   - component: {fileID: 8156391354315375271}
+  - component: {fileID: 819448753}
   m_Layer: 0
   m_Name: Arm
   m_TagString: Untagged
@@ -54,6 +55,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &819448753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10685396336464990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c582bf978567af54f9172caeb8341a2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 42695576058503064}
+  wpnSensitivity: 0.5
+  armPivot: {fileID: 735725388371942554}
+  cooldown: 0.1
 --- !u!1 &42695576058503066
 GameObject:
   m_ObjectHideFlags: 0
@@ -65,7 +82,6 @@ GameObject:
   - component: {fileID: 42695576058503065}
   - component: {fileID: 42695576058503143}
   - component: {fileID: 42695576058503064}
-  - component: {fileID: 3503353443107702521}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -124,22 +140,6 @@ MonoBehaviour:
   dodgeSpeed: 10
   sensitivity: {x: 500, y: 500}
   camera: {fileID: 42695576157200118}
---- !u!114 &3503353443107702521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42695576058503066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c582bf978567af54f9172caeb8341a2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wpnSensitivity: 0
-  armPivot: {fileID: 735725388371942554}
-  atkAngle: 0
-  animator: {fileID: 8156391354315375271}
 --- !u!1 &42695576157200106
 GameObject:
   m_ObjectHideFlags: 0
