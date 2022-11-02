@@ -7,18 +7,17 @@ public class MeleeSystem : MonoBehaviour
     [SerializeField] FirstPersonPlayer player;
     [Range(0, 1)] [SerializeField] float wpnSensitivity;
     [SerializeField] Transform armPivot;
-    [SerializeField] float cooldown = 1;
+    [SerializeField] Animator animator;
+    [SerializeField] Transform weapon;
 
-    float cooldownTimer = 0;
-    public float atkAngle;
-    Animator animator;
+
+    float atkAngle;
     bool isAttacking;
     Vector2 defSensitivity;
     Vector2 axis = new Vector2();
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
         defSensitivity = player.sensitivity;
@@ -45,8 +44,8 @@ public class MeleeSystem : MonoBehaviour
             if(axis.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
-                animator.SetInteger("r", 180);
             }
+            animator.SetInteger("r", 180);
         }
     }
 

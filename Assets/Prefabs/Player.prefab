@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 823638539032530660}
   - component: {fileID: 8156391354315375271}
-  - component: {fileID: 819448753}
+  - component: {fileID: 1351302869}
   m_Layer: 0
   m_Name: Arm
   m_TagString: Untagged
@@ -55,7 +55,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &819448753
+--- !u!114 &1351302869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,7 +70,8 @@ MonoBehaviour:
   player: {fileID: 42695576058503064}
   wpnSensitivity: 0.5
   armPivot: {fileID: 735725388371942554}
-  cooldown: 0.1
+  animator: {fileID: 8156391354315375271}
+  weapon: {fileID: 512590238791676727}
 --- !u!1 &42695576058503066
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +507,6 @@ GameObject:
   - component: {fileID: 512590238791676727}
   - component: {fileID: 3509093071533751442}
   - component: {fileID: 1681596139769251928}
-  - component: {fileID: 1531187412}
   m_Layer: 0
   m_Name: weapon
   m_TagString: Weapon
@@ -580,19 +580,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1531187412
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 889116468421257613}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.25871727, y: 4.7478786, z: 1.0589387}
-  m_Center: {x: 0.0000025783559, y: 1.2726946, z: 0.3496867}
 --- !u!1 &903239345860361558
 GameObject:
   m_ObjectHideFlags: 0
