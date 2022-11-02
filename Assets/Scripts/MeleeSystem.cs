@@ -38,25 +38,32 @@ public class MeleeSystem : MonoBehaviour
 
     void Update()
     {
-        if(isAttacking)
+        if (isAttacking)
         {
             axis = player.actions.Look.ReadValue<Vector2>();
-            if(axis.magnitude > 0)
+            if (axis.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
+                animator.SetInteger("r", 180);
+                weapon.GetComponent<WeaponScript>().inUse = true;
             }
-            animator.SetInteger("r", 180);
         }
     }
 
+
+
+    ///Animation Events
+    
     public void SetAttackAngle()
     {
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
+    
     public void ResetArm()
     {
         animator.SetInteger("r", 0);
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        weapon.GetComponent<WeaponScript>().inUse = false;
     }
 
 }

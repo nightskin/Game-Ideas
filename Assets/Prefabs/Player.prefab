@@ -507,6 +507,8 @@ GameObject:
   - component: {fileID: 512590238791676727}
   - component: {fileID: 3509093071533751442}
   - component: {fileID: 1681596139769251928}
+  - component: {fileID: 27881788}
+  - component: {fileID: 2128774445467023229}
   m_Layer: 0
   m_Name: weapon
   m_TagString: Weapon
@@ -580,6 +582,34 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &27881788
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889116468421257613}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.25871727, y: 2.5, z: 1.0589387}
+  m_Center: {x: 0.0000025783559, y: 2.4, z: 0.3496867}
+--- !u!114 &2128774445467023229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889116468421257613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3fc583880bd6434a851efc24b189dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inUse: 0
+  damage: 1
+  knockback: 250
 --- !u!1 &903239345860361558
 GameObject:
   m_ObjectHideFlags: 0
