@@ -26,13 +26,11 @@ public class MeleeSystem : MonoBehaviour
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        player.sensitivity *= wpnSensitivity;
         isAttacking = true;
     }
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        player.sensitivity = defSensitivity;
         isAttacking = false;
     }
 
@@ -49,18 +47,17 @@ public class MeleeSystem : MonoBehaviour
             }
         }
     }
-
-
-
-    ///Animation Events
     
-    public void SetAttackAngle()
+    ///Animation Events
+    public void StartAttack()
     {
+        player.sensitivity *= wpnSensitivity;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
     
-    public void ResetArm()
+    public void EndAttack()
     {
+        player.sensitivity = defSensitivity;
         animator.SetInteger("r", 0);
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<WeaponScript>().inUse = false;

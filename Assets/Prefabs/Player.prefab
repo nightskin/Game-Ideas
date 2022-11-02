@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 42695576058503064}
-  wpnSensitivity: 0.5
+  wpnSensitivity: 0
   armPivot: {fileID: 735725388371942554}
   animator: {fileID: 8156391354315375271}
   weapon: {fileID: 512590238791676727}
