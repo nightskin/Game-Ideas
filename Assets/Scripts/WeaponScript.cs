@@ -16,7 +16,7 @@ public class WeaponScript : MonoBehaviour
             {
                 if (other.attachedRigidbody)
                 {
-                    other.attachedRigidbody.AddForceAtPosition(transform.forward * knockback, other.ClosestPoint(transform.position));
+                    other.attachedRigidbody.AddForceAtPosition(-transform.up * knockback, other.ClosestPoint(transform.position));
                 }
             }
         }

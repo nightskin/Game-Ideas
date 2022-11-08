@@ -23,6 +23,19 @@ public class MeleeSystem : MonoBehaviour
         defSensitivity = player.sensitivity;
     }
 
+    void Update()
+    {
+        if (isAttacking)
+        {
+            axis = player.actions.Look.ReadValue<Vector2>();
+            if (axis.magnitude > 0)
+            {
+                atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
+                animator.SetInteger("r", 180);
+            }
+        }
+    }
+
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -34,25 +47,14 @@ public class MeleeSystem : MonoBehaviour
         isAttacking = false;
     }
 
-    void Update()
-    {
-        if (isAttacking)
-        {
-            axis = player.actions.Look.ReadValue<Vector2>();
-            if (axis.magnitude > 0)
-            {
-                atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
-                animator.SetInteger("r", 180);
-                weapon.GetComponent<WeaponScript>().inUse = true;
-            }
-        }
-    }
+
     
     ///Animation Events
     public void StartAttack()
     {
         player.sensitivity *= wpnSensitivity;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        weapon.GetComponent<WeaponScript>().inUse = true;
     }
     
     public void EndAttack()
