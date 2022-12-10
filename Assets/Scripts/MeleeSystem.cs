@@ -4,65 +4,84 @@ using UnityEngine;
 
 public class MeleeSystem : MonoBehaviour
 {
-    [SerializeField] FirstPersonPlayer player;
-    [Range(0, 1)] [SerializeField] float wpnSensitivity;
+    [SerializeField] private FirstPersonPlayer player;
+    [SerializeField] private Animator animator;
+
+    
     [SerializeField] Transform armPivot;
-    [SerializeField] Animator animator;
     [SerializeField] Transform weapon;
 
 
     float atkAngle;
-    bool isAttacking;
+    private float wpnSensitivity = 0.1f;
+    private bool atk;
+    private bool parry;
+
     Vector2 defSensitivity;
-    Vector2 axis = new Vector2();
+    Vector2 lookAxis = new Vector2();
+    Vector2 moveAxis = new Vector2();
 
     void Start()
     {
-        player.actions.Attack.performed += Attack_performed;
-        player.actions.Attack.canceled += Attack_canceled;
-        defSensitivity = player.sensitivity;
+        animator = GetComponent<Animator>();
+        player = GetComponent<FirstPersonPlayer>();
+        defSensitivity = player.lookSpeed;
+        player.actions.Slash.performed += Slash_performed;
+        player.actions.Slash.canceled += Slash_canceled;
+        player.actions.Parry.performed += Parry_performed;
+        player.actions.Parry.canceled += Parry_canceled;
+    }
+
+    private void Parry_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        parry = false;
+    }
+
+    private void Parry_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        parry = true;
+    }
+
+    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        atk = false;   
+    }
+
+    private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        atk = true;
     }
 
     void Update()
     {
-        if (isAttacking)
+        lookAxis = player.actions.Look.ReadValue<Vector2>();
+        moveAxis = player.actions.Move.ReadValue<Vector2>();
+        if(atk)
         {
-            axis = player.actions.Look.ReadValue<Vector2>();
-            if (axis.magnitude > 0)
+            if (lookAxis.magnitude > 0)
             {
-                atkAngle = Mathf.Atan2(axis.x, -axis.y) * Mathf.Rad2Deg;
-                animator.SetInteger("r", 180);
+                atkAngle = Mathf.Atan2(lookAxis.x, -lookAxis.y) * (180 / Mathf.PI);
             }
+            animator.SetTrigger("atk");
+        }
+        else if(parry)
+        {
+            
         }
     }
-
-
-    private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        isAttacking = true;
-    }
-
-    private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        isAttacking = false;
-    }
-
 
     
     ///Animation Events
     public void StartAttack()
     {
-        player.sensitivity *= wpnSensitivity;
+        player.lookSpeed *= wpnSensitivity;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        weapon.GetComponent<WeaponScript>().inUse = true;
     }
     
     public void EndAttack()
     {
-        player.sensitivity = defSensitivity;
-        animator.SetInteger("r", 0);
+        player.lookSpeed = defSensitivity;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        weapon.GetComponent<WeaponScript>().inUse = false;
     }
 
 }
