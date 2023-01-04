@@ -24,18 +24,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Parry",
+                    "name": "Slash",
                     "type": "Button",
-                    "id": "def070b1-4aa3-4f16-9aa0-6fed795cb7c8",
+                    "id": "5ad2762f-fa9f-48eb-81bb-44d0798cb362",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Slash",
+                    "name": "Jump",
                     "type": "Button",
-                    "id": "5ad2762f-fa9f-48eb-81bb-44d0798cb362",
+                    "id": "c372ae9a-fdba-4829-a12f-7ce23b10b256",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -133,30 +133,8 @@
                 },
                 {
                     "name": "",
-                    "id": "de09209c-9645-4188-8faa-12b8e9ade173",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Parry",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "fd532f24-9f8b-4e1d-9a29-b0b261f14aad",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Parry",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4400006e-3492-46cf-94e0-c46487a24e0a",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -172,6 +150,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Slash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1abc0dd2-e567-43c4-93f4-f4efd687cf5e",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "41bd9d5f-4fbb-4ec4-9fdd-667cf4ecf3b7",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
