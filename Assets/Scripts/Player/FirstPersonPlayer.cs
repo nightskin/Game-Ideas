@@ -18,9 +18,10 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] private bool isGrounded;
     private float groundDistance = 0.4f;
 
-    // 
+    // For basic motion
     private Vector3 motion;
     public float moveSpeed = 10;
+    [SerializeField] private float wallDistance = 0.5f;
 
     //For Look/Aim
     public Vector2 lookSpeed = new Vector2(100f, 100);
@@ -61,7 +62,12 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         motion = transform.right * x + transform.forward * z;
-        controller.Move(motion * moveSpeed * Time.deltaTime);
+        if(!Physics.Raycast(transform.position, motion, wallDistance))
+        {
+            controller.Move(motion * moveSpeed * Time.deltaTime);
+        }
+
+
 
         //Jumping
         if(actions.Jump.IsPressed() && isGrounded)

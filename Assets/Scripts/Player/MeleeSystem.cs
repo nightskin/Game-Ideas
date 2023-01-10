@@ -10,7 +10,6 @@ public class MeleeSystem : MonoBehaviour
     private FirstPersonPlayer player;
     private Animator animator;
 
-
     private bool attacking;
 
     public enum AxisType
