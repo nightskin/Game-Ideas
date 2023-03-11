@@ -31,6 +31,7 @@ public class FirstPersonPlayer : MonoBehaviour
     // For Jumping
     private Vector3 velocity;
     private float gravity = -9.81f;
+    public bool gravityOn = true;
     public float jumpHeight = 2;
 
     void Awake()
@@ -39,6 +40,16 @@ public class FirstPersonPlayer : MonoBehaviour
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
+        actions.Jump.performed += Jump_performed;
+    }
+
+    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        //Jumping
+        if (actions.Jump.IsPressed() && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+        }
     }
 
     void Update()
@@ -49,8 +60,12 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Movement()
     {
-        //Ground Checking
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        if(gravityOn)
+        {
+            //Ground Checking
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        }
+
 
         if(controller.isGrounded && velocity.y < 0)
         {
@@ -67,17 +82,13 @@ public class FirstPersonPlayer : MonoBehaviour
             controller.Move(motion * moveSpeed * Time.deltaTime);
         }
 
-
-
-        //Jumping
-        if(actions.Jump.IsPressed() && isGrounded)
+        if(gravityOn)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+            //Gravity
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
         }
 
-        //Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 
     void Look()

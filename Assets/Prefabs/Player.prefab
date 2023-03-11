@@ -154,15 +154,15 @@ MonoBehaviour:
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
   groundCheck: {fileID: 1606872000}
-  wallCheck: {fileID: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
   isGrounded: 0
-  isInFrontOfWall: 0
   moveSpeed: 10
+  wallDistance: 1
   lookSpeed: {x: 150, y: 150}
-  jumpHeight: 2
+  gravityOn: 1
+  jumpHeight: 5
 --- !u!114 &865030074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,6 +178,7 @@ MonoBehaviour:
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 512590238791676727}
   atkAxisType: 0
+  LookDamp: 0.1
   atkAngle: 0
 --- !u!1 &42695576157200106
 GameObject:
@@ -545,7 +546,7 @@ GameObject:
   - component: {fileID: 512590238791676727}
   - component: {fileID: 3509093071533751442}
   - component: {fileID: 1681596139769251928}
-  - component: {fileID: 921798128}
+  - component: {fileID: 4610347218055476303}
   - component: {fileID: 2128774445467023229}
   m_Layer: 3
   m_Name: Weapon
@@ -562,8 +563,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 889116468421257613}
   m_LocalRotation: {x: -0.25934878, y: 0.575373, z: 0.4767877, w: 0.61184776}
-  m_LocalPosition: {x: -0.468, y: 0.417, z: 0.178}
-  m_LocalScale: {x: 0.1, y: 0.7, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.226, z: 0.057}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3172740719984430142}
@@ -576,7 +577,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 889116468421257613}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4898376589914736847, guid: 3ec572874386e0345bc8c2b4d75fbd64, type: 3}
 --- !u!23 &1681596139769251928
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -597,7 +598,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0ce9eba3f344b7d43ace278b381bf4b5, type: 2}
+  - {fileID: -7098565394360792512, guid: 3ec572874386e0345bc8c2b4d75fbd64, type: 3}
+  - {fileID: -4973734387028869240, guid: 3ec572874386e0345bc8c2b4d75fbd64, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -619,8 +621,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &921798128
-CapsuleCollider:
+--- !u!64 &4610347218055476303
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -629,10 +631,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000016
-  m_Height: 2.000001
-  m_Direction: 1
-  m_Center: {x: 0.0000024437904, y: 0.00000047683716, z: 0.00000086426735}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4898376589914736847, guid: 3ec572874386e0345bc8c2b4d75fbd64, type: 3}
 --- !u!114 &2128774445467023229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,8 +647,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fc583880bd6434a851efc24b189dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  meleeSystem: {fileID: 0}
+  player: {fileID: 42695576058503064}
+  meleeSystem: {fileID: 865030074}
   attacking: 0
   damage: 1
   knockback: 250

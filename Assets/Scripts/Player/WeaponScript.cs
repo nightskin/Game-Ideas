@@ -9,6 +9,8 @@ public class WeaponScript : MonoBehaviour
     public bool attacking;
     public int damage = 1;
     public float knockback = 100;
+    
+
 
     private void OnTriggerEnter(Collider other)
     {

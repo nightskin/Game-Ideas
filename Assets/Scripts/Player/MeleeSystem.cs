@@ -19,6 +19,7 @@ public class MeleeSystem : MonoBehaviour
     }
     public AxisType atkAxisType;
     private Vector2 defaultLookSpeed;
+    [SerializeField] [Range(0,1)] private float LookDamp = 0.1f;
 
     private Vector2 axis = new Vector2();
     [SerializeField] private float atkAngle;
@@ -54,11 +55,13 @@ public class MeleeSystem : MonoBehaviour
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         attacking = true;
+        player.lookSpeed *= LookDamp;
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         attacking = false;
+        player.lookSpeed = defaultLookSpeed;
     }
 
 
