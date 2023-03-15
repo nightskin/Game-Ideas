@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tile
+public class Space
 {
     public float x;
     public float z;
     public float y;
     public bool visited;
-    public Tile(float xPos, float zPos)
+    public Space(float xPos, float zPos)
     {
         x = xPos;
         z = zPos;
@@ -16,7 +16,7 @@ public class Tile
         visited = false;
     }
 
-    public Tile (float xpos, float yPos, float zPos)
+    public Space (float xpos, float yPos, float zPos)
     {
         x = xpos;
         y = yPos;
@@ -28,8 +28,8 @@ public class Tile
 public class LevelGen : MonoBehaviour
 {
     
-    Tile[,] map2d;
-    Tile[,,] map3d;
+    Space[,] map2d;
+    Space[,,] map3d;
     
     public int tilesX = 25;
     public int tilesY = 25;
@@ -159,7 +159,7 @@ public class LevelGen : MonoBehaviour
 
     public void CreateLevel2D()
     {
-        map2d = new Tile[tilesX, tilesZ];
+        map2d = new Space[tilesX, tilesZ];
         Vector3Int currentPos = Vector3Int.zero;
 
         //Create Map
@@ -167,7 +167,7 @@ public class LevelGen : MonoBehaviour
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                map2d[x, z] = new Tile(x,z);
+                map2d[x, z] = new Space(x,z);
             }
         }
 
@@ -277,7 +277,7 @@ public class LevelGen : MonoBehaviour
 
     public void CreateLevel3D()
     {
-        map3d = new Tile[tilesX, tilesY, tilesZ];
+        map3d = new Space[tilesX, tilesY, tilesZ];
         Vector3Int currentPos = Vector3Int.zero;
 
         //CreateMap
@@ -287,7 +287,7 @@ public class LevelGen : MonoBehaviour
             {
                 for(int z = 0; z < tilesZ; z++)
                 {
-                    map3d[x, y, z] = new Tile(x, y, z);
+                    map3d[x, y, z] = new Space(x, y, z);
                 }
             }
         }

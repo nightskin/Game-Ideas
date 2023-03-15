@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6760798428983159068}
   - component: {fileID: 6760798428983159059}
   - component: {fileID: 6760798428983159058}
-  - component: {fileID: 6760798428983159070}
+  - component: {fileID: 445412258}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -115,9 +115,9 @@ MonoBehaviour:
   tilesX: 25
   tilesY: 25
   tilesZ: 25
-  stepSize: 5
-  level3D: 1
---- !u!114 &6760798428983159070
+  stepSize: 10
+  level3D: 0
+--- !u!114 &445412258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

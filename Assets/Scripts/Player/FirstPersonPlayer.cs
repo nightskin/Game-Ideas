@@ -30,25 +30,52 @@ public class FirstPersonPlayer : MonoBehaviour
 
     // For Jumping
     private Vector3 velocity;
-    private float gravity = -9.81f;
+    private Vector3 gravity = new Vector3(0,-9.81f, 0);
     public bool gravityOn = true;
     public float jumpHeight = 2;
 
+    //For Dashing
+    public float dashSpeed = 20;
+    public float dashAmount = 1;
+
+    Vector3 dashDirection;
+    float dashTimer;
+    bool dashing = false;
+
     void Awake()
     {
+        dashTimer = dashAmount;
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
         actions.Jump.performed += Jump_performed;
+        actions.Dash.performed += Dash_performed;
+    }
+
+    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(isGrounded)
+        {
+            if (motion == Vector3.zero)
+            {
+                dashDirection = transform.forward + new Vector3(0, 0.25f, 0);
+            }
+            else
+            {
+                dashDirection = motion + new Vector3(0, 0.25f, 0);
+            }
+            dashing = true;
+        }
+
     }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         //Jumping
-        if (actions.Jump.IsPressed() && isGrounded)
+        if (isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+            velocity.y =  Mathf.Sqrt(jumpHeight * -2 * gravity.y);
         }
     }
 
@@ -56,6 +83,19 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         Look();
         Movement();
+
+        if(dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+
+            if(dashTimer <= 0)
+            {
+                dashTimer = dashAmount;
+                dashing = false;
+            }
+        }
+
     }
 
     void Movement()
@@ -77,7 +117,7 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         motion = transform.right * x + transform.forward * z;
-        if(!Physics.Raycast(transform.position, motion, wallDistance))
+        if(!dashing)
         {
             controller.Move(motion * moveSpeed * Time.deltaTime);
         }
@@ -85,7 +125,7 @@ public class FirstPersonPlayer : MonoBehaviour
         if(gravityOn)
         {
             //Gravity
-            velocity.y += gravity * Time.deltaTime;
+            velocity += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
         }
 
@@ -97,7 +137,7 @@ public class FirstPersonPlayer : MonoBehaviour
         float y = actions.Look.ReadValue<Vector2>().y;
         //Looking up/down with camera
         xRot -= y * lookSpeed.y * Time.deltaTime;
-        xRot = Mathf.Clamp(xRot, -45, 45);
+        xRot = Mathf.Clamp(xRot, -90, 45);
         camera.localEulerAngles = new Vector3(xRot, 0, 0);
         //Looking left right with player body
         yRot += x * lookSpeed.x * Time.deltaTime;

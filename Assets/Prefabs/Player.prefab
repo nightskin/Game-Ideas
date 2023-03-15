@@ -162,7 +162,9 @@ MonoBehaviour:
   wallDistance: 1
   lookSpeed: {x: 150, y: 150}
   gravityOn: 1
-  jumpHeight: 5
+  jumpHeight: 1
+  dashSpeed: 25
+  dashAmount: 0.25
 --- !u!114 &865030074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +353,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3febcec0ecc7efe4b8ae9cf137a23f8f, type: 2}
+  - {fileID: 2100000, guid: f3a7c0836cfbfc34ba5d0417927773e7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -564,7 +566,7 @@ Transform:
   m_GameObject: {fileID: 889116468421257613}
   m_LocalRotation: {x: -0.25934878, y: 0.575373, z: 0.4767877, w: 0.61184776}
   m_LocalPosition: {x: 0, y: 0.226, z: 0.057}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.25, y: 0.3, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3172740719984430142}
