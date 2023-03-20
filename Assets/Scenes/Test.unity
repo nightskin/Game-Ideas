@@ -242,6 +242,11 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
   m_PVRTiledBaking: 0
+--- !u!4 &1748884586 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 42695576058503065, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+  m_PrefabInstance: {fileID: 130327667}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1782811455
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,5 +417,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6760798428983159058, guid: f13653e301044f049aa1a137f5856b4b, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1748884586}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f13653e301044f049aa1a137f5856b4b, type: 3}

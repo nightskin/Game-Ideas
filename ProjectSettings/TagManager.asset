@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerWeapon
-  - Slither
+  - Enemy
   layers:
   - Default
   - TransparentFX

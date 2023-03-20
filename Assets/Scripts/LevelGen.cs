@@ -30,7 +30,9 @@ public class LevelGen : MonoBehaviour
     
     Space[,] map2d;
     Space[,,] map3d;
-    
+
+    public Transform player;
+    public GameObject spiderPrefab;
     public int tilesX = 25;
     public int tilesY = 25;
     public int tilesZ = 25;
@@ -55,30 +57,11 @@ public class LevelGen : MonoBehaviour
         else
         {
             CreateLevel2D();
+            AddMonsters();
         }
 
         UpdateMesh();
-    }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            buffer = 0;
-            mesh.Clear();
-            verts.Clear();
-            tris.Clear();
-            uvs.Clear();
-            if (level3D)
-            {
-                CreateLevel3D();
-            }
-            else
-            {
-                CreateLevel2D();
-            }
-            UpdateMesh();
-        }
     }
 
     void CreateQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight, Vector3 offset)
@@ -269,6 +252,33 @@ public class LevelGen : MonoBehaviour
                     if (z == tilesZ - 1)
                     {
                         CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, true);
+                    }
+                }
+            }
+        }
+    }
+
+    void AddMonsters()
+    {
+        if(level3D)
+        {
+
+        }
+        else
+        {
+            //Create Map
+            for (int x = 0; x < tilesX; x++)
+            {
+                for (int z = 0; z < tilesZ; z++)
+                {
+                    if (map2d[x, z].visited && x != 0 && z != 0)
+                    {
+                        float r = Random.Range(0.0f, 1.0f) * 100;
+                        if(r > 90.0f)
+                        {
+                            GameObject enemy =  Instantiate(spiderPrefab, new Vector3(x, 0, z) * stepSize, Quaternion.identity, transform);
+                            enemy.GetComponent<GroundEnemyAI>().target = player;
+                        }
                     }
                 }
             }

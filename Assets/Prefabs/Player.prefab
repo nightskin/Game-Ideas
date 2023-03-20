@@ -180,7 +180,7 @@ MonoBehaviour:
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 512590238791676727}
   atkAxisType: 0
-  LookDamp: 0.1
+  LookDamp: 0.5
   atkAngle: 0
 --- !u!1 &42695576157200106
 GameObject:

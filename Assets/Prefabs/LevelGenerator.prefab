@@ -112,10 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d21c2faddc95325479e7707a85891ca0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  spiderPrefab: {fileID: 1387779423687056279, guid: 4a14bb14e5aae3b42a0079c840bc2235, type: 3}
   tilesX: 25
   tilesY: 25
   tilesZ: 25
-  stepSize: 10
+  stepSize: 20
   level3D: 0
 --- !u!114 &445412258
 MonoBehaviour:

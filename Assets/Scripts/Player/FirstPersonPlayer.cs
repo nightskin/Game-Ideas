@@ -12,12 +12,6 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] private Transform camera;
     [SerializeField] private CharacterController controller;
 
-    //For Ground Checking
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundMask;
-    [SerializeField] private bool isGrounded;
-    private float groundDistance = 0.4f;
-
     // For basic motion
     private Vector3 motion;
     public float moveSpeed = 10;
@@ -29,7 +23,7 @@ public class FirstPersonPlayer : MonoBehaviour
     private float yRot = 0;
 
     // For Jumping
-    private Vector3 velocity;
+    [SerializeField] private Vector3 velocity;
     private Vector3 gravity = new Vector3(0,-9.81f, 0);
     public bool gravityOn = true;
     public float jumpHeight = 2;
@@ -55,7 +49,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(isGrounded)
+        if(!dashing)
         {
             if (motion == Vector3.zero)
             {
@@ -73,7 +67,7 @@ public class FirstPersonPlayer : MonoBehaviour
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         //Jumping
-        if (isGrounded)
+        if (controller.isGrounded)
         {
             velocity.y =  Mathf.Sqrt(jumpHeight * -2 * gravity.y);
         }
@@ -100,13 +94,6 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Movement()
     {
-        if(gravityOn)
-        {
-            //Ground Checking
-            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        }
-
-
         if(controller.isGrounded && velocity.y < 0)
         {
             velocity.y = 0;
