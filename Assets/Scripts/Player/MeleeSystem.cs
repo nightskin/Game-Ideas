@@ -46,6 +46,10 @@ public class MeleeSystem : MonoBehaviour
             {
                 atkAngle = Mathf.Atan2(axis.x, -axis.y) * (180 / Mathf.PI);
             }
+            else
+            {
+                atkAngle = Random.Range(-180, 180);
+            }
             animator.SetBool("slash", true);
         }
 
