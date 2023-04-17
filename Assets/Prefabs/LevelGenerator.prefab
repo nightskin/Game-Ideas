@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 6760798428983159069}
   - component: {fileID: 6760798428983159068}
   - component: {fileID: 6760798428983159059}
-  - component: {fileID: 6760798428983159058}
-  - component: {fileID: 445412258}
+  - component: {fileID: 3476786958774289453}
+  - component: {fileID: 1772326380}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -100,7 +100,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &6760798428983159058
+--- !u!114 &3476786958774289453
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,17 +109,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6760798428983159056}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d21c2faddc95325479e7707a85891ca0, type: 3}
+  m_Script: {fileID: 11500000, guid: 7b2524b4fdfa30542b4c39c2ed6a95ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  spiderPrefab: {fileID: 1387779423687056279, guid: 4a14bb14e5aae3b42a0079c840bc2235, type: 3}
+  enemyPrefab: {fileID: 0}
   tilesX: 25
-  tilesY: 25
   tilesZ: 25
-  stepSize: 20
-  level3D: 0
---- !u!114 &445412258
+  stepSize: 10
+--- !u!114 &1772326380
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

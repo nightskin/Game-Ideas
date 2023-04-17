@@ -8,9 +8,8 @@ public class MeleeSystem : MonoBehaviour
     public Transform weapon;
 
     private FirstPersonPlayer player;
-    private Animator animator;
+    public Animator animator;
 
-    private bool attacking;
 
     public enum AxisType
     {
@@ -19,7 +18,8 @@ public class MeleeSystem : MonoBehaviour
     }
     public AxisType atkAxisType;
     private Vector2 defaultLookSpeed;
-    [SerializeField] [Range(0,1)] private float LookDamp = 0.1f;
+    private float defaultMoveSpeed;
+    [SerializeField] [Range(0,1)] private float atkDamp = 0.1f;
 
     private Vector2 axis = new Vector2();
     [SerializeField] private float atkAngle;
@@ -30,51 +30,40 @@ public class MeleeSystem : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
+        defaultMoveSpeed = player.moveSpeed;
 
         player.actions.Slash.performed += Slash_performed;
-        player.actions.Slash.canceled += Slash_canceled;
     }
 
     void Update()
     {
-        if (atkAxisType == AxisType.MOVE) axis = player.actions.Move.ReadValue<Vector2>();
-        else if (atkAxisType == AxisType.LOOK) axis = player.actions.Look.ReadValue<Vector2>();
-
-        if (attacking)
+        if(animator.GetBool("slash"))
         {
+            if (atkAxisType == AxisType.MOVE) axis = player.actions.Move.ReadValue<Vector2>();
+            else if (atkAxisType == AxisType.LOOK) axis = player.actions.Look.ReadValue<Vector2>();
+
             if (axis.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(axis.x, -axis.y) * (180 / Mathf.PI);
             }
-            else
-            {
-                atkAngle = Random.Range(-180, 180);
-            }
-            animator.SetBool("slash", true);
         }
 
-    }
 
+
+    }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        attacking = true;
-        player.lookSpeed *= LookDamp;
+        animator.SetBool("slash", true);
+        player.lookSpeed *= atkDamp;
+
     }
-
-    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        attacking = false;
-        player.lookSpeed = defaultLookSpeed;
-    }
-
-
 
     ///Animation Events
     public void StartAttack()
     {
-        weapon.GetComponent<WeaponScript>().attacking = true;
-        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= 0.1f;
+        weapon.GetComponent<PlayerWeapon>().attacking = true;
+        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= atkDamp;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
     
@@ -82,7 +71,7 @@ public class MeleeSystem : MonoBehaviour
     {
         player.lookSpeed = defaultLookSpeed;
         armPivot.localEulerAngles = Vector3.zero;
-        weapon.GetComponent<WeaponScript>().attacking = false;
+        weapon.GetComponent<PlayerWeapon>().attacking = false;
         animator.SetBool("slash", false);
     }
 

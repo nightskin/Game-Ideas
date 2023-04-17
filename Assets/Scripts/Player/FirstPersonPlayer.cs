@@ -5,28 +5,28 @@ using UnityEngine;
 public class FirstPersonPlayer : MonoBehaviour
 {
     // For Input
-    private Controls controls;
+    Controls controls;
     public Controls.PlayerActions actions;
     
     //Components
-    [SerializeField] private Transform camera;
-    [SerializeField] private CharacterController controller;
+    [SerializeField] Transform camera;
+    [SerializeField] CharacterController controller;
 
     // For basic motion
-    private Vector3 motion;
+    Vector3 motion;
     public float moveSpeed = 10;
     [SerializeField] private float wallDistance = 0.5f;
 
     //For Look/Aim
     public Vector2 lookSpeed = new Vector2(100f, 100);
-    private float xRot = 0;
-    private float yRot = 0;
+    float xRot = 0;
+    float yRot = 0;
 
     // For Jumping
-    [SerializeField] private Vector3 velocity;
-    [SerializeField] private LayerMask groundMask;
-    private Transform groundCheck;
-    private Vector3 gravity = new Vector3(0,-9.81f, 0);
+    [SerializeField] Vector3 velocity;
+    [SerializeField] LayerMask groundMask;
+    Transform groundCheck;
+    Vector3 gravity = new Vector3(0,-9.81f, 0);
     public bool gravityOn = true;
     [SerializeField] private bool isGrounded;
     public float jumpHeight = 2;
@@ -35,10 +35,17 @@ public class FirstPersonPlayer : MonoBehaviour
     //For Dashing
     public float dashSpeed = 20;
     public float dashAmount = 1;
-
     Vector3 dashDirection;
     float dashTimer;
     bool dashing = false;
+
+    //For HealthSystem
+    public bool stun = false;
+    public Vector3 knockback;
+    [SerializeField] float stunTime = 0.25f;
+    float stunTimer = 0.2f;
+    int health = 100;
+
 
     void Awake()
     {
@@ -80,21 +87,33 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Update()
     {
-        Look();
-        Movement();
-
-        if(dashing)
+        if (!stun)
         {
-            dashTimer -= Time.deltaTime;
-            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            Look();
+            Movement();
 
-            if(dashTimer <= 0)
+            if (dashing)
             {
-                dashTimer = dashAmount;
-                dashing = false;
+                dashTimer -= Time.deltaTime;
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+
+                if (dashTimer <= 0)
+                {
+                    dashTimer = dashAmount;
+                    dashing = false;
+                }
             }
         }
-
+        else
+        {
+            stunTimer -= Time.deltaTime;
+            controller.Move(knockback * dashSpeed * Time.deltaTime);
+            if (stunTimer <= 0)
+            {
+                stun = false;
+                stunTimer = stunTime;
+            }
+        }
     }
 
     void Movement()
@@ -137,4 +156,6 @@ public class FirstPersonPlayer : MonoBehaviour
         yRot += x * lookSpeed.x * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
+
+
 }

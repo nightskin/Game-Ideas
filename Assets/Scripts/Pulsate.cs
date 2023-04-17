@@ -8,7 +8,7 @@ public class Pulsate : MonoBehaviour
     
     void Update()
     {
-        normal = Mathf.PingPong(Time.time * 0.25f, 0.1f);
+        normal = Mathf.PingPong(Time.time * 0.25f, 0.08f);
         GetComponent<MeshRenderer>().material.SetFloat("_Parallax", normal);
     }
 }

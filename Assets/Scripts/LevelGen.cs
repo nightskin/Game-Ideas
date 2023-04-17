@@ -7,13 +7,13 @@ public class Space
     public float x;
     public float z;
     public float y;
-    public bool visited;
+    public bool on;
     public Space(float xPos, float zPos)
     {
         x = xPos;
         z = zPos;
         y = 0;
-        visited = false;
+        on = false;
     }
 
     public Space (float xpos, float yPos, float zPos)
@@ -21,28 +21,23 @@ public class Space
         x = xpos;
         y = yPos;
         z = zPos;
-        visited = false;
+        on = false;
     }
 }
 
 public class LevelGen : MonoBehaviour
 {
     
-    Space[,] map2d;
-    Space[,,] map3d;
-
+    Space[,] map = null;
     public Transform player;
-    public GameObject spiderPrefab;
+    public GameObject enemyPrefab;
     public int tilesX = 25;
-    public int tilesY = 25;
     public int tilesZ = 25;
     public float stepSize = 10;
-    public bool level3D = false;
 
     Mesh mesh;
     List<Vector3> verts = new List<Vector3>();
     List<Vector2> uvs = new List<Vector2>();
-    List<Vector3> normals = new List<Vector3>();
     List<int> tris = new List<int>();
     int buffer = 0;
 
@@ -50,19 +45,15 @@ public class LevelGen : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        if(level3D)
-        {
-            CreateLevel3D();
-        }
-        else
-        {
-            CreateLevel2D();
-            AddMonsters();
-        }
+
+        
+        Gen1();
+        AddStuff();
 
         UpdateMesh();
 
     }
+
 
     void CreateQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight, Vector3 offset)
     {
@@ -87,20 +78,28 @@ public class LevelGen : MonoBehaviour
         buffer += 4;
     }
 
-    void CreateBox(Vector3 offset, Vector3 size)
+    void CreateQuad(Vector3 position, Vector3 rotation, Vector3 scale)
     {
-        //top
-        CreateQuad(new Vector3(-1 * size.x, 1 * size.y, -1 * size.z), new Vector3(-1 * size.x, 1 * size.y, 1 * size.z), new Vector3(1 * size.x, 1 * size.y, -1 * size.z), new Vector3(1 * size.x, 1 * size.y, 1 * size.z), offset);
-        //Bottom
-        CreateQuad(new Vector3(-1 * size.x, -1 * size.y, 1 * size.z), new Vector3(-1 * size.x, -1 * size.y, -1 * size.z), new Vector3(1 * size.x, -1 * size.y, 1 * size.z), new Vector3(1 * size.x, -1 * size.y, -1 * size.z), offset);
-        //Left
-        CreateQuad(new Vector3(-1 * size.x, 1 * size.y, -1 * size.z), new Vector3(-1 * size.x, -1 * size.y, -1 * size.z), new Vector3(-1 * size.x, 1 * size.y, 1 * size.z), new Vector3(-1 * size.x, -1 * size.y, 1 * size.z), offset);
-        //Right
-        CreateQuad(new Vector3(1 * size.x, -1 * size.y, -1 * size.z), new Vector3(1 * size.x, 1 * size.y, -1 * size.z), new Vector3(1 * size.x, -1 * size.y, 1 * size.z), new Vector3(1 * size.x, 1 * size.y, 1 * size.z), offset);
-        //Front
-        CreateQuad(new Vector3(-1 * size.x, 1 * size.y, 1 * size.z), new Vector3(-1 * size.x, -1 * size.y, 1 * size.z), new Vector3(1 * size.x, 1 * size.y, 1 * size.z), new Vector3(1 * size.x, -1 * size.y, 1 * size.z), offset);
-        //Back
-        CreateQuad(new Vector3(-1 * size.x, -1 * size.y, -1 * size.z), new Vector3(-1 * size.x, 1 * size.y, -1 * size.z), new Vector3(1 * size.x, -1 * size.y, -1 * size.z), new Vector3(1 * size.x, 1 * size.y, -1 * size.z), offset);
+        verts.Add(Quaternion.Euler(rotation) * new Vector3(-1 * scale.x, -1 * scale.y, -1 * scale.z) + position);
+        verts.Add(Quaternion.Euler(rotation) * new Vector3(-1 * scale.x, -1 * scale.y, 1 * scale.z) + position);
+        verts.Add(Quaternion.Euler(rotation) * new Vector3(1 * scale.x, -1 * scale.y, -1 * scale.z) + position);
+        verts.Add(Quaternion.Euler(rotation) * new Vector3(1 * scale.x, -1 * scale.y, 1 * scale.z) + position);
+
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(1, 1));
+
+
+        tris.Add(0 + buffer);
+        tris.Add(1 + buffer);
+        tris.Add(2 + buffer);
+
+        tris.Add(1 + buffer);
+        tris.Add(3 + buffer);
+        tris.Add(2 + buffer);
+
+        buffer += 4;
     }
 
     void CreateWalls(Vector3 offset, Vector3 size, bool front = false, bool back = false, bool left = false, bool right = false, bool up = false, bool down = false)
@@ -130,19 +129,11 @@ public class LevelGen : MonoBehaviour
 
     }
     
-    void CreateFloor(Vector3 offset, Vector3 size, bool ceiling = false)
-    {
-        //Ceiling
-        if(ceiling)
-            CreateQuad(new Vector3(-1 * size.x, 1 * size.y, 1 * size.z), new Vector3(-1 * size.x, 1 * size.y, -1 * size.z), new Vector3(1 * size.x, 1 * size.y, 1 * size.z), new Vector3(1 * size.x, 1 * size.y, -1 * size.z), offset);
-        
-        //Floor
-        CreateQuad(new Vector3(-1 * size.x, -1 * size.y, -1 * size.z), new Vector3(-1 * size.x, -1 * size.y, 1 * size.z), new Vector3(1 * size.x, -1 * size.y, -1 * size.z), new Vector3(1 * size.x, -1 * size.y, 1 * size.z), offset);
-    }
 
-    public void CreateLevel2D()
+    //Random Walker
+    public void Gen1()
     {
-        map2d = new Space[tilesX, tilesZ];
+        map = new Space[tilesX, tilesZ];
         Vector3Int currentPos = Vector3Int.zero;
 
         //Create Map
@@ -150,7 +141,7 @@ public class LevelGen : MonoBehaviour
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                map2d[x, z] = new Space(x,z);
+                map[x, z] = new Space(x,z);
             }
         }
 
@@ -160,10 +151,10 @@ public class LevelGen : MonoBehaviour
             for (int z = 0; z < tilesZ; z++)
             {
                 int dir = Random.Range(1, 5);
-                if (map2d[currentPos.x, currentPos.z].visited == false)
+                if (map[currentPos.x, currentPos.z].on == false)
                 {
-                    CreateFloor((Vector3)currentPos * stepSize, Vector3.one * stepSize / 2, true);
-                    map2d[currentPos.x, currentPos.z].visited = true;
+                    CreateWalls((Vector3)currentPos * stepSize, Vector3.one * stepSize / 2, false, false, false, false, true, true);
+                    map[currentPos.x, currentPos.z].on = true;
                 }
                 if (dir == 1)
                 {
@@ -204,7 +195,7 @@ public class LevelGen : MonoBehaviour
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                if (map2d[x,z].visited)
+                if (map[x,z].on)
                 {
                     if (x == 0)
                     {
@@ -212,7 +203,7 @@ public class LevelGen : MonoBehaviour
                     }
                     if (x > 0)
                     {
-                        if (!map2d[x - 1, z].visited)
+                        if (!map[x - 1, z].on)
                         {
                             CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, false, false, true);
                         }
@@ -220,7 +211,7 @@ public class LevelGen : MonoBehaviour
 
                     if (x < tilesX - 1)
                     {
-                        if (!map2d[x + 1, z].visited)
+                        if (!map[x + 1, z].on)
                         {
                             CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, true);
                         }
@@ -236,7 +227,7 @@ public class LevelGen : MonoBehaviour
                     }
                     if (z > 0)
                     {
-                        if (!map2d[x, z - 1].visited)
+                        if (!map[x, z - 1].on)
                         {
                             CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, false, true);
                         }
@@ -244,7 +235,7 @@ public class LevelGen : MonoBehaviour
 
                     if (z < tilesZ - 1)
                     {
-                        if (!map2d[x, z + 1].visited)
+                        if (!map[x, z + 1].on)
                         {
                             CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, true);
                         }
@@ -253,193 +244,24 @@ public class LevelGen : MonoBehaviour
                     {
                         CreateWalls(new Vector3(x, 0, z) * stepSize, Vector3.one * stepSize / 2, true);
                     }
+
                 }
             }
         }
     }
 
-    void AddMonsters()
+    void AddStuff()
     {
-        if(level3D)
-        {
-
-        }
-        else
-        {
-            //Create Map
-            for (int x = 0; x < tilesX; x++)
-            {
-                for (int z = 0; z < tilesZ; z++)
-                {
-                    if (map2d[x, z].visited && x != 0 && z != 0)
-                    {
-                        float r = Random.Range(0.0f, 1.0f) * 100;
-                        if(r > 90.0f)
-                        {
-                            GameObject enemy =  Instantiate(spiderPrefab, new Vector3(x, 0, z) * stepSize, Quaternion.identity, transform);
-                            enemy.GetComponent<GroundEnemyAI>().target = player;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public void CreateLevel3D()
-    {
-        map3d = new Space[tilesX, tilesY, tilesZ];
-        Vector3Int currentPos = Vector3Int.zero;
-
-        //CreateMap
-        for(int x = 0; x < tilesX; x++)
-        {
-            for(int y = 0; y < tilesY; y++)
-            {
-                for(int z = 0; z < tilesZ; z++)
-                {
-                    map3d[x, y, z] = new Space(x, y, z);
-                }
-            }
-        }
-
-        //Random Walker
         for (int x = 0; x < tilesX; x++)
         {
-            for (int y = 0; y < tilesY; y++)
+            for (int z = 0; z < tilesZ; z++)
             {
-                for (int z = 0; z < tilesZ; z++)
+                if (map[x, z].on && x != 0 && z != 0)
                 {
-                    int dir = Random.Range(1, 7);
-                    if (map3d[currentPos.x, currentPos.y, currentPos.z].visited == false)
+                    float r = Random.Range(0.0f, 1.0f) * 100;
+                    if (r > 90.0f)
                     {
-                        map3d[currentPos.x, currentPos.y ,currentPos.z].visited = true;
-                    }
-                    if(dir == 1)
-                    {
-                        if (currentPos.x < tilesX - 1)
-                        {
-                            currentPos.x++;
-                        }
-                    }
-                    else if (dir == 2)
-                    {
-                        if (currentPos.x > 0)
-                        {
-                            currentPos.x--;
-                        }
-
-                    }
-                    else if (dir == 3)
-                    {
-                        if (currentPos.z < tilesZ - 1)
-                        {
-                            currentPos.z++;
-                        }
-
-                    }
-                    else if (dir == 4)
-                    {
-                        if (currentPos.z > 0)
-                        {
-                            currentPos.z--;
-                        }
-                    }
-                    else if(dir == 5)
-                    {
-                        if(currentPos.y > 0)
-                        {
-                            currentPos.y--;
-                        }
-                    }
-                    else if(dir == 6)
-                    {
-                        if(currentPos.y < tilesY - 1)
-                        {
-                            currentPos.y++;
-                        }
-                    }
-                }
-            }
-        }
-
-        //Create Walls
-        for (int x = 0; x < tilesX; x++)
-        {
-            for (int y = 0; y < tilesY; y++)
-            {
-                for (int z = 0; z < tilesZ; z++)
-                {
-                    if(map3d[x,y,z].visited)
-                    {
-                        if (x == 0)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, true);
-                        }
-                        if (x > 0)
-                        {
-                            if (!map3d[x - 1, y,z].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, true);
-                            }
-                        }
-                        if (x < tilesX - 1)
-                        {
-                            if (!map3d[x + 1, y,z].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, true);
-                            }
-                        }
-                        if (x == tilesX - 1)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, true);
-                        }
-
-                        if (z == 0)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, true);
-                        }
-                        if (z > 0)
-                        {
-                            if (!map3d[x, y,z - 1].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, true);
-                            }
-                        }
-                        if (z < tilesZ - 1)
-                        {
-                            if (!map3d[x, y,z + 1].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, true);
-                            }
-                        }
-                        if (z == tilesZ - 1)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, true);
-                        }
-
-                        if(y > 0)
-                        {
-                            if(!map3d[x,y - 1,z].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, false, false, true);
-                            }
-
-                        }
-                        if(y < tilesY - 1)
-                        {
-                            if (!map3d[x, y + 1, z].visited)
-                            {
-                                CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, false, true);
-                            }
-                        }
-                        if(y == 0)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, false, false, true);
-                        }
-                        if(y == tilesY - 1)
-                        {
-                            CreateWalls(new Vector3(x, y, z) * stepSize, Vector3.one * stepSize / 2, false, false, false, false, true);
-                        }
+                        GameObject enemy =  Instantiate(enemyPrefab, new Vector3(x, 0, z) * stepSize, Quaternion.identity, transform);
                     }
                 }
             }
@@ -452,12 +274,10 @@ public class LevelGen : MonoBehaviour
         mesh.vertices = verts.ToArray();
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
-        mesh.normals = normals.ToArray();
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    
 
 }
