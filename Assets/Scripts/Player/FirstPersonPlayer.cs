@@ -27,9 +27,11 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] LayerMask groundMask;
     Transform groundCheck;
     Vector3 gravity = new Vector3(0,-9.81f, 0);
-    public bool gravityOn = true;
-    [SerializeField] private bool isGrounded;
+    bool gravityOn = true;
+    private bool isGrounded;
     public float jumpHeight = 2;
+    private int jumps = 0;
+    public int maxJumps = 1;
 
 
     //For Dashing
@@ -65,11 +67,11 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             if (motion == Vector3.zero)
             {
-                dashDirection = transform.forward + new Vector3(0, 0.25f, 0);
+                dashDirection = transform.forward;
             }
             else
             {
-                dashDirection = motion + new Vector3(0, 0.25f, 0);
+                dashDirection = motion;
             }
             dashing = true;
         }
@@ -79,9 +81,10 @@ public class FirstPersonPlayer : MonoBehaviour
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         //Jumping
-        if (isGrounded)
+        if (jumps < maxJumps)
         {
             velocity.y =  Mathf.Sqrt(jumpHeight * -2 * gravity.y);
+            jumps++;
         }
     }
 
@@ -118,10 +121,11 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Movement()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.4f, groundMask);
+        isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f,groundMask);
 
         if(isGrounded && velocity.y < 0)
         {
+            jumps = 0;
             velocity.y = 0;
         }
 

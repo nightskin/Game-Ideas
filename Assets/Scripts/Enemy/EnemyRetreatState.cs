@@ -12,7 +12,7 @@ public class EnemyRetreatState : EnemyBaseState
     {
 
     }
-    public override void CollisionEnter(EnemyStateMachine enemy)
+    public override void CollisionEnter(EnemyStateMachine enemy, ControllerColliderHit other)
     {
 
     }

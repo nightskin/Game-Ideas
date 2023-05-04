@@ -6,25 +6,39 @@ public class PlayerWeapon: MonoBehaviour
 {
     public FirstPersonPlayer player;
     public MeleeSystem meleeSystem;
+    public GameObject impactEffectEnemy;
+    public GameObject impactEffectSolid;
+    
     public bool attacking;
     public int damage = 1;
-    public float knockback = 100;
+    public float knockbackForce = 10;
     
 
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
-        if(other.transform.tag == "EnemyWeapon" && attacking)
+        if(attacking)
         {
-            player.stun = true;
+            if (other.transform.tag == "Enemy")
+            {
+                Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                var e = other.GetComponent<EnemyStateMachine>();
+                if (meleeSystem.atkAngle > 135 || meleeSystem.atkAngle < -135)
+                {
+                    e.enemyStun.knockback = Vector3.up * knockbackForce;
+                }
+                else if (meleeSystem.atkAngle < 45 || meleeSystem.atkAngle > -45)
+                {
+                    e.enemyStun.knockback = player.transform.forward + Vector3.down * knockbackForce;
+                }
+                e.SwitchState(e.enemyStun);
+            }
+            if (other.transform.tag == "EnemyWeapon")
+            {
+                Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                meleeSystem.animator.SetTrigger("recoil");
+            }
         }
-        if(other.transform.tag == "Enemy" && attacking)
-        {
-            var enemyStateMachine = other.transform.GetComponent<EnemyStateMachine>();
-            enemyStateMachine.enemyStun.knockback = new Vector3(transform.forward.x, 0, transform.forward.y);
-            enemyStateMachine.SwitchState(enemyStateMachine.enemyStun);
-        }
-
     }
 
 }

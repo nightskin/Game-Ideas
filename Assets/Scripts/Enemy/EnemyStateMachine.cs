@@ -5,7 +5,12 @@ using UnityEngine;
 public class EnemyStateMachine : MonoBehaviour
 {
     EnemyBaseState currentState;
+    Vector3 velocity;
+    Vector3 gravity = new Vector3(0, -9.81f, 0);
 
+    public CharacterController controller;
+    public Animator anim;
+    public Transform armPivot;
 
     public EnemyPatrolState enemyPatrol = new EnemyPatrolState();
     public EnemyRetreatState enemyRetreat = new EnemyRetreatState();
@@ -13,20 +18,14 @@ public class EnemyStateMachine : MonoBehaviour
     public EnemyAtkState enemyAttack = new EnemyAtkState();
     public EnemyStunState enemyStun = new EnemyStunState();
 
-
-    public Transform armPivot;
-    public Animator anim;
-    public Rigidbody rb;
     public Transform target;
 
-    public float atkDistance = 4.5f;
+    public float atkDistance = 2;
 
     void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player").transform;
-        armPivot = transform.Find("HandPivot");
-        anim = GetComponent<Animator>();        
-        rb = GetComponent<Rigidbody>();
+        anim.GetComponent<Animator>();
+        controller = GetComponent<CharacterController>();
         currentState = enemyPatrol;
         currentState.Start(this);
     }
@@ -34,12 +33,25 @@ public class EnemyStateMachine : MonoBehaviour
     void Update()
     {
         currentState.Update(this);
+
+        if(currentState != enemyStun)
+        {
+            if (!controller.isGrounded)
+            {
+                //Gravity
+                velocity.y += gravity.y * Time.deltaTime;
+                controller.Move(velocity * Time.deltaTime);
+            }
+            else
+            {
+                velocity.y = 0;
+            }
+        }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnControllerColliderHit(ControllerColliderHit collision)
     {
-        //currentState.CollisionEnter(this);
-
+        currentState.CollisionEnter(this, collision);
     }
 
     public void SwitchState(EnemyBaseState state)
@@ -48,15 +60,10 @@ public class EnemyStateMachine : MonoBehaviour
         currentState.Start(this);
     }
 
-
     public void StartAttack()
     {
-       armPivot.transform.GetChild(0).GetChild(0).GetComponent<EnemyWeapon>().attacking = true;
-    }
-
-    public void EndAttack()
-    {
-        armPivot.transform.GetChild(0).GetChild(0).GetComponent<EnemyWeapon>().attacking = false;
+        float atkAngle = Random.Range(-135, 135);
+        armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
 
 }

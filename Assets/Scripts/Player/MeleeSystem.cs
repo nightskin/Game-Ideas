@@ -14,15 +14,14 @@ public class MeleeSystem : MonoBehaviour
     public enum AxisType
     {
         LOOK,
-        MOVE
+        MOVE,
     }
     public AxisType atkAxisType;
     private Vector2 defaultLookSpeed;
-    private float defaultMoveSpeed;
     [SerializeField] [Range(0,1)] private float atkDamp = 0.1f;
 
-    private Vector2 axis = new Vector2();
-    [SerializeField] private float atkAngle;
+    private Vector2 atkAxis = new Vector2();
+    public float atkAngle = 0;
 
 
     void Start()
@@ -30,7 +29,6 @@ public class MeleeSystem : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
-        defaultMoveSpeed = player.moveSpeed;
 
         player.actions.Slash.performed += Slash_performed;
     }
@@ -39,12 +37,12 @@ public class MeleeSystem : MonoBehaviour
     {
         if(animator.GetBool("slash"))
         {
-            if (atkAxisType == AxisType.MOVE) axis = player.actions.Move.ReadValue<Vector2>();
-            else if (atkAxisType == AxisType.LOOK) axis = player.actions.Look.ReadValue<Vector2>();
+            if (atkAxisType == AxisType.MOVE) atkAxis = player.actions.Move.ReadValue<Vector2>();
+            else if (atkAxisType == AxisType.LOOK) atkAxis = player.actions.Look.ReadValue<Vector2>();
 
-            if (axis.magnitude > 0)
+            if (atkAxis.magnitude > 0)
             {
-                atkAngle = Mathf.Atan2(axis.x, -axis.y) * (180 / Mathf.PI);
+                atkAngle = Mathf.Atan2(atkAxis.x, -atkAxis.y) * (180 / Mathf.PI);
             }
         }
 

@@ -5,21 +5,15 @@ using UnityEngine;
 public class EnemyChaseState : EnemyBaseState
 {
     float chaseSpeed = 10;
-    float atkTimer = 0;
     public override void Start(EnemyStateMachine enemy)
     {
-
+        
     }
     public override void Update(EnemyStateMachine enemy)
     {
         if (Vector3.Distance(enemy.transform.position, enemy.target.position) <= enemy.atkDistance)
         {
-            atkTimer -= Time.deltaTime;
-            if (atkTimer <= 0)
-            {
-                enemy.SwitchState(enemy.enemyAttack);
-                atkTimer = 0.5f;
-            }
+            enemy.SwitchState(enemy.enemyAttack);
         }
         else
         {
@@ -30,7 +24,7 @@ public class EnemyChaseState : EnemyBaseState
         }
 
     }
-    public override void CollisionEnter(EnemyStateMachine enemy)
+    public override void CollisionEnter(EnemyStateMachine enemy, ControllerColliderHit other)
     {
 
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyStunState : EnemyBaseState
 {
-    public Vector3 knockback;
+    public Vector3 knockback = new Vector3();
     float stunTimer;
     public override void Start(EnemyStateMachine enemy)
     {
@@ -19,10 +19,10 @@ public class EnemyStunState : EnemyBaseState
         }
         else
         {
-            enemy.transform.position += knockback * 20 * Time.deltaTime;
+            enemy.controller.Move(knockback * Time.deltaTime);
         }
     }
-    public override void CollisionEnter(EnemyStateMachine enemy)
+    public override void CollisionEnter(EnemyStateMachine enemy, ControllerColliderHit other)
     {
         
     }
