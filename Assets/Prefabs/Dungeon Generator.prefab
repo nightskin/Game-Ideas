@@ -337,6 +337,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2524b4fdfa30542b4c39c2ed6a95ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesX: 100
-  tilesZ: 100
+  tilesX: 50
+  tilesZ: 50
   stepSize: 15

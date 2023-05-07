@@ -145,7 +145,7 @@ public class LevelGen : MonoBehaviour
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                int dir = Random.Range(1, 5);
+                int dir = Random.Range(0, 5);
                 if (map[currentPos.x, currentPos.z].on == false)
                 {
                     CreateWalls((Vector3)currentPos * stepSize, Vector3.one * stepSize / 2, false, false, false, false, false, true);
@@ -157,7 +157,7 @@ public class LevelGen : MonoBehaviour
                     {
                         currentPos.x++;
                     }
-
+                
                 }
                 else if (dir == 2)
                 {
@@ -165,7 +165,7 @@ public class LevelGen : MonoBehaviour
                     {
                         currentPos.x--;
                     }
-
+                
                 }
                 else if (dir == 3)
                 {
@@ -173,7 +173,7 @@ public class LevelGen : MonoBehaviour
                     {
                         currentPos.z++;
                     }
-
+                
                 }
                 else if (dir == 4)
                 {
@@ -185,6 +185,8 @@ public class LevelGen : MonoBehaviour
             }
         }
     }
+
+
 
     public void UpdateMesh()
     {

@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
@@ -34,6 +33,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
     //For Dashing
+    [SerializeField] Image dashEffect;
     public float dashSpeed = 20;
     public float dashAmount = 1;
     Vector3 dashDirection;
@@ -73,6 +73,7 @@ public class FirstPersonPlayer : MonoBehaviour
                 dashDirection = motion;
             }
             dashing = true;
+            dashEffect.color = new Color(1, 1, 1, 0.1f);
         }
 
     }
@@ -103,6 +104,7 @@ public class FirstPersonPlayer : MonoBehaviour
                 {
                     dashTimer = dashAmount;
                     dashing = false;
+                    dashEffect.color = new Color(1, 1, 1, 0);
                 }
             }
         }
