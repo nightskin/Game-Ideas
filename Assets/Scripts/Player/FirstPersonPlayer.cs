@@ -9,13 +9,12 @@ public class FirstPersonPlayer : MonoBehaviour
     public Controls.PlayerActions actions;
     
     //Components
-    [SerializeField] Transform camera;
+    public Transform camera;
     [SerializeField] CharacterController controller;
 
     // For basic motion
     Vector3 motion;
-    public float moveSpeed = 10;
-    [SerializeField] private float wallDistance = 0.5f;
+    public float moveSpeed = 15;
 
     //For Look/Aim
     public Vector2 lookSpeed = new Vector2(100f, 100);
@@ -67,7 +66,7 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             if (motion == Vector3.zero)
             {
-                dashDirection = transform.forward;
+                dashDirection = camera.forward;
             }
             else
             {

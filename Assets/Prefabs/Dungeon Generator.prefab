@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1349160438
 Transform:
@@ -127,10 +127,10 @@ GameObject:
   - component: {fileID: 9176900004066731513}
   m_Layer: 0
   m_Name: Wall Generator
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3060568491716650710
 Transform:
@@ -242,7 +242,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9176900004492960203
 Transform:
@@ -337,6 +337,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2524b4fdfa30542b4c39c2ed6a95ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesX: 30
-  tilesZ: 30
-  stepSize: 10
+  tilesX: 100
+  tilesZ: 100
+  stepSize: 15

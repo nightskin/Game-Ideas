@@ -15,7 +15,6 @@ public class Space
         y = 0;
         on = false;
     }
-
     public Space (float xpos, float yPos, float zPos)
     {
         x = xpos;
@@ -27,7 +26,6 @@ public class Space
 
 public class LevelGen : MonoBehaviour
 {
-
     public Space[,] map = null;
     public int tilesX = 25;
     public int tilesZ = 25;

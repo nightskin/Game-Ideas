@@ -17,7 +17,6 @@ public class WallGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-
         //Create Walls
         for (int x = 0; x < level.tilesX; x++)
         {
