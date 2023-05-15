@@ -13,6 +13,22 @@ public class PlayerWeapon: MonoBehaviour
     public int damage = 1;
     public float knockbackForce = 10;
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (attacking)
+        {
+            if (other.transform.tag == "Enemy")
+            {
+                Instantiate(impactEffectEnemy, other.ClosestPoint(transform.position), Quaternion.identity);
+            }
+            if (other.transform.tag == "EnemyWeapon" || other.transform.tag == "Wall")
+            {
+                Instantiate(impactEffectSolid, other.ClosestPoint(transform.position), Quaternion.identity);
+                meleeSystem.animator.SetTrigger("recoil");
+            }
+
+        }
+    }
 
     private void OnCollisionEnter(Collision other)
     {

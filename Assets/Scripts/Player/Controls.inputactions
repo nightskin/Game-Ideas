@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
+                    "name": "Block",
                     "type": "Button",
                     "id": "c372ae9a-fdba-4829-a12f-7ce23b10b256",
                     "expectedControlType": "Button",
@@ -45,6 +45,15 @@
                     "name": "Dash",
                     "type": "Button",
                     "id": "db6562a0-422e-4260-a0d4-99c2f3b959c9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "f45c89b7-0a38-4aae-aad9-99b63fb32775",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -175,40 +184,7 @@
                 },
                 {
                     "name": "",
-                    "id": "1abc0dd2-e567-43c4-93f4-f4efd687cf5e",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "41bd9d5f-4fbb-4ec4-9fdd-667cf4ecf3b7",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "298fa8ac-7a2b-4875-9e34-22e2d2815f59",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ccc1ea11-3999-4629-a2ec-97ecd5c45f81",
+                    "id": "f52608b1-0dda-4273-a4b4-386967d22b70",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
@@ -219,12 +195,56 @@
                 },
                 {
                     "name": "",
-                    "id": "2164cba8-f4a8-42e4-a4bc-8978925b1e24",
-                    "path": "<Mouse>/rightButton",
+                    "id": "1aa11e93-294c-44a8-93e9-2e36bff33639",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14b0185b-649f-4ea4-8ecc-eb50fa84a01c",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b5ef239-62ff-4be6-af87-0d9255d36c43",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4cfa6049-3089-446b-b21d-4d39a636352c",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c4092bba-dc7c-44bd-8dec-3496e64e0695",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

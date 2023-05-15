@@ -21,19 +21,16 @@ public class FirstPersonPlayer : MonoBehaviour
     float yRot = 0;
 
     // For Jumping
+    [SerializeField] float jumpHeight = 5;
     [SerializeField] Vector3 velocity;
     [SerializeField] LayerMask groundMask;
     Transform groundCheck;
     Vector3 gravity = new Vector3(0,-9.81f, 0);
     bool gravityOn = true;
     private bool isGrounded;
-    public float jumpHeight = 2;
-    private int jumps = 0;
-    public int maxJumps = 1;
 
 
     //For Dashing
-    [SerializeField] Image dashEffect;
     public float dashSpeed = 20;
     public float dashAmount = 1;
     Vector3 dashDirection;
@@ -56,8 +53,16 @@ public class FirstPersonPlayer : MonoBehaviour
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
-        actions.Jump.performed += Jump_performed;
         actions.Dash.performed += Dash_performed;
+        actions.Jump.performed += Jump_performed;
+    }
+
+    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity.y);
+        }
     }
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -66,26 +71,15 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             if (motion == Vector3.zero)
             {
-                dashDirection = camera.forward;
+                dashDirection = transform.forward + new Vector3(0, 0.25f, 0);
             }
             else
             {
-                dashDirection = motion;
+                dashDirection = motion + new Vector3(0, 0.25f, 0);
             }
             dashing = true;
-            dashEffect.color = new Color(1, 1, 1, 0.1f);
         }
 
-    }
-
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        //Jumping
-        if (jumps < maxJumps)
-        {
-            velocity.y =  Mathf.Sqrt(jumpHeight * -2 * gravity.y);
-            jumps++;
-        }
     }
 
     void Update()
@@ -104,7 +98,6 @@ public class FirstPersonPlayer : MonoBehaviour
                 {
                     dashTimer = dashAmount;
                     dashing = false;
-                    dashEffect.color = new Color(1, 1, 1, 0);
                 }
             }
         }
@@ -126,7 +119,6 @@ public class FirstPersonPlayer : MonoBehaviour
 
         if(isGrounded && velocity.y < 0)
         {
-            jumps = 0;
             velocity.y = 0;
         }
 

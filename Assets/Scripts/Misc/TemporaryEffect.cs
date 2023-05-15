@@ -5,11 +5,12 @@ using UnityEngine.VFX;
 
 public class TemporaryEffect : MonoBehaviour
 {
-    
+    public float timer = 1;
     
     void Update()
     {
-        if(!GetComponent<VisualEffect>().HasAnySystemAwake())
+        timer -= Time.deltaTime;
+        if(timer <= 0)
         {
             Destroy(gameObject);
         }
