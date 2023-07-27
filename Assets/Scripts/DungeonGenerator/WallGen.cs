@@ -18,61 +18,127 @@ public class WallGen : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
 
         //Create Walls
-        for (int x = 0; x < level.tilesX; x++)
+        if(!level.threeDimensions)
         {
-            for (int z = 0; z < level.tilesZ; z++)
+            for (int x = 0; x < level.tilesX; x++)
             {
-                if (level.map[x, z].on)
+                for (int z = 0; z < level.tilesZ; z++)
                 {
-                    if (x == 0)
+                    if (level.map[x, z].on)
                     {
-                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, true);
-                    }
-                    if (x > 0)
-                    {
-                        if (!level.map[x - 1, z].on)
+                        if (x == 0)
                         {
                             CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, true);
                         }
-                    }
+                        if (x > 0)
+                        {
+                            if (!level.map[x - 1, z].on)
+                            {
+                                CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, true);
+                            }
+                        }
 
-                    if (x < level.tilesX - 1)
-                    {
-                        if (!level.map[x + 1, z].on)
+                        if (x < level.tilesX - 1)
+                        {
+                            if (!level.map[x + 1, z].on)
+                            {
+                                CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, true);
+                            }
+                        }
+                        if (x == level.tilesX - 1)
                         {
                             CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, true);
                         }
-                    }
-                    if (x == level.tilesX - 1)
-                    {
-                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, true);
-                    }
 
-                    if (z == 0)
-                    {
-                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, true);
-                    }
-                    if (z > 0)
-                    {
-                        if (!level.map[x, z - 1].on)
+                        if (z == 0)
                         {
                             CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, true);
                         }
-                    }
+                        if (z > 0)
+                        {
+                            if (!level.map[x, z - 1].on)
+                            {
+                                CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, true);
+                            }
+                        }
 
-                    if (z < level.tilesZ - 1)
-                    {
-                        if (!level.map[x, z + 1].on)
+                        if (z < level.tilesZ - 1)
+                        {
+                            if (!level.map[x, z + 1].on)
+                            {
+                                CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, true);
+                            }
+                        }
+                        if (z == level.tilesX - 1)
                         {
                             CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, true);
                         }
-                    }
-                    if (z == level.tilesX - 1)
-                    {
-                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, true);
-                    }
 
+                    }
                 }
+            }
+        }
+        else
+        {
+            for (int x = 0; x < level.tilesX; x++)
+            {
+                for(int y = 0; y < level.tilesY; y++)
+                {
+                    for (int z = 0; z < level.tilesZ; z++)
+                    {
+                        if (level.map3d[x,y,z].on)
+                        {
+                            if (x == 0)
+                            {
+                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, true);
+                            }
+                            if (x > 0)
+                            {
+                                if (!level.map3d[x - 1, y,z].on)
+                                {
+                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, true);
+                                }
+                            }
+
+                            if (x < level.tilesX - 1)
+                            {
+                                if (!level.map3d[x + 1,y, z].on)
+                                {
+                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, true);
+                                }
+                            }
+                            if (x == level.tilesX - 1)
+                            {
+                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, true);
+                            }
+
+                            if (z == 0)
+                            {
+                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, true);
+                            }
+                            if (z > 0)
+                            {
+                                if (!level.map3d[x, y,z - 1].on)
+                                {
+                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, true);
+                                }
+                            }
+
+                            if (z < level.tilesZ - 1)
+                            {
+                                if (!level.map3d[x, y,z + 1].on)
+                                {
+                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, true);
+                                }
+                            }
+                            if (z == level.tilesX - 1)
+                            {
+                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, true);
+                            }
+                        }
+                    }
+                }
+
             }
         }
 

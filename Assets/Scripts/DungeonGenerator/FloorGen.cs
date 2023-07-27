@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CeilingGen : MonoBehaviour
+public class FloorGen : MonoBehaviour
 {
     public LevelGen level;
 
@@ -104,8 +104,8 @@ public class CeilingGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        //Create Ceilings
-        if(!level.threeDimensions)
+        //Create Floor
+        if (!level.threeDimensions)
         {
             for (int x = 0; x < level.tilesX; x++)
             {
@@ -113,7 +113,7 @@ public class CeilingGen : MonoBehaviour
                 {
                     if (level.map[x, z].on)
                     {
-                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, true, false);
+                        CreateWalls(new Vector3(x, 0, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, false, true);
                     }
 
                 }
@@ -123,22 +123,22 @@ public class CeilingGen : MonoBehaviour
         {
             for (int x = 0; x < level.tilesX; x++)
             {
-                for(int y = 0; y < level.tilesY; y++)
+                for (int y = 0; y < level.tilesY; y++)
                 {
                     for (int z = 0; z < level.tilesZ; z++)
                     {
-                        if (level.map3d[x,y,z].on)
+                        if (level.map3d[x, y, z].on)
                         {
-                            if( y < level.tilesY - 1)
+                            if (y > 0)
                             {
-                                if (!level.map3d[x, y + 1, z].on)
+                                if (!level.map3d[x, y - 1, z].on)
                                 {
-                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, true, false);
+                                    CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, false, true);
                                 }
                             }
-                            if(y == level.tilesY - 1)
+                            if (y == 0)
                             {
-                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, true, false);
+                                CreateWalls(new Vector3(x, y, z) * level.stepSize, Vector3.one * level.stepSize / 2, false, false, false, false, false, true);
                             }
                         }
                     }
@@ -148,8 +148,6 @@ public class CeilingGen : MonoBehaviour
         }
 
         UpdateMesh();
-
     }
 
-    
 }
