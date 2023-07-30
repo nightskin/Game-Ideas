@@ -30,7 +30,10 @@ public class MeleeSystem : MonoBehaviour
         defaultLookSpeed = player.lookSpeed;
 
         player.actions.Slash.performed += Slash_performed;
+        player.actions.Slash.canceled += Slash_canceled;
     }
+
+
 
     void Update()
     {
@@ -53,6 +56,11 @@ public class MeleeSystem : MonoBehaviour
         player.lookSpeed *= atkDamp;
     }
 
+    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        animator.SetBool("slash", false);
+    }
+
     ///Animation Events
     public void StartAttack()
     {
@@ -63,10 +71,9 @@ public class MeleeSystem : MonoBehaviour
     
     public void EndAttack()
     {
-        player.lookSpeed = defaultLookSpeed;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
-        animator.SetBool("slash", false);
+        player.lookSpeed = defaultLookSpeed;
     }
 
 }

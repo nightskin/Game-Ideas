@@ -32,22 +32,21 @@ public class FirstPersonPlayer : MonoBehaviour
 
     //For Dashing
     public float dashSpeed = 20;
-    public float dashAmount = 1;
+    public float dashTime = 1;
     Vector3 dashDirection;
     float dashTimer;
     bool dashing = false;
 
     //For HealthSystem
     public bool stun = false;
-    public Vector3 knockback;
+    public Vector3 knockbackDirection;
     [SerializeField] float stunTime = 0.25f;
     float stunTimer = 0.2f;
-    int health = 100;
 
 
     void Awake()
     {
-        dashTimer = dashAmount;
+        dashTimer = dashTime;
         groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
@@ -69,15 +68,11 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         if(!dashing)
         {
-            if (motion == Vector3.zero)
-            {
-                dashDirection = transform.forward + new Vector3(0, 0.25f, 0);
-            }
-            else
+            if(motion != Vector3.zero)
             {
                 dashDirection = motion + new Vector3(0, 0.25f, 0);
+                dashing = true;
             }
-            dashing = true;
         }
 
     }
@@ -96,7 +91,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
                 if (dashTimer <= 0)
                 {
-                    dashTimer = dashAmount;
+                    dashTimer = dashTime;
                     dashing = false;
                 }
             }
@@ -104,7 +99,7 @@ public class FirstPersonPlayer : MonoBehaviour
         else
         {
             stunTimer -= Time.deltaTime;
-            controller.Move(knockback * dashSpeed * Time.deltaTime);
+            controller.Move(knockbackDirection * dashSpeed * Time.deltaTime);
             if (stunTimer <= 0)
             {
                 stun = false;
@@ -127,10 +122,7 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         motion = transform.right * x + transform.forward * z;
-        if(!dashing)
-        {
-            controller.Move(motion * moveSpeed * Time.deltaTime);
-        }
+        controller.Move(motion * moveSpeed * Time.deltaTime);
 
         if(gravityOn)
         {

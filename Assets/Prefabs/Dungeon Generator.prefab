@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 1296816837}
   - component: {fileID: 1296816840}
   m_Layer: 0
-  m_Name: FloorGenerator
+  m_Name: Floors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 1349160440}
   - component: {fileID: 1349160443}
   m_Layer: 0
-  m_Name: Ceiling Generator
+  m_Name: Ceiling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -313,7 +313,7 @@ GameObject:
   - component: {fileID: 9176900004066731514}
   - component: {fileID: 9176900004066731513}
   m_Layer: 0
-  m_Name: Wall Generator
+  m_Name: Walls
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -459,8 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2524b4fdfa30542b4c39c2ed6a95ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  threeDimensions: 1
+  floorNumber: 1
   tilesX: 25
   tilesZ: 25
-  tilesY: 25
-  stepSize: 10
+  stepSize: 20
+  currentPos: {x: 0, y: 0, z: 0}

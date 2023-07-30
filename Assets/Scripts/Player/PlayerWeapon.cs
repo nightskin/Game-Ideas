@@ -21,7 +21,7 @@ public class PlayerWeapon: MonoBehaviour
             {
                 Instantiate(impactEffectEnemy, other.ClosestPoint(transform.position), Quaternion.identity);
             }
-            if (other.transform.tag == "EnemyWeapon" || other.transform.tag == "Wall")
+            if (other.transform.tag == "EnemyWeapon")
             {
                 Instantiate(impactEffectSolid, other.ClosestPoint(transform.position), Quaternion.identity);
                 meleeSystem.animator.SetTrigger("recoil");
@@ -38,7 +38,7 @@ public class PlayerWeapon: MonoBehaviour
             {
                 Instantiate(impactEffectEnemy, other.GetContact(0).point, Quaternion.identity);
             }
-            if (other.transform.tag == "EnemyWeapon" || other.transform.tag == "Wall")
+            if (other.transform.tag == "EnemyWeapon")
             {
                 Instantiate(impactEffectSolid, other.GetContact(0).point, Quaternion.identity);
                 meleeSystem.animator.SetTrigger("recoil");
