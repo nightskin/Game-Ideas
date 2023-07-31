@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: f35c5abd09781ba40aa78bff2998253a, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 26538262df198da4981601595f7f1e1b, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.000029371067, g: 0.000049345694, b: 0.000029371067, a: 1}
+  m_IndirectSpecularColor: {r: 0.0979396, g: 0.103187785, b: 0.09313686, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &908565599
+--- !u!1001 &877064748
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9176900004492960204, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
       propertyPath: m_Name
-      value: Floor (1)
+      value: Dungeon Generator
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
@@ -187,6 +187,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 83383831, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 42695576058503065, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_RootOrder
       value: 0
