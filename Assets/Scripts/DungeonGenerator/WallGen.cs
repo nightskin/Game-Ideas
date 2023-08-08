@@ -58,16 +58,17 @@ public class WallGen : MonoBehaviour
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+
                     if (state == "1000")
                     {
                         CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
-                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.topLeft, level.tileSize), square.topLeft);
-                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
+                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
                     }
                     else if (state == "0100")
                     {
                         CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.centerLeft, level.tileSize),square.centerLeft);
+                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.topLeft, level.tileSize),square.topLeft);
                         if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.centerTop, level.tileSize), square.centerTop, square.PlusUp(square.topRight, level.tileSize), square.topRight);
                     }
                     else if (state == "0010")
@@ -127,7 +128,7 @@ public class WallGen : MonoBehaviour
                     {
                         CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
                         if (z == 0) CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.bottomRight,level.tileSize), square.bottomRight);
-                        if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft,level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
+                        if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft,level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
                         if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
                         if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
                     }
@@ -169,7 +170,7 @@ public class WallGen : MonoBehaviour
         }
     }
 
-    public void UpdateMesh()
+    void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = verts.ToArray();
@@ -192,10 +193,7 @@ public class WallGen : MonoBehaviour
                     {
                         Square square = new Square(level.map[x, z].position, level.tileSize);
                         string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
-                        if(state == "0111" || state == "1011" || state == "1101" || state == "1110")
-                        {
-                            Gizmos.DrawSphere(square.center, 1);
-                        }
+                        
                     }
                 }
             }

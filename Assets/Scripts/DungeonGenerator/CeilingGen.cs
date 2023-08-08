@@ -53,7 +53,7 @@ public class CeilingGen : MonoBehaviour
         buffer += 3;
     }
 
-    public void UpdateMesh()
+    void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = verts.ToArray();
@@ -64,94 +64,117 @@ public class CeilingGen : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
+    void CreateCeilings()
+    {
+        for (int x = 0; x < level.tilesX; x++)
+        {
+            for (int z = 0; z < level.tilesZ; z++)
+            {
+                if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                {
+                    Square square = new Square(level.map[x, z].position, level.tileSize);
+                    string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                    if (state == "1000")
+                    {
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
+                    }
+                    if (state == "0100")
+                    {
+                        CreateTri(square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                    }
+                    if (state == "0010")
+                    {
+                        CreateTri(square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "0001")
+                    {
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize));
+                    }
+
+                    if (state == "1100")
+                    {
+                        CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
+                    }
+                    if (state == "0011")
+                    {
+                        CreateQuad(square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize),square.PlusUp(square.topRight,level.tileSize), square.PlusUp(square.bottomRight, level.tileSize));
+                    }
+                    if (state == "1001")
+                    {
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize));
+                    }
+                    if (state == "0110")
+                    {
+                        CreateTri(square.PlusUp(square.centerTop,level.tileSize), square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri( square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "0101")
+                    {
+                        CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "1010")
+                    {
+                        CreateQuad(square.PlusUp(square.centerLeft,level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize));
+                    }
+
+
+                    if (state == "0111")
+                    {
+                        CreateTri(square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize));
+
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "1011")
+                    {
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize));
+
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "1101")
+                    {
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize));
+
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+                    if (state == "1110")
+                    {
+                        CreateTri(square.PlusUp(square.centerLeft,level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom,level.tileSize));
+                        CreateTri(square.PlusUp(square.centerTop,level.tileSize), square.PlusUp(square.topLeft, level.tileSize), square.PlusUp(square.centerLeft,level.tileSize));
+                        CreateTri(square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+
+                        CreateTri(square.PlusUp(square.centerRight, level.tileSize), square.PlusUp(square.centerTop, level.tileSize), square.PlusUp(square.centerLeft, level.tileSize));
+                        CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize), square.PlusUp(square.centerRight, level.tileSize));
+                    }
+
+                    if (state == "1111") CreateQuad(square.PlusUp(square.topLeft,level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize),square.PlusUp(square.topRight, level.tileSize), square.PlusUp(square.bottomRight, level.tileSize));
+                }
+
+            }
+        }
+    }
 
     void Start()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        //Create Ceilings
-        for (int x = 0; x < level.tilesX; x++)
-        {
-            for (int z = 0; z < level.tilesZ; z++)
-            {
-                if (x < level.tilesX - 1 && z < level.tilesZ - 1 && level.map[x, z].on == 1)
-                {
-                    Square square = new Square(level.map[x, z].position, level.tileSize);
-                    string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
-                    if (state == "1000")
-                    {
-
-                    }
-                    if (state == "0100")
-                    {
-
-                    }
-                    if (state == "0010")
-                    {
-
-                    }
-                    if (state == "0001")
-                    {
-
-                    }
-
-                    if (state == "1100")
-                    {
-
-                    }
-                    if (state == "0011")
-                    {
-
-                    }
-                    if (state == "1001")
-                    {
-
-                    }
-                    if (state == "0110")
-                    {
-
-                    }
-                    if (state == "0101")
-                    {
-
-                    }
-                    if (state == "1010")
-                    {
-
-                    }
-
-
-                    if (state == "0111")
-                    {
-
-                    }
-                    if (state == "1011")
-                    {
-
-                    }
-                    if (state == "1101")
-                    {
-
-                    }
-                    if (state == "1110")
-                    {
-
-                    }
-
-                    if (state == "1111")
-                    {
-
-                    }
-
-                }
-
-
-            }
-        }
+        CreateCeilings();
         UpdateMesh();
 
     }
 
+
+
     
+
 }

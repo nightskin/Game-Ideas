@@ -28,7 +28,6 @@ public class Square
         centerTop = new Vector3(pos.x, pos.y, pos.z + size/2);
         centerRight = new Vector3(pos.x + size / 2, pos.y, pos.z);
     }
-
     public Vector3 PlusUp(Vector3 pos, float magnitude)
     {
         return pos + (Vector3.up * magnitude);

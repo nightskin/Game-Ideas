@@ -53,7 +53,7 @@ public class FloorGen : MonoBehaviour
         buffer += 3;
     }
 
-    public void UpdateMesh()
+    void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = verts.ToArray();
@@ -70,6 +70,13 @@ public class FloorGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
+        CreateFloors();
+        UpdateMesh();
+    }
+
+    
+    void CreateFloors()
+    {
         for (int x = 0; x < level.tilesX; x++)
         {
             for (int z = 0; z < level.tilesZ; z++)
@@ -81,7 +88,7 @@ public class FloorGen : MonoBehaviour
                     if (state == "1000")
                     {
                         CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
-                    }    
+                    }
                     if (state == "0100")
                     {
                         CreateTri(square.topLeft, square.centerTop, square.centerLeft);
@@ -95,29 +102,29 @@ public class FloorGen : MonoBehaviour
                         CreateTri(square.topRight, square.centerRight, square.centerTop);
                     }
 
-                    if(state == "1100")
+                    if (state == "1100")
                     {
                         CreateQuad(square.bottomLeft, square.topLeft, square.centerBottom, square.centerTop);
                     }
-                    if(state == "0011")
+                    if (state == "0011")
                     {
                         CreateQuad(square.centerBottom, square.centerTop, square.bottomRight, square.topRight);
                     }
-                    if(state == "1001")
+                    if (state == "1001")
                     {
                         CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
                         CreateTri(square.topRight, square.centerRight, square.centerTop);
                     }
-                    if(state == "0110")
+                    if (state == "0110")
                     {
                         CreateTri(square.topLeft, square.centerTop, square.centerLeft);
                         CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
                     }
-                    if(state == "0101")
+                    if (state == "0101")
                     {
                         CreateQuad(square.centerLeft, square.topLeft, square.centerRight, square.topRight);
                     }
-                    if(state == "1010")
+                    if (state == "1010")
                     {
                         CreateQuad(square.bottomLeft, square.centerLeft, square.bottomRight, square.centerRight);
                     }
@@ -142,7 +149,7 @@ public class FloorGen : MonoBehaviour
                         CreateTri(square.centerTop, square.centerRight, square.centerLeft);
                         CreateTri(square.centerBottom, square.centerLeft, square.centerRight);
                     }
-                    if(state == "1101")
+                    if (state == "1101")
                     {
                         CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
                         CreateTri(square.topLeft, square.centerTop, square.centerLeft);
@@ -166,9 +173,6 @@ public class FloorGen : MonoBehaviour
 
             }
         }
-
-        UpdateMesh();
     }
 
-   
 }
