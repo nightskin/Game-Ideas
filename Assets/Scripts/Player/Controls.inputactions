@@ -33,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Block",
-                    "type": "Button",
-                    "id": "c372ae9a-fdba-4829-a12f-7ce23b10b256",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Dash",
                     "type": "Button",
                     "id": "db6562a0-422e-4260-a0d4-99c2f3b959c9",
@@ -196,33 +187,11 @@
                 {
                     "name": "",
                     "id": "1aa11e93-294c-44a8-93e9-2e36bff33639",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "14b0185b-649f-4ea4-8ecc-eb50fa84a01c",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Block",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1b5ef239-62ff-4be6-af87-0d9255d36c43",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Block",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

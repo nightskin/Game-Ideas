@@ -138,7 +138,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 90d0c322cc7145b46a9326598b000e4b, type: 2}
+  - {fileID: 2100000, guid: da9ef998f0f25294183986087698935d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -250,7 +250,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 90d0c322cc7145b46a9326598b000e4b, type: 2}
+  - {fileID: 2100000, guid: da9ef998f0f25294183986087698935d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -362,7 +362,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dda202122a8172147a0ea3b8b1a85178, type: 2}
+  - {fileID: 2100000, guid: da9ef998f0f25294183986087698935d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -459,8 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2524b4fdfa30542b4c39c2ed6a95ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floorNumber: 1
   tilesX: 25
   tilesZ: 25
-  stepSize: 20
-  currentPos: {x: 0, y: 0, z: 0}
+  tileSize: 12
+  seed: 1111
+  useRandomSeed: 0

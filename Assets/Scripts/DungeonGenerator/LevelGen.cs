@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Square
@@ -56,12 +57,25 @@ public class LevelGen : MonoBehaviour
     public int tilesX = 25;
     public int tilesZ = 25;
     public float tileSize = 10;
-    public Vector3Int currentPos = Vector3Int.zero;
+    public string seed = "";
+    public bool useRandomSeed = false;
+    System.Random random;
+    Vector3Int currentPos = Vector3Int.zero;
 
 
     void Awake()
     {
-        map = new Point[tilesX,tilesZ];
+        if (useRandomSeed) random = new System.Random();
+        else random = new System.Random(seed.GetHashCode());
+
+        Gen1();
+
+    }
+
+    //2D Random Walker
+    public void Gen1()
+    {
+        map = new Point[tilesX, tilesZ];
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
@@ -70,20 +84,13 @@ public class LevelGen : MonoBehaviour
             }
         }
 
-        Gen1();
-
-    }
-
-
-    //2D Random Walker
-    public void Gen1()
-    {
         //Random Walker
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                int dir = Random.Range(1, 5);
+                int dir;
+                dir = random.Next(1, 5);
                 map[currentPos.x, currentPos.z].on = 1;
                 if (dir == 1)
                 {
