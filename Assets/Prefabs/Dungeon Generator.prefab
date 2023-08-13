@@ -427,7 +427,7 @@ MonoBehaviour:
   tilesX: 25
   tilesZ: 25
   tileSize: 10
-  seed: 4
+  seed: 0
   useRandomSeed: 0
 --- !u!114 &562383320
 MonoBehaviour:
@@ -471,6 +471,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyPrafab: {fileID: 6469183536324700069, guid: bb4686ec4f1af9342aded5225c2f7c77, type: 3}
+  enemyPrafab: {fileID: 0}
   spawnChance: 10
   surface: {fileID: 562383320}

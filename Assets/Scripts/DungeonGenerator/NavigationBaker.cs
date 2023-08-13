@@ -18,7 +18,7 @@ public class NavigationBaker : MonoBehaviour
         {
             surface.BuildNavMesh();
             navMeshMade = true;
-            if (!enemiesPlaced) PlaceEnemies();
+            if (!enemiesPlaced && enemyPrafab) PlaceEnemies();
         }
     }
 

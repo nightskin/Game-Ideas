@@ -23,6 +23,28 @@ public class WallGen : MonoBehaviour
 
     }
 
+    void OnDrawGizmos()
+    {
+        if(level.map != null)
+        {
+            for(int x = 0; x < level.tilesX; x++)
+            {
+                for(int z = 0; z < level.tilesZ; z++)
+                {
+                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                    {
+                        Square square = new Square(level.map[x, z].position, level.tileSize);
+                        string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                        if(state == "0010")
+                        {
+                            Gizmos.DrawSphere(square.centerRight, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void CreateQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight)
     {
         verts.Add(bottomLeft);
@@ -73,7 +95,7 @@ public class WallGen : MonoBehaviour
                     else if (state == "0010")
                     {
                         CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
                         if (z == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
                     }
                     else if (state == "0001")
