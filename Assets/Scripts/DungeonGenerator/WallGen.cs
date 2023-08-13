@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WallGen : MonoBehaviour
 {
-    public LevelGen level;
+    [SerializeField] DungeonGen level;
 
     Mesh mesh;
     List<Vector3> verts = new List<Vector3>();
@@ -45,7 +45,6 @@ public class WallGen : MonoBehaviour
 
         buffer += 4;
     }
-
 
 
     void MakeWalls()
@@ -102,12 +101,16 @@ public class WallGen : MonoBehaviour
                     {
                         CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
                         CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
+                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+
                     }
                     else if (state == "0110")
                     {
                         CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
                         CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-
+                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
                     }
                     else if (state == "0101")
                     {
@@ -179,24 +182,5 @@ public class WallGen : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if(level.map != null)
-        {
-            for (int x = 0; x < level.tilesX; x++)
-            {
-                for (int z = 0; z < level.tilesZ; z++)
-                {
-                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
-                    {
-                        Square square = new Square(level.map[x, z].position, level.tileSize);
-                        string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
-                        
-                    }
-                }
-            }
-        }
     }
 }

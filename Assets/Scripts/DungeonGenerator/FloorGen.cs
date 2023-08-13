@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FloorGen : MonoBehaviour
 {
-    public LevelGen level;
+    [SerializeField] DungeonGen level;
 
     Mesh mesh;
     List<Vector3> verts = new List<Vector3>();
@@ -63,8 +63,7 @@ public class FloorGen : MonoBehaviour
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
-
-
+   
     void Start()
     {
         mesh = new Mesh();
@@ -74,7 +73,6 @@ public class FloorGen : MonoBehaviour
         UpdateMesh();
     }
 
-    
     void CreateFloors()
     {
         for (int x = 0; x < level.tilesX; x++)

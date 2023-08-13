@@ -47,7 +47,7 @@ public class FirstPersonPlayer : MonoBehaviour
     void Awake()
     {
         dashTimer = dashTime;
-        groundCheck = transform.Find("GroundCheck");
+        if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
@@ -55,6 +55,13 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.Dash.performed += Dash_performed;
         actions.Jump.performed += Jump_performed;
     }
+
+    private void OnDestroy()
+    {
+        actions.Dash.performed -= Dash_performed;
+        actions.Jump.performed -= Jump_performed;
+    }
+
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -68,17 +75,16 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         if(!dashing)
         {
-            if(motion != Vector3.zero)
-            {
-                dashDirection = motion + new Vector3(0, 0.25f, 0);
-                dashing = true;
-            }
+            dashDirection = motion;
+            dashing = true;
         }
 
     }
 
     void Update()
     {
+        isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f);
+
         if (!stun)
         {
             Look();

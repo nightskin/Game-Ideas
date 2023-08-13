@@ -32,9 +32,7 @@ public class MeleeSystem : MonoBehaviour
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
     }
-
-
-
+    
     void Update()
     {
         if (actionAxisType == AxisType.MOVE) actionAxis = player.actions.Move.ReadValue<Vector2>();
@@ -49,6 +47,11 @@ public class MeleeSystem : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        player.actions.Slash.performed -= Slash_performed;
+        player.actions.Slash.canceled -= Slash_canceled;
+    }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {

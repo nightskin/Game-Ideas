@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CeilingGen : MonoBehaviour
 {
-    public LevelGen level;
+    [SerializeField] DungeonGen level;
 
     Mesh mesh;
     List<Vector3> verts = new List<Vector3>();
