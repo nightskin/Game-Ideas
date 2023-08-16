@@ -26,7 +26,6 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] LayerMask groundMask;
     Transform groundCheck;
     Vector3 gravity = new Vector3(0,-9.81f, 0);
-    bool gravityOn = true;
     private bool isGrounded;
 
 
@@ -130,12 +129,9 @@ public class FirstPersonPlayer : MonoBehaviour
         motion = transform.right * x + transform.forward * z;
         controller.Move(motion * moveSpeed * Time.deltaTime);
 
-        if(gravityOn)
-        {
-            //Gravity
-            velocity += gravity * Time.deltaTime;
-            controller.Move(velocity * Time.deltaTime);
-        }
+        //Gravity
+        velocity += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
 
     }
 
