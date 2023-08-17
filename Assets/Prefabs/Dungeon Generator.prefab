@@ -471,6 +471,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyPrafab: {fileID: 7222626889234851914, guid: e7426b76cfc94e34c8100717ae0156d2, type: 3}
+  enemyPrafab: {fileID: 0}
   spawnChance: 10
   surface: {fileID: 562383320}

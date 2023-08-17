@@ -9,6 +9,7 @@ public class FleshMonsterAI : MonoBehaviour
     public FleshMonsterChaseState chaseState = new FleshMonsterChaseState();
     public FleshMonsterPatrolState patrolState = new FleshMonsterPatrolState();
     public FleshMonsterAttackState attackState = new FleshMonsterAttackState();
+    public FleshMonsterDeadState deadState = new FleshMonsterDeadState();
 
 
     [SerializeField] LayerMask playerMask;

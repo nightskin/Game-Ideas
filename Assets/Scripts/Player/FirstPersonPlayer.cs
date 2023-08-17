@@ -51,13 +51,11 @@ public class FirstPersonPlayer : MonoBehaviour
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
-        actions.Dash.performed += Dash_performed;
         actions.Jump.performed += Jump_performed;
     }
 
     private void OnDestroy()
     {
-        actions.Dash.performed -= Dash_performed;
         actions.Jump.performed -= Jump_performed;
     }
 
@@ -67,18 +65,16 @@ public class FirstPersonPlayer : MonoBehaviour
         if(isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity.y);
-        }
-    }
-
-    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if(!dashing)
-        {
-            dashDirection = motion;
-            dashing = true;
+            if (!dashing)
+            {
+                dashDirection = motion;
+                dashing = true;
+            }
         }
 
     }
+
+
 
     void Update()
     {
