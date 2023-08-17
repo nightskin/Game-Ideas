@@ -18,6 +18,7 @@ public class MeleeSystem : MonoBehaviour
     }
     public AxisType actionAxisType;
     private Vector2 defaultLookSpeed;
+    private float defaultMoveSpeed;
     [SerializeField] [Range(0, 1)] private float atkDamp = 0.1f;
 
     private Vector2 actionAxis = new Vector2();
@@ -28,6 +29,7 @@ public class MeleeSystem : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
+        defaultMoveSpeed = player.moveSpeed;
 
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
@@ -69,6 +71,7 @@ public class MeleeSystem : MonoBehaviour
     {
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         if (actionAxisType == AxisType.LOOK) player.lookSpeed *= atkDamp;
+        if (actionAxisType == AxisType.MOVE) player.moveSpeed *= atkDamp;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
     
@@ -77,6 +80,7 @@ public class MeleeSystem : MonoBehaviour
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
         player.lookSpeed = defaultLookSpeed;
+        player.moveSpeed = defaultMoveSpeed;
     }
 
 }

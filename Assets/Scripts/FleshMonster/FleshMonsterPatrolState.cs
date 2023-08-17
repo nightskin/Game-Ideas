@@ -5,7 +5,6 @@ public class FleshMonsterPatrolState : FleshMonsterBaseState
 {
     public override void Start(FleshMonsterAI ai)
     {
-        Debug.Log("Patrol");
         ai.SetSpeed(ai.walkSpeed);
     }
         

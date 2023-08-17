@@ -182,7 +182,7 @@ MonoBehaviour:
   weapon: {fileID: 1213949453649727775}
   animator: {fileID: 865030075}
   actionAxisType: 0
-  atkDamp: 0.2
+  atkDamp: 0.5
   atkAngle: 0
 --- !u!1 &42695576157200106
 GameObject:
@@ -796,7 +796,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986932084788300709}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.012175972, y: 0.0031042183, z: 0.05360585}

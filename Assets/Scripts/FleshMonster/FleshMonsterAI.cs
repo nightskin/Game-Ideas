@@ -29,21 +29,13 @@ public class FleshMonsterAI : MonoBehaviour
 
         agent.stoppingDistance = attackDistance;
 
-
+        SetDeadState(false);
         SwitchState(patrolState);
     }
 
     void Update()
     {
         currentState.Update(this);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.tag == "PlayerWeapon")
-        {
-
-        }
     }
 
     public void SetSpeed(float speed)
@@ -63,26 +55,39 @@ public class FleshMonsterAI : MonoBehaviour
         if(Vector3.Distance(player.position, transform.position) <= viewDistance)
         {
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            if(Vector3.Angle(transform.forward, directionToPlayer) < fieldOfView/2)
+            if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, viewDistance, playerMask))
             {
-                if(Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit ,viewDistance, playerMask))
+                if (hit.transform == player)
                 {
-                    if(hit.transform == player)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    public bool SeesPlayer2()
+    public void SetDeadState(bool dead)
     {
-        if (Vector3.Distance(player.position, transform.position) <= viewDistance)
+        if(dead)
         {
-            return true;
+            Collider[] ragDollColliders = transform.GetComponentsInChildren<Collider>();
+            for (int c = 0; c < ragDollColliders.Length; c++)
+            {
+                ragDollColliders[c].isTrigger = false;
+                ragDollColliders[c].attachedRigidbody.isKinematic = false;
+            }
+            GetComponent<Animator>().enabled = false;
         }
-        return false;
+        else
+        {
+            Collider[] ragDollColliders = transform.GetComponentsInChildren<Collider>();
+            for (int c = 0; c < ragDollColliders.Length; c++)
+            {
+                ragDollColliders[c].isTrigger = true;
+                ragDollColliders[c].attachedRigidbody.isKinematic = true;
+            }
+            GetComponent<Animator>().enabled = true;
+        }
+
     }
 }

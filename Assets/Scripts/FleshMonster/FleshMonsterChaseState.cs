@@ -5,11 +5,9 @@ using UnityEngine;
 public class FleshMonsterChaseState : FleshMonsterBaseState
 {
 
-
     public override void Start(FleshMonsterAI ai)
     {
         ai.SetSpeed(ai.walkSpeed);
-        Debug.Log("Chasing");
     }
 
     public override void Update(FleshMonsterAI ai)

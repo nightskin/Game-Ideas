@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &529902363
 AudioSource:
   m_ObjectHideFlags: 0
@@ -306,14 +306,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ArmedPlayer
       objectReference: {fileID: 0}
-    - target: {fileID: 4192026593116200048, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_Constraints
-      value: 126
-      objectReference: {fileID: 0}
-    - target: {fileID: 4192026593116200048, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_IsKinematic
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
 --- !u!1001 &2051922366
@@ -323,6 +315,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 562383319, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
+      propertyPath: enemyPrafab
+      value: 
+      objectReference: {fileID: 6719332761704470763, guid: 10d294d65c60c3840bb4c981893d641e, type: 3}
     - target: {fileID: 9176900004492960203, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
       propertyPath: m_RootOrder
       value: 3

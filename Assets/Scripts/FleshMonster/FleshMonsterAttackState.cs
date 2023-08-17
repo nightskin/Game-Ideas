@@ -29,7 +29,7 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
             ai.animator.SetInteger("atkAngle", 0);
         }
 
-        if (Vector3.Distance(ai.player.position, ai.transform.position) > ai.attackDistance || !ai.SeesPlayer2())
+        if (Vector3.Distance(ai.player.position, ai.transform.position) > ai.attackDistance || !ai.SeesPlayer())
         {
             ai.SwitchState(ai.chaseState);
         }
