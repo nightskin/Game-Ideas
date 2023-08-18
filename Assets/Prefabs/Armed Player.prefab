@@ -182,7 +182,8 @@ MonoBehaviour:
   weapon: {fileID: 1213949453649727775}
   animator: {fileID: 865030075}
   actionAxisType: 0
-  actionDamp: 0.2
+  atkDamp: 0.1
+  blockDamp: 0
   atkAngle: 0
   blockAngle: 0
 --- !u!1 &42695576157200106

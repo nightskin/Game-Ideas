@@ -20,6 +20,7 @@ public class PlayerWeapon: MonoBehaviour
             if (other.transform.tag == "Enemy")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                other.transform.GetComponentInParent<EnemyHealth>().TakeDamage();
             }
             if (other.transform.tag == "EnemyWeapon")
             {

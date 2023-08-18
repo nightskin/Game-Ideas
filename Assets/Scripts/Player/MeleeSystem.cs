@@ -16,12 +16,15 @@ public class MeleeSystem : MonoBehaviour
         LOOK,
         MOVE,
     }
-    public AxisType actionAxisType;
+    public AxisType atkAxisType;
+    public AxisType blockAxisType;
     private Vector2 defaultLookSpeed;
     private float defaultMoveSpeed;
-    [SerializeField] [Range(0, 1)] private float actionDamp = 0.1f;
+    [SerializeField] [Range(0, 1)] private float atkDamp = 0.1f;
+    [SerializeField] [Range(0, 1)] private float blockDamp = 0.1f;
 
-    private Vector2 actionAxis = new Vector2();
+    private Vector2 atkAxis = new Vector2();
+    private Vector2 blockAxis = new Vector2();
     public float atkAngle = 0;
 
     bool blocking = false;
@@ -44,26 +47,31 @@ public class MeleeSystem : MonoBehaviour
 
     void Update()
     {
-        if (actionAxisType == AxisType.MOVE) actionAxis = player.actions.Move.ReadValue<Vector2>();
-        else if (actionAxisType == AxisType.LOOK) actionAxis = player.actions.Look.ReadValue<Vector2>();
+        if (atkAxisType == AxisType.MOVE) atkAxis = player.actions.Move.ReadValue<Vector2>();
+        else if (atkAxisType == AxisType.LOOK) atkAxis = player.actions.Look.ReadValue<Vector2>();
+
+        if (blockAxisType == AxisType.MOVE) blockAxis = player.actions.Move.ReadValue<Vector2>();
+        else if (blockAxisType == AxisType.LOOK) blockAxis = player.actions.Look.ReadValue<Vector2>();
 
         if (animator.GetBool("slash") && !blocking)
         {
-            if (actionAxis.magnitude > 0)
+            if (atkAxis.magnitude > 0.5f)
             {
-                atkAngle = Mathf.Atan2(actionAxis.x, -actionAxis.y) * (180 / Mathf.PI);
+                atkAngle = Mathf.Atan2(atkAxis.x, -atkAxis.y) * (180 / Mathf.PI);
             }
         }
         if(blocking && !animator.GetBool("slash"))
         {
-            if(actionAxis.magnitude > 0)
+            if(atkAxis.magnitude > 0.5f)
             {
-                blockAngle = Mathf.Atan2(-actionAxis.x, actionAxis.y) * (180 / Mathf.PI) + 90;
+                blockAngle = Mathf.Atan2(-blockAxis.x, blockAxis.y) * (180 / Mathf.PI) + 90;
                 blockAngle = Mathf.Round(blockAngle / 45) * 45;
                 blockAngle = Mathf.Clamp(blockAngle, 0, 180);
-            }
-            armPivot.localEulerAngles = Vector3.Lerp(armPivot.localEulerAngles, new Vector3(0, 0, blockAngle), 10 * Time.deltaTime);
 
+                if (blockAngle == 0) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.identity, 10 * Time.deltaTime);
+                else if (blockAngle == 45 || blockAngle == 135 || blockAngle == 90) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, 0, blockAngle), 10 * Time.deltaTime);
+                else if (blockAngle == 180) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, -60, 0), 10 * Time.deltaTime);
+            }
         }
     }
 
@@ -76,7 +84,7 @@ public class MeleeSystem : MonoBehaviour
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         animator.SetBool("slash", true);
-        player.lookSpeed *= actionDamp;
+        player.lookSpeed *= atkDamp;
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -87,8 +95,8 @@ public class MeleeSystem : MonoBehaviour
     private void Block_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = true;
-        if (actionAxisType == AxisType.LOOK) player.lookSpeed *= actionDamp;
-        if (actionAxisType == AxisType.MOVE) player.moveSpeed *= actionDamp;
+        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= blockDamp;
+        if (atkAxisType == AxisType.MOVE) player.moveSpeed *= blockDamp;
     }
 
     private void Block_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -102,8 +110,8 @@ public class MeleeSystem : MonoBehaviour
     public void StartAttack()
     {
         weapon.GetComponent<PlayerWeapon>().attacking = true;
-        if (actionAxisType == AxisType.LOOK) player.lookSpeed *= actionDamp;
-        if (actionAxisType == AxisType.MOVE) player.moveSpeed *= actionDamp;
+        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= atkDamp;
+        if (atkAxisType == AxisType.MOVE) player.moveSpeed *= atkDamp;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
     

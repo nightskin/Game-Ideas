@@ -1182,6 +1182,7 @@ GameObject:
   - component: {fileID: 1149284406}
   - component: {fileID: 1149284407}
   - component: {fileID: 1149284408}
+  - component: {fileID: 4754641709258680357}
   m_Layer: 6
   m_Name: Flesh monster
   m_TagString: Enemy
@@ -1247,7 +1248,7 @@ MonoBehaviour:
   walkSpeed: 5
   fieldOfView: 45
   viewDistance: 20
-  attackDistance: 2.5
+  attackDistance: 3
   animator: {fileID: 0}
   agent: {fileID: 0}
 --- !u!195 &1149284408
@@ -1272,6 +1273,20 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4754641709258680357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6719332761704470763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d84938e35a7a62e48acdcd7b60d10e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  health: 0
 --- !u!1 &6844262823521680304
 GameObject:
   m_ObjectHideFlags: 0
