@@ -73,8 +73,14 @@ public class FleshMonsterAI : MonoBehaviour
 
     public void Attack()
     {
+        SetSpeed(0);
         int attackAngle = Random.Range(1, 5);
         animator.SetInteger("atkAngle", attackAngle);
+    }
+
+    public bool IsAlive()
+    {
+        return animator.enabled;
     }
 
     public void SetDeadState(bool dead)
@@ -91,7 +97,7 @@ public class FleshMonsterAI : MonoBehaviour
                 }
 
             }
-            GetComponent<Animator>().enabled = false;
+            animator.enabled = false;
         }
         else
         {
@@ -104,8 +110,7 @@ public class FleshMonsterAI : MonoBehaviour
                     ragDollColliders[c].attachedRigidbody.isKinematic = true;
                 }
             }
-            GetComponent<Animator>().enabled = true;
+            animator.enabled = true;
         }
-
     }
 }

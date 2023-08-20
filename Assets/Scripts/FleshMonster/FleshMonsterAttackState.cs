@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class FleshMonsterAttackState : FleshMonsterBaseState
 {
-    float atkDelay = 0.5f;
-    float atkTimer;
     public override void Start(FleshMonsterAI ai)
     {
-        atkTimer = atkDelay;
-        ai.SetSpeed(0);
+        ai.agent.isStopped = true;
         ai.Attack();
     }
     
@@ -18,23 +15,23 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
         Quaternion look = Quaternion.LookRotation(ai.player.position - ai.transform.position);
         ai.transform.rotation = Quaternion.Lerp(ai.transform.rotation, look, 10 * Time.deltaTime);
 
-        atkTimer -= Time.deltaTime;
-        if(atkTimer <= 0)
+
+        if(ai.animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            ai.Attack();
-            atkTimer = atkDelay;
+            if (!ai.SeesPlayer())
+            {
+                ai.SwitchState(ai.patrolState);
+            }
+            else if (Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.attackDistance)
+            {
+                ai.SwitchState(ai.chaseState);
+            }
+            else
+            {
+                ai.Attack();
+            }
         }
 
-        if (!ai.SeesPlayer())
-        {
-            ai.animator.SetInteger("atkAngle", 0);
-            ai.SwitchState(ai.patrolState);
-        }
-        else if(Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.attackDistance)
-        {
-            ai.animator.SetInteger("atkAngle", 0);
-            ai.SwitchState(ai.chaseState);
-        }
     }
 
 

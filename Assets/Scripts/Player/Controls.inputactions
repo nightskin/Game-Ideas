@@ -42,7 +42,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
+                    "name": "Dash",
                     "type": "Button",
                     "id": "f45c89b7-0a38-4aae-aad9-99b63fb32775",
                     "expectedControlType": "Button",
@@ -142,17 +142,6 @@
                 },
                 {
                     "name": "",
-                    "id": "4400006e-3492-46cf-94e0-c46487a24e0a",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "7c137db1-8189-49a3-bdb7-30190705cdb5",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
@@ -198,11 +187,11 @@
                 {
                     "name": "",
                     "id": "4cfa6049-3089-446b-b21d-4d39a636352c",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -213,7 +202,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -154,9 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
-  moveSpeed: 5
+  moveSpeed: 6
   lookSpeed: {x: 200, y: 200}
-  jumpHeight: 0.25
+  jumpHeight: 0.2
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
