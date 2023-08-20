@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyWeapon : MonoBehaviour
+public class FleshMonsterWeapon : MonoBehaviour
 {
+    public FleshMonsterAI fleshMonster;
     public bool attacking = false;
 
     private void OnCollisionEnter(Collision other)

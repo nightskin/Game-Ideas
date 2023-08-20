@@ -25,10 +25,10 @@ public class MeleeSystem : MonoBehaviour
 
     private Vector2 atkAxis = new Vector2();
     private Vector2 blockAxis = new Vector2();
-    public float atkAngle = 0;
+    [SerializeField] float atkAngle = 0;
 
     bool blocking = false;
-    public float blockAngle = 0;
+    [SerializeField] float blockAngle = 0;
 
     void Start()
     {
@@ -67,12 +67,16 @@ public class MeleeSystem : MonoBehaviour
                 blockAngle = Mathf.Atan2(-blockAxis.x, blockAxis.y) * (180 / Mathf.PI) + 90;
                 blockAngle = Mathf.Round(blockAngle / 45) * 45;
                 blockAngle = Mathf.Clamp(blockAngle, 0, 180);
-
-                if (blockAngle == 0) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.identity, 10 * Time.deltaTime);
-                else if (blockAngle == 45 || blockAngle == 135 || blockAngle == 90) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, 0, blockAngle), 10 * Time.deltaTime);
-                else if (blockAngle == 180) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, -60, 0), 10 * Time.deltaTime);
             }
+            if (blockAngle == 0) armPivot.localRotation = Quaternion.Euler(0, 0, 0);
+            if (blockAngle == 45) armPivot.localRotation = Quaternion.Euler(0, 0, 45);
+            if (blockAngle == 90) armPivot.localRotation = Quaternion.Euler(10, 0, 90);
+            if (blockAngle == 135) armPivot.localRotation = Quaternion.Euler(0, 0, 135);
+            if (blockAngle == 180) armPivot.localRotation = Quaternion.Euler(0, -78, 0);
         }
+
+        
+
     }
 
     void OnDestroy()

@@ -4,43 +4,38 @@ using UnityEngine;
 
 public class FleshMonsterAttackState : FleshMonsterBaseState
 {
-    float attackRate = 1;
-    float attackTimer = 0;
-
+    float atkDelay = 0.5f;
+    float atkTimer;
     public override void Start(FleshMonsterAI ai)
     {
+        atkTimer = atkDelay;
         ai.SetSpeed(0);
+        ai.Attack();
     }
     
     public override void Update(FleshMonsterAI ai)
     {
-        Vector3 directionToPlayer = (ai.player.position - ai.transform.position).normalized;
-        ai.transform.rotation = Quaternion.Lerp(ai.transform.rotation, Quaternion.LookRotation(directionToPlayer), 10 * Time.deltaTime);
+        Quaternion look = Quaternion.LookRotation(ai.player.position - ai.transform.position);
+        ai.transform.rotation = Quaternion.Lerp(ai.transform.rotation, look, 10 * Time.deltaTime);
 
-
-        attackTimer -= Time.deltaTime;
-        if(attackTimer <= 0)
+        atkTimer -= Time.deltaTime;
+        if(atkTimer <= 0)
         {
-            Attack(ai);
-            attackTimer = attackRate;
+            ai.Attack();
+            atkTimer = atkDelay;
         }
-        else
+
+        if (!ai.SeesPlayer())
         {
             ai.animator.SetInteger("atkAngle", 0);
+            ai.SwitchState(ai.patrolState);
         }
-
-        if (Vector3.Distance(ai.player.position, ai.transform.position) > ai.attackDistance || !ai.SeesPlayer())
+        else if(Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.attackDistance)
         {
+            ai.animator.SetInteger("atkAngle", 0);
             ai.SwitchState(ai.chaseState);
         }
     }
 
-
-    void Attack(FleshMonsterAI ai)
-    {
-        int attackAngle = Random.Range(1, 5);
-        ai.animator.SetInteger("atkAngle", attackAngle);
-
-    }
 
 }

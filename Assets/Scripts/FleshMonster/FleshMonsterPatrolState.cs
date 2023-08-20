@@ -10,12 +10,8 @@ public class FleshMonsterPatrolState : FleshMonsterBaseState
         
     public override void Update(FleshMonsterAI ai)
     {
-        if(ai.SeesPlayer())
-        {
-            ai.SwitchState(ai.chaseState);
-        }
-
-        if(ai.agent.remainingDistance <= ai.agent.stoppingDistance)
+        //Patrolling Behaviour
+        if (ai.agent.remainingDistance <= ai.agent.stoppingDistance)
         {
             Vector3 randomPoint = ai.transform.position + Random.insideUnitSphere * ai.viewDistance;
             NavMeshHit hit;
@@ -23,6 +19,12 @@ public class FleshMonsterPatrolState : FleshMonsterBaseState
             {
                 ai.agent.SetDestination(hit.position);
             }
+        }
+
+
+        if (ai.SeesPlayer())
+        {
+            ai.SwitchState(ai.chaseState);
         }
     }
 }

@@ -216,13 +216,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 1471460673086485256}
   controller: {fileID: 1471460674489461613}
-  moveSpeed: 15
+  moveSpeed: 6
   lookSpeed: {x: 200, y: 200}
   jumpHeight: 5
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 192
   dashSpeed: 50
   dashTime: 0.1
   stun: 0

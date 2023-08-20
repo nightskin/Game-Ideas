@@ -21,7 +21,7 @@ public class FleshMonsterAI : MonoBehaviour
     public float attackDistance = 4;
     public Animator animator;
     public NavMeshAgent agent;
-    
+
     void Start()
     {
         if(!agent)agent = GetComponent<NavMeshAgent>();
@@ -56,15 +56,25 @@ public class FleshMonsterAI : MonoBehaviour
         if(Vector3.Distance(player.position, transform.position) <= viewDistance)
         {
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, viewDistance, playerMask))
+            if(Vector3.Angle(transform.forward, directionToPlayer) < fieldOfView)
             {
-                if (hit.transform == player)
+                if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, viewDistance, playerMask))
                 {
-                    return true;
+                    if (hit.transform == player)
+                    {
+                        return true;
+                    }
                 }
             }
+
         }
         return false;
+    }
+
+    public void Attack()
+    {
+        int attackAngle = Random.Range(1, 5);
+        animator.SetInteger("atkAngle", attackAngle);
     }
 
     public void SetDeadState(bool dead)
@@ -74,8 +84,12 @@ public class FleshMonsterAI : MonoBehaviour
             Collider[] ragDollColliders = transform.GetComponentsInChildren<Collider>();
             for (int c = 0; c < ragDollColliders.Length; c++)
             {
-                ragDollColliders[c].isTrigger = false;
-                ragDollColliders[c].attachedRigidbody.isKinematic = false;
+                if(ragDollColliders[c] != GetComponent<Collider>())
+                {
+                    ragDollColliders[c].isTrigger = false;
+                    ragDollColliders[c].attachedRigidbody.isKinematic = false;
+                }
+
             }
             GetComponent<Animator>().enabled = false;
         }
@@ -84,8 +98,11 @@ public class FleshMonsterAI : MonoBehaviour
             Collider[] ragDollColliders = transform.GetComponentsInChildren<Collider>();
             for (int c = 0; c < ragDollColliders.Length; c++)
             {
-                ragDollColliders[c].isTrigger = true;
-                ragDollColliders[c].attachedRigidbody.isKinematic = true;
+                if (ragDollColliders[c] != GetComponent<Collider>())
+                {
+                    ragDollColliders[c].isTrigger = true;
+                    ragDollColliders[c].attachedRigidbody.isKinematic = true;
+                }
             }
             GetComponent<Animator>().enabled = true;
         }

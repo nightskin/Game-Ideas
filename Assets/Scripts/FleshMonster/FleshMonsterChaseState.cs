@@ -4,28 +4,32 @@ using UnityEngine;
 
 public class FleshMonsterChaseState : FleshMonsterBaseState
 {
-
+    float chaseDuration = 5;
+    float chaseTimer;
     public override void Start(FleshMonsterAI ai)
     {
-        ai.SetSpeed(ai.walkSpeed);
+        chaseTimer = chaseDuration;
+        ai.SetSpeed(ai.runSpeed);
     }
 
     public override void Update(FleshMonsterAI ai)
     {
-        if(ai.SeesPlayer())
+        ai.agent.SetDestination(ai.player.position + (ai.player.forward * ai.attackDistance));
+        chaseTimer -= Time.deltaTime;
+        if(chaseTimer <= 0)
         {
-            if(Vector3.Distance(ai.player.position, ai.transform.position) <= ai.attackDistance)
+            if(!ai.SeesPlayer())
             {
-                ai.SwitchState(ai.attackState);
+                ai.SwitchState(ai.patrolState);
             }
-            else
-            {
-                ai.agent.SetDestination(ai.player.position + (ai.player.forward));
-            }
+            chaseTimer = chaseDuration;
         }
-        else
+
+
+        if(Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) <= ai.attackDistance)
         {
-            ai.SwitchState(ai.patrolState);
+            ai.SwitchState(ai.attackState);
         }
+
     }
 }

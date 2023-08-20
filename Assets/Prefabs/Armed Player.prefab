@@ -114,7 +114,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.35
   m_SlopeLimit: 45
   m_StepOffset: 0.75
   m_SkinWidth: 0.08
@@ -154,13 +154,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
-  moveSpeed: 7
+  moveSpeed: 5
   lookSpeed: {x: 200, y: 200}
   jumpHeight: 0.25
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   dashSpeed: 50
   dashTime: 0.1
   stun: 0
@@ -181,7 +181,8 @@ MonoBehaviour:
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 1213949453649727775}
   animator: {fileID: 865030075}
-  actionAxisType: 0
+  atkAxisType: 0
+  blockAxisType: 0
   atkDamp: 0.1
   blockDamp: 0
   atkAngle: 0
@@ -436,7 +437,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389437643099873519}
-  m_LocalRotation: {x: 0.43301275, y: -0.24999999, z: -0.75000006, w: 0.43301266}
+  m_LocalRotation: {x: 0.36599815, y: -0.21130908, z: -0.7848856, w: 0.45315382}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -444,7 +445,7 @@ Transform:
   - {fileID: 3744789353663722195}
   m_Father: {fileID: 8637609080517615226}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -60, z: -120}
+  m_LocalEulerAnglesHint: {x: 0, y: -50, z: -120}
 --- !u!1 &460189054483465509
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,7 +712,7 @@ GameObject:
   - component: {fileID: 1213949453649727775}
   - component: {fileID: 2843753844165140154}
   - component: {fileID: 41654190632446576}
-  - component: {fileID: 1271391560167996472}
+  - component: {fileID: 2135325811292713676}
   - component: {fileID: 4192026593116200048}
   - component: {fileID: 1339336252}
   m_Layer: 3
@@ -790,7 +791,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1271391560167996472
+--- !u!65 &2135325811292713676
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -802,7 +803,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.012175972, y: 0.0031042183, z: 0.05360585}
-  m_Center: {x: -0.000003463535, y: 0.0000000051885274, z: 0.018397598}
+  m_Center: {x: -0.0000034653976, y: 0.0000000056541887, z: 0.018397598}
 --- !u!54 &4192026593116200048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -831,7 +832,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fc583880bd6434a851efc24b189dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 42695576058503064}
   meleeSystem: {fileID: 865030074}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}

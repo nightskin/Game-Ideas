@@ -78,7 +78,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Update()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f);
+        isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f,groundMask);
 
         if (!stun)
         {
@@ -111,8 +111,6 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Movement()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f,groundMask);
-
         if(isGrounded && velocity.y < 0)
         {
             velocity.y = 0;

@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerWeapon
-  - Enemy
   - EnemyWeapon
+  - FleshMonster
   layers:
   - Default
   - TransparentFX
