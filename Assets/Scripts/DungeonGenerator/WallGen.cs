@@ -17,15 +17,22 @@ public class WallGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
+        if(level.use3dMap)
+        {
 
-        MakeWalls();
+        }
+        else
+        {
+            MakeWalls2D();
+        }
+
         UpdateMesh();
 
     }
 
     void OnDrawGizmos()
     {
-        if(level.map != null)
+        if(level.map2d != null)
         {
             for(int x = 0; x < level.tilesX; x++)
             {
@@ -33,8 +40,8 @@ public class WallGen : MonoBehaviour
                 {
                     if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                     {
-                        Square square = new Square(level.map[x, z].position, level.tileSize);
-                        string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                        Square square = new Square(level.map2d[x, z].position, level.tileSize);
+                        string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
                         if(state == "0010")
                         {
                             Gizmos.DrawSphere(square.centerRight, 1);
@@ -69,16 +76,16 @@ public class WallGen : MonoBehaviour
     }
 
 
-    void MakeWalls()
+    void MakeWalls2D()
     {
         for (int x = 0; x < level.tilesX; x++)
         {
             for (int z = 0; z < level.tilesZ; z++)
             {
-                Square square = new Square(level.map[x, z].position, level.tileSize);
+                Square square = new Square(level.map2d[x, z].position, level.tileSize);
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                    string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
 
                     if (state == "1000")
                     {

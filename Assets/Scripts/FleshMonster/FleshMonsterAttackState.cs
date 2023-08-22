@@ -16,7 +16,7 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
         ai.transform.rotation = Quaternion.Lerp(ai.transform.rotation, look, 10 * Time.deltaTime);
 
 
-        if(ai.animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        if(ai.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
             if (!ai.SeesPlayer())
             {
@@ -28,7 +28,10 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
             }
             else
             {
-                ai.Attack();
+                int r = Random.Range(0, 2);
+                if (r == 0) ai.Attack();
+                else if (r == 1) ai.animator.SetInteger("atkAngle", 0); ai.animator.SetInteger("speed", 0); 
+
             }
         }
 

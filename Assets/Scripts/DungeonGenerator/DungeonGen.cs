@@ -40,22 +40,23 @@ public class Point
 {
     public Vector3 position;
     public int on;
-    public bool bottomHole;
-    public bool topHole;
     public Point()
     {
         position = new Vector3();
         on = 0;
-        bottomHole = false;
-        topHole = false;
     }
 }
 
 public class DungeonGen : MonoBehaviour
 {
-    public Point[,] map = null;
-    public int tilesX = 25;
-    public int tilesZ = 25;
+
+    public Point[,] map2d = null;
+    public Point[,,] map3d = null;
+    public int tilesX = 20;
+    public int tilesY = 20;
+    public int tilesZ = 20;
+
+    public bool use3dMap = false;
     public float tileSize = 10;
     public string seed = "";
     public bool useRandomSeed = false;
@@ -72,19 +73,27 @@ public class DungeonGen : MonoBehaviour
         
         random = new System.Random(seed.GetHashCode());
 
-        Gen1();
+        if(use3dMap)
+        {
+            Gen3D();
+        }
+        else
+        {
+            Gen2D();
+        }
+
 
     }
+    
 
-    //2D Random Walker
-    public void Gen1()
+    void Gen2D()
     {
-        map = new Point[tilesX, tilesZ];
+        map2d = new Point[tilesX, tilesZ];
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                map[x, z] = new Point();
+                map2d[x, z] = new Point();
             }
         }
 
@@ -95,7 +104,7 @@ public class DungeonGen : MonoBehaviour
             {
                 int dir;
                 dir = random.Next(1, 5);
-                map[currentPos.x, currentPos.z].on = 1;
+                map2d[currentPos.x, currentPos.z].on = 1;
                 if (dir == 1)
                 {
                     if( currentPos.x < tilesX - 1)
@@ -124,9 +133,54 @@ public class DungeonGen : MonoBehaviour
                         currentPos.z--;
                     }
                 }
-                map[x, z].position = new Vector3(x, 0, z) * tileSize;
+                map2d[x, z].position = new Vector3(x, 0, z) * tileSize;
             }
         }
+    }
+
+    void Gen3D()
+    {
+        map3d = new Point[tilesX, tilesY, tilesZ];
+        for(int x = 0; x < tilesX; x++)
+        {
+            for (int y = 0; y < tilesY; y++)
+            {
+                for(int z = 0; z < tilesZ; z++)
+                {
+                    map3d[x, y, z] = new Point();
+                    map3d[x, y, z].position = new Vector3(x, y, z) * tileSize;
+                    if(Perlin3D(x * .9f,y *  .9f,z * .9f) >= 0.5f)
+                    {
+                        map3d[x, y, z].on = 1;
+                    }
+                    else
+                    {
+                        map3d[x, y, z].on = 0;
+                    }
+                }
+            }
+        }
+
+
+
+
+    }
+
+
+
+
+    float Perlin3D(float x, float y, float z)
+    {
+        float ab = UnityEngine.Mathf.PerlinNoise(x, y);
+        float bc = UnityEngine.Mathf.PerlinNoise(y, z);
+        float ac = UnityEngine.Mathf.PerlinNoise(x, z);
+
+        float ba = UnityEngine.Mathf.PerlinNoise(y, x);
+        float cb = UnityEngine.Mathf.PerlinNoise(z, y);
+        float ca = UnityEngine.Mathf.PerlinNoise(z, x);
+
+        float abc = (ab + bc + ac + ba + cb + ca) / 6;
+        return abc;
     }
 
     public string GetState(int a, int b, int c, int d)

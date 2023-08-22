@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &529902363
 AudioSource:
   m_ObjectHideFlags: 0
@@ -316,7 +316,7 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 9146304533616603600, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
-      propertyPath: seed
+      propertyPath: useRandomSeed
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9176900004492960203, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 2125661029}
   - component: {fileID: 2125661028}
   m_Layer: 0
-  m_Name: Directional Light
+  m_Name: Sun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

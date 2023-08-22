@@ -19,10 +19,12 @@ public class PlayerWeapon: MonoBehaviour
             if (other.transform.tag == "FleshMonster")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                other.transform.GetComponentInParent<EnemyHealth>().TakeDamage();
+                other.transform.GetComponentInParent<FleshMonsterHealth>().TakeDamage(damage);
                 other.GetComponentInParent<FleshMonsterAI>().SwitchState(other.GetComponentInParent<FleshMonsterAI>().chaseState);
+                if (other.attachedRigidbody) other.attachedRigidbody.AddForce(-transform.right * knockbackForce);
+                attacking = false;
             }
-            if (other.transform.tag == "EnemyWeapon")
+            else if (other.transform.tag == "EnemyWeapon")
             {
                 Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 meleeSystem.animator.SetTrigger("recoil");

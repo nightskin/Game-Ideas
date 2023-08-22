@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,10 +8,12 @@ public class FleshMonsterAI : MonoBehaviour
     public FleshMonsterPatrolState patrolState = new FleshMonsterPatrolState();
     public FleshMonsterAttackState attackState = new FleshMonsterAttackState();
     public FleshMonsterDeadState deadState = new FleshMonsterDeadState();
+    public FleshMonsterStunState stunState = new FleshMonsterStunState();
 
 
     [SerializeField] LayerMask playerMask;
     public Transform player;
+    public bool attacking = false;
     public float runSpeed = 10;
     public float walkSpeed = 5f;
     public float fieldOfView = 45;
@@ -83,6 +83,16 @@ public class FleshMonsterAI : MonoBehaviour
         return animator.enabled;
     }
 
+    public void StartAttack()
+    {
+        attacking = true;
+    }
+
+    public void EndAttack()
+    {
+        attacking = false;
+    }
+
     public void SetDeadState(bool dead)
     {
         if(dead)
@@ -95,9 +105,9 @@ public class FleshMonsterAI : MonoBehaviour
                     ragDollColliders[c].isTrigger = false;
                     ragDollColliders[c].attachedRigidbody.isKinematic = false;
                 }
-
             }
             animator.enabled = false;
+            GetComponent<Collider>().enabled = false;
         }
         else
         {
@@ -111,6 +121,7 @@ public class FleshMonsterAI : MonoBehaviour
                 }
             }
             animator.enabled = true;
+            GetComponent<Collider>().enabled = true;
         }
     }
 }

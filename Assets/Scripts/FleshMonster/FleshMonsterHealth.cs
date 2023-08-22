@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyHealth : MonoBehaviour
+public class FleshMonsterHealth : MonoBehaviour
 {
-    [SerializeField] int maxHealth = 3;
+    [SerializeField] int maxHealth = 10;
     [SerializeField] int health;
 
     void Start()
@@ -13,9 +13,9 @@ public class EnemyHealth : MonoBehaviour
         health = maxHealth;
     }
 
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
-        health--;
+        health-= damage;
         if(health <= 0)
         {
             GetComponent<FleshMonsterAI>().SetDeadState(true);

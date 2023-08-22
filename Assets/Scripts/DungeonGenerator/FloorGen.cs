@@ -69,11 +69,19 @@ public class FloorGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateFloors();
+        if(level.use3dMap)
+        {
+
+        }
+        else
+        {
+            CreateFloors2D();
+        }
+
         UpdateMesh();
     }
 
-    void CreateFloors()
+    void CreateFloors2D()
     {
         for (int x = 0; x < level.tilesX; x++)
         {
@@ -81,8 +89,8 @@ public class FloorGen : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Square square = new Square(level.map[x, z].position, level.tileSize);
-                    string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                    Square square = new Square(level.map2d[x, z].position, level.tileSize);
+                    string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
                     if (state == "1000")
                     {
                         CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);

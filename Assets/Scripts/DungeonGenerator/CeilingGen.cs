@@ -64,7 +64,7 @@ public class CeilingGen : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    void CreateCeilings()
+    void CreateCeilings2D()
     {
         for (int x = 0; x < level.tilesX; x++)
         {
@@ -72,8 +72,8 @@ public class CeilingGen : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Square square = new Square(level.map[x, z].position, level.tileSize);
-                    string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                    Square square = new Square(level.map2d[x, z].position, level.tileSize);
+                    string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
                     if (state == "1000")
                     {
                         CreateTri(square.PlusUp(square.centerLeft, level.tileSize), square.PlusUp(square.bottomLeft, level.tileSize), square.PlusUp(square.centerBottom, level.tileSize));
@@ -168,7 +168,15 @@ public class CeilingGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateCeilings();
+        if(level.use3dMap)
+        {
+
+        }
+        else
+        {
+            CreateCeilings2D();
+        }
+
         UpdateMesh();
 
     }

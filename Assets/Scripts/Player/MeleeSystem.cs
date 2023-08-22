@@ -23,12 +23,13 @@ public class MeleeSystem : MonoBehaviour
     [SerializeField] [Range(0, 1)] private float atkDamp = 0.1f;
     [SerializeField] [Range(0, 1)] private float blockDamp = 0.1f;
 
-    private Vector2 atkAxis = new Vector2();
-    private Vector2 blockAxis = new Vector2();
-    [SerializeField] float atkAngle = 0;
+    Vector2 atkAxis = new Vector2();
+    Vector2 blockAxis = new Vector2();
+    float atkAngle = 0;
+    float blockAngle = 0;
 
     bool blocking = false;
-    [SerializeField] float blockAngle = 0;
+
 
     void Start()
     {
@@ -42,8 +43,6 @@ public class MeleeSystem : MonoBehaviour
         player.actions.Block.performed += Block_performed;
         player.actions.Block.canceled += Block_canceled;
     }
-
-
 
     void Update()
     {
@@ -83,6 +82,8 @@ public class MeleeSystem : MonoBehaviour
     {
         player.actions.Slash.performed -= Slash_performed;
         player.actions.Slash.canceled -= Slash_canceled;
+        player.actions.Block.performed -= Block_performed;
+        player.actions.Block.canceled -= Block_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

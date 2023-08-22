@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class FleshMonsterWeapon : MonoBehaviour
 {
-    public FleshMonsterAI fleshMonster;
-    public bool attacking = false;
+    [SerializeField] GameObject impactEffectSolid;
+    [SerializeField] FleshMonsterAI ai;
 
-    private void OnCollisionEnter(Collision other)
+
+    private void OnTriggerEnter(Collider other)
     {
-        if(attacking)
+        if(ai.attacking)
         {
             if(other.gameObject.tag == "Player")
             {
@@ -17,9 +18,12 @@ public class FleshMonsterWeapon : MonoBehaviour
             }
             else if(other.gameObject.tag == "PlayerWeapon")
             {
-
+                Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                ai.SwitchState(ai.stunState);
             }
         }
     }
+
+
 
 }
