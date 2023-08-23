@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 3171810552084752017}
   - component: {fileID: 1993779005472893236}
   - component: {fileID: 4345872729346874878}
-  - component: {fileID: 6575087790109047477}
+  - component: {fileID: 307361006221476928}
   - component: {fileID: 6157164069365403741}
   m_Layer: 0
   m_Name: Claymore
@@ -377,7 +377,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6575087790109047477
+--- !u!65 &307361006221476928
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -388,8 +388,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.009779457, y: 0.0027128472, z: 0.065946124}
-  m_Center: {x: 6.7673794e-10, y: 0.0000000057976903, z: 0.02975612}
+  m_Size: {x: 0.009779458, y: 0.0027128477, z: 0.048607193}
+  m_Center: {x: -0.000000001197637, y: 0.000000006060359, z: 0.038425595}
 --- !u!114 &6157164069365403741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,7 +778,7 @@ GameObject:
   - component: {fileID: 4156738482345720090}
   - component: {fileID: 1008920893883594431}
   - component: {fileID: 3018713009271226997}
-  - component: {fileID: 5579338244827573627}
+  - component: {fileID: 2169472350278811359}
   - component: {fileID: 1758466481902540051}
   m_Layer: 0
   m_Name: Claymore
@@ -856,7 +856,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5579338244827573627
+--- !u!65 &2169472350278811359
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -867,8 +867,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.0097794635, y: 0.0027128437, z: 0.065946124}
-  m_Center: {x: -0.00000001719999, y: 0.000000007347754, z: 0.029756127}
+  m_Size: {x: 0.0097794635, y: 0.0027128437, z: 0.04816636}
+  m_Center: {x: -0.000000015686961, y: 0.000000006209137, z: 0.038646013}
 --- !u!114 &1758466481902540051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1496,7 +1496,7 @@ MonoBehaviour:
   walkSpeed: 5
   fieldOfView: 90
   viewDistance: 30
-  attackDistance: 2
+  attackDistance: 1.75
   animator: {fileID: 0}
   agent: {fileID: 0}
 --- !u!195 &1149284408

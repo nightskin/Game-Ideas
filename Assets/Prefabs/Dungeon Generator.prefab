@@ -430,7 +430,7 @@ MonoBehaviour:
   use3dMap: 0
   tileSize: 10
   seed: 0
-  useRandomSeed: 1
+  useRandomSeed: 0
 --- !u!114 &562383320
 MonoBehaviour:
   m_ObjectHideFlags: 0

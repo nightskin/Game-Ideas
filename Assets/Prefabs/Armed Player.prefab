@@ -155,18 +155,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
-  moveSpeed: 6
+  moveSpeed: 5
   lookSpeed: {x: 200, y: 200}
-  jumpHeight: 0.2
+  jumpHeight: 1
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 192
-  dashSpeed: 50
-  dashTime: 0.1
-  stun: 0
-  knockbackDirection: {x: 0, y: 0, z: 0}
-  stunTime: 0.2
 --- !u!114 &865030074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,10 +181,7 @@ MonoBehaviour:
   blockAxisType: 0
   atkDamp: 0.1
   blockDamp: 0
-  atkAxis: {x: 0, y: 0}
-  blockAxis: {x: 0, y: 0}
-  atkAngle: 0
-  blockAngle: 0
+  blockSpeed: 10
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d56f64fac1dd4bc4b9099fa48347d893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 10
   health: 0
 --- !u!1 &42695576157200106
 GameObject:
@@ -819,8 +811,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.012175972, y: 0.0031042183, z: 0.05360585}
-  m_Center: {x: -0.0000034653976, y: 0.0000000056541887, z: 0.018397598}
+  m_Size: {x: 0.0063853157, y: 0.0031042183, z: 0.039766}
+  m_Center: {x: -0.0009422146, y: -0.000000032245115, z: 0.025317494}
 --- !u!54 &4192026593116200048
 Rigidbody:
   m_ObjectHideFlags: 0

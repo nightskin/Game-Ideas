@@ -13,7 +13,6 @@ public class FleshMonsterStunState : FleshMonsterBaseState
 
     public override void Update(FleshMonsterAI ai)
     {
-
         if(ai.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
             ai.SwitchState(ai.attackState);

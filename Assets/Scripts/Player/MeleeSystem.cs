@@ -22,6 +22,7 @@ public class MeleeSystem : MonoBehaviour
     private float defaultMoveSpeed;
     [SerializeField] [Range(0, 1)] private float atkDamp = 0.1f;
     [SerializeField] [Range(0, 1)] private float blockDamp = 0.1f;
+    [SerializeField] private float blockSpeed = 10;
 
     Vector2 atkAxis = new Vector2();
     Vector2 blockAxis = new Vector2();
@@ -67,14 +68,16 @@ public class MeleeSystem : MonoBehaviour
                 blockAngle = Mathf.Round(blockAngle / 45) * 45;
                 blockAngle = Mathf.Clamp(blockAngle, 0, 180);
             }
-            if (blockAngle == 0) armPivot.localRotation = Quaternion.Euler(0, 0, 0);
-            if (blockAngle == 45) armPivot.localRotation = Quaternion.Euler(0, 0, 45);
-            if (blockAngle == 90) armPivot.localRotation = Quaternion.Euler(10, 0, 90);
-            if (blockAngle == 135) armPivot.localRotation = Quaternion.Euler(0, 0, 135);
-            if (blockAngle == 180) armPivot.localRotation = Quaternion.Euler(0, -78, 0);
+
+            if (blockAngle == 0) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, 0, 0), blockSpeed * Time.deltaTime);
+            if (blockAngle == 45) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, 0, 45), blockSpeed * Time.deltaTime);
+            if (blockAngle == 90) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(10, 0, 90), blockSpeed * Time.deltaTime);
+            if (blockAngle == 135) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, 0, 135), blockSpeed * Time.deltaTime);
+            if (blockAngle == 180) armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(0, -78, 0), blockSpeed * Time.deltaTime);
+
         }
 
-        
+
 
     }
 

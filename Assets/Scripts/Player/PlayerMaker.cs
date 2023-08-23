@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMaker : MonoBehaviour
 {
-    public static bool armed = false;
+    public bool armed = false;
     bool prevValue;
     [SerializeField] GameObject armedPlayer;
     [SerializeField] GameObject unarmedPlayer;

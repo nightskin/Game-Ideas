@@ -18,7 +18,7 @@ public class FleshMonsterAI : MonoBehaviour
     public float walkSpeed = 5f;
     public float fieldOfView = 45;
     public float viewDistance = 20;
-    public float attackDistance = 4;
+    [SerializeField] float attackDistance = 1.5f;
     public Animator animator;
     public NavMeshAgent agent;
 

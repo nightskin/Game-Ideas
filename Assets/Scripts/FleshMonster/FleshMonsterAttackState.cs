@@ -18,22 +18,16 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
 
         if(ai.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
-            if (!ai.SeesPlayer())
-            {
-                ai.SwitchState(ai.patrolState);
-            }
-            else if (Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.attackDistance)
-            {
-                ai.SwitchState(ai.chaseState);
-            }
-            else
-            {
-                int r = Random.Range(0, 2);
-                if (r == 0) ai.Attack();
-                else if (r == 1) ai.animator.SetInteger("atkAngle", 0); ai.animator.SetInteger("speed", 0); 
-
-            }
+            int r = Random.Range(0, 2);
+            if (r == 0) ai.Attack();
+            else if (r == 1) ai.animator.SetInteger("atkAngle", 0); ai.animator.SetInteger("speed", 0);
         }
+
+        if (Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.agent.stoppingDistance)
+        {
+            ai.SwitchState(ai.chaseState);
+        }
+
 
     }
 
