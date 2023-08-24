@@ -28,31 +28,44 @@ public class FirstPersonPlayer : MonoBehaviour
     float gravity = -9.81f;
     private bool isGrounded;
 
+    //For Dashing
+    [SerializeField] float dashSpeed = 100;
+    [SerializeField] float dashTime = 0.1f;
+    Vector3 dashDirection;
+    float dashTimer;
+    bool dashing;
 
 
     void Awake()
     {
+        dashing = false;
+        dashTimer = dashTime;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
         actions.Dash.performed += Dash_performed;
+        actions.Jump.performed += Jump_performed;
     }
+
+
 
     private void OnDestroy()
     {
         actions.Dash.performed -= Dash_performed;
     }
 
+    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(isGrounded) velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+    }
+
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
-        }
-
+        dashDirection = motion;
+        dashing = true;
     }
 
 
@@ -62,7 +75,28 @@ public class FirstPersonPlayer : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f,groundMask);
 
         Look();
-        Movement();
+
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if(dashTimer <= 0)
+            {
+                dashTimer = dashTime;
+                dashing = false;
+            }
+            else
+            {
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            }
+        }
+        else
+        {
+            Movement();
+        }
+
+
+
+
     }
 
     void Movement()

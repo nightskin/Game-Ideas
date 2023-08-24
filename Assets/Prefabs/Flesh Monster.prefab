@@ -1417,7 +1417,7 @@ GameObject:
   - component: {fileID: 1149284408}
   - component: {fileID: 4754641709258680357}
   m_Layer: 6
-  m_Name: Flesh monster
+  m_Name: Flesh Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1496,7 +1496,7 @@ MonoBehaviour:
   walkSpeed: 5
   fieldOfView: 90
   viewDistance: 30
-  attackDistance: 1.75
+  attackDistance: 1.5
   animator: {fileID: 0}
   agent: {fileID: 0}
 --- !u!195 &1149284408

@@ -17,14 +17,7 @@ public class WallGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        if(level.use3dMap)
-        {
-
-        }
-        else
-        {
-            MakeWalls2D();
-        }
+        MakeWalls();
 
         UpdateMesh();
 
@@ -76,7 +69,7 @@ public class WallGen : MonoBehaviour
     }
 
 
-    void MakeWalls2D()
+    void MakeWalls()
     {
         for (int x = 0; x < level.tilesX; x++)
         {

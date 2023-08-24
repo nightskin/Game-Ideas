@@ -14,7 +14,7 @@ public class FleshMonsterWeapon : MonoBehaviour
         {
             if(other.gameObject.tag == "Player")
             {
-                other.GetComponent<PlayerHealth>().TakeDamage(1);
+                other.GetComponent<PlayerHealth>().TakeDamage();
                 ai.attacking = false;
             }
             else if(other.gameObject.tag == "PlayerWeapon")

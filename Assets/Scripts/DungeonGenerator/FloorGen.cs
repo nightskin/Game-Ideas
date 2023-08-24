@@ -69,19 +69,12 @@ public class FloorGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        if(level.use3dMap)
-        {
-
-        }
-        else
-        {
-            CreateFloors2D();
-        }
+        CreateFloors();
 
         UpdateMesh();
     }
 
-    void CreateFloors2D()
+    void CreateFloors()
     {
         for (int x = 0; x < level.tilesX; x++)
         {

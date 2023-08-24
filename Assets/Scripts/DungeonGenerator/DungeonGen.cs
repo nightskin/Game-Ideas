@@ -51,12 +51,9 @@ public class DungeonGen : MonoBehaviour
 {
 
     public Point[,] map2d = null;
-    public Point[,,] map3d = null;
     public int tilesX = 20;
-    public int tilesY = 20;
     public int tilesZ = 20;
 
-    public bool use3dMap = false;
     public float tileSize = 10;
     public string seed = "";
     public bool useRandomSeed = false;
@@ -68,21 +65,13 @@ public class DungeonGen : MonoBehaviour
     {
         if (useRandomSeed) 
         {
-            seed = DateTime.Now.ToString();
+            string date = DateTime.Now.Day.ToString();
+            seed = date;
         }
         
         random = new System.Random(seed.GetHashCode());
 
-        if(use3dMap)
-        {
-            Gen3D();
-        }
-        else
-        {
-            Gen2D();
-        }
-
-
+        Gen2D();
     }
     
 
@@ -138,50 +127,7 @@ public class DungeonGen : MonoBehaviour
         }
     }
 
-    void Gen3D()
-    {
-        map3d = new Point[tilesX, tilesY, tilesZ];
-        for(int x = 0; x < tilesX; x++)
-        {
-            for (int y = 0; y < tilesY; y++)
-            {
-                for(int z = 0; z < tilesZ; z++)
-                {
-                    map3d[x, y, z] = new Point();
-                    map3d[x, y, z].position = new Vector3(x, y, z) * tileSize;
-                    if(Perlin3D(x * .9f,y *  .9f,z * .9f) >= 0.5f)
-                    {
-                        map3d[x, y, z].on = 1;
-                    }
-                    else
-                    {
-                        map3d[x, y, z].on = 0;
-                    }
-                }
-            }
-        }
 
-
-
-
-    }
-
-
-
-
-    float Perlin3D(float x, float y, float z)
-    {
-        float ab = UnityEngine.Mathf.PerlinNoise(x, y);
-        float bc = UnityEngine.Mathf.PerlinNoise(y, z);
-        float ac = UnityEngine.Mathf.PerlinNoise(x, z);
-
-        float ba = UnityEngine.Mathf.PerlinNoise(y, x);
-        float cb = UnityEngine.Mathf.PerlinNoise(z, y);
-        float ca = UnityEngine.Mathf.PerlinNoise(z, x);
-
-        float abc = (ab + bc + ac + ba + cb + ca) / 6;
-        return abc;
-    }
 
     public string GetState(int a, int b, int c, int d)
     {

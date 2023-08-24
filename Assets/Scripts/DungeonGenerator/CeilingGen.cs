@@ -64,7 +64,7 @@ public class CeilingGen : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    void CreateCeilings2D()
+    void CreateCeilings()
     {
         for (int x = 0; x < level.tilesX; x++)
         {
@@ -168,14 +168,7 @@ public class CeilingGen : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        if(level.use3dMap)
-        {
-
-        }
-        else
-        {
-            CreateCeilings2D();
-        }
+        CreateCeilings();
 
         UpdateMesh();
 

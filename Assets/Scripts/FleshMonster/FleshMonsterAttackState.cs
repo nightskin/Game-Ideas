@@ -12,6 +12,12 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
     
     public override void Update(FleshMonsterAI ai)
     {
+        if (Vector3.Distance(ai.transform.position, ai.player.position) > ai.agent.stoppingDistance)
+        {
+            ai.SwitchState(ai.chaseState);
+        }
+
+
         Quaternion look = Quaternion.LookRotation(ai.player.position - ai.transform.position);
         ai.transform.rotation = Quaternion.Lerp(ai.transform.rotation, look, 10 * Time.deltaTime);
 
@@ -23,10 +29,7 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
             else if (r == 1) ai.animator.SetInteger("atkAngle", 0); ai.animator.SetInteger("speed", 0);
         }
 
-        if (Vector3.Distance(ai.transform.position, ai.player.position + (ai.player.forward)) > ai.agent.stoppingDistance)
-        {
-            ai.SwitchState(ai.chaseState);
-        }
+
 
 
     }

@@ -162,6 +162,8 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 192
+  dashSpeed: 100
+  dashTime: 0.1
 --- !u!114 &865030074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,8 +196,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d56f64fac1dd4bc4b9099fa48347d893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 6
   health: 0
+  hud: {fileID: 0}
 --- !u!1 &42695576157200106
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,13 +36,8 @@ public class FleshMonsterAI : MonoBehaviour
 
     void Update()
     {
+        animator.SetInteger("speed", Mathf.RoundToInt(agent.velocity.magnitude));
         currentState.Update(this);
-    }
-
-    public void SetSpeed(float speed)
-    {
-        agent.speed = speed;
-        animator.SetInteger("speed", (int)speed);
     }
 
     public void SwitchState(FleshMonsterBaseState state)
@@ -73,7 +68,7 @@ public class FleshMonsterAI : MonoBehaviour
 
     public void Attack()
     {
-        SetSpeed(0);
+        agent.speed = 0;
         int attackAngle = Random.Range(1, 5);
         animator.SetInteger("atkAngle", attackAngle);
     }

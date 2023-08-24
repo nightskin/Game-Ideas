@@ -7,7 +7,7 @@ public class FleshMonsterPatrolState : FleshMonsterBaseState
     {
         if(ai.IsAlive()) ai.agent.isStopped = false;
         if(ai.IsAlive())ai.animator.SetInteger("atkAngle", 0);
-        ai.SetSpeed(ai.walkSpeed);
+        ai.agent.speed = ai.walkSpeed;
     }
         
     public override void Update(FleshMonsterAI ai)
