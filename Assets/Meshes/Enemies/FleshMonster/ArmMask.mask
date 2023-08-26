@@ -12,9 +12,9 @@ AvatarMask:
   - m_Path: 
     m_Weight: 1
   - m_Path: Empty
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: Flesh Monster
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: mixamorig:Hips
     m_Weight: 1
   - m_Path: mixamorig:Hips/mixamorig:LeftUpLeg
