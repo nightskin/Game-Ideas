@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMask:
     serializedVersion: 2
-    m_Bits: 137
+    m_Bits: 9
   player: {fileID: 0}
   attacking: 0
   runSpeed: 10

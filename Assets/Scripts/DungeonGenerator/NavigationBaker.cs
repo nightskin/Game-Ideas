@@ -4,8 +4,8 @@ using UnityEngine.AI;
 public class NavigationBaker : MonoBehaviour
 {
     [SerializeField] DungeonGen level;
-    [SerializeField] GameObject enemyPrafab;
-    [SerializeField] [Range(1, 100)] int spawnChance = 10;
+    [SerializeField] GameObject[] enemyTypes;
+    [SerializeField] [Range(0, 100)] int spawnChance = 10;
 
     public NavMeshSurface surface;
     bool enemiesPlaced = false;
@@ -18,7 +18,7 @@ public class NavigationBaker : MonoBehaviour
         {
             surface.BuildNavMesh();
             navMeshMade = true;
-            if (!enemiesPlaced && enemyPrafab) PlaceEnemies();
+            if (!enemiesPlaced && enemyTypes.Length > 0) PlaceEnemies();
         }
     }
 
@@ -36,10 +36,11 @@ public class NavigationBaker : MonoBehaviour
                         string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
                         if (state == "1111")
                         {
-                            int g = level.random.Next(0, 101);
-                            if (g <= spawnChance)
+                            int outcome = level.random.Next(0, 101);
+                            if (outcome <= spawnChance)
                             {
-                                Instantiate(enemyPrafab, square.center, Quaternion.identity);
+                                int enemyIndex = level.random.Next(0, enemyTypes.Length);
+                                Instantiate(enemyTypes[enemyIndex], square.center, Quaternion.identity);
                             }
                         }
                     }

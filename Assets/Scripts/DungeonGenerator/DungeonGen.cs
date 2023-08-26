@@ -51,7 +51,7 @@ public class Point
 public class DungeonGen : MonoBehaviour
 {
     public Point[,,] map = null;
-    [Min(1)]public int numberOfFloors = 1;
+    [Min(1)] public int numberOfFloors = 1;
     public int tilesX = 20;
     public int tilesZ = 20;
 
@@ -66,7 +66,7 @@ public class DungeonGen : MonoBehaviour
     {
         if (useRandomSeed) 
         {
-            string date = DateTime.Now.Day.ToString();
+            string date = DateTime.Now.Ticks.ToString();
             seed = date;
         }
         
@@ -75,10 +75,10 @@ public class DungeonGen : MonoBehaviour
         GenerateMap();
 
     }
-    
+
     void GenerateMap()
     {
-        map = new Point[tilesX, tilesZ,numberOfFloors];
+        map = new Point[tilesX, tilesZ, numberOfFloors];
         for(int f = 0; f < numberOfFloors; f++)
         {
             for (int x = 0; x < tilesX; x++)
@@ -128,14 +128,18 @@ public class DungeonGen : MonoBehaviour
                         {
                             currentPos.z--;
                         }
+
                     }
                     map[x, z, f].position = new Vector3(x, -f, z) * tileSize;
                 }
             }
-            map[currentPos.x, currentPos.z, f].hole = true;
+
         }
+
+
     }
 
+    
 
     public string GetState(int a, int b, int c, int d)
     {

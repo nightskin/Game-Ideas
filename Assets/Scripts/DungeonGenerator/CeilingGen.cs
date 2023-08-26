@@ -74,7 +74,7 @@ public class CeilingGen : MonoBehaviour
                 {
                     if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                     {
-                        Square square = new Square(level.map[x, z,f].position, level.tileSize);
+                        Square square = new Square(level.map[x, z, f].position, level.tileSize);
                         string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
                         if (state == "1000")
                         {

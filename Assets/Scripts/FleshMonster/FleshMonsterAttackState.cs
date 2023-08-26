@@ -6,8 +6,11 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
 {
     public override void Start(FleshMonsterAI ai)
     {
-        ai.agent.isStopped = true;
-        ai.Attack();
+        if(ai.IsAlive())
+        {
+            ai.agent.isStopped = true;
+            ai.Attack();
+        }
     }
     
     public override void Update(FleshMonsterAI ai)

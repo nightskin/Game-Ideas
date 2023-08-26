@@ -36,7 +36,7 @@ public class FleshMonsterAI : MonoBehaviour
 
     void Update()
     {
-        animator.SetInteger("speed", Mathf.RoundToInt(agent.velocity.magnitude));
+        animator.SetInteger("speed", (int)agent.velocity.magnitude);
         currentState.Update(this);
     }
 

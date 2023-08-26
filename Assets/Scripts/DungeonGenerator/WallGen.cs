@@ -37,10 +37,7 @@ public class WallGen : MonoBehaviour
                         {
                             Square square = new Square(level.map[x, z, f].position, level.tileSize);
                             string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
-                            if(state == "0010")
-                            {
-                                Gizmos.DrawSphere(square.center, 1);
-                            }
+                            
                         }
                     }
                 }

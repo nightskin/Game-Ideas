@@ -7,9 +7,12 @@ public class FleshMonsterChaseState : FleshMonsterBaseState
     
     public override void Start(FleshMonsterAI ai)
     {
-        if(ai.IsAlive()) ai.agent.isStopped = false;
-        if (ai.IsAlive())ai.animator.SetInteger("atkAngle", 0);
-        ai.agent.speed = ai.runSpeed;
+        if (ai.IsAlive())
+        {
+            ai.agent.isStopped = false;
+            ai.animator.SetInteger("atkAngle", 0);
+            ai.agent.speed = ai.runSpeed;
+        }
     }
 
     public override void Update(FleshMonsterAI ai)
