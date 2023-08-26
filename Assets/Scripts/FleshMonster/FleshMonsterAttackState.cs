@@ -29,7 +29,7 @@ public class FleshMonsterAttackState : FleshMonsterBaseState
         {
             int r = Random.Range(0, 2);
             if (r == 0) ai.Attack();
-            else if (r == 1) ai.animator.SetInteger("atkAngle", 0); ai.animator.SetInteger("speed", 0);
+            else if (r == 1) ai.animator.SetInteger("atkAngle", 0);
         }
 
 
