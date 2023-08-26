@@ -428,7 +428,7 @@ MonoBehaviour:
   tilesX: 20
   tilesZ: 20
   tileSize: 10
-  seed: 4
+  seed: 638286617445224943
   useRandomSeed: 0
 --- !u!114 &562383320
 MonoBehaviour:

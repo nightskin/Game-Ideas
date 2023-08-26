@@ -182,7 +182,7 @@ MonoBehaviour:
   atkAxisType: 0
   blockAxisType: 0
   atkDamp: 0.1
-  blockDamp: 0
+  blockDamp: 0.1
   blockSpeed: 10
 --- !u!114 &1091619360
 MonoBehaviour:

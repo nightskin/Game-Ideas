@@ -1496,7 +1496,7 @@ MonoBehaviour:
   walkSpeed: 5
   fieldOfView: 90
   viewDistance: 30
-  attackDistance: 1.5
+  attackDistance: 1.75
   animator: {fileID: 0}
   agent: {fileID: 0}
 --- !u!195 &1149284408

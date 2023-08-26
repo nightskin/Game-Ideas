@@ -116,7 +116,7 @@ public class WallGen : MonoBehaviour
                         else if (state == "0011")
                         {
                             CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                            if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
                             if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
                             if (z == level.tilesZ - 2) CreateQuad(square.centerTop, square.PlusUp(square.centerTop, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
                         }
