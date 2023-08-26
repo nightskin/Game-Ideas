@@ -24,25 +24,29 @@ public class NavigationBaker : MonoBehaviour
 
     void PlaceEnemies()
     {
-        for (int x = 0; x < level.tilesX; x++)
+        for(int f = 0; f < level.numberOfFloors; f++)
         {
-            for (int z = 0; z < level.tilesZ; z++)
+            for (int x = 0; x < level.tilesX; x++)
             {
-                if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                for (int z = 0; z < level.tilesZ; z++)
                 {
-                    Square square = new Square(level.map2d[x, z].position, level.tileSize);
-                    string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
-                    if (state == "1111")
+                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                     {
-                        int g = level.random.Next(0, 101);
-                        if (g <= spawnChance) 
+                        Square square = new Square(level.map[x, z, f].position, level.tileSize);
+                        string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
+                        if (state == "1111")
                         {
-                            Instantiate(enemyPrafab, square.center, Quaternion.identity);
+                            int g = level.random.Next(0, 101);
+                            if (g <= spawnChance)
+                            {
+                                Instantiate(enemyPrafab, square.center, Quaternion.identity);
+                            }
                         }
                     }
                 }
             }
         }
+
         enemiesPlaced = true;
     }
 }

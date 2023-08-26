@@ -25,19 +25,22 @@ public class WallGen : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if(level.map2d != null)
+        if(level.map != null)
         {
-            for(int x = 0; x < level.tilesX; x++)
+            for(int f = 0; f < level.numberOfFloors; f++)
             {
-                for(int z = 0; z < level.tilesZ; z++)
+                for (int x = 0; x < level.tilesX; x++)
                 {
-                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                    for (int z = 0; z < level.tilesZ; z++)
                     {
-                        Square square = new Square(level.map2d[x, z].position, level.tileSize);
-                        string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
-                        if(state == "0010")
+                        if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                         {
-                            Gizmos.DrawSphere(square.centerRight, 1);
+                            Square square = new Square(level.map[x, z, f].position, level.tileSize);
+                            string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
+                            if(state == "0010")
+                            {
+                                Gizmos.DrawSphere(square.center, 1);
+                            }
                         }
                     }
                 }
@@ -68,131 +71,134 @@ public class WallGen : MonoBehaviour
         buffer += 4;
     }
 
-
     void MakeWalls()
     {
-        for (int x = 0; x < level.tilesX; x++)
+        for(int f = 0; f < level.numberOfFloors; f++)
         {
-            for (int z = 0; z < level.tilesZ; z++)
+            for (int x = 0; x < level.tilesX; x++)
             {
-                Square square = new Square(level.map2d[x, z].position, level.tileSize);
-                if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                for (int z = 0; z < level.tilesZ; z++)
                 {
-                    string state = level.GetState(level.map2d[x, z].on, level.map2d[x, z + 1].on, level.map2d[x + 1, z].on, level.map2d[x + 1, z + 1].on);
+                    Square square = new Square(level.map[x, z, f].position, level.tileSize);
+                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                    {
+                        string state = level.GetState(level.map[x, z, f].on, level.map[x, z + 1, f].on, level.map[x + 1, z, f].on, level.map[x + 1, z + 1, f].on);
 
-                    if (state == "1000")
-                    {
-                        CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
-                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
-                    }
-                    else if (state == "0100")
-                    {
-                        CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.topLeft, level.tileSize),square.topLeft);
-                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.centerTop, level.tileSize), square.centerTop, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                    }
-                    else if (state == "0010")
-                    {
-                        CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
-                        if (z == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
-                    }
-                    else if (state == "0001")
-                    {
-                        CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                    }
+                        if (state == "1000")
+                        {
+                            CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
+                            if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
+                            if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
+                        }
+                        else if (state == "0100")
+                        {
+                            CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                            if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.topLeft, level.tileSize), square.topLeft);
+                            if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.centerTop, level.tileSize), square.centerTop, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                        }
+                        else if (state == "0010")
+                        {
+                            CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
+                            if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                            if (z == 0) CreateQuad(square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
+                        }
+                        else if (state == "0001")
+                        {
+                            CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                            if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                        }
 
-                    else if (state == "1100")
-                    {
-                        CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == 0) CreateQuad(square.bottomLeft,square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft,level.tileSize));
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                    }
-                    else if (state == "0011")
-                    {
-                        CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, square.PlusUp(square.centerTop, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
-                    }
-                    else if (state == "1001")
-                    {
-                        CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
-                        CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                        else if (state == "1100")
+                        {
+                            CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                            if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                        }
+                        else if (state == "0011")
+                        {
+                            CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                            if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                            if (z == level.tilesZ - 2) CreateQuad(square.centerTop, square.PlusUp(square.centerTop, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                        }
+                        else if (state == "1001")
+                        {
+                            CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
+                            CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                            if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
+                            if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+
+                        }
+                        else if (state == "0110")
+                        {
+                            CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                            CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
+                            if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                        }
+                        else if (state == "0101")
+                        {
+                            CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerRight, level.tileSize), square.centerRight);
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                            if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                        }
+                        else if (state == "1010")
+                        {
+                            CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerRight, square.PlusUp(square.centerRight, level.tileSize));
+                            if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
+                            if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                        }
+
+                        else if (state == "0111")
+                        {
+                            CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
+                            if (z == 0) CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                            if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                        }
+                        else if (state == "1011")
+                        {
+                            CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                            if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize));
+                            if (z == level.tilesZ - 2) CreateQuad(square.centerTop, square.PlusUp(square.centerTop, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                        }
+                        else if (state == "1101")
+                        {
+                            CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
+                            if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                        }
+                        else if (state == "1110")
+                        {
+                            CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
+                            if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
+                            if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                        }
+
+                        else if (state == "1111")
+                        {
+                            if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
+                            if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
+                            if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
+                            if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
+                        }
 
                     }
-                    else if (state == "0110")
-                    {
-                        CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == 0) CreateQuad(square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                    }
-                    else if (state == "0101")
-                    {
-                        CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerRight, level.tileSize), square.centerRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft,level.tileSize), square.topRight, square.PlusUp(square.topRight,level.tileSize));
-                        if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                    }
-                    else if (state == "1010")
-                    {
-                        CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerRight, square.PlusUp(square.centerRight, level.tileSize));
-                        if (x == 0) CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight, level.tileSize));
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                    }
-
-                    else if (state == "0111")
-                    {
-                        CreateQuad(square.PlusUp(square.centerLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == 0) CreateQuad(square.PlusUp(square.centerBottom, level.tileSize), square.centerBottom, square.PlusUp(square.bottomRight,level.tileSize), square.bottomRight);
-                        if (x == 0) CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft,level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
-                    }
-                    else if (state == "1011")
-                    {
-                        CreateQuad(square.centerLeft, square.PlusUp(square.centerLeft, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                        if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.centerLeft, square.PlusUp(square.centerLeft,level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, square.PlusUp(square.centerTop, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                    }
-                    else if (state == "1101")
-                    {
-                        CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerBottom, square.PlusUp(square.centerBottom, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.topRight,level.tileSize), square.topRight);
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.centerBottom,level.tileSize),square.centerBottom);
-                        if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
-                    }
-                    else if (state == "1110")
-                    {
-                        CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft,level.tileSize), square.centerTop, square.PlusUp(square.centerTop,level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, square.PlusUp(square.centerRight,level.tileSize), square.bottomRight, square.PlusUp(square.bottomRight,level.tileSize));
-                        if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                    }
-
-                    else if (state == "1111")
-                    {
-                        if (x == 0) CreateQuad(square.bottomLeft, square.PlusUp(square.bottomLeft, level.tileSize), square.topLeft, square.PlusUp(square.topLeft, level.tileSize));
-                        if (z == 0) CreateQuad(square.PlusUp(square.bottomLeft, level.tileSize), square.bottomLeft, square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.bottomRight, level.tileSize), square.bottomRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, square.PlusUp(square.topLeft, level.tileSize), square.topRight, square.PlusUp(square.topRight, level.tileSize));
-                    }
-
                 }
             }
         }
+
     }
 
     void UpdateMesh()

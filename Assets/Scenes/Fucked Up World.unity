@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.1
@@ -268,7 +268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &529902363
 AudioSource:
   m_ObjectHideFlags: 0
@@ -678,6 +678,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 9146304533616603600, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
+      propertyPath: numberOfFloors
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 9176900004492960203, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
       propertyPath: m_RootOrder
       value: 3

@@ -40,6 +40,7 @@ public class Point
 {
     public Vector3 position;
     public int on;
+    public bool hole;
     public Point()
     {
         position = new Vector3();
@@ -49,8 +50,8 @@ public class Point
 
 public class DungeonGen : MonoBehaviour
 {
-
-    public Point[,] map2d = null;
+    public Point[,,] map = null;
+    [Min(1)]public int numberOfFloors = 1;
     public int tilesX = 20;
     public int tilesZ = 20;
 
@@ -71,62 +72,69 @@ public class DungeonGen : MonoBehaviour
         
         random = new System.Random(seed.GetHashCode());
 
-        Gen2D();
+        GenerateMap();
+
     }
     
-
-    void Gen2D()
+    void GenerateMap()
     {
-        map2d = new Point[tilesX, tilesZ];
-        for (int x = 0; x < tilesX; x++)
+        map = new Point[tilesX, tilesZ,numberOfFloors];
+        for(int f = 0; f < numberOfFloors; f++)
         {
-            for (int z = 0; z < tilesZ; z++)
+            for (int x = 0; x < tilesX; x++)
             {
-                map2d[x, z] = new Point();
+                for (int z = 0; z < tilesZ; z++)
+                {
+                    map[x, z, f] = new Point();
+                }
             }
         }
+
 
         //Random Walker
-        for (int x = 0; x < tilesX; x++)
+        for(int f = 0; f < numberOfFloors; f++)
         {
-            for (int z = 0; z < tilesZ; z++)
+            for (int x = 0; x < tilesX; x++)
             {
-                int dir;
-                dir = random.Next(1, 5);
-                map2d[currentPos.x, currentPos.z].on = 1;
-                if (dir == 1)
+                for (int z = 0; z < tilesZ; z++)
                 {
-                    if( currentPos.x < tilesX - 1)
+                    int dir;
+                    dir = random.Next(1, 5);
+                    map[currentPos.x, currentPos.z,f].on = 1;
+                    if (dir == 1)
                     {
-                        currentPos.x++;
+                        if (currentPos.x < tilesX - 1)
+                        {
+                            currentPos.x++;
+                        }
                     }
-                }
-                if (dir == 2)
-                {
-                    if(currentPos.x > 0)
+                    if (dir == 2)
                     {
-                        currentPos.x--;
+                        if (currentPos.x > 0)
+                        {
+                            currentPos.x--;
+                        }
                     }
-                }
-                if (dir == 3)
-                {
-                    if(currentPos.z < tilesZ - 1)
+                    if (dir == 3)
                     {
-                        currentPos.z++;
+                        if (currentPos.z < tilesZ - 1)
+                        {
+                            currentPos.z++;
+                        }
                     }
-                }
-                if (dir == 4)
-                {
-                    if (currentPos.z > 0)
+                    if (dir == 4)
                     {
-                        currentPos.z--;
+                        if (currentPos.z > 0)
+                        {
+                            currentPos.z--;
+                        }
                     }
+                    map[x, z, f].position = new Vector3(x, -f, z) * tileSize;
                 }
-                map2d[x, z].position = new Vector3(x, 0, z) * tileSize;
             }
+            map[currentPos.x, currentPos.z, f].hole = true;
         }
     }
-
 
 
     public string GetState(int a, int b, int c, int d)

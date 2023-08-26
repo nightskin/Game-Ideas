@@ -424,11 +424,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6b0b517536cc44da2fb17985b1c12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfFloors: 2
   tilesX: 20
   tilesZ: 20
   tileSize: 10
   seed: 0
-  useRandomSeed: 1
+  useRandomSeed: 0
 --- !u!114 &562383320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -471,6 +472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyPrafab: {fileID: 6719332761704470763, guid: 10d294d65c60c3840bb4c981893d641e, type: 3}
+  enemyPrafab: {fileID: 0}
   spawnChance: 10
   surface: {fileID: 562383320}
