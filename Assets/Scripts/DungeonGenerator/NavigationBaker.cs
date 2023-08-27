@@ -37,7 +37,7 @@ public class NavigationBaker : MonoBehaviour
                         if (state == "1111")
                         {
                             int outcome = level.random.Next(0, 101);
-                            if (outcome <= spawnChance)
+                            if (outcome < spawnChance)
                             {
                                 int enemyIndex = level.random.Next(0, enemyTypes.Length);
                                 Instantiate(enemyTypes[enemyIndex], square.center, Quaternion.identity);

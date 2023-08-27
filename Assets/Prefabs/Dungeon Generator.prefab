@@ -428,8 +428,8 @@ MonoBehaviour:
   tilesX: 20
   tilesZ: 20
   tileSize: 10
-  seed: 638286617445224943
-  useRandomSeed: 0
+  seed: 0
+  useRandomSeed: 1
 --- !u!114 &562383320
 MonoBehaviour:
   m_ObjectHideFlags: 0

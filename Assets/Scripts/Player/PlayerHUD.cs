@@ -7,11 +7,12 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] FirstPersonPlayer player;
     public Image hitOverlay;
     public GameObject pauseMenu;
-    
+    public bool paused;
+
     float flickerTime = 0.05f;
     bool flicker;
     bool fadeToBlack;
-    bool paused;
+
 
     void Start()
     {
@@ -25,12 +26,14 @@ public class PlayerHUD : MonoBehaviour
     {
         if(paused)
         {
+            Cursor.lockState = CursorLockMode.Locked;
             pauseMenu.SetActive(false);
             Time.timeScale = 1;
             paused = false;
         }
         else
         {
+            Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0;
             pauseMenu.SetActive(true);
             paused = true;
@@ -39,7 +42,7 @@ public class PlayerHUD : MonoBehaviour
 
     void Update()
     {
-        if(flicker)
+        if(flicker && !fadeToBlack)
         {
             flickerTime -= Time.deltaTime;
             if(flickerTime <= 0)
@@ -61,7 +64,6 @@ public class PlayerHUD : MonoBehaviour
                 SceneManager.LoadScene("GameOver");
             }
         }
-        
     }
 
     public void Flicker()
