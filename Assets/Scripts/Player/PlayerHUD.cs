@@ -22,6 +22,11 @@ public class PlayerHUD : MonoBehaviour
         player.actions.Pause.performed += Pause_performed;
     }
 
+    void OnDestroy()
+    {
+        player.actions.Pause.performed -= Pause_performed;
+    }
+
     void Pause_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if(paused)
