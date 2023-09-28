@@ -12,8 +12,11 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] CharacterController controller;
 
     // For basic motion
-    Vector3 motion;
-    public float moveSpeed = 15;
+    Vector3 moveDirection;
+    public float currentSpd;
+    public float walkSpd = 15;
+    public float runSpd = 30;
+
 
     //For Look/Aim
     public Vector2 lookSpeed = new Vector2(100f, 100);
@@ -24,9 +27,12 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] float jumpHeight = 5;
     [SerializeField] Vector3 velocity = new Vector3();
     [SerializeField] LayerMask groundMask;
+    [SerializeField] LayerMask wallMask;
     Transform groundCheck;
     float gravity = -9.81f;
-    private bool isGrounded;
+    private bool grounded;
+    [SerializeField] bool canWallJump;
+    RaycastHit wallHit;
 
     //For Dashing
     [SerializeField] float dashSpeed = 100;
@@ -36,8 +42,10 @@ public class FirstPersonPlayer : MonoBehaviour
     bool dashing;
 
 
+
     void Awake()
     {
+        currentSpd = walkSpd;
         dashing = false;
         dashTimer = dashTime;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
@@ -50,30 +58,35 @@ public class FirstPersonPlayer : MonoBehaviour
     }
 
 
-
-    private void OnDestroy()
+    void OnDestroy()
     {
         actions.Dash.performed -= Dash_performed;
+        actions.Jump.performed -= Jump_performed;
     }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(isGrounded) velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+        if (grounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+        }
+        else if (canWallJump) 
+        {
+            velocity = (wallHit.normal + transform.up).normalized * Mathf.Sqrt(jumpHeight * -2 * gravity); 
+        }
     }
-
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        dashDirection = motion;
+        dashDirection = moveDirection;
         dashing = true;
     }
 
-
-
     void Update()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f,groundMask);
-
+        CanJump();
+        CanWallJump();
+        
         Look();
 
         if (dashing)
@@ -93,27 +106,24 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             Movement();
         }
-
-
-
-
     }
 
     void Movement()
     {
-        if(isGrounded && velocity.y < 0)
+        if(grounded && velocity.y < 0)
         {
-            velocity.y = 0;
+            velocity = Vector3.zero;
         }
 
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
 
-        motion = transform.right * x + transform.forward * z;
-        controller.Move(motion * moveSpeed * Time.deltaTime);
+        moveDirection = transform.right * x + transform.forward * z;
+        controller.Move(moveDirection * currentSpd * Time.deltaTime);
 
-        //Gravity
+
+        //Add Gravity
         velocity += Vector3.up * gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
@@ -132,5 +142,16 @@ public class FirstPersonPlayer : MonoBehaviour
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 
+    void CanJump()
+    {
+        grounded = Physics.Raycast(groundCheck.position, -transform.up, 0.25f, groundMask);
+        
+    }
 
+    void CanWallJump()
+    {
+        canWallJump = Physics.Raycast(transform.position, transform.right, out wallHit, 1, wallMask) || Physics.Raycast(transform.position, -transform.right, out wallHit, 1, wallMask) ||
+        Physics.Raycast(transform.position, transform.forward, out wallHit, 1, wallMask) || Physics.Raycast(transform.position, -transform.forward, out wallHit, 1, wallMask);
+    }
+    
 }

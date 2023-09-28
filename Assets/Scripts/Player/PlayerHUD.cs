@@ -9,7 +9,7 @@ public class PlayerHUD : MonoBehaviour
     public GameObject pauseMenu;
     public bool paused;
 
-    float flickerTime = 0.05f;
+    float flickerTime = 0.1f;
     bool flicker;
     bool fadeToBlack;
 
@@ -53,7 +53,7 @@ public class PlayerHUD : MonoBehaviour
             if(flickerTime <= 0)
             {
                 hitOverlay.color = Color.clear;
-                flickerTime = 0.05f;
+                flickerTime = 0.1f;
                 flicker = false;
             }
             else

@@ -19,12 +19,15 @@ public class FleshMonsterWeapon : MonoBehaviour
             }
             else if(other.gameObject.tag == "PlayerWeapon")
             {
-                Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                ai.SwitchState(ai.stunState);
+                MeleeSystem player = other.GetComponentInParent<MeleeSystem>();
+                if(player.blocking)
+                {
+                    Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                    ai.SwitchState(ai.stunState);
+                    ai.attacking = false;
+                }
+
             }
         }
     }
-
-
-
 }

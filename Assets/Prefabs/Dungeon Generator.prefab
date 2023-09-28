@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 9176900004066731514}
   - component: {fileID: 9176900004066731513}
   - component: {fileID: 2051922372}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -472,7 +472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyTypes:
-  - {fileID: 6719332761704470763, guid: 10d294d65c60c3840bb4c981893d641e, type: 3}
+  enemyTypes: []
   spawnChance: 10
   surface: {fileID: 562383320}
