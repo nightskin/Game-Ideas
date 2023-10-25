@@ -31,8 +31,6 @@ public class FirstPersonPlayer : MonoBehaviour
     Transform groundCheck;
     float gravity = -9.81f;
     private bool grounded;
-    [SerializeField] bool canWallJump;
-    RaycastHit wallHit;
 
     //For Dashing
     [SerializeField] float dashSpeed = 100;
@@ -70,10 +68,6 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
         }
-        else if (canWallJump) 
-        {
-            velocity = (wallHit.normal + transform.up).normalized * Mathf.Sqrt(jumpHeight * -2 * gravity); 
-        }
     }
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -85,7 +79,6 @@ public class FirstPersonPlayer : MonoBehaviour
     void Update()
     {
         CanJump();
-        CanWallJump();
         
         Look();
 
@@ -146,12 +139,6 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         grounded = Physics.Raycast(groundCheck.position, -transform.up, 0.25f, groundMask);
         
-    }
-
-    void CanWallJump()
-    {
-        canWallJump = Physics.Raycast(transform.position, transform.right, out wallHit, 1, wallMask) || Physics.Raycast(transform.position, -transform.right, out wallHit, 1, wallMask) ||
-        Physics.Raycast(transform.position, transform.forward, out wallHit, 1, wallMask) || Physics.Raycast(transform.position, -transform.forward, out wallHit, 1, wallMask);
     }
     
 }
