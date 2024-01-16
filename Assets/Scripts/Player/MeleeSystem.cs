@@ -7,11 +7,12 @@ public class MeleeSystem : MonoBehaviour
 {
     [SerializeField] Transform armPivot;
     [SerializeField] Transform weapon;
-    [SerializeField] Image crossHair;
 
     private FirstPersonPlayer player;
     public Animator animator;
     float atkAngle = 0;
+
+    public Transform lockOnTarget = null;
 
     public bool defending = false;
     public bool blocking = false;
@@ -26,11 +27,17 @@ public class MeleeSystem : MonoBehaviour
         player.actions.Slash.canceled += Slash_canceled;
         player.actions.Defend.performed += Defend_performed;
         player.actions.Defend.canceled += Defend_canceled;
-        player.actions.RotateAngle.performed += RotateAngle_performed;
+        player.actions.LockOn.performed += LockOn_performed;
+        player.actions.LockOn.canceled += LockOn_canceled;
     }
 
     void Update()
     {
+        if(animator.GetBool("slash"))
+        {
+            Vector2 axis = player.actions.Look.ReadValue<Vector2>();
+            if(axis.magnitude > 0) atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
+        }
         if (defending) 
         {
             if (player.moveDirection != Vector3.zero)
@@ -41,7 +48,6 @@ public class MeleeSystem : MonoBehaviour
             {
                 blocking = true;
             }
-
         }
     }
 
@@ -52,6 +58,8 @@ public class MeleeSystem : MonoBehaviour
         player.actions.Slash.canceled -= Slash_canceled;
         player.actions.Defend.performed -= Defend_performed;
         player.actions.Defend.canceled -= Defend_canceled;
+        player.actions.LockOn.performed -= LockOn_performed;
+        player.actions.LockOn.canceled -= LockOn_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -74,19 +82,23 @@ public class MeleeSystem : MonoBehaviour
         defending = false;
     }
 
-    private void RotateAngle_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        float rotateValue = obj.ReadValue<float>();
-        if(rotateValue == 1)
+        if(Physics.SphereCast(player.camera.position, 5f, player.camera.forward, out RaycastHit hit))
         {
-            atkAngle += 45;
+            if(hit.transform.gameObject.layer == 6)
+            {
+                lockOnTarget = hit.transform;
+            }
         }
-        else if(rotateValue == -1)
-        {
-            atkAngle -= 45;
-        }
-        crossHair.rectTransform.rotation = Quaternion.Euler(0, 0, atkAngle);
     }
+
+    private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        lockOnTarget = null;
+    }
+
+
 
     ///Animation Events
     public void StartAttack()

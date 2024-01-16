@@ -82,10 +82,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""RotateAngle"",
-                    ""type"": ""PassThrough"",
+                    ""name"": ""LockOn"",
+                    ""type"": ""Button"",
                     ""id"": ""e1f102fb-59f6-4325-a66c-e4f7566b59f0"",
-                    ""expectedControlType"": ""Axis"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -204,8 +204,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f52608b1-0dda-4273-a4b4-386967d22b70"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""id"": ""e1ec3db9-571e-4433-8dfa-24e89e2bd0a1"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -215,8 +215,19 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ea7ee18b-2b8c-4897-aef9-5968ebc04240"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""id"": ""fb59acfc-3d4c-405e-a42c-0c8ad753430c"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Defend"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87942cda-d492-4ae5-a66c-8b099671ea7c"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -269,70 +280,26 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""LeftRight"",
-                    ""id"": ""c1efed35-cb62-4feb-9375-bf34cc37ab22"",
-                    ""path"": ""1DAxis"",
+                    ""name"": """",
+                    ""id"": ""24372daf-6c89-4630-8220-06761cbc9c67"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateAngle"",
-                    ""isComposite"": true,
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""negative"",
-                    ""id"": ""db55a418-7296-40bc-8780-bc90035d8f82"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""name"": """",
+                    ""id"": ""abd9bf7f-2e32-4aaf-acba-17653821c60b"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateAngle"",
+                    ""action"": ""LockOn"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""ffb6e798-f069-4d8d-8ddc-290bf773df6d"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RotateAngle"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""ScrollWheel"",
-                    ""id"": ""ff918959-9f6c-4d53-a2ce-c7f672761016"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": ""Clamp(min=-1,max=1)"",
-                    ""groups"": """",
-                    ""action"": ""RotateAngle"",
-                    ""isComposite"": true,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""7c35bb20-be73-4708-8c73-04fc5febdbe9"",
-                    ""path"": ""<Mouse>/scroll/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RotateAngle"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""6e97135d-97e9-48f3-88ed-8b1f6151f208"",
-                    ""path"": ""<Mouse>/scroll/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RotateAngle"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -347,7 +314,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Defend = m_Player.FindAction("Defend", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
-        m_Player_RotateAngle = m_Player.FindAction("RotateAngle", throwIfNotFound: true);
+        m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -415,7 +382,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Defend;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Pause;
-    private readonly InputAction m_Player_RotateAngle;
+    private readonly InputAction m_Player_LockOn;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -426,7 +393,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Defend => m_Wrapper.m_Player_Defend;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
-        public InputAction @RotateAngle => m_Wrapper.m_Player_RotateAngle;
+        public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -454,9 +421,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @RotateAngle.started += instance.OnRotateAngle;
-            @RotateAngle.performed += instance.OnRotateAngle;
-            @RotateAngle.canceled += instance.OnRotateAngle;
+            @LockOn.started += instance.OnLockOn;
+            @LockOn.performed += instance.OnLockOn;
+            @LockOn.canceled += instance.OnLockOn;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -479,9 +446,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @RotateAngle.started -= instance.OnRotateAngle;
-            @RotateAngle.performed -= instance.OnRotateAngle;
-            @RotateAngle.canceled -= instance.OnRotateAngle;
+            @LockOn.started -= instance.OnLockOn;
+            @LockOn.performed -= instance.OnLockOn;
+            @LockOn.canceled -= instance.OnLockOn;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -507,6 +474,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnDefend(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
-        void OnRotateAngle(InputAction.CallbackContext context);
+        void OnLockOn(InputAction.CallbackContext context);
     }
 }

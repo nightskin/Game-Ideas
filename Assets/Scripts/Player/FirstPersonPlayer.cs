@@ -1,20 +1,19 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
     // For Input
     Controls controls;
     public Controls.PlayerActions actions;
-    
+    public MeleeSystem meleeSystem;
+
     //Components
     public Transform camera;
     [SerializeField] CharacterController controller;
 
     // For basic motion
     public Vector3 moveDirection;
-    public float currentSpd;
-    public float walkSpd = 15;
+    public float walkSpeed = 15;
 
 
 
@@ -36,12 +35,12 @@ public class FirstPersonPlayer : MonoBehaviour
     //For Dashing
     public bool dashing = false;
     public float dashSpeed = 30;
-    [SerializeField] float dashAmount = 1;
+    [SerializeField] float dashAmount = 0.1f;
     float dashTimer = 0;
 
     void Awake()
     {
-        currentSpd = walkSpd;
+        meleeSystem = GetComponent<MeleeSystem>();
         dashTimer = dashAmount;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
@@ -57,26 +56,43 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         CanJump();
 
-
-        Look();
-
-        if (dashing)
+        if(meleeSystem.lockOnTarget == null)
         {
-            dashTimer -= Time.deltaTime;
-            if (dashTimer <= 0)
+            Look();
+
+            if (dashing)
             {
-                dashing = false;
-                dashTimer = dashAmount;
+                dashTimer -= Time.deltaTime;
+                if (dashTimer <= 0)
+                {
+                    dashing = false;
+                    dashTimer = dashAmount;
+                }
+                else
+                {
+                    NormalDash();
+                }
             }
             else
             {
-                Dash();
+                NormalMovement();
             }
+
         }
         else
         {
-            Movement();
+            camera.LookAt(meleeSystem.lockOnTarget);
+            if(dashing)
+            {
+
+            }
+            else
+            {
+                LockOnMovement();
+            }
         }
+
+
 
     }
 
@@ -94,7 +110,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
     }
 
-    void Dash()
+    void NormalDash()
     {
         if (grounded && velocity.y < 0)
         {
@@ -108,7 +124,7 @@ public class FirstPersonPlayer : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    void Movement()
+    void NormalMovement()
     {
         if(grounded && velocity.y < 0)
         {
@@ -120,7 +136,29 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = transform.right * x + transform.forward * z;
-        controller.Move(moveDirection * currentSpd * Time.deltaTime);
+        controller.Move(moveDirection * walkSpeed * Time.deltaTime);
+
+
+        //Add Gravity
+        velocity += Vector3.up * gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+
+    }
+
+    void LockOnMovement()
+    {
+        if (grounded && velocity.y < 0)
+        {
+            velocity = Vector3.zero;
+        }
+
+        //Basic Motion
+        float x = actions.Move.ReadValue<Vector2>().x;
+        float z = actions.Move.ReadValue<Vector2>().y;
+
+
+        moveDirection = camera.transform.right * x + camera.transform.forward * z;
+        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * walkSpeed * Time.deltaTime);
 
 
         //Add Gravity

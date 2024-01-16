@@ -16,7 +16,7 @@ public class PlayerWeapon: MonoBehaviour
     {
         if (attacking)
         {
-            if (other.transform.tag == "FleshMonster")
+            if (other.transform.tag == "Enemy")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 other.transform.GetComponentInParent<FleshMonsterHealth>().TakeDamage(damage);

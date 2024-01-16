@@ -6,7 +6,7 @@ TagManager:
   tags:
   - PlayerWeapon
   - EnemyWeapon
-  - FleshMonster
+  - Enemy
   layers:
   - Default
   - TransparentFX
