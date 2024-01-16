@@ -20,7 +20,7 @@ public class FleshMonsterWeapon : MonoBehaviour
             else if(other.gameObject.tag == "PlayerWeapon")
             {
                 MeleeSystem player = other.GetComponentInParent<MeleeSystem>();
-                if(player.blocking)
+                if(player.defending)
                 {
                     Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                     ai.SwitchState(ai.stunState);

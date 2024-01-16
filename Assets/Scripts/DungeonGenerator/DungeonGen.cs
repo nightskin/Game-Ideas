@@ -57,16 +57,15 @@ public class DungeonGen : MonoBehaviour
 
     public float tileSize = 10;
     public string seed = "";
-    public bool useRandomSeed = false;
     public System.Random random;
     Vector3Int currentPos = Vector3Int.zero;
 
 
     void Awake()
     {
-        if (useRandomSeed) 
+        if (seed == "") 
         {
-            string date = DateTime.Now.Ticks.ToString();
+            string date = DateTime.Now.ToString();
             seed = date;
         }
         
@@ -138,8 +137,6 @@ public class DungeonGen : MonoBehaviour
 
 
     }
-
-    
 
     public string GetState(int a, int b, int c, int d)
     {

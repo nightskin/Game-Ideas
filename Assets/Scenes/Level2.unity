@@ -553,7 +553,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 562383319, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
       propertyPath: enemyTypes.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 562383319, guid: 7fad6adf52a68ed42967b9f5c607ae4d, type: 3}
       propertyPath: enemyTypes.Array.data[0]

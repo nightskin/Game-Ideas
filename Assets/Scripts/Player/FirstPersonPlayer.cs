@@ -12,10 +12,10 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] CharacterController controller;
 
     // For basic motion
-    Vector3 moveDirection;
+    public Vector3 moveDirection;
     public float currentSpd;
     public float walkSpd = 15;
-    public float runSpd = 30;
+
 
 
     //For Look/Aim
@@ -32,35 +32,59 @@ public class FirstPersonPlayer : MonoBehaviour
     float gravity = -9.81f;
     private bool grounded;
 
+
     //For Dashing
-    [SerializeField] float dashSpeed = 100;
-    [SerializeField] float dashTime = 0.1f;
-    Vector3 dashDirection;
-    float dashTimer;
-    bool dashing;
-
-
+    public bool dashing = false;
+    public float dashSpeed = 30;
+    [SerializeField] float dashAmount = 1;
+    float dashTimer = 0;
 
     void Awake()
     {
         currentSpd = walkSpd;
-        dashing = false;
-        dashTimer = dashTime;
+        dashTimer = dashAmount;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
-        actions.Dash.performed += Dash_performed;
+
+
         actions.Jump.performed += Jump_performed;
     }
 
+    void Update()
+    {
+        CanJump();
+
+
+        Look();
+
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0)
+            {
+                dashing = false;
+                dashTimer = dashAmount;
+            }
+            else
+            {
+                Dash();
+            }
+        }
+        else
+        {
+            Movement();
+        }
+
+    }
 
     void OnDestroy()
     {
-        actions.Dash.performed -= Dash_performed;
         actions.Jump.performed -= Jump_performed;
     }
+    
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -70,35 +94,18 @@ public class FirstPersonPlayer : MonoBehaviour
         }
     }
 
-    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    void Dash()
     {
-        dashDirection = moveDirection;
-        dashing = true;
-    }
-
-    void Update()
-    {
-        CanJump();
-        
-        Look();
-
-        if (dashing)
+        if (grounded && velocity.y < 0)
         {
-            dashTimer -= Time.deltaTime;
-            if(dashTimer <= 0)
-            {
-                dashTimer = dashTime;
-                dashing = false;
-            }
-            else
-            {
-                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
-            }
+            velocity = Vector3.zero;
         }
-        else
-        {
-            Movement();
-        }
+
+        controller.Move(moveDirection * dashSpeed * Time.deltaTime);
+
+        //Add Gravity
+        velocity += Vector3.up * gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     void Movement()

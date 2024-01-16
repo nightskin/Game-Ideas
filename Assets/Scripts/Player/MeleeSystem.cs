@@ -1,102 +1,62 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MeleeSystem : MonoBehaviour
 {
-    public Transform armPivot;
-    public Transform weapon;
+    [SerializeField] Transform armPivot;
+    [SerializeField] Transform weapon;
+    [SerializeField] Image crossHair;
 
     private FirstPersonPlayer player;
     public Animator animator;
-
-
-    public enum AxisType
-    {
-        LOOK,
-        MOVE,
-    }
-    public AxisType atkAxisType;
-    public AxisType blockAxisType;
-    private Vector2 defaultLookSpeed;
-    private float defaultMoveSpeed;
-    [SerializeField] [Range(0, 1)] private float atkDamp = 0.1f;
-    [SerializeField] [Range(0, 1)] private float blockDamp = 0.1f;
-    [SerializeField] private float blockSpeed = 10;
-
-    Vector2 atkAxis = new Vector2();
-    Vector2 blockAxis = new Vector2();
-
     float atkAngle = 0;
-    float blockAngle = 0;
 
+    public bool defending = false;
     public bool blocking = false;
-    Quaternion targetArmAngle = new Quaternion();
 
     void Start()
     {
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
-        defaultLookSpeed = player.lookSpeed;
-        defaultMoveSpeed = player.currentSpd;
+
 
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
-        player.actions.Block.performed += Block_performed;
-        player.actions.Block.canceled += Block_canceled;
+        player.actions.Defend.performed += Defend_performed;
+        player.actions.Defend.canceled += Defend_canceled;
+        player.actions.RotateAngle.performed += RotateAngle_performed;
     }
 
     void Update()
     {
-        if (atkAxisType == AxisType.MOVE) atkAxis = player.actions.Move.ReadValue<Vector2>();
-        else if (atkAxisType == AxisType.LOOK) atkAxis = player.actions.Look.ReadValue<Vector2>();
-
-        if (blockAxisType == AxisType.MOVE) blockAxis = player.actions.Move.ReadValue<Vector2>();
-        else if (blockAxisType == AxisType.LOOK) blockAxis = player.actions.Look.ReadValue<Vector2>();
-
-        if (animator.GetBool("slash") && !blocking)
+        if (defending) 
         {
-            if (atkAxis.magnitude > 0.5f)
+            if (player.moveDirection != Vector3.zero)
             {
-                atkAngle = Mathf.Atan2(atkAxis.x, -atkAxis.y) * (180 / Mathf.PI);
+                player.dashing = true;
             }
             else
             {
-                atkAngle = Random.Range(-180, 180);
+                blocking = true;
             }
-        }
-        else if(blocking && !animator.GetBool("slash"))
-        {
-            if(atkAxis.magnitude > 0.5f)
-            {
-                blockAngle = Mathf.Atan2(-blockAxis.x, blockAxis.y) * (180 / Mathf.PI) + 90;
-                blockAngle = Mathf.Round(blockAngle / 45) * 45;
-                blockAngle = Mathf.Clamp(blockAngle, 0, 180);
-
-                if (blockAngle == 0) targetArmAngle =   Quaternion.Euler(0, 0, 0);
-                else if (blockAngle == 45)  targetArmAngle = Quaternion.Euler(0, 0, 45);
-                else if (blockAngle == 90)  targetArmAngle = Quaternion.Euler(10, 0, 90);
-                else if (blockAngle == 135) targetArmAngle = Quaternion.Euler(0, 0, 135);
-                else if (blockAngle == 180) targetArmAngle = Quaternion.Euler(0, -78, 0);
-            }
-
-            armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, targetArmAngle, blockSpeed * Time.deltaTime);
 
         }
     }
+
 
     void OnDestroy()
     {
         player.actions.Slash.performed -= Slash_performed;
         player.actions.Slash.canceled -= Slash_canceled;
-        player.actions.Block.performed -= Block_performed;
-        player.actions.Block.canceled -= Block_canceled;
+        player.actions.Defend.performed -= Defend_performed;
+        player.actions.Defend.canceled -= Defend_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         animator.SetBool("slash", true);
-        player.lookSpeed *= atkDamp;
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -104,26 +64,34 @@ public class MeleeSystem : MonoBehaviour
         animator.SetBool("slash", false);
     }
 
-    private void Block_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        blocking = true;
-        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= blockDamp;
-        if (atkAxisType == AxisType.MOVE) player.currentSpd *= blockDamp;
+        defending = true;
     }
 
-    private void Block_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        blocking = false;
-        player.lookSpeed = defaultLookSpeed;
-        player.currentSpd = defaultMoveSpeed;
+        defending = false;
+    }
+
+    private void RotateAngle_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        float rotateValue = obj.ReadValue<float>();
+        if(rotateValue == 1)
+        {
+            atkAngle += 45;
+        }
+        else if(rotateValue == -1)
+        {
+            atkAngle -= 45;
+        }
+        crossHair.rectTransform.rotation = Quaternion.Euler(0, 0, atkAngle);
     }
 
     ///Animation Events
     public void StartAttack()
     {
         weapon.GetComponent<PlayerWeapon>().attacking = true;
-        if (atkAxisType == AxisType.LOOK) player.lookSpeed *= atkDamp;
-        if (atkAxisType == AxisType.MOVE) player.currentSpd *= atkDamp;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
     
@@ -131,8 +99,6 @@ public class MeleeSystem : MonoBehaviour
     {
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
-        player.lookSpeed = defaultLookSpeed;
-        player.currentSpd = defaultMoveSpeed;
     }
 
 }
