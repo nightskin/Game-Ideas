@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1296816838}
   - component: {fileID: 1296816837}
   - component: {fileID: 1296816840}
-  - component: {fileID: 2051922370}
   m_Layer: 7
   m_Name: Floors
   m_TagString: Untagged
@@ -113,18 +112,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
---- !u!114 &2051922370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1296816834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1349160437
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +125,6 @@ GameObject:
   - component: {fileID: 1349160441}
   - component: {fileID: 1349160440}
   - component: {fileID: 1349160443}
-  - component: {fileID: 2051922371}
   m_Layer: 0
   m_Name: Ceiling
   m_TagString: Untagged
@@ -238,18 +224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
---- !u!114 &2051922371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1349160437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &577160491768185439
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,7 +237,6 @@ GameObject:
   - component: {fileID: 9176900004066731515}
   - component: {fileID: 9176900004066731514}
   - component: {fileID: 9176900004066731513}
-  - component: {fileID: 2051922372}
   m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
@@ -363,18 +336,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
---- !u!114 &2051922372
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 577160491768185439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &9176900004492960204
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,6 +433,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
   enemyTypes:
-  - {fileID: 6719332761704470763, guid: 10d294d65c60c3840bb4c981893d641e, type: 3}
+  - {fileID: 8901971485468941739, guid: 1280edaff0b2ab64fbca9ad47396acac, type: 3}
   spawnChance: 10
   surface: {fileID: 562383320}

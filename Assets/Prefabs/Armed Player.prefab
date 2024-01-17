@@ -804,7 +804,7 @@ GameObject:
   - component: {fileID: 1213949453649727775}
   - component: {fileID: 2843753844165140154}
   - component: {fileID: 41654190632446576}
-  - component: {fileID: 2135325811292713676}
+  - component: {fileID: 5279725506871445108}
   - component: {fileID: 4192026593116200048}
   - component: {fileID: 1339336252}
   m_Layer: 3
@@ -883,7 +883,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2135325811292713676
+--- !u!65 &5279725506871445108
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -891,11 +891,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986932084788300709}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.0063853157, y: 0.0031042183, z: 0.039766}
-  m_Center: {x: -0.0009422146, y: -0.000000032245115, z: 0.025317494}
+  m_Size: {x: 0.012175977, y: 0.003104217, z: 0.05360585}
+  m_Center: {x: -0.0000034710147, y: 0.000000004174472, z: 0.0183976}
 --- !u!54 &4192026593116200048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -929,7 +929,7 @@ MonoBehaviour:
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
   attacking: 0
   damage: 1
-  knockbackForce: 2000
+  knockbackForce: 100
 --- !u!1 &2294702738215078189
 GameObject:
   m_ObjectHideFlags: 0

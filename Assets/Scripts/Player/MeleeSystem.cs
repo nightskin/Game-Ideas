@@ -12,6 +12,7 @@ public class MeleeSystem : MonoBehaviour
     public Animator animator;
     float atkAngle = 0;
 
+    public bool lockedOn = false;
     public Transform lockOnTarget = null;
 
     public bool defending = false;
@@ -51,7 +52,6 @@ public class MeleeSystem : MonoBehaviour
         }
     }
 
-
     void OnDestroy()
     {
         player.actions.Slash.performed -= Slash_performed;
@@ -84,18 +84,24 @@ public class MeleeSystem : MonoBehaviour
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(Physics.SphereCast(player.camera.position, 5f, player.camera.forward, out RaycastHit hit))
+        RaycastHit[] hits = Physics.RaycastAll(player.camera.position, player.camera.forward);
+        if (hits.Length > 0)
         {
-            if(hit.transform.gameObject.layer == 6)
+            for(int i = 0; i < hits.Length; i++) 
             {
-                lockOnTarget = hit.transform;
+                if (hits[i].transform.tag == "Enemy")
+                {
+                    lockOnTarget = hits[i].transform;
+                }
             }
         }
+        lockedOn = true;
     }
 
     private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         lockOnTarget = null;
+        lockedOn = false;
     }
 
 

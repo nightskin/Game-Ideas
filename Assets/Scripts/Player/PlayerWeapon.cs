@@ -19,14 +19,34 @@ public class PlayerWeapon: MonoBehaviour
             if (other.transform.tag == "Enemy")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                other.transform.GetComponentInParent<FleshMonsterHealth>().TakeDamage(damage);
-                other.GetComponentInParent<FleshMonsterAI>().SwitchState(other.GetComponentInParent<FleshMonsterAI>().chaseState);
+                if (other.GetComponent<EnemyHealth>()) other.GetComponent<EnemyHealth>().TakeDamage();
                 if (other.attachedRigidbody) other.attachedRigidbody.AddForce(-transform.right * knockbackForce);
                 attacking = false;
             }
             else if (other.transform.tag == "EnemyWeapon")
             {
                 Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                meleeSystem.animator.SetTrigger("recoil");
+                attacking = false;
+            }
+
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (attacking)
+        {
+            if (other.transform.tag == "Enemy")
+            {
+                Instantiate(impactEffectEnemy, other.GetContact(0).point, Quaternion.identity);
+                if (other.transform.GetComponent<EnemyHealth>()) other.transform.GetComponent<EnemyHealth>().TakeDamage();
+                if (other.rigidbody) other.rigidbody.AddForce(-transform.right * knockbackForce);
+                attacking = false;
+            }
+            else if (other.transform.tag == "EnemyWeapon")
+            {
+                Instantiate(impactEffectSolid, other.GetContact(0).point, Quaternion.identity);
                 meleeSystem.animator.SetTrigger("recoil");
                 attacking = false;
             }

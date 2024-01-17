@@ -56,43 +56,37 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         CanJump();
 
-        if(meleeSystem.lockOnTarget == null)
+        if (!meleeSystem.lockOnTarget && !meleeSystem.lockedOn)
         {
             Look();
+        }
+        else if (meleeSystem.lockOnTarget && meleeSystem.lockedOn)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(meleeSystem.lockOnTarget.position - transform.position);
+            xRot = targetRot.eulerAngles.x;
+            camera.localEulerAngles = new Vector3(xRot, 0, 0);
+            yRot = targetRot.eulerAngles.y;
+            transform.localEulerAngles = new Vector3(0, yRot, 0);
+        }
 
-            if (dashing)
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer < 0)
             {
-                dashTimer -= Time.deltaTime;
-                if (dashTimer <= 0)
-                {
-                    dashing = false;
-                    dashTimer = dashAmount;
-                }
-                else
-                {
-                    NormalDash();
-                }
+                dashTimer = dashAmount;
+                dashing = false;
             }
             else
             {
-                NormalMovement();
+                Dash();
             }
-
         }
         else
         {
-            camera.LookAt(meleeSystem.lockOnTarget);
-            if(dashing)
-            {
-
-            }
-            else
-            {
-                LockOnMovement();
-            }
+            if (meleeSystem.lockOnTarget && meleeSystem.lockedOn) LockOnMovement();
+            else NormalMovement();
         }
-
-
 
     }
 
@@ -110,7 +104,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
     }
 
-    void NormalDash()
+    void Dash()
     {
         if (grounded && velocity.y < 0)
         {
