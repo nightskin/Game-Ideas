@@ -89,7 +89,7 @@ public class MeleeSystem : MonoBehaviour
         {
             for(int i = 0; i < hits.Length; i++) 
             {
-                if (hits[i].transform.tag == "Enemy" || hits[i].transform.tag == "EnemyWeapon")
+                if (hits[i].transform.gameObject.layer == 9)
                 {
                     lockOnTarget = hits[i].transform;
                 }

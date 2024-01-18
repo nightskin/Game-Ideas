@@ -62,10 +62,10 @@ public class FirstPersonPlayer : MonoBehaviour
         }
         else if (meleeSystem.lockOnTarget && meleeSystem.lockedOn)
         {
-            Quaternion targetRot = Quaternion.LookRotation(meleeSystem.lockOnTarget.position - transform.position);
+            Quaternion targetRot = Quaternion.LookRotation(meleeSystem.lockOnTarget.position - camera.transform.position);
             xRot = targetRot.eulerAngles.x;
-            camera.localEulerAngles = new Vector3(xRot, 0, 0);
             yRot = targetRot.eulerAngles.y;
+            camera.localEulerAngles = new Vector3(xRot, 0, 0);
             transform.localEulerAngles = new Vector3(0, yRot, 0);
         }
 
@@ -95,7 +95,6 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.Jump.performed -= Jump_performed;
     }
     
-
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (grounded)
