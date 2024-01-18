@@ -19,7 +19,7 @@ public class PlayerWeapon: MonoBehaviour
             if (other.transform.tag == "Enemy")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if (other.GetComponent<EnemyHealth>()) other.GetComponent<EnemyHealth>().TakeDamage();
+                if (other.transform.root.GetComponent<EnemyHealth>()) other.transform.root.GetComponent<EnemyHealth>().TakeDamage();
                 if (other.attachedRigidbody) other.attachedRigidbody.AddForce(-transform.right * knockbackForce);
                 attacking = false;
             }
@@ -33,25 +33,5 @@ public class PlayerWeapon: MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (attacking)
-        {
-            if (other.transform.tag == "Enemy")
-            {
-                Instantiate(impactEffectEnemy, other.GetContact(0).point, Quaternion.identity);
-                if (other.transform.GetComponent<EnemyHealth>()) other.transform.GetComponent<EnemyHealth>().TakeDamage();
-                if (other.rigidbody) other.rigidbody.AddForce(-transform.right * knockbackForce);
-                attacking = false;
-            }
-            else if (other.transform.tag == "EnemyWeapon")
-            {
-                Instantiate(impactEffectSolid, other.GetContact(0).point, Quaternion.identity);
-                meleeSystem.animator.SetTrigger("recoil");
-                attacking = false;
-            }
-
-        }
-    }
 
 }

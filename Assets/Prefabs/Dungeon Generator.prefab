@@ -433,6 +433,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
   enemyTypes:
-  - {fileID: 8901971485468941739, guid: 1280edaff0b2ab64fbca9ad47396acac, type: 3}
+  - {fileID: 6957505284263440021, guid: edcf87198c5b20d4ba62d3965dbe49ba, type: 3}
   spawnChance: 10
   surface: {fileID: 562383320}
