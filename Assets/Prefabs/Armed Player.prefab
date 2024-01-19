@@ -234,7 +234,7 @@ MonoBehaviour:
   controller: {fileID: 42695576058503143}
   moveDirection: {x: 0, y: 0, z: 0}
   walkSpeed: 15
-  lookSpeed: {x: 200, y: 200}
+  lookSpeed: 100
   jumpHeight: 2
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
@@ -260,8 +260,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 1213949453649727775}
+  atkDamp: 0.5
   animator: {fileID: 865030075}
-  lockedOn: 0
   lockOnTarget: {fileID: 0}
   defending: 0
   blocking: 0
@@ -912,7 +912,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &1339336252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,7 +930,7 @@ MonoBehaviour:
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
   attacking: 0
   damage: 1
-  knockbackForce: 100
+  knockbackForce: 1000
 --- !u!1 &2294702738215078189
 GameObject:
   m_ObjectHideFlags: 0

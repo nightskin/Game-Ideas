@@ -18,7 +18,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
     //For Look/Aim
-    public Vector2 lookSpeed = new Vector2(100f, 100);
+    public float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
 
@@ -56,11 +56,11 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         CanJump();
 
-        if (!meleeSystem.lockOnTarget && !meleeSystem.lockedOn)
+        if (!meleeSystem.lockOnTarget)
         {
             Look();
         }
-        else if (meleeSystem.lockOnTarget && meleeSystem.lockedOn)
+        else if (meleeSystem.lockOnTarget)
         {
             Quaternion targetRot = Quaternion.LookRotation(meleeSystem.lockOnTarget.position - camera.transform.position);
             xRot = targetRot.eulerAngles.x;
@@ -84,7 +84,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
         else
         {
-            if (meleeSystem.lockOnTarget && meleeSystem.lockedOn) LockOnMovement();
+            if (meleeSystem.lockOnTarget) LockOnMovement();
             else NormalMovement();
         }
 
@@ -165,11 +165,11 @@ public class FirstPersonPlayer : MonoBehaviour
         float x = actions.Look.ReadValue<Vector2>().x;
         float y = actions.Look.ReadValue<Vector2>().y;
         //Looking up/down with camera
-        xRot -= y * lookSpeed.y * Time.deltaTime;
+        xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 45);
         camera.localEulerAngles = new Vector3(xRot, 0, 0);
         //Looking left right with player body
-        yRot += x * lookSpeed.x * Time.deltaTime;
+        yRot += x * lookSpeed * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 

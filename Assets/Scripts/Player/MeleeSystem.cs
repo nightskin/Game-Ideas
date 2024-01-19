@@ -8,11 +8,14 @@ public class MeleeSystem : MonoBehaviour
     [SerializeField] Transform armPivot;
     [SerializeField] Transform weapon;
 
-    private FirstPersonPlayer player;
+    [SerializeField][Range(0, 1)] float atkDamp = 0.5f;
+    
+    FirstPersonPlayer player;
     public Animator animator;
     float atkAngle = 0;
+    float defaultLookSpeed;
 
-    public bool lockedOn = false;
+    
     public Transform lockOnTarget = null;
 
     public bool defending = false;
@@ -22,7 +25,7 @@ public class MeleeSystem : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
-
+        defaultLookSpeed = player.lookSpeed;
 
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
@@ -37,7 +40,7 @@ public class MeleeSystem : MonoBehaviour
         if(animator.GetBool("slash"))
         {
             Vector2 axis = player.actions.Look.ReadValue<Vector2>();
-            if(axis.magnitude > 0) atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
+            if(axis.magnitude > 0.5f) atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
         }
         if (defending) 
         {
@@ -65,11 +68,13 @@ public class MeleeSystem : MonoBehaviour
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         animator.SetBool("slash", true);
+        player.lookSpeed *= atkDamp;
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         animator.SetBool("slash", false);
+        player.lookSpeed = defaultLookSpeed;
     }
 
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -84,24 +89,18 @@ public class MeleeSystem : MonoBehaviour
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        RaycastHit[] hits = Physics.RaycastAll(player.camera.position, player.camera.forward);
-        if (hits.Length > 0)
+        if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit))
         {
-            for(int i = 0; i < hits.Length; i++) 
+            if(hit.transform.gameObject.layer == 6)
             {
-                if (hits[i].transform.gameObject.layer == 9)
-                {
-                    lockOnTarget = hits[i].transform;
-                }
+                lockOnTarget = hit.transform;
             }
         }
-        lockedOn = true;
     }
 
     private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         lockOnTarget = null;
-        lockedOn = false;
     }
 
 
@@ -111,12 +110,14 @@ public class MeleeSystem : MonoBehaviour
     {
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        player.lookSpeed *= atkDamp;
     }
     
     public void EndAttack()
     {
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
+        player.lookSpeed = defaultLookSpeed;
     }
 
 }

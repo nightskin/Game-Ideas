@@ -15,7 +15,7 @@ public class MenuOptions : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("Level2");
+        SceneManager.LoadScene("Level");
     }
 
     public void OpenSettings()

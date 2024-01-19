@@ -385,11 +385,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6b0b517536cc44da2fb17985b1c12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfFloors: 1
-  tilesX: 20
-  tilesZ: 20
+  tilesX: 30
+  tilesZ: 30
   tileSize: 10
-  seed: 0
+  maxRampHeight: 5
+  seed: DickButt
 --- !u!114 &562383320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,7 +432,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyTypes:
-  - {fileID: 7668676657383438932, guid: a214e39d498e7364483f25d41099d88a, type: 3}
+  enemyTypes: []
   spawnChance: 10
   surface: {fileID: 562383320}
