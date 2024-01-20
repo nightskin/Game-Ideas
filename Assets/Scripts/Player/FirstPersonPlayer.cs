@@ -50,7 +50,11 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         actions.Jump.performed += Jump_performed;
+        actions.Dash.performed += Dash_performed;
+        velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
     }
+
+
 
     void Update()
     {
@@ -101,6 +105,11 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
         }
+    }
+
+    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        dashing = true;
     }
 
     void Dash()

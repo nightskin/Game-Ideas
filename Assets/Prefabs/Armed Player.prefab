@@ -260,7 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 1213949453649727775}
-  atkDamp: 0.5
+  atkDamp: 0.1
   animator: {fileID: 865030075}
   lockOnTarget: {fileID: 0}
   defending: 0

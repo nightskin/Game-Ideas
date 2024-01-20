@@ -3381,7 +3381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fa7cb5f453d7c84a8c5c9a953ab059b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 3
   health: 0
   rig: {fileID: 3276120970465984634}
   animator: {fileID: 442464551214222584}

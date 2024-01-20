@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MeleeSystem : MonoBehaviour
 {
@@ -12,14 +9,18 @@ public class MeleeSystem : MonoBehaviour
     
     FirstPersonPlayer player;
     public Animator animator;
-    float atkAngle = 0;
-    float defaultLookSpeed;
 
-    
+
+    float atkAngle = 0;
+
+    [SerializeField] float blockSpeed = 10;
+    bool defending = false;
+    float blockAngle = 0;
+    Vector3 TargetArmPivotAngle = Vector3.zero;
+
+    float defaultLookSpeed;
     public Transform lockOnTarget = null;
 
-    public bool defending = false;
-    public bool blocking = false;
 
     void Start()
     {
@@ -42,16 +43,35 @@ public class MeleeSystem : MonoBehaviour
             Vector2 axis = player.actions.Look.ReadValue<Vector2>();
             if(axis.magnitude > 0.5f) atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
         }
-        if (defending) 
+        if (defending && !animator.GetBool("slash")) 
         {
-            if (player.moveDirection != Vector3.zero)
-            {
-                player.dashing = true;
+            Vector2 axis = player.actions.Look.ReadValue<Vector2>();
+            if (axis.magnitude > 0.5f) 
+            { 
+                blockAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
+                blockAngle = Mathf.Round(blockAngle / 45) * 45;
+                if(blockAngle == -180)
+                {
+                    TargetArmPivotAngle = new Vector3(10, 0, 90);
+                }
+                else if(blockAngle == 90)
+                {
+                    TargetArmPivotAngle = new Vector3(0, 10, 0);
+                }
+                else if(blockAngle == -90)
+                {
+                    TargetArmPivotAngle = new Vector3(0, -90, 0);
+                }
+                else if(blockAngle == 135)
+                {
+                    TargetArmPivotAngle = new Vector3(0, 0, 45);
+                }
+                else if(blockAngle == -135)
+                {
+                    TargetArmPivotAngle = new Vector3(0, 0, 135);
+                }
             }
-            else
-            {
-                blocking = true;
-            }
+            armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(TargetArmPivotAngle), blockSpeed * Time.deltaTime);
         }
     }
 
@@ -73,7 +93,6 @@ public class MeleeSystem : MonoBehaviour
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        animator.SetBool("slash", false);
         player.lookSpeed = defaultLookSpeed;
     }
 
@@ -108,6 +127,8 @@ public class MeleeSystem : MonoBehaviour
     ///Animation Events
     public void StartAttack()
     {
+        TargetArmPivotAngle = Vector3.zero;
+        armPivot.localRotation = Quaternion.Euler(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         player.lookSpeed *= atkDamp;
@@ -115,6 +136,7 @@ public class MeleeSystem : MonoBehaviour
     
     public void EndAttack()
     {
+        animator.SetBool("slash", false);
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
         player.lookSpeed = defaultLookSpeed;
