@@ -244,7 +244,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   dashing: 0
-  dashSpeed: 30
+  dashSpeed: 50
   dashAmount: 0.1
 --- !u!114 &865030074
 MonoBehaviour:
@@ -260,11 +260,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 1213949453649727775}
-  atkDamp: 0.1
+  actionDamp: 0.05
   animator: {fileID: 865030075}
+  blockSpeed: 10
   lockOnTarget: {fileID: 0}
-  defending: 0
-  blocking: 0
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -929,8 +928,7 @@ MonoBehaviour:
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
   attacking: 0
-  damage: 1
-  knockbackForce: 1000
+  knockbackForce: 10000
 --- !u!1 &2294702738215078189
 GameObject:
   m_ObjectHideFlags: 0

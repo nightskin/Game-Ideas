@@ -161,10 +161,6 @@ PrefabInstance:
       propertyPath: hud
       value: 
       objectReference: {fileID: 401170322}
-    - target: {fileID: 42695576058503064, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: dashSpeed
-      value: 50
-      objectReference: {fileID: 0}
     - target: {fileID: 42695576058503065, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -213,36 +209,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 42695576157200118, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 735725388371942554, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
+    - target: {fileID: 4192026593116200048, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+      propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

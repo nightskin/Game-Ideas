@@ -279,8 +279,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""24372daf-6c89-4630-8220-06761cbc9c67"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""id"": ""abd9bf7f-2e32-4aaf-acba-17653821c60b"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -290,8 +290,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""abd9bf7f-2e32-4aaf-acba-17653821c60b"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""id"": ""64175d13-42fe-4e97-b7f5-ff2e9b0d2521"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

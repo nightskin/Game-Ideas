@@ -30,9 +30,25 @@ public class NavigationBaker : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Square square = new Square(level.map[x, z].position, level.tileSize);
+                    Point[] corners =
+                    {
+                        level.map[x,z],
+                        level.map[x,z+1],
+                        level.map[x+1,z],
+                        level.map[x+1,z+1],
+                    };
+
+                    Vector3[] midPoints =
+                    {
+                        level.map[x,z].position + new Vector3(0, 0, level.tileSize/2),
+                        level.map[x,z].position + new Vector3(level.tileSize, 0, level.tileSize/2),
+                        level.map[x,z].position + new Vector3(level.tileSize/2, 0, level.tileSize),
+                        level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
+                    };
+
+                    Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
-                    if (state == "1111")
+                    if (state == "1111" && x > 0 && z > 0)
                     {
                         int outcome = level.random.Next(0, 101);
                         if (outcome < spawnChance)

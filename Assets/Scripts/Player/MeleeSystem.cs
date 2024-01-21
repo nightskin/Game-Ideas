@@ -5,13 +5,14 @@ public class MeleeSystem : MonoBehaviour
     [SerializeField] Transform armPivot;
     [SerializeField] Transform weapon;
 
-    [SerializeField][Range(0, 1)] float atkDamp = 0.5f;
+    [SerializeField][Range(0, 1)] float actionDamp = 0.5f;
     
     FirstPersonPlayer player;
     public Animator animator;
 
 
     float atkAngle = 0;
+    public Vector3 atkVector;
 
     [SerializeField] float blockSpeed = 10;
     bool defending = false;
@@ -41,9 +42,14 @@ public class MeleeSystem : MonoBehaviour
         if(animator.GetBool("slash"))
         {
             Vector2 axis = player.actions.Look.ReadValue<Vector2>();
-            if(axis.magnitude > 0.5f) atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
+            if (axis.magnitude > 0.5f)
+            {
+                atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
+                atkVector = axis;
+            }
+
         }
-        if (defending && !animator.GetBool("slash")) 
+        else if (defending && !animator.GetBool("slash")) 
         {
             Vector2 axis = player.actions.Look.ReadValue<Vector2>();
             if (axis.magnitude > 0.5f) 
@@ -88,7 +94,7 @@ public class MeleeSystem : MonoBehaviour
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         animator.SetBool("slash", true);
-        player.lookSpeed *= atkDamp;
+        player.lookSpeed *= actionDamp;
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -99,11 +105,13 @@ public class MeleeSystem : MonoBehaviour
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         defending = true;
+        player.lookSpeed *= actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         defending = false;
+        player.lookSpeed = defaultLookSpeed;
     }
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -131,7 +139,7 @@ public class MeleeSystem : MonoBehaviour
         armPivot.localRotation = Quaternion.Euler(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed *= atkDamp;
+        player.lookSpeed *= actionDamp;
     }
     
     public void EndAttack()

@@ -9,7 +9,6 @@ public class PlayerWeapon: MonoBehaviour
     public GameObject impactEffectSolid;
     
     public bool attacking;
-    public int damage = 1;
     public float knockbackForce = 10;
 
     private void OnTriggerEnter(Collider other)
@@ -20,7 +19,8 @@ public class PlayerWeapon: MonoBehaviour
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 if (other.transform.root.GetComponent<EnemyHealth>()) other.transform.root.GetComponent<EnemyHealth>().TakeDamage();
-                if (other.attachedRigidbody) other.attachedRigidbody.AddForce(-transform.right * knockbackForce);
+                Vector3 atkDirection = meleeSystem.transform.right * meleeSystem.atkVector.x + Vector3.up * meleeSystem.atkVector.y;
+                if (other.attachedRigidbody) other.attachedRigidbody.AddForce(atkDirection * knockbackForce);
                 attacking = false;
             }
             else if (other.transform.tag == "EnemyWeapon")

@@ -9,28 +9,32 @@ public class EnemyHealth : MonoBehaviour
 
     [SerializeField] Transform rig;
     [SerializeField] Animator animator;
+    [SerializeField] EnemyAI enemyAI;
 
-
-
-    void Start()
+    private void Start()
     {
         if(!animator) animator = GetComponent<Animator>();
+        if(!enemyAI)  enemyAI = GetComponent<EnemyAI>();
         health = maxHealth;
         SetRagdoll(false);
     }
-
-    public void TakeDamage()
+    
+    public void TakeDamage(int amount = 1)
     {
-        health--;
-        if(health <= 0) SetRagdoll(true);
+        health -= amount;
+        if (health <= 0) 
+        { 
+            enemyAI.SwitchState(enemyAI.deadState);
+            SetRagdoll(true); 
+        }
     }
 
-    public void SetRagdoll(bool active)
+    public void SetRagdoll(bool on)
     {
         Rigidbody[] rigidbodies = rig.GetComponentsInChildren<Rigidbody>();
         Collider[] colliders = rig.GetComponentsInChildren<Collider>();
 
-        if (active)
+        if (on)
         {
             animator.enabled = false;
             foreach (Rigidbody rb in rigidbodies)
@@ -58,4 +62,9 @@ public class EnemyHealth : MonoBehaviour
 
     }
     
+    public bool GetRagDollState()
+    {
+        return !animator.enabled;
+    }
+
 }

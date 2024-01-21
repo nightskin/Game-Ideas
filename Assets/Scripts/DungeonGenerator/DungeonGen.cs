@@ -17,7 +17,6 @@ public class Square
 
     public Square(Vector3 pos, float size ,Point[] corners, Vector3[] midPoints)
     {
-        center = pos;
         bottomLeft = corners[0].position;
         topLeft = corners[1].position;
         bottomRight = corners[2].position;
@@ -27,22 +26,9 @@ public class Square
         centerRight = midPoints[1];
         centerTop = midPoints[2];
         centerBottom = midPoints[3];
-    }
-
-    public Square(Vector3 pos, float size)
-    {
         center = pos;
-
-        bottomLeft = new Vector3(pos.x - size / 2, pos.y, pos.z - size / 2);
-        bottomRight = new Vector3(bottomLeft.x + size, bottomLeft.y, bottomLeft.z);
-        topLeft = new Vector3(bottomLeft.x, bottomLeft.y, bottomLeft.z + size);
-        topRight = new Vector3(topLeft.x + size, topLeft.y, topLeft.z);
-
-        centerLeft = new Vector3(pos.x - size / 2, pos.y, pos.z);
-        centerBottom = new Vector3(pos.x, pos.y, pos.z - size/2);
-        centerTop = new Vector3(pos.x, pos.y, pos.z + size/2);
-        centerRight = new Vector3(pos.x + size / 2, pos.y, pos.z);
     }
+
     
     public Vector3 PlusUp(Vector3 pos, float magnitude)
     {

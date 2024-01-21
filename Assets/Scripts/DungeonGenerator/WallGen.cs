@@ -33,7 +33,23 @@ public class WallGen : MonoBehaviour
                 {
                     if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                     {
-                        Square square = new Square(level.map[x, z].position, level.tileSize);
+                        Point[] corners =
+                        {
+                            level.map[x,z],
+                            level.map[x,z+1],
+                            level.map[x+1,z],
+                            level.map[x+1,z+1],
+                        };
+
+                        Vector3[] midPoints =
+                        {
+                            level.map[x,z].position + new Vector3(0, 0, level.tileSize/2),
+                            level.map[x,z].position + new Vector3(level.tileSize, 0, level.tileSize/2),
+                            level.map[x,z].position + new Vector3(level.tileSize/2, 0, level.tileSize),
+                            level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
+                        };
+
+                        Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
                         string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                         if(state == "0001") Gizmos.DrawSphere(square.center, 1);
                     }
@@ -113,7 +129,7 @@ public class WallGen : MonoBehaviour
                     else if (state == "0001")
                     {
                         CreateQuad(square.centerRight, square.PlusUp(square.centerRight, level.tileSize), square.centerTop, square.PlusUp(square.centerTop, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topLeft, level.tileSize), square.topLeft, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
+                        if (z == level.tilesZ - 2) CreateQuad(square.PlusUp(square.topRight, level.tileSize), square.topRight, square.PlusUp(square.centerTop, level.tileSize), square.centerTop);
                         if (x == level.tilesX - 2) CreateQuad(square.PlusUp(square.centerRight, level.tileSize), square.centerRight, square.PlusUp(square.topRight, level.tileSize), square.topRight);
                     }
 
