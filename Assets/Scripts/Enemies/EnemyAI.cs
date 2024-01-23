@@ -12,6 +12,8 @@ public class EnemyAI : MonoBehaviour
     public EnemyAttackState fightState = new EnemyAttackState();
     public EnemyAIDeadState deadState = new EnemyAIDeadState();
 
+    public Transform lockOn;
+    public EnemyHealth health;
     public NavMeshAgent agent;
     public Animator animator;
     public Transform head;
@@ -20,6 +22,7 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
+        if(!health) health = GetComponent<EnemyHealth>();
         if(!agent) agent = GetComponent<NavMeshAgent>();
         if(!animator) animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;

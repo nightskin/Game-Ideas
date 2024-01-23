@@ -7,6 +7,7 @@ TagManager:
   - PlayerWeapon
   - EnemyWeapon
   - Enemy
+  - Lockable
   layers:
   - Default
   - TransparentFX

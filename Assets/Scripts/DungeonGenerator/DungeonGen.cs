@@ -15,35 +15,35 @@ public class Square
     public Vector3 centerTop;
     public Vector3 centerBottom;
 
-    public Square(Vector3 pos, float size ,Point[] corners, Vector3[] midPoints)
+    public Square(Vector3 pos, float size ,Vector3[] corners, Vector3[] midPoints)
     {
-        bottomLeft = corners[0].position;
-        topLeft = corners[1].position;
-        bottomRight = corners[2].position;
-        topRight = corners[3].position;
+        bottomLeft = corners[0];
+        topLeft = corners[1];
+        bottomRight = corners[2];
+        topRight = corners[3];
 
         centerLeft = midPoints[0];
         centerRight = midPoints[1];
         centerTop = midPoints[2];
         centerBottom = midPoints[3];
-        center = pos;
+        center = centerLeft + new Vector3(size / 2, 0, 0);
     }
 
     
-    public Vector3 PlusUp(Vector3 pos, float magnitude)
+    public static Vector3 Up(Vector3 pos, float magnitude)
     {
         return pos + (Vector3.up * magnitude);
     }
 
 }
 
-public class Point
+public class DungoenPoint
 {
     public Vector3 position;
     public int on;
-    public Point()
+    public DungoenPoint()
     {
-        position = new Vector3();
+        position = Vector3.zero;
         on = 0;
     }
 
@@ -51,74 +51,68 @@ public class Point
 
 public class DungeonGen : MonoBehaviour
 {
-    public Point[,] map = null;
+    public NavigationBaker navigationBaker;
+    public DungoenPoint[,] map = null;
+
     public int tilesX = 20;
     public int tilesZ = 20;
 
     public float tileSize = 10;
     public float maxRampHeight = 5;
     public string seed = "";
-    public System.Random random;
     Vector3Int currentPos = Vector3Int.zero;
 
 
     void Awake()
     {
-        if (seed == "") 
-        {
-            string date = DateTime.Now.ToString();
-            seed = date;
-        }
-        
-        random = new System.Random(seed.GetHashCode());
-
+        if(!navigationBaker) navigationBaker = GetComponent<NavigationBaker>();
+        if (seed == "") seed = DateTime.Now.ToString();
+        UnityEngine.Random.InitState(seed.GetHashCode());
         GenerateMap();
-
     }
 
     void GenerateMap()
     {
-        map = new Point[tilesX, tilesZ];
+        map = new DungoenPoint[tilesX, tilesZ];
+
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                map[x, z] = new Point();
+                map[x, z] = new DungoenPoint();
                 map[x, z].position = new Vector3(x * tileSize, 0, z * tileSize);
             }
         }
-
 
         //Random Walker
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                int dir;
-                dir = random.Next(1, 5);
+                int dirXZ = UnityEngine.Random.Range(0, 5);
                 map[currentPos.x, currentPos.z].on = 1;
-                if (dir == 1)
+                if (dirXZ == 1)
                 {
                     if (currentPos.x < tilesX - 1)
                     {
                         currentPos.x++;
                     }
                 }
-                if (dir == 2)
+                else if (dirXZ == 2)
                 {
                     if (currentPos.x > 0)
                     {
                         currentPos.x--;
                     }
                 }
-                if (dir == 3)
+                else if (dirXZ == 3)
                 {
                     if (currentPos.z < tilesZ - 1)
                     {
                         currentPos.z++;
                     }
                 }
-                if (dir == 4)
+                else if (dirXZ == 4)
                 {
                     if (currentPos.z > 0)
                     {
@@ -126,10 +120,10 @@ public class DungeonGen : MonoBehaviour
                     }
 
                 }
+
+
             }
         }
-
-
     }
 
     public string GetState(int a, int b, int c, int d)

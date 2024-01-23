@@ -260,8 +260,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armPivot: {fileID: 735725388371942554}
   weapon: {fileID: 1213949453649727775}
-  actionDamp: 0.05
+  actionDamp: 0.1
   animator: {fileID: 865030075}
+  atkVector: {x: 0, y: 0, z: 0}
   blockSpeed: 10
   lockOnTarget: {fileID: 0}
 --- !u!114 &1091619360
@@ -857,11 +858,11 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 925000b29e4eb1347be6750c5e9e5b1e, type: 2}
-  - {fileID: 2100000, guid: 17fb289555c4a974daa5ede007717a74, type: 2}
-  - {fileID: 2100000, guid: 925000b29e4eb1347be6750c5e9e5b1e, type: 2}
-  - {fileID: 2100000, guid: 5ba87d3da7c5d8541805bf99dd84dcc0, type: 2}
-  - {fileID: 2100000, guid: 3f9be5a74a3acc749be4e0bddbde4b1f, type: 2}
+  - {fileID: -8367705006879899164, guid: 6416fd18a13ed96469f0b28449337ee6, type: 3}
+  - {fileID: -6477940958727351939, guid: 6416fd18a13ed96469f0b28449337ee6, type: 3}
+  - {fileID: -6477940958727351939, guid: 6416fd18a13ed96469f0b28449337ee6, type: 3}
+  - {fileID: -3155047780354543793, guid: 6416fd18a13ed96469f0b28449337ee6, type: 3}
+  - {fileID: -3155047780354543793, guid: 6416fd18a13ed96469f0b28449337ee6, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -911,7 +912,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!114 &1339336252
 MonoBehaviour:
   m_ObjectHideFlags: 0

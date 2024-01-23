@@ -118,7 +118,8 @@ public class MeleeSystem : MonoBehaviour
     {
         if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit))
         {
-            if(hit.transform.gameObject.layer == 6)
+            Debug.Log(hit.transform.gameObject.name);
+            if(hit.transform.tag == "Lockable")
             {
                 lockOnTarget = hit.transform;
             }

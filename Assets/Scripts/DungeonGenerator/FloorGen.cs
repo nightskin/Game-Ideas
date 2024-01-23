@@ -12,6 +12,66 @@ public class FloorGen : MonoBehaviour
     List<int> tris = new List<int>();
     int buffer = 0;
 
+    void Start()
+    {
+        mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+
+        CreateFloors();
+        UpdateMesh();
+
+        level.navigationBaker.surface.BuildNavMesh();
+        level.navigationBaker.PlaceEnemies();
+    }
+
+    void OnDrawGizmos()
+    {
+        if(Application.isPlaying)
+        {
+            for (int x = 0; x < level.tilesX; x++)
+            {
+                for (int z = 0; z < level.tilesZ; z++)
+                {
+                    if (x < level.tilesX - 1 && z < level.tilesZ - 1)
+                    {
+                        Vector3[] corners =
+                        {
+                            level.map[x,z].position,
+                            level.map[x, z + 1].position,
+                            level.map[x + 1, z].position,
+                            level.map[x + 1, z + 1].position,
+                        };
+                        Vector3[] midPoints =
+                        {
+                            level.map[x,z].position + new Vector3(0, 0, level.tileSize / 2),
+                            level.map[x,z].position + new Vector3(level.tileSize, 0, level.tileSize / 2),
+                            level.map[x,z].position + new Vector3(level.tileSize / 2, 0, level.tileSize),
+                            level.map[x,z].position + new Vector3(level.tileSize / 2, 0, 0),
+                        };
+
+                        Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
+                        string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                        
+                        if(state == "1010")
+                        {
+                            Gizmos.DrawSphere(square.topLeft, 1);
+                            Gizmos.DrawSphere(square.topRight, 1);
+                            Gizmos.DrawSphere(square.bottomLeft, 1);
+                            Gizmos.DrawSphere(square.bottomRight, 1);
+
+                            Gizmos.DrawSphere(square.centerRight, 1);
+                            Gizmos.DrawSphere(square.centerLeft, 1);
+                            Gizmos.DrawSphere(square.centerTop, 1);
+                            Gizmos.DrawSphere(square.centerBottom, 1);
+
+                            Gizmos.DrawSphere(square.center, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void CreateQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight)
     {
         verts.Add(bottomLeft);
@@ -63,18 +123,7 @@ public class FloorGen : MonoBehaviour
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
-   
-    void Start()
-    {
-        mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        CreateFloors();
-        UpdateMesh();
-
-
-    }
-
+    
     void CreateFloors()
     {
         for (int x = 0; x < level.tilesX; x++)
@@ -83,14 +132,13 @@ public class FloorGen : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Point[] corners =   
+                    Vector3[] corners =    
                     {
-                        level.map[x,z],
-                        level.map[x,z+1],
-                        level.map[x+1,z],
-                        level.map[x+1,z+1],
+                        level.map[x,z].position,
+                        level.map[x,z+1].position,
+                        level.map[x+1,z].position,
+                        level.map[x+1,z+1].position,
                     };
-
                     Vector3[] midPoints =
                     {
                         level.map[x,z].position + new Vector3(0, 0, level.tileSize/2),
@@ -99,8 +147,11 @@ public class FloorGen : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
 
+
+
                     Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
+                    
                     if (state == "1000")
                     {
                         CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);

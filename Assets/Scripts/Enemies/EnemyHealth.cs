@@ -23,9 +23,8 @@ public class EnemyHealth : MonoBehaviour
     {
         health -= amount;
         if (health <= 0) 
-        { 
+        {
             enemyAI.SwitchState(enemyAI.deadState);
-            SetRagdoll(true); 
         }
     }
 

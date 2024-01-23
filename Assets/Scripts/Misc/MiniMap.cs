@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class MiniMap : MonoBehaviour
 {
-    [SerializeField] DungeonGen level;
     [SerializeField] Transform player;
+    [SerializeField] float distanceFromplayer = 10;
     void Start()
     {
-        transform.position = new Vector3(level.tilesX/2 * level.tileSize, 10 , level.tilesZ/2 * level.tileSize);
+        transform.position = player.position + (Vector3.up * distanceFromplayer);
     }
 
     void LateUpdate()
     {
-        Vector3 newpos = player.position;
-        newpos.y = transform.position.y;
-        transform.position = newpos;
+        transform.position = player.position + (Vector3.up * distanceFromplayer);
     }
 
 }

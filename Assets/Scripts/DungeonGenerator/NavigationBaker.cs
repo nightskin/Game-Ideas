@@ -8,21 +8,7 @@ public class NavigationBaker : MonoBehaviour
     [SerializeField] [Range(0, 100)] int spawnChance = 10;
 
     public NavMeshSurface surface;
-    bool enemiesPlaced = false;
-    bool navMeshMade = false;
-    
-
-    void Update()
-    {
-        if(!navMeshMade)
-        {
-            surface.BuildNavMesh();
-            navMeshMade = true;
-            if (!enemiesPlaced && enemyTypes.Length > 0) PlaceEnemies();
-        }
-    }
-
-    void PlaceEnemies()
+    public void PlaceEnemies()
     {
         for (int x = 0; x < level.tilesX; x++)
         {
@@ -30,15 +16,15 @@ public class NavigationBaker : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Point[] corners =
+                    Vector3[] corners =
                     {
-                        level.map[x,z],
-                        level.map[x,z+1],
-                        level.map[x+1,z],
-                        level.map[x+1,z+1],
+                        level.map[x,z].position,
+                        level.map[x,z+1].position,
+                        level.map[x + 1, z].position,
+                        level.map[x + 1, z + 1].position,
                     };
 
-                    Vector3[] midPoints =
+                    Vector3[] midPoints = 
                     {
                         level.map[x,z].position + new Vector3(0, 0, level.tileSize/2),
                         level.map[x,z].position + new Vector3(level.tileSize, 0, level.tileSize/2),
@@ -48,12 +34,12 @@ public class NavigationBaker : MonoBehaviour
 
                     Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
-                    if (state == "1111" && x > 0 && z > 0)
+                    if (state == "1111")
                     {
-                        int outcome = level.random.Next(0, 101);
-                        if (outcome < spawnChance)
+                        int outcome = Random.Range(0, 100 + 1);
+                        if (outcome < spawnChance && enemyTypes.Length > 0)
                         {
-                            int enemyIndex = level.random.Next(0, enemyTypes.Length);
+                            int enemyIndex = Random.Range(0, enemyTypes.Length);
                             Instantiate(enemyTypes[enemyIndex], square.center, Quaternion.identity);
                         }
                     }
@@ -61,6 +47,5 @@ public class NavigationBaker : MonoBehaviour
             }
         }
 
-        enemiesPlaced = true;
     }
 }
