@@ -15,7 +15,7 @@ public class EnemyPatrolState : EnemyAIState
 
     public override void Update(EnemyAI ai)
     {
-        ai.animator.SetFloat("speed", ai.agent.velocity.magnitude);
+        //ai.animator.SetFloat("speed", ai.agent.velocity.magnitude);
         if (ai.agent.remainingDistance <= ai.agent.stoppingDistance) 
         {
             Vector3 randomPoint = ai.transform.position + Random.insideUnitSphere * patrolRange;
@@ -26,13 +26,13 @@ public class EnemyPatrolState : EnemyAIState
             }
         }
 
-        if(Physics.Raycast(ai.head.position,ai.head.forward, out RaycastHit rayHit))
-        {
-            if(rayHit.transform.tag == "Player")
-            {
-                ai.SwitchState(ai.chaseState);
-            }
-        }
+        //if(Physics.Raycast(ai.head.position,ai.head.forward, out RaycastHit rayHit))
+        //{
+        //    if(rayHit.transform.tag == "Player")
+        //    {
+        //        ai.SwitchState(ai.chaseState);
+        //    }
+        //}
 
     }
 

@@ -12,11 +12,11 @@ public class EnemyAI : MonoBehaviour
     public EnemyAttackState fightState = new EnemyAttackState();
     public EnemyAIDeadState deadState = new EnemyAIDeadState();
 
-    public Transform lockOn;
+    //public Transform lockOn;
     public EnemyHealth health;
     public NavMeshAgent agent;
     public Animator animator;
-    public Transform head;
+    //public Transform head;
     public Transform player;
     public float attackDistance = 3;
 

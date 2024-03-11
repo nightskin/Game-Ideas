@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1296816838}
   - component: {fileID: 1296816837}
   - component: {fileID: 1296816840}
+  - component: {fileID: 8364732629915170990}
   m_Layer: 7
   m_Name: Floors
   m_TagString: Untagged
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ad6f14dc693094b47a1633b36a3ad8ee, type: 2}
+  - {fileID: 2100000, guid: e4ea634482dca154bb0a93b4e001d3a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,6 +113,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
+--- !u!114 &8364732629915170990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296816834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1349160437
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,6 +138,7 @@ GameObject:
   - component: {fileID: 1349160441}
   - component: {fileID: 1349160440}
   - component: {fileID: 1349160443}
+  - component: {fileID: 2733229892280860764}
   m_Layer: 0
   m_Name: Ceiling
   m_TagString: Untagged
@@ -175,7 +189,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 112fbc6da6c2e37469d1eb9bff82ed39, type: 2}
+  - {fileID: 2100000, guid: e4ea634482dca154bb0a93b4e001d3a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -224,6 +238,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
+--- !u!114 &2733229892280860764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349160437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &577160491768185439
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +263,7 @@ GameObject:
   - component: {fileID: 9176900004066731515}
   - component: {fileID: 9176900004066731514}
   - component: {fileID: 9176900004066731513}
+  - component: {fileID: 4905617166039074344}
   m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
@@ -287,7 +314,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 112fbc6da6c2e37469d1eb9bff82ed39, type: 2}
+  - {fileID: 2100000, guid: e4ea634482dca154bb0a93b4e001d3a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -336,6 +363,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
+--- !u!114 &4905617166039074344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 577160491768185439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8310be193c6ef6047a416f1108eece2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9176900004492960204
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyTypes:
-  - {fileID: 7668676657383438932, guid: a214e39d498e7364483f25d41099d88a, type: 3}
+  enemyTypes: []
   spawnChance: 5
   surface: {fileID: 562383320}
