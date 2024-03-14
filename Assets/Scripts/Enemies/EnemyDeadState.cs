@@ -8,8 +8,7 @@ public class EnemyAIDeadState : EnemyAIState
     {
         ai.agent.isStopped = true;
         ai.health.SetRagdoll(true);
-        //ai.lockOn.GetComponent<Rigidbody>().isKinematic = true;
-        //ai.lockOn.GetComponent<Collider>().enabled = false;
+        ai.walker.enabled = false;
     }
 
     public override void Update(EnemyAI ai)

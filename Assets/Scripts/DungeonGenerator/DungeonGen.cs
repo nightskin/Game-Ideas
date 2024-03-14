@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Square
+public class Tile
 {
     public Vector3 center;
 
@@ -15,7 +15,7 @@ public class Square
     public Vector3 centerTop;
     public Vector3 centerBottom;
 
-    public Square(Vector3 pos, float size ,Vector3[] corners, Vector3[] midPoints)
+    public Tile(Vector3 pos, float size ,Vector3[] corners, Vector3[] midPoints)
     {
         bottomLeft = corners[0];
         topLeft = corners[1];
@@ -29,7 +29,21 @@ public class Square
         center = centerLeft + new Vector3(size / 2, 0, 0);
     }
 
-    
+    public void Shift(Vector3 direction)
+    {
+        bottomLeft += direction;
+        topLeft += direction;
+        bottomRight += direction;
+        topRight += direction;
+
+        centerLeft += direction;
+        centerRight += direction;
+        centerTop += direction;
+        centerBottom += direction;
+        center += direction;
+
+    }
+
     public static Vector3 Up(Vector3 pos, float magnitude)
     {
         return pos + (Vector3.up * magnitude);
@@ -37,14 +51,18 @@ public class Square
 
 }
 
-public class DungoenPoint
+public class DungeonPoint
 {
     public Vector3 position;
+    public Vector3 direction;
     public int on;
-    public DungoenPoint()
+    public float height;
+    public DungeonPoint()
     {
         position = Vector3.zero;
+        direction = Vector3.zero;
         on = 0;
+        height = 0;
     }
 
 }
@@ -52,13 +70,12 @@ public class DungoenPoint
 public class DungeonGen : MonoBehaviour
 {
     public NavigationBaker navigationBaker;
-    public DungoenPoint[,] map = null;
+    public DungeonPoint[,] map = null;
 
     public int tilesX = 20;
     public int tilesZ = 20;
 
     public float tileSize = 10;
-    public float maxRampHeight = 5;
     public string seed = "";
     Vector3Int currentPos = Vector3Int.zero;
 
@@ -73,13 +90,15 @@ public class DungeonGen : MonoBehaviour
 
     void GenerateMap()
     {
-        map = new DungoenPoint[tilesX, tilesZ];
+        map = new DungeonPoint[tilesX, tilesZ];
 
         for (int x = 0; x < tilesX; x++)
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                map[x, z] = new DungoenPoint();
+                float rampHeight = UnityEngine.Random.Range(0.0f, 1.0f);
+                map[x, z] = new DungeonPoint();
+                map[x, z].height = rampHeight;
                 map[x, z].position = new Vector3(x * tileSize, 0, z * tileSize);
             }
         }
@@ -89,39 +108,41 @@ public class DungeonGen : MonoBehaviour
         {
             for (int z = 0; z < tilesZ; z++)
             {
-                int dirXZ = UnityEngine.Random.Range(0, 5);
+                int direction = UnityEngine.Random.Range(1, 5);
                 map[currentPos.x, currentPos.z].on = 1;
-                if (dirXZ == 1)
+                if (direction == 1)
                 {
                     if (currentPos.x < tilesX - 1)
                     {
                         currentPos.x++;
+                        map[currentPos.x, currentPos.z].direction = Vector3.right;
                     }
                 }
-                else if (dirXZ == 2)
+                else if (direction == 2)
                 {
                     if (currentPos.x > 0)
                     {
                         currentPos.x--;
+                        map[currentPos.x, currentPos.z].direction = Vector3.left;
                     }
                 }
-                else if (dirXZ == 3)
+                else if (direction == 3)
                 {
                     if (currentPos.z < tilesZ - 1)
                     {
                         currentPos.z++;
+                        map[currentPos.x, currentPos.z].direction = Vector3.forward;
                     }
                 }
-                else if (dirXZ == 4)
+                else if (direction == 4)
                 {
                     if (currentPos.z > 0)
                     {
                         currentPos.z--;
+                        map[currentPos.x, currentPos.z].direction = Vector3.back;
                     }
 
                 }
-
-
             }
         }
     }

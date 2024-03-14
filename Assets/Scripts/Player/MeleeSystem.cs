@@ -13,6 +13,8 @@ public class MeleeSystem : MonoBehaviour
 
     float atkAngle = 0;
     public Vector3 atkVector;
+    
+
 
     [SerializeField] float blockSpeed = 10;
     bool defending = false;
@@ -56,7 +58,7 @@ public class MeleeSystem : MonoBehaviour
             { 
                 blockAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
                 blockAngle = Mathf.Round(blockAngle / 45) * 45;
-                if(blockAngle == -180)
+                if(blockAngle == -180 || blockAngle == 180 || blockAngle == 135 || blockAngle == -135)
                 {
                     TargetArmPivotAngle = new Vector3(10, 0, 90);
                 }
@@ -67,14 +69,6 @@ public class MeleeSystem : MonoBehaviour
                 else if(blockAngle == -90)
                 {
                     TargetArmPivotAngle = new Vector3(0, -90, 0);
-                }
-                else if(blockAngle == 135)
-                {
-                    TargetArmPivotAngle = new Vector3(0, 0, 45);
-                }
-                else if(blockAngle == -135)
-                {
-                    TargetArmPivotAngle = new Vector3(0, 0, 135);
                 }
             }
             armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(TargetArmPivotAngle), blockSpeed * Time.deltaTime);
@@ -118,7 +112,6 @@ public class MeleeSystem : MonoBehaviour
     {
         if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit))
         {
-            Debug.Log(hit.transform.gameObject.name);
             if(hit.transform.gameObject.layer == 6)
             {
                 lockOnTarget = hit.transform;

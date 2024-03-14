@@ -16,6 +16,7 @@ public class EnemyAI : MonoBehaviour
     public EnemyHealth health;
     public NavMeshAgent agent;
     public Animator animator;
+    public EnemyWalker walker;
     //public Transform head;
     public Transform player;
     public float attackDistance = 3;
@@ -25,6 +26,7 @@ public class EnemyAI : MonoBehaviour
         if(!health) health = GetComponent<EnemyHealth>();
         if(!agent) agent = GetComponent<NavMeshAgent>();
         if(!animator) animator = GetComponent<Animator>();
+        if (!walker) walker = GetComponent<EnemyWalker>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         currentState = patrolState;

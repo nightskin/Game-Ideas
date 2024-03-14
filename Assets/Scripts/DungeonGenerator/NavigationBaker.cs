@@ -32,7 +32,7 @@ public class NavigationBaker : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
 
-                    Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    Tile square = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                     if (state == "1111")
                     {

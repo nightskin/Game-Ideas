@@ -49,23 +49,10 @@ public class FloorGen : MonoBehaviour
                             level.map[x,z].position + new Vector3(level.tileSize / 2, 0, 0),
                         };
 
-                        Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
+                        Tile square = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
                         string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                         
-                        if(state == "1010")
-                        {
-                            Gizmos.DrawSphere(square.topLeft, 1);
-                            Gizmos.DrawSphere(square.topRight, 1);
-                            Gizmos.DrawSphere(square.bottomLeft, 1);
-                            Gizmos.DrawSphere(square.bottomRight, 1);
-
-                            Gizmos.DrawSphere(square.centerRight, 1);
-                            Gizmos.DrawSphere(square.centerLeft, 1);
-                            Gizmos.DrawSphere(square.centerTop, 1);
-                            Gizmos.DrawSphere(square.centerBottom, 1);
-
-                            Gizmos.DrawSphere(square.center, 1);
-                        }
+                        
                     }
                 }
             }
@@ -146,96 +133,95 @@ public class FloorGen : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, level.tileSize),
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
-
-
-
-                    Square square = new Square(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    
+                    Tile tile = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                     
                     if (state == "1000")
                     {
-                        CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
+                        CreateTri(tile.bottomLeft, tile.centerLeft, tile.centerBottom);
                     }
                     if (state == "0100")
                     {
-                        CreateTri(square.topLeft, square.centerTop, square.centerLeft);
+                        CreateTri(tile.topLeft, tile.centerTop, tile.centerLeft);
                     }
                     if (state == "0010")
                     {
-                        CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
+                        CreateTri(tile.bottomRight, tile.centerBottom, tile.centerRight);
                     }
                     if (state == "0001")
                     {
-                        CreateTri(square.topRight, square.centerRight, square.centerTop);
+                        CreateTri(tile.topRight, tile.centerRight, tile.centerTop);
                     }
 
                     if (state == "1100")
                     {
-                        CreateQuad(square.bottomLeft, square.topLeft, square.centerBottom, square.centerTop);
+                        CreateQuad(tile.bottomLeft, tile.topLeft, tile.centerBottom, tile.centerTop);
                     }
                     if (state == "0011")
                     {
-                        CreateQuad(square.centerBottom, square.centerTop, square.bottomRight, square.topRight);
+                        CreateQuad(tile.centerBottom, tile.centerTop, tile.bottomRight, tile.topRight);
                     }
                     if (state == "1001")
                     {
-                        CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
-                        CreateTri(square.topRight, square.centerRight, square.centerTop);
+                        CreateTri(tile.bottomLeft, tile.centerLeft, tile.centerBottom);
+                        CreateTri(tile.topRight, tile.centerRight, tile.centerTop);
                     }
                     if (state == "0110")
                     {
-                        CreateTri(square.topLeft, square.centerTop, square.centerLeft);
-                        CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
+                        CreateTri(tile.topLeft, tile.centerTop, tile.centerLeft);
+                        CreateTri(tile.bottomRight, tile.centerBottom, tile.centerRight);
                     }
                     if (state == "0101")
                     {
-                        CreateQuad(square.centerLeft, square.topLeft, square.centerRight, square.topRight);
+                        CreateQuad(tile.centerLeft, tile.topLeft, tile.centerRight, tile.topRight);
                     }
                     if (state == "1010")
                     {
-                        CreateQuad(square.bottomLeft, square.centerLeft, square.bottomRight, square.centerRight);
+                        CreateQuad(tile.bottomLeft, tile.centerLeft, tile.bottomRight, tile.centerRight);
                     }
 
 
                     if (state == "0111")
                     {
-                        CreateTri(square.topLeft, square.centerTop, square.centerLeft);
-                        CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
-                        CreateTri(square.topRight, square.centerRight, square.centerTop);
+                        CreateTri(tile.topLeft, tile.centerTop, tile.centerLeft);
+                        CreateTri(tile.bottomRight, tile.centerBottom, tile.centerRight);
+                        CreateTri(tile.topRight, tile.centerRight, tile.centerTop);
 
-                        CreateTri(square.centerTop, square.centerRight, square.centerLeft);
-                        CreateTri(square.centerBottom, square.centerLeft, square.centerRight);
+                        CreateTri(tile.centerTop, tile.centerRight, tile.centerLeft);
+                        CreateTri(tile.centerBottom, tile.centerLeft, tile.centerRight);
 
                     }
                     if (state == "1011")
                     {
-                        CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
-                        CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
-                        CreateTri(square.topRight, square.centerRight, square.centerTop);
+                        CreateTri(tile.bottomLeft, tile.centerLeft, tile.centerBottom);
+                        CreateTri(tile.bottomRight, tile.centerBottom, tile.centerRight);
+                        CreateTri(tile.topRight, tile.centerRight, tile.centerTop);
 
-                        CreateTri(square.centerTop, square.centerRight, square.centerLeft);
-                        CreateTri(square.centerBottom, square.centerLeft, square.centerRight);
+                        CreateTri(tile.centerTop, tile.centerRight, tile.centerLeft);
+                        CreateTri(tile.centerBottom, tile.centerLeft, tile.centerRight);
                     }
                     if (state == "1101")
                     {
-                        CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
-                        CreateTri(square.topLeft, square.centerTop, square.centerLeft);
-                        CreateTri(square.topRight, square.centerRight, square.centerTop);
+                        CreateTri(tile.bottomLeft, tile.centerLeft, tile.centerBottom);
+                        CreateTri(tile.topLeft, tile.centerTop, tile.centerLeft);
+                        CreateTri(tile.topRight, tile.centerRight, tile.centerTop);
 
-                        CreateTri(square.centerTop, square.centerRight, square.centerLeft);
-                        CreateTri(square.centerBottom, square.centerLeft, square.centerRight);
+                        CreateTri(tile.centerTop, tile.centerRight, tile.centerLeft);
+                        CreateTri(tile.centerBottom, tile.centerLeft, tile.centerRight);
                     }
                     if (state == "1110")
                     {
-                        CreateTri(square.bottomLeft, square.centerLeft, square.centerBottom);
-                        CreateTri(square.topLeft, square.centerTop, square.centerLeft);
-                        CreateTri(square.bottomRight, square.centerBottom, square.centerRight);
+                        CreateTri(tile.bottomLeft, tile.centerLeft, tile.centerBottom);
+                        CreateTri(tile.topLeft, tile.centerTop, tile.centerLeft);
+                        CreateTri(tile.bottomRight, tile.centerBottom, tile.centerRight);
 
-                        CreateTri(square.centerTop, square.centerRight, square.centerLeft);
-                        CreateTri(square.centerBottom, square.centerLeft, square.centerRight);
+                        CreateTri(tile.centerTop, tile.centerRight, tile.centerLeft);
+                        CreateTri(tile.centerBottom, tile.centerLeft, tile.centerRight);
                     }
 
-                    if (state == "1111") CreateQuad(square.bottomLeft, square.topLeft, square.bottomRight, square.topRight);
+                    if (state == "1111") CreateQuad(tile.bottomLeft, tile.topLeft, tile.bottomRight, tile.topRight);
                 }
             }
         }
