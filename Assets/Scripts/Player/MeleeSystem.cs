@@ -13,7 +13,7 @@ public class MeleeSystem : MonoBehaviour
 
     float atkAngle = 0;
     public Vector3 atkVector;
-    
+    public Vector3 blockVector;
 
 
     [SerializeField] float blockSpeed = 10;
@@ -54,24 +54,8 @@ public class MeleeSystem : MonoBehaviour
         else if (defending && !animator.GetBool("slash")) 
         {
             Vector2 axis = player.actions.Look.ReadValue<Vector2>();
-            if (axis.magnitude > 0.5f) 
-            { 
-                blockAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
-                blockAngle = Mathf.Round(blockAngle / 45) * 45;
-                if(blockAngle == -180 || blockAngle == 180 || blockAngle == 135 || blockAngle == -135)
-                {
-                    TargetArmPivotAngle = new Vector3(10, 0, 90);
-                }
-                else if(blockAngle == 90)
-                {
-                    TargetArmPivotAngle = new Vector3(0, 10, 0);
-                }
-                else if(blockAngle == -90)
-                {
-                    TargetArmPivotAngle = new Vector3(0, -90, 0);
-                }
-            }
-            armPivot.localRotation = Quaternion.Lerp(armPivot.localRotation, Quaternion.Euler(TargetArmPivotAngle), blockSpeed * Time.deltaTime);
+            animator.SetInteger("blockX", Mathf.RoundToInt(axis.x));
+            animator.SetInteger("blockY", Mathf.RoundToInt(axis.y));
         }
     }
 

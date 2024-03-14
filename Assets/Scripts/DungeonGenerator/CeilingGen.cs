@@ -72,7 +72,7 @@ public class CeilingGen : MonoBehaviour
             {
                 if (x < level.tilesX - 1 && z < level.tilesZ - 1)
                 {
-                    Vector3[] corners =
+                    Vector3[] corners = 
                     {
                         level.map[x, z].position,
                         level.map[x, z + 1].position,
@@ -80,7 +80,7 @@ public class CeilingGen : MonoBehaviour
                         level.map[x + 1, z + 1].position,
                     };
 
-                    Vector3[] midPoints =
+                    Vector3[] midPoints = 
                     {
                         level.map[x,z].position + new Vector3(0, 0, level.tileSize/2),
                         level.map[x,z].position + new Vector3(level.tileSize, 0, level.tileSize/2),
