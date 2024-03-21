@@ -13,9 +13,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     // For basic motion
     public Vector3 moveDirection;
-    public float walkSpeed = 15;
-
-
+    public float moveSpeed = 15;
 
     //For Look/Aim
     public float lookSpeed = 100;
@@ -33,14 +31,22 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
     //For Dashing
-    public bool dashing = false;
-    public float dashSpeed = 30;
-    [SerializeField] float dashAmount = 0.1f;
+    bool dashing = false;
+    float dashSpeed = 30;
+    float dashAmount = 0.1f;
     float dashTimer = 0;
+
+
+    //For Combat
+    [SerializeField] bool armed = false;
+
 
     void Awake()
     {
-        meleeSystem = GetComponent<MeleeSystem>();
+
+
+
+
         dashTimer = dashAmount;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
@@ -51,10 +57,16 @@ public class FirstPersonPlayer : MonoBehaviour
 
         actions.Jump.performed += Jump_performed;
         actions.Dash.performed += Dash_performed;
-        velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
     }
 
-
+    void Start()
+    {
+        if(armed)
+        {
+            meleeSystem = GetComponent<MeleeSystem>();
+            camera.GetChild(0).gameObject.SetActive(true);
+        }
+    }
 
     void Update()
     {
@@ -98,7 +110,15 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         actions.Jump.performed -= Jump_performed;
     }
-    
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Pickup")
+        {
+
+        }
+    }
+
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (grounded)
@@ -138,7 +158,7 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = transform.right * x + transform.forward * z;
-        controller.Move(moveDirection * walkSpeed * Time.deltaTime);
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
 
         //Add Gravity
@@ -160,7 +180,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         moveDirection = camera.transform.right * x + camera.transform.forward * z;
-        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * walkSpeed * Time.deltaTime);
+        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * moveSpeed * Time.deltaTime);
 
 
         //Add Gravity
@@ -184,7 +204,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void CanJump()
     {
-        grounded = Physics.Raycast(groundCheck.position, -transform.up, 0.25f, groundMask);
+        grounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f, groundMask);
         
     }
     

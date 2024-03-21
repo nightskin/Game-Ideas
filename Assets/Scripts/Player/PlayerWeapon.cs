@@ -18,12 +18,9 @@ public class PlayerWeapon: MonoBehaviour
             if (other.transform.tag == "Enemy")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if (other.transform.root.GetComponent<EnemyHealth>()) other.transform.root.GetComponent<EnemyHealth>().TakeDamage();
-                Vector3 atkDirection = meleeSystem.transform.right * meleeSystem.atkVector.x + Vector3.up * meleeSystem.atkVector.y;
-                if (other.attachedRigidbody) other.attachedRigidbody.AddForce(atkDirection * knockbackForce);
-                attacking = false;
+
             }
-            else if (other.transform.tag == "EnemyWeapon")
+            else if (other.transform.tag == "Solid")
             {
                 Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 meleeSystem.animator.SetTrigger("recoil");

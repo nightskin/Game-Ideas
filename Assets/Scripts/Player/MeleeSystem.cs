@@ -11,51 +11,32 @@ public class MeleeSystem : MonoBehaviour
     public Animator animator;
 
 
-    float atkAngle = 0;
-    public Vector3 atkVector;
-    public Vector3 blockVector;
-
-
-    [SerializeField] float blockSpeed = 10;
-    bool defending = false;
-    float blockAngle = 0;
-    Vector3 TargetArmPivotAngle = Vector3.zero;
-
+    float atkAngle;
+    Vector2 atkVector;
     float defaultLookSpeed;
     public Transform lockOnTarget = null;
 
 
     void Start()
     {
+        atkAngle = 0;
+        atkVector = Vector2.zero;
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
 
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
-        player.actions.Defend.performed += Defend_performed;
-        player.actions.Defend.canceled += Defend_canceled;
         player.actions.LockOn.performed += LockOn_performed;
         player.actions.LockOn.canceled += LockOn_canceled;
     }
 
     void Update()
     {
-        if(animator.GetBool("slash"))
+        atkVector = player.actions.Look.ReadValue<Vector2>();
+        if (atkVector.magnitude > 0.5f)
         {
-            Vector2 axis = player.actions.Look.ReadValue<Vector2>();
-            if (axis.magnitude > 0.5f)
-            {
-                atkAngle = Mathf.Atan2(axis.x, -axis.y) * 180 / Mathf.PI;
-                atkVector = axis;
-            }
-
-        }
-        else if (defending && !animator.GetBool("slash")) 
-        {
-            Vector2 axis = player.actions.Look.ReadValue<Vector2>();
-            animator.SetInteger("blockX", Mathf.RoundToInt(axis.x));
-            animator.SetInteger("blockY", Mathf.RoundToInt(axis.y));
+            atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
         }
     }
 
@@ -63,33 +44,18 @@ public class MeleeSystem : MonoBehaviour
     {
         player.actions.Slash.performed -= Slash_performed;
         player.actions.Slash.canceled -= Slash_canceled;
-        player.actions.Defend.performed -= Defend_performed;
-        player.actions.Defend.canceled -= Defend_canceled;
         player.actions.LockOn.performed -= LockOn_performed;
         player.actions.LockOn.canceled -= LockOn_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        animator.SetBool("slash", true);
-        player.lookSpeed *= actionDamp;
+        animator.SetTrigger("atk");
     }
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        player.lookSpeed = defaultLookSpeed;
-    }
-
-    private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        defending = true;
-        player.lookSpeed *= actionDamp;
-    }
-
-    private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        defending = false;
-        player.lookSpeed = defaultLookSpeed;
+        
     }
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -113,19 +79,16 @@ public class MeleeSystem : MonoBehaviour
     ///Animation Events
     public void StartAttack()
     {
-        TargetArmPivotAngle = Vector3.zero;
-        armPivot.localRotation = Quaternion.Euler(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed *= actionDamp;
+        //player.lookSpeed *= actionDamp;
     }
     
     public void EndAttack()
     {
-        animator.SetBool("slash", false);
-        armPivot.localEulerAngles = new Vector3(0, 0, 0);
         weapon.GetComponent<PlayerWeapon>().attacking = false;
-        player.lookSpeed = defaultLookSpeed;
+        armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        //player.lookSpeed = defaultLookSpeed;
     }
 
 }
