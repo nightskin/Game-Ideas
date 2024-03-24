@@ -5,7 +5,6 @@ public class FirstPersonPlayer : MonoBehaviour
     // For Input
     Controls controls;
     public Controls.PlayerActions actions;
-    public MeleeSystem meleeSystem;
 
     //Components
     public Transform camera;
@@ -37,16 +36,11 @@ public class FirstPersonPlayer : MonoBehaviour
     float dashTimer = 0;
 
 
-    //For Combat
-    [SerializeField] bool armed = false;
-
+    //For lockOn System
+    Transform lockOnTarget = null;
 
     void Awake()
     {
-
-
-
-
         dashTimer = dashAmount;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
@@ -57,28 +51,22 @@ public class FirstPersonPlayer : MonoBehaviour
 
         actions.Jump.performed += Jump_performed;
         actions.Dash.performed += Dash_performed;
+        actions.LockOn.performed += LockOn_performed;
+        actions.LockOn.canceled += LockOn_canceled;
     }
 
-    void Start()
-    {
-        if(armed)
-        {
-            meleeSystem = GetComponent<MeleeSystem>();
-            camera.GetChild(0).gameObject.SetActive(true);
-        }
-    }
 
     void Update()
     {
         CanJump();
 
-        if (!meleeSystem.lockOnTarget)
+        if (!lockOnTarget)
         {
             Look();
         }
-        else if (meleeSystem.lockOnTarget)
+        else if (lockOnTarget)
         {
-            Quaternion targetRot = Quaternion.LookRotation(meleeSystem.lockOnTarget.position - camera.transform.position);
+            Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
             xRot = targetRot.eulerAngles.x;
             yRot = targetRot.eulerAngles.y;
             camera.localEulerAngles = new Vector3(xRot, 0, 0);
@@ -100,7 +88,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
         else
         {
-            if (meleeSystem.lockOnTarget) LockOnMovement();
+            if (lockOnTarget) LockOnMovement();
             else NormalMovement();
         }
 
@@ -109,6 +97,8 @@ public class FirstPersonPlayer : MonoBehaviour
     void OnDestroy()
     {
         actions.Jump.performed -= Jump_performed;
+        actions.LockOn.performed -= LockOn_performed;
+        actions.LockOn.canceled -= LockOn_canceled;
     }
 
     void OnTriggerEnter(Collider other)
@@ -131,6 +121,23 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         dashing = true;
     }
+
+    private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if (Physics.Raycast(camera.position, camera.forward, out RaycastHit hit))
+        {
+            if (hit.transform.gameObject.layer == 6)
+            {
+                lockOnTarget = hit.transform;
+            }
+        }
+    }
+
+    private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        lockOnTarget = null;
+    }
+
 
     void Dash()
     {

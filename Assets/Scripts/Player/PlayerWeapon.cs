@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerWeapon: MonoBehaviour
 {
-    public MeleeSystem meleeSystem;
+    public BladeSystem meleeSystem;
     public GameObject impactEffectEnemy;
     public GameObject impactEffectSolid;
     

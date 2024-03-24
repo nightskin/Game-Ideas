@@ -16,6 +16,7 @@ public class PlayerHUD : MonoBehaviour
 
     void Start()
     {
+        if(!player) player = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonPlayer>();
         paused = false;
         flicker = false;
         fadeToBlack = false;

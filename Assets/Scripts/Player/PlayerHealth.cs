@@ -6,7 +6,7 @@ public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] int maxHealth = 100;
     [SerializeField] int health;
-    MeleeSystem meleeSystem;
+    BladeSystem meleeSystem;
     FirstPersonPlayer player;
     [SerializeField] PlayerHUD hud;
 
@@ -14,7 +14,7 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         if(!player) player = GetComponent<FirstPersonPlayer>();
-        if(!meleeSystem) meleeSystem = GetComponent<MeleeSystem>();
+        if(!meleeSystem) meleeSystem = GetComponent<BladeSystem>();
         if(!hud) hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
         health = maxHealth;
     }

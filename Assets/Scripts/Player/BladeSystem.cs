@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MeleeSystem : MonoBehaviour
+public class BladeSystem : MonoBehaviour
 {
     [SerializeField] Transform armPivot;
     [SerializeField] Transform weapon;
@@ -11,24 +11,18 @@ public class MeleeSystem : MonoBehaviour
     public Animator animator;
 
 
-    float atkAngle;
-    Vector2 atkVector;
-    float defaultLookSpeed;
-    public Transform lockOnTarget = null;
+    float atkAngle = 0;
+    Vector2 atkVector = Vector2.zero;
 
 
     void Start()
     {
-        atkAngle = 0;
-        atkVector = Vector2.zero;
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
-        defaultLookSpeed = player.lookSpeed;
 
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
-        player.actions.LockOn.performed += LockOn_performed;
-        player.actions.LockOn.canceled += LockOn_canceled;
+
     }
 
     void Update()
@@ -44,8 +38,6 @@ public class MeleeSystem : MonoBehaviour
     {
         player.actions.Slash.performed -= Slash_performed;
         player.actions.Slash.canceled -= Slash_canceled;
-        player.actions.LockOn.performed -= LockOn_performed;
-        player.actions.LockOn.canceled -= LockOn_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -58,21 +50,6 @@ public class MeleeSystem : MonoBehaviour
         
     }
 
-    private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit))
-        {
-            if(hit.transform.gameObject.layer == 6)
-            {
-                lockOnTarget = hit.transform;
-            }
-        }
-    }
-
-    private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        lockOnTarget = null;
-    }
 
 
 
@@ -81,14 +58,12 @@ public class MeleeSystem : MonoBehaviour
     {
         weapon.GetComponent<PlayerWeapon>().attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        //player.lookSpeed *= actionDamp;
     }
     
     public void EndAttack()
     {
         weapon.GetComponent<PlayerWeapon>().attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        //player.lookSpeed = defaultLookSpeed;
     }
 
 }
