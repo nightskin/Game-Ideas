@@ -2,46 +2,48 @@ using UnityEngine;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
-    // For Input
+
     Controls controls;
     public Controls.PlayerActions actions;
 
     //Components
     public Transform camera;
-    [SerializeField] CharacterController controller;
+    public CharacterController controller;
 
-    // For basic motion
-    public Vector3 moveDirection;
-    public float moveSpeed = 15;
+    //For Basic Motion/mouselook
+    Vector3 moveDirection;
+    float currentSpeed;
+    float walkSpeed = 15;
+    float runSpeed = 20;
 
-    //For Look/Aim
-    public float lookSpeed = 100;
+    float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
 
     // For Jumping
-    [SerializeField] float jumpHeight = 5;
-    [SerializeField] Vector3 velocity = new Vector3();
+    float jumpHeight = 5;
+    Vector3 velocity = Vector3.zero;
     [SerializeField] LayerMask groundMask;
-    [SerializeField] LayerMask wallMask;
     Transform groundCheck;
     float gravity = -9.81f;
-    private bool grounded;
+    public bool gravityOn = true;
+    public bool isGrounded = false;
 
-
-    //For Dashing
-    bool dashing = false;
-    float dashSpeed = 30;
-    float dashAmount = 0.1f;
-    float dashTimer = 0;
-
-
+    
     //For lockOn System
     Transform lockOnTarget = null;
 
+    //For Wall Jumping and Wall Running
+    bool isWallRunning = false;
+    float wallDistance = 1.0f;
+    bool isAgainstWallLeft = false;
+    bool isAgainstWallRight = false;
+    RaycastHit wallHitLeft;
+    RaycastHit wallHitRight;
+
     void Awake()
     {
-        dashTimer = dashAmount;
+        currentSpeed = walkSpeed;
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
@@ -50,15 +52,17 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         actions.Jump.performed += Jump_performed;
-        actions.Dash.performed += Dash_performed;
+        actions.Run.performed += Run_performed;
+        actions.Run.canceled += Run_canceled;
         actions.LockOn.performed += LockOn_performed;
         actions.LockOn.canceled += LockOn_canceled;
     }
-
-
+    
     void Update()
     {
         CanJump();
+        CheckWall();
+        WallRunInput();
 
         if (!lockOnTarget)
         {
@@ -73,53 +77,43 @@ public class FirstPersonPlayer : MonoBehaviour
             transform.localEulerAngles = new Vector3(0, yRot, 0);
         }
 
-        if (dashing)
-        {
-            dashTimer -= Time.deltaTime;
-            if (dashTimer < 0)
-            {
-                dashTimer = dashAmount;
-                dashing = false;
-            }
-            else
-            {
-                Dash();
-            }
-        }
-        else
-        {
-            if (lockOnTarget) LockOnMovement();
-            else NormalMovement();
-        }
+        if (isWallRunning) WallRunningMovement();
+        Movement();
 
     }
-
+    
     void OnDestroy()
     {
         actions.Jump.performed -= Jump_performed;
+        actions.Run.performed -= Run_performed;
+        actions.Run.canceled -= Run_canceled;
         actions.LockOn.performed -= LockOn_performed;
         actions.LockOn.canceled -= LockOn_canceled;
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.tag == "Pickup")
-        {
-
-        }
-    }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (grounded)
+        if (isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
         }
+        if(isWallRunning)
+        {
+            Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+            velocity = (wallNormal + transform.up).normalized;
+        }
     }
 
-    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+
+    private void Run_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        dashing = true;
+        currentSpeed = runSpeed;
+    }
+
+    private void Run_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        currentSpeed = walkSpeed;
     }
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -138,24 +132,44 @@ public class FirstPersonPlayer : MonoBehaviour
         lockOnTarget = null;
     }
 
-
-    void Dash()
+    void CheckWall()
     {
-        if (grounded && velocity.y < 0)
-        {
-            velocity = Vector3.zero;
-        }
-
-        controller.Move(moveDirection * dashSpeed * Time.deltaTime);
-
-        //Add Gravity
-        velocity += Vector3.up * gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, groundMask);
+        isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, groundMask);
     }
 
-    void NormalMovement()
+    void WallRunInput()
     {
-        if(grounded && velocity.y < 0)
+        if((isAgainstWallLeft || isAgainstWallRight) && actions.Move.ReadValue<Vector2>().y > 0 && !isGrounded)
+        {
+            isWallRunning = true;
+            gravityOn = false;
+        }
+        else
+        {
+            isWallRunning = false;
+            gravityOn = true;
+        }
+    }
+
+    void WallRunningMovement()
+    {
+
+        Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
+        {
+            wallForward = -wallForward;
+        }
+
+        controller.Move(wallForward * currentSpeed * Time.deltaTime);
+
+    }
+
+    void Movement()
+    {
+        if(isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
         }
@@ -163,36 +177,18 @@ public class FirstPersonPlayer : MonoBehaviour
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
-
-        moveDirection = transform.right * x + transform.forward * z;
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-
-
-        //Add Gravity
-        velocity += Vector3.up * gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-    }
-
-    void LockOnMovement()
-    {
-        if (grounded && velocity.y < 0)
-        {
-            velocity = Vector3.zero;
-        }
-
-        //Basic Motion
-        float x = actions.Move.ReadValue<Vector2>().x;
-        float z = actions.Move.ReadValue<Vector2>().y;
-
 
         moveDirection = camera.transform.right * x + camera.transform.forward * z;
-        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * moveSpeed * Time.deltaTime);
+        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
 
 
         //Add Gravity
-        velocity += Vector3.up * gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        if (gravityOn)
+        {
+            velocity += Vector3.up * gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+        }
+
 
     }
 
@@ -211,7 +207,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void CanJump()
     {
-        grounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f, groundMask);
+        if(gravityOn) isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f, groundMask);
         
     }
     

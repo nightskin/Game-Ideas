@@ -182,7 +182,12 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.39891356, y: 0.37702546, z: 0.33479628}
   m_Center: {x: 0.19945678, y: -0.003969269, z: 0.16587959}
---- !u!1001 &311092080
+--- !u!1 &1082092280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1870265438, guid: bcd37ea05fbe04944b8cb065551fba01, type: 3}
+  m_PrefabInstance: {fileID: 1730666900251018314}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1136273862
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -191,7 +196,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 42695576058503065, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 42695576058503065, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -239,11 +244,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
---- !u!1 &1082092280 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1870265438, guid: bcd37ea05fbe04944b8cb065551fba01, type: 3}
-  m_PrefabInstance: {fileID: 1730666900251018314}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1877185620
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +320,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123331916
 GameObject:
@@ -398,7 +398,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450653634947277
 Transform:
@@ -414,7 +414,7 @@ Transform:
   m_Children:
   - {fileID: 136633071}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -90, y: -90, z: 0}
 --- !u!1 &919132149094625911
 GameObject:
@@ -503,7 +503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1730666899917003739, guid: bcd37ea05fbe04944b8cb065551fba01, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1730666899917003739, guid: bcd37ea05fbe04944b8cb065551fba01, type: 3}
       propertyPath: m_AnchorMax.x

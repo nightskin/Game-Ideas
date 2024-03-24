@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 42695576058503064}
   - component: {fileID: 1091619360}
   - component: {fileID: 5789329354880294375}
+  - component: {fileID: 5465765516197757889}
   m_Layer: 3
   m_Name: BladePlayer
   m_TagString: Player
@@ -152,20 +153,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02037fbffea3007488ee3c8633db3711, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeSystem: {fileID: 0}
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
   moveDirection: {x: 0, y: 0, z: 0}
-  moveSpeed: 15
+  walkSpeed: 10
+  runSpeed: 20
   lookSpeed: 100
-  jumpHeight: 2
+  jumpHeight: 5
   velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 128
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 256
+  gravityOn: 1
+  grounded: 0
+  leftWall: 0
+  rightWall: 0
+  wallDistance: 1
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +200,18 @@ MonoBehaviour:
   weapon: {fileID: 7621130007956315112}
   actionDamp: 0.5
   animator: {fileID: 865030075}
-  lockOnTarget: {fileID: 0}
+--- !u!114 &5465765516197757889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42695576058503066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3bccf1861c1ce4ebdb83e527857d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &42695576157200106
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,7 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fc583880bd6434a851efc24b189dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeSystem: {fileID: 0}
+  meleeSystem: {fileID: 5789329354880294375}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
   attacking: 0

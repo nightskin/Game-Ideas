@@ -69,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Dash",
+                    "name": "Run",
                     "type": "Button",
                     "id": "4ddbceec-ded7-4cf1-a0af-45630ec81c25",
                     "expectedControlType": "Button",
@@ -279,45 +279,23 @@
                 },
                 {
                     "name": "",
-                    "id": "b6744117-cfba-4a1f-a665-496ce1fb72aa",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "74c16765-5ea5-44d0-8c17-097b113b9fd1",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "112cd744-734b-4c94-a080-4722e3430586",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "9b23a741-e48b-4c67-be66-fbe352ece44a",
-                    "path": "<Mouse>/middleButton",
+                    "id": "3dbb8164-3ba7-4dca-9606-54dd5d5550ba",
+                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
