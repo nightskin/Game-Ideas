@@ -23,7 +23,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1606871999}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -78,7 +78,6 @@ GameObject:
   - component: {fileID: 42695576058503064}
   - component: {fileID: 1091619360}
   - component: {fileID: 5789329354880294375}
-  - component: {fileID: 5465765516197757889}
   m_Layer: 3
   m_Name: BladePlayer
   m_TagString: Player
@@ -155,20 +154,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
-  moveDirection: {x: 0, y: 0, z: 0}
-  walkSpeed: 10
-  runSpeed: 20
-  lookSpeed: 100
-  jumpHeight: 5
-  velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 128
   gravityOn: 1
-  grounded: 0
-  leftWall: 0
-  rightWall: 0
-  wallDistance: 1
+  isGrounded: 0
+  wallJumpSideForce: 10
+  wallJumpUpForce: 5
+  maxWallRunTime: 1
+  maxWallRunTimer: 0
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,18 +194,6 @@ MonoBehaviour:
   weapon: {fileID: 7621130007956315112}
   actionDamp: 0.5
   animator: {fileID: 865030075}
---- !u!114 &5465765516197757889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42695576058503066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea3bccf1861c1ce4ebdb83e527857d0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &42695576157200106
 GameObject:
   m_ObjectHideFlags: 0
