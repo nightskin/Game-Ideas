@@ -19,10 +19,11 @@ public class FirstPersonPlayer : MonoBehaviour
     float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
+    float zRot = 0;
 
     // For Jumping
     float jumpHeight = 5;
-    Vector3 velocity = Vector3.zero;
+    [SerializeField] Vector3 velocity = Vector3.zero;
     [SerializeField] LayerMask groundMask;
     Transform groundCheck;
     float gravity = -9.81f;
@@ -37,7 +38,7 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] float wallJumpSideForce = 10;
     [SerializeField] float wallJumpUpForce = 5;
     [SerializeField] float maxWallRunTime = 1;
-    public float maxWallRunTimer = 0;
+    float maxWallRunTimer = 0;
     
     bool isExitingWall = false;
     float exitingWallTime = 0.25f;
@@ -105,6 +106,7 @@ public class FirstPersonPlayer : MonoBehaviour
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         maxWallRunTimer = maxWallRunTime;
+        zRot = 0;
         if (isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
@@ -194,12 +196,13 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void WallRunningMovement()
     {
-
         Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
-        Vector3 targetCameraAngle = isAgainstWallRight ? new Vector3(xRot, 0, 15) : new Vector3(xRot, 0, -15);
-        camera.localEulerAngles = targetCameraAngle;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
+        float targetCameraAngle = isAgainstWallRight ? 30 : -30f;
+        zRot = Mathf.LerpAngle(zRot, targetCameraAngle, 10 * Time.deltaTime);
+        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
+        
         if((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
         {
             wallForward = -wallForward;
@@ -215,6 +218,7 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity = Vector3.zero;
             maxWallRunTimer = maxWallRunTime;
+            zRot = 0;
         }
 
         //Basic Motion
@@ -250,7 +254,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void CanJump()
     {
-        if(gravityOn) isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f, groundMask);
+        if(gravityOn) isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
     }
     
 }

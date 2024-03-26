@@ -7,7 +7,7 @@ TagManager:
   - PlayerWeapon
   - Enemy
   - Solid
-  - Pickup
+  - Moveable
   layers:
   - Default
   - TransparentFX

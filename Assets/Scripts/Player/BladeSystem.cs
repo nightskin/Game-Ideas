@@ -12,7 +12,7 @@ public class BladeSystem : MonoBehaviour
 
 
     float atkAngle = 0;
-    Vector2 atkVector = Vector2.zero;
+    public Vector2 atkVector = Vector2.zero;
 
 
     void Start()
@@ -27,9 +27,10 @@ public class BladeSystem : MonoBehaviour
 
     void Update()
     {
-        atkVector = player.actions.Look.ReadValue<Vector2>();
-        if (atkVector.magnitude > 0.5f)
+        Vector3 lookDirection = player.actions.Look.ReadValue<Vector2>();
+        if (lookDirection.magnitude > 0)
         {
+            atkVector = lookDirection;
             atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
         }
     }
