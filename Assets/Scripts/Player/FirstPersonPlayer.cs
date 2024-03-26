@@ -16,7 +16,7 @@ public class FirstPersonPlayer : MonoBehaviour
     float walkSpeed = 15;
     float runSpeed = 20;
 
-    float lookSpeed = 100;
+    public float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
     float zRot = 0;
@@ -35,9 +35,9 @@ public class FirstPersonPlayer : MonoBehaviour
     Transform lockOnTarget = null;
 
     //For Wall Jumping and Wall Running
-    [SerializeField] float wallJumpSideForce = 10;
-    [SerializeField] float wallJumpUpForce = 5;
-    [SerializeField] float maxWallRunTime = 1;
+    [SerializeField] float maxWallRunTime = 5;
+    float wallJumpSideForce = 15;
+    float wallJumpUpForce = 5;
     float maxWallRunTimer = 0;
     
     bool isExitingWall = false;

@@ -154,15 +154,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
+  lookSpeed: 100
+  velocity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 128
   gravityOn: 1
   isGrounded: 0
-  wallJumpSideForce: 15
-  wallJumpUpForce: 5
-  maxWallRunTime: 1
-  maxWallRunTimer: 0
+  maxWallRunTime: 5
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,8 +190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armPivot: {fileID: 735725388371942554}
-  weapon: {fileID: 7621130007956315112}
-  actionDamp: 0.5
+  weapon: {fileID: 2020645453}
+  actionDamp: 0
   animator: {fileID: 865030075}
   atkVector: {x: 0, y: 0}
 --- !u!1 &42695576157200106
@@ -1257,6 +1256,7 @@ MonoBehaviour:
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
   attacking: 0
+  defending: 0
   knockbackForce: 1000
 --- !u!1 &7647017862953486064
 GameObject:

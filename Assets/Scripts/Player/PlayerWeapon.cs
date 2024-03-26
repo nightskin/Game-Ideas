@@ -29,7 +29,6 @@ public class PlayerWeapon: MonoBehaviour
             else if (other.transform.tag == "Moveable")
             {
                 Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-
                 if(other.GetComponent<Rigidbody>()) 
                 {
                     Vector3 forceDirection = (transform.root.right * bladeSystem.atkVector.x + transform.root.up * bladeSystem.atkVector.y).normalized;
