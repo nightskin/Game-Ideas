@@ -15,8 +15,7 @@ public class BladeSystem : MonoBehaviour
     float atkAngle = 0;
     public Vector2 atkVector = Vector2.zero;
 
-    bool defending = false;
-
+    bool blocking = false;
 
     void Start()
     {
@@ -39,7 +38,7 @@ public class BladeSystem : MonoBehaviour
             atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
         }
 
-        if (defending)
+        if (blocking)
         {
             animator.SetInteger("blockX", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().x));
             animator.SetInteger("blockY", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().y));
@@ -54,6 +53,7 @@ public class BladeSystem : MonoBehaviour
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        weapon.defending = false;
         animator.SetTrigger("atk");
     }
 
@@ -64,12 +64,13 @@ public class BladeSystem : MonoBehaviour
 
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        defending = true;
+        blocking = true;
+        weapon.defending = true;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        defending = false;
+        blocking = false;
     }
 
 

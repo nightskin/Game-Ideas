@@ -8,7 +8,8 @@ public class PlayerWeapon: MonoBehaviour
     public GameObject impactEffectEnemy;
     public GameObject impactEffectSolid;
     
-    public bool attacking;
+    public bool attacking = false;
+    public bool defending = false;
     public float knockbackForce = 10;
 
     private void OnTriggerEnter(Collider other)
