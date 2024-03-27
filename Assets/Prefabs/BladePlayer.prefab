@@ -161,7 +161,7 @@ MonoBehaviour:
     m_Bits: 128
   gravityOn: 1
   isGrounded: 0
-  maxWallRunTime: 5
+  maxWallRunTime: 3
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0

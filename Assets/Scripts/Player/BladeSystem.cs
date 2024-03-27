@@ -23,21 +23,24 @@ public class BladeSystem : MonoBehaviour
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
 
+        player.actions.Stab.performed += Stab_performed;
+        player.actions.DirectionalSlash.performed += DirectionalSlash_performed;
         player.actions.Slash.performed += Slash_performed;
-        player.actions.Slash.canceled += Slash_canceled;
         player.actions.Defend.performed += Defend_performed;
         player.actions.Defend.canceled += Defend_canceled;
 
     }
-    
+
     void Update()
     {
-        atkVector = player.actions.Look.ReadValue<Vector2>();
-        if (atkVector.magnitude > 0)
+        if(player.actions.DirectionalSlash.IsPressed())
         {
-            atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+            atkVector = player.actions.Look.ReadValue<Vector2>();
+            if (atkVector.magnitude > 0)
+            {
+                atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+            }
         }
-
         if (blocking)
         {
             animator.SetInteger("blockX", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().x));
@@ -48,18 +51,28 @@ public class BladeSystem : MonoBehaviour
     void OnDestroy()
     {
         player.actions.Slash.performed -= Slash_performed;
-        player.actions.Slash.canceled -= Slash_canceled;
+        player.actions.Stab.performed -= Stab_performed;
+        player.actions.Defend.performed -= Defend_performed;
+        player.actions.Defend.canceled -= Defend_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         weapon.defending = false;
-        animator.SetTrigger("atk");
+        atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
+        animator.SetTrigger("slash");
     }
 
-    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void DirectionalSlash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        
+        weapon.defending = false;
+        animator.SetTrigger("slash");
+    }
+
+    private void Stab_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        weapon.defending = false;
+        animator.SetTrigger("stab");
     }
 
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -75,20 +88,31 @@ public class BladeSystem : MonoBehaviour
 
 
 
-
     ///Animation Events
-    public void StartAttack()
+    public void StartSlash()
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         player.lookSpeed *= actionDamp;
     }
     
-    public void EndAttack()
+    public void EndSlash()
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         player.lookSpeed = defaultLookSpeed;
+    }
+
+    public void Stab()
+    {
+        if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit, 2.5f))
+        {
+            if(hit.transform.tag == "Solid")
+            {
+                Instantiate(weapon.impactEffectSolid, hit.point, Quaternion.identity);
+                animator.SetTrigger("recoil");
+            }
+        }
     }
 
 }

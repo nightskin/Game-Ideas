@@ -209,7 +209,6 @@ public class FirstPersonPlayer : MonoBehaviour
         }
 
         controller.Move(wallForward * currentSpeed * Time.deltaTime);
-
     }
 
     void Movement()
