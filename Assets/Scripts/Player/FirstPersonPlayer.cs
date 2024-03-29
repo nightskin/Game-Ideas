@@ -90,7 +90,7 @@ public class FirstPersonPlayer : MonoBehaviour
             LockOnMovement();
         }
 
-        if(moveDirection.magnitude > 0 && isGrounded)
+        if(moveDirection.magnitude > 0 && isGrounded || isWallRunning)
         {
             CameraBob(0.5f, 1.25f, currentSpeed/4);
         }
