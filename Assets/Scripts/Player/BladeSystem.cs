@@ -14,7 +14,6 @@ public class BladeSystem : MonoBehaviour
 
     float atkAngle = 0;
     public Vector2 atkVector = Vector2.zero;
-
     bool blocking = false;
 
     void Start()
@@ -24,7 +23,6 @@ public class BladeSystem : MonoBehaviour
         defaultLookSpeed = player.lookSpeed;
 
         player.actions.Stab.performed += Stab_performed;
-        player.actions.DirectionalSlash.performed += DirectionalSlash_performed;
         player.actions.Slash.performed += Slash_performed;
         player.actions.Defend.performed += Defend_performed;
         player.actions.Defend.canceled += Defend_canceled;
@@ -33,12 +31,16 @@ public class BladeSystem : MonoBehaviour
 
     void Update()
     {
-        if(player.actions.DirectionalSlash.IsPressed())
+        if(player.actions.Slash.IsPressed())
         {
             atkVector = player.actions.Look.ReadValue<Vector2>();
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+            }
+            else
+            {
+                atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
             }
         }
         if (blocking)
@@ -59,16 +61,9 @@ public class BladeSystem : MonoBehaviour
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         weapon.defending = false;
-        atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
         animator.SetTrigger("slash");
     }
-
-    private void DirectionalSlash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        weapon.defending = false;
-        animator.SetTrigger("slash");
-    }
-
+    
     private void Stab_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         weapon.defending = false;
@@ -79,11 +74,13 @@ public class BladeSystem : MonoBehaviour
     {
         blocking = true;
         weapon.defending = true;
+        player.lookSpeed *= actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = false;
+        player.lookSpeed = defaultLookSpeed;
     }
 
 

@@ -107,15 +107,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""DirectionalSlash"",
-                    ""type"": ""Button"",
-                    ""id"": ""923a39d8-b363-467a-a4e7-e95bc885d836"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -342,7 +333,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""255b589f-cfdb-42d0-bbd1-f702d6cdaee4"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -353,33 +344,11 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""be4add52-0604-4914-8e04-990d148850cf"",
-                    ""path"": ""<Gamepad>/rightStickPress"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Stab"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ef149ea1-77c4-4916-9229-4e5a79f9bb45"",
-                    ""path"": ""<Mouse>/middleButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""DirectionalSlash"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ddaed7f5-b08d-4ec3-a688-12d364f2c78a"",
                     ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""DirectionalSlash"",
+                    ""action"": ""Stab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -399,7 +368,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_Stab = m_Player.FindAction("Stab", throwIfNotFound: true);
-        m_Player_DirectionalSlash = m_Player.FindAction("DirectionalSlash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -470,7 +438,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_LockOn;
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_Stab;
-    private readonly InputAction m_Player_DirectionalSlash;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -484,7 +451,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputAction @Run => m_Wrapper.m_Player_Run;
         public InputAction @Stab => m_Wrapper.m_Player_Stab;
-        public InputAction @DirectionalSlash => m_Wrapper.m_Player_DirectionalSlash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -521,9 +487,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Stab.started += instance.OnStab;
             @Stab.performed += instance.OnStab;
             @Stab.canceled += instance.OnStab;
-            @DirectionalSlash.started += instance.OnDirectionalSlash;
-            @DirectionalSlash.performed += instance.OnDirectionalSlash;
-            @DirectionalSlash.canceled += instance.OnDirectionalSlash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -555,9 +518,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Stab.started -= instance.OnStab;
             @Stab.performed -= instance.OnStab;
             @Stab.canceled -= instance.OnStab;
-            @DirectionalSlash.started -= instance.OnDirectionalSlash;
-            @DirectionalSlash.performed -= instance.OnDirectionalSlash;
-            @DirectionalSlash.canceled -= instance.OnDirectionalSlash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -586,6 +546,5 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnLockOn(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnStab(InputAction.CallbackContext context);
-        void OnDirectionalSlash(InputAction.CallbackContext context);
     }
 }

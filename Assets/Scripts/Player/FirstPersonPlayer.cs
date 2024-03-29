@@ -22,22 +22,26 @@ public class FirstPersonPlayer : MonoBehaviour
     float zRot = 0;
 
     // For Jumping
+    int numberOfJumps = 0;
+    [SerializeField] int maxJumps = 2;
     float jumpHeight = 5;
     Vector3 velocity = Vector3.zero;
     Transform groundCheck;
     float gravity = -9.81f;
     public bool gravityOn = true;
-    public bool isGrounded = false;
+    bool isGrounded = false;
 
     
     //For lockOn System
     Transform lockOnTarget = null;
 
+
+
     //For Wall Jumping and Wall Running
     [SerializeField] LayerMask wallMask;
     [SerializeField] float maxWallRunTime = 5;
     float wallJumpSideForce = 15;
-    float wallJumpUpForce = 5;
+    float wallJumpUpForce = 15;
     float maxWallRunTimer = 0;
     
     bool isExitingWall = false;
@@ -86,6 +90,11 @@ public class FirstPersonPlayer : MonoBehaviour
             LockOnMovement();
         }
 
+        if(moveDirection.magnitude > 0 && isGrounded)
+        {
+            CameraBob(0.5f, 1.25f, currentSpeed/4);
+        }
+
         if (isWallRunning && !isExitingWall) 
         {
             WallRunningMovement();
@@ -110,10 +119,9 @@ public class FirstPersonPlayer : MonoBehaviour
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         maxWallRunTimer = maxWallRunTime;
-        zRot = 0;
-        if (isGrounded)
+        if (numberOfJumps < maxJumps)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
         }
         if(isWallRunning)
         {
@@ -149,6 +157,11 @@ public class FirstPersonPlayer : MonoBehaviour
     private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         lockOnTarget = null;
+    }
+
+    void CameraBob(float lowestPoint, float highestPoint, float speed)
+    {
+        camera.localPosition = Vector3.up * (Mathf.PingPong(Time.time * speed, 1) * (highestPoint - lowestPoint) + lowestPoint);
     }
 
     void CheckWall()
@@ -220,6 +233,7 @@ public class FirstPersonPlayer : MonoBehaviour
         if(isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
+            numberOfJumps = 0;
             maxWallRunTimer = maxWallRunTime;
             zRot = 0;
         }
@@ -247,6 +261,7 @@ public class FirstPersonPlayer : MonoBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
+            numberOfJumps = 0;
             maxWallRunTimer = maxWallRunTime;
             zRot = 0;
         }
