@@ -49,7 +49,7 @@ public class FloorGen : MonoBehaviour
                             level.map[x,z].position + new Vector3(level.tileSize / 2, 0, 0),
                         };
 
-                        Tile square = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                        DungeonTile square = new DungeonTile(level.map[x, z].position, level.tileSize, corners, midPoints);
                         string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                         
                         
@@ -134,7 +134,7 @@ public class FloorGen : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
                     
-                    Tile tile = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    DungeonTile tile = new DungeonTile(level.map[x, z].position, level.tileSize, corners, midPoints);
                     
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
                     

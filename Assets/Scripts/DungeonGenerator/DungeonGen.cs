@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Tile
+public class DungeonTile
 {
     public Vector3 center;
 
@@ -15,7 +15,7 @@ public class Tile
     public Vector3 centerTop;
     public Vector3 centerBottom;
 
-    public Tile(Vector3 pos, float size ,Vector3[] corners, Vector3[] midPoints)
+    public DungeonTile(Vector3 pos, float size ,Vector3[] corners, Vector3[] midPoints)
     {
         bottomLeft = corners[0];
         topLeft = corners[1];

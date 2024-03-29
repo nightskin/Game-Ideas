@@ -49,7 +49,7 @@ public class WallGen : MonoBehaviour
                             level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                         };
 
-                        Tile tile = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                        DungeonTile tile = new DungeonTile(level.map[x, z].position, level.tileSize, corners, midPoints);
                         string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
 
                         if(state == "0110")
@@ -114,118 +114,118 @@ public class WallGen : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
 
-                    Tile square = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    DungeonTile square = new DungeonTile(level.map[x, z].position, level.tileSize, corners, midPoints);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
 
                     if (state == "1000")
                     {
-                        CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.centerBottom, Tile.Up(square.centerBottom, level.tileSize));
-                        if (x == 0) CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (z == 0) CreateQuad(square.centerBottom, Tile.Up(square.centerBottom, level.tileSize), square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize));
+                        CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize));
+                        if (x == 0) CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
+                        if (z == 0) CreateQuad(square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize));
                     }
                     else if (state == "0100")
                     {
-                        CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == 0) CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.topLeft, level.tileSize), square.topLeft);
-                        if (z == level.tilesZ - 2) CreateQuad(Tile.Up(square.centerTop, level.tileSize), square.centerTop, Tile.Up(square.topRight, level.tileSize), square.topRight);
+                        CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        if (x == 0) CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.topLeft);
+                        if (z == level.tilesZ - 2) CreateQuad(DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
                     }
                     else if (state == "0010")
                     {
-                        CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.bottomRight, Tile.Up(square.bottomRight, level.tileSize));
-                        if (z == 0) CreateQuad(square.bottomRight, Tile.Up(square.bottomRight, level.tileSize), square.centerBottom, Tile.Up(square.centerBottom, level.tileSize));
+                        CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom);
+                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.bottomRight, level.tileSize));
+                        if (z == 0) CreateQuad(square.bottomRight, DungeonTile.Up(square.bottomRight, level.tileSize), square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize));
                     }
                     else if (state == "0001")
                     {
-                        CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(Tile.Up(square.topRight, level.tileSize), square.topRight, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
+                        CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
+                        if (z == level.tilesZ - 2) CreateQuad(DungeonTile.Up(square.topRight, level.tileSize), square.topRight, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
                     }
 
                     else if (state == "1100")
                     {
-                        CreateQuad(Tile.Up(square.centerBottom, level.tileSize), square.centerBottom, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
-                        if (x == 0) CreateQuad(square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
+                        CreateQuad(DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        if (x == 0) CreateQuad(square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom);
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
                     }
                     else if (state == "0011")
                     {
-                        CreateQuad(square.centerBottom, Tile.Up(square.centerBottom, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.centerBottom, level.tileSize), square.centerBottom, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.bottomRight, level.tileSize), square.bottomRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, Tile.Up(square.centerTop, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
+                        CreateQuad(square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
+                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
                     }
                     else if (state == "1001")
                     {
-                        CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.centerBottom, Tile.Up(square.centerBottom, level.tileSize));
-                        CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
-                        if (x == 0) CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (z == level.tilesZ - 2) CreateQuad(Tile.Up(square.topLeft, level.tileSize), square.topLeft, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize));
+                        CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
+                        if (x == 0) CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
+                        if (z == level.tilesZ - 2) CreateQuad(DungeonTile.Up(square.topLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
 
                     }
                     else if (state == "0110")
                     {
-                        CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
-                        CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == 0) CreateQuad(square.centerBottom, Tile.Up(square.centerBottom, level.tileSize), square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == 0) CreateQuad(Tile.Up(square.topLeft, level.tileSize), square.topLeft,Tile.Up(square.centerLeft, level.tileSize), square.centerLeft);
+                        CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom);
+                        if (z == 0) CreateQuad(square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        if (x == 0) CreateQuad(DungeonTile.Up(square.topLeft, level.tileSize), square.topLeft,DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft);
                     }
                     else if (state == "0101")
                     {
-                        CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.centerRight, level.tileSize), square.centerRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
-                        if (x == 0) CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
+                        CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight);
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
+                        if (x == 0) CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
                     }
                     else if (state == "1010")
                     {
-                        CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.centerRight, Tile.Up(square.centerRight, level.tileSize));
-                        if (x == 0) CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.bottomRight, Tile.Up(square.bottomRight, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize));
+                        if (x == 0) CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft);
+                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.bottomRight, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
                     }
 
                     else if (state == "0111")
                     {
-                        CreateQuad(Tile.Up(square.centerLeft, level.tileSize), square.centerLeft, Tile.Up(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (z == 0) CreateQuad(Tile.Up(square.centerBottom, level.tileSize), square.centerBottom, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == 0) CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.bottomRight, level.tileSize), square.bottomRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
+                        CreateQuad(DungeonTile.Up(square.centerLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom);
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        if (x == 0) CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
                     }
                     else if (state == "1011")
                     {
-                        CreateQuad(square.centerLeft, Tile.Up(square.centerLeft, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
-                        if (x == 0) CreateQuad(square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize), square.centerLeft, Tile.Up(square.centerLeft, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, Tile.Up(square.centerTop, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.bottomRight, level.tileSize), square.bottomRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
+                        CreateQuad(square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
+                        if (x == 0) CreateQuad(square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.centerLeft, DungeonTile.Up(square.centerLeft, level.tileSize));
+                        if (z == level.tilesZ - 2) CreateQuad(square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
                     }
                     else if (state == "1101")
                     {
-                        CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.centerBottom, Tile.Up(square.centerBottom, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.centerBottom, level.tileSize), square.centerBottom);
-                        if (x == 0) CreateQuad(square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
+                        CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.centerBottom, DungeonTile.Up(square.centerBottom, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.centerBottom, level.tileSize), square.centerBottom);
+                        if (x == 0) CreateQuad(square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
                     }
                     else if (state == "1110")
                     {
-                        CreateQuad(Tile.Up(square.centerRight, level.tileSize), square.centerRight, Tile.Up(square.centerTop, level.tileSize), square.centerTop);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.centerTop, Tile.Up(square.centerTop, level.tileSize));
-                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, Tile.Up(square.centerRight, level.tileSize), square.bottomRight, Tile.Up(square.bottomRight, level.tileSize));
-                        if (x == 0) CreateQuad(square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        CreateQuad(DungeonTile.Up(square.centerRight, level.tileSize), square.centerRight, DungeonTile.Up(square.centerTop, level.tileSize), square.centerTop);
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.centerTop, DungeonTile.Up(square.centerTop, level.tileSize));
+                        if (x == level.tilesX - 2) CreateQuad(square.centerRight, DungeonTile.Up(square.centerRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.bottomRight, level.tileSize));
+                        if (x == 0) CreateQuad(square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
                     }
 
                     else if (state == "1111")
                     {
-                        if (x == 0) CreateQuad(square.bottomLeft, Tile.Up(square.bottomLeft, level.tileSize), square.topLeft, Tile.Up(square.topLeft, level.tileSize));
-                        if (z == 0) CreateQuad(Tile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, Tile.Up(square.bottomRight, level.tileSize), square.bottomRight);
-                        if (x == level.tilesX - 2) CreateQuad(Tile.Up(square.bottomRight, level.tileSize), square.bottomRight, Tile.Up(square.topRight, level.tileSize), square.topRight);
-                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, Tile.Up(square.topLeft, level.tileSize), square.topRight, Tile.Up(square.topRight, level.tileSize));
+                        if (x == 0) CreateQuad(square.bottomLeft, DungeonTile.Up(square.bottomLeft, level.tileSize), square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize));
+                        if (z == 0) CreateQuad(DungeonTile.Up(square.bottomLeft, level.tileSize), square.bottomLeft, DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight);
+                        if (x == level.tilesX - 2) CreateQuad(DungeonTile.Up(square.bottomRight, level.tileSize), square.bottomRight, DungeonTile.Up(square.topRight, level.tileSize), square.topRight);
+                        if (z == level.tilesZ - 2) CreateQuad(square.topLeft, DungeonTile.Up(square.topLeft, level.tileSize), square.topRight, DungeonTile.Up(square.topRight, level.tileSize));
                     }
 
                 }

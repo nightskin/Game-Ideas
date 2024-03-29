@@ -23,8 +23,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     // For Jumping
     float jumpHeight = 5;
-    [SerializeField] Vector3 velocity = Vector3.zero;
-    [SerializeField] LayerMask groundMask;
+    Vector3 velocity = Vector3.zero;
     Transform groundCheck;
     float gravity = -9.81f;
     public bool gravityOn = true;
@@ -35,6 +34,7 @@ public class FirstPersonPlayer : MonoBehaviour
     Transform lockOnTarget = null;
 
     //For Wall Jumping and Wall Running
+    [SerializeField] LayerMask wallMask;
     [SerializeField] float maxWallRunTime = 5;
     float wallJumpSideForce = 15;
     float wallJumpUpForce = 5;
@@ -45,7 +45,7 @@ public class FirstPersonPlayer : MonoBehaviour
     float exitWallTimer = 0;
 
     bool isWallRunning = false;
-    float wallDistance = 1.0f;
+    float wallDistance = 0.6f;
     bool isAgainstWallLeft = false;
     bool isAgainstWallRight = false;
     RaycastHit wallHitLeft;
@@ -78,18 +78,22 @@ public class FirstPersonPlayer : MonoBehaviour
         if (!lockOnTarget)
         {
             Look();
+            Movement();
         }
         else if (lockOnTarget)
         {
-            Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
-            xRot = targetRot.eulerAngles.x;
-            yRot = targetRot.eulerAngles.y;
-            camera.localEulerAngles = new Vector3(xRot, 0, 0);
-            transform.localEulerAngles = new Vector3(0, yRot, 0);
+            LookAtTarget();
+            LockOnMovement();
         }
 
-        if (isWallRunning) WallRunningMovement();
-        Movement();
+        if (isWallRunning && !isExitingWall) 
+        {
+            WallRunningMovement();
+        }
+        else
+        {
+            zRot = Mathf.Lerp(zRot, 0, 10 * Time.deltaTime);
+        }
 
     }
     
@@ -149,8 +153,8 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void CheckWall()
     {
-        isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, groundMask);
-        isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, groundMask);
+        isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, wallMask);
+        isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, wallMask);
     }
 
     void WallRunInput()
@@ -224,7 +228,7 @@ public class FirstPersonPlayer : MonoBehaviour
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
 
-        moveDirection = camera.transform.right * x + camera.transform.forward * z;
+        moveDirection = transform.right * x + transform.forward * z;
         controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
 
 
@@ -237,6 +241,31 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
     }
+    
+    void LockOnMovement()
+    {
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity = Vector3.zero;
+            maxWallRunTimer = maxWallRunTime;
+            zRot = 0;
+        }
+
+        //Basic Motion
+        float x = actions.Move.ReadValue<Vector2>().x;
+        float z = actions.Move.ReadValue<Vector2>().y;
+
+        moveDirection = camera.transform.right * x + camera.transform.forward * z;
+        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
+
+
+        //Add Gravity
+        if (gravityOn)
+        {
+            velocity += Vector3.up * gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+        }
+    }
 
     void Look()
     {
@@ -245,9 +274,18 @@ public class FirstPersonPlayer : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 45);
-        camera.localEulerAngles = new Vector3(xRot, 0, 0);
+        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
+        transform.localEulerAngles = new Vector3(0, yRot, 0);
+    }
+
+    void LookAtTarget()
+    {
+        Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
+        xRot = targetRot.eulerAngles.x;
+        yRot = targetRot.eulerAngles.y;
+        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 

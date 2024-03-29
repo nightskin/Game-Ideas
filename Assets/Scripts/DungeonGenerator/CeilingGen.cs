@@ -88,7 +88,7 @@ public class CeilingGen : MonoBehaviour
                         level.map[x,z].position + new Vector3(level.tileSize/2, 0, 0),
                     };
 
-                    Tile tile = new Tile(level.map[x, z].position, level.tileSize, corners, midPoints);
+                    DungeonTile tile = new DungeonTile(level.map[x, z].position, level.tileSize, corners, midPoints);
                     tile.Shift(Vector3.up * level.tileSize);
                     string state = level.GetState(level.map[x, z].on, level.map[x, z + 1].on, level.map[x + 1, z].on, level.map[x + 1, z + 1].on);
 
