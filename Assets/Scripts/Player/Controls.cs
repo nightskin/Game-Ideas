@@ -100,7 +100,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Stab"",
+                    ""name"": ""ChiSlash"",
                     ""type"": ""Button"",
                     ""id"": ""665b4125-a149-416f-b20c-343c9f6e86c4"",
                     ""expectedControlType"": ""Button"",
@@ -337,7 +337,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Stab"",
+                    ""action"": ""ChiSlash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -348,7 +348,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Stab"",
+                    ""action"": ""ChiSlash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -367,7 +367,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
-        m_Player_Stab = m_Player.FindAction("Stab", throwIfNotFound: true);
+        m_Player_ChiSlash = m_Player.FindAction("ChiSlash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -437,7 +437,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_LockOn;
     private readonly InputAction m_Player_Run;
-    private readonly InputAction m_Player_Stab;
+    private readonly InputAction m_Player_ChiSlash;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -450,7 +450,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputAction @Run => m_Wrapper.m_Player_Run;
-        public InputAction @Stab => m_Wrapper.m_Player_Stab;
+        public InputAction @ChiSlash => m_Wrapper.m_Player_ChiSlash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -484,9 +484,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Run.started += instance.OnRun;
             @Run.performed += instance.OnRun;
             @Run.canceled += instance.OnRun;
-            @Stab.started += instance.OnStab;
-            @Stab.performed += instance.OnStab;
-            @Stab.canceled += instance.OnStab;
+            @ChiSlash.started += instance.OnChiSlash;
+            @ChiSlash.performed += instance.OnChiSlash;
+            @ChiSlash.canceled += instance.OnChiSlash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -515,9 +515,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Run.started -= instance.OnRun;
             @Run.performed -= instance.OnRun;
             @Run.canceled -= instance.OnRun;
-            @Stab.started -= instance.OnStab;
-            @Stab.performed -= instance.OnStab;
-            @Stab.canceled -= instance.OnStab;
+            @ChiSlash.started -= instance.OnChiSlash;
+            @ChiSlash.performed -= instance.OnChiSlash;
+            @ChiSlash.canceled -= instance.OnChiSlash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -545,6 +545,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnLockOn(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
-        void OnStab(InputAction.CallbackContext context);
+        void OnChiSlash(InputAction.CallbackContext context);
     }
 }

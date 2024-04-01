@@ -35,6 +35,12 @@ public class FirstPersonPlayer : MonoBehaviour
     //For lockOn System
     Transform lockOnTarget = null;
 
+    //For Dashing
+    Vector3 dashDirection;
+    float dashTime = 0.1f;
+    float dashTimer;
+    float dashSpeed = 100;
+    bool dashing = false;
 
 
     //For Wall Jumping and Wall Running
@@ -57,6 +63,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Awake()
     {
+        dashTimer = dashTime;
         currentSpeed = walkSpeed;
         if (!camera) camera = transform.Find("Camera");
         if(!groundCheck) groundCheck = transform.Find("GroundCheck");
@@ -79,31 +86,37 @@ public class FirstPersonPlayer : MonoBehaviour
         CheckWall();
         WallRunInput();
 
-        if (!lockOnTarget)
+        if(dashing)
         {
-            Look();
-            Movement();
-        }
-        else if (lockOnTarget)
-        {
-            LookAtTarget();
-            LockOnMovement();
-        }
-
-        if(moveDirection.magnitude > 0 && isGrounded || isWallRunning)
-        {
-            CameraBob(0.5f, 1.25f, currentSpeed/4);
-        }
-
-        if (isWallRunning && !isExitingWall) 
-        {
-            WallRunningMovement();
+            Dash();
         }
         else
         {
-            zRot = Mathf.Lerp(zRot, 0, 10 * Time.deltaTime);
-        }
+            if (!lockOnTarget)
+            {
+                Look();
+                Movement();
+            }
+            else if (lockOnTarget)
+            {
+                LookAtTarget();
+                LockOnMovement();
+            }
 
+            if (moveDirection.magnitude > 0 && isGrounded || isWallRunning)
+            {
+                CameraBob(0.5f, 1.25f, currentSpeed / 4);
+            }
+
+            if (isWallRunning && !isExitingWall)
+            {
+                WallRunningMovement();
+            }
+            else
+            {
+                zRot = Mathf.Lerp(zRot, 0, 10 * Time.deltaTime);
+            }
+        }
     }
     
     void OnDestroy()
@@ -116,12 +129,14 @@ public class FirstPersonPlayer : MonoBehaviour
     }
 
 
+
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         maxWallRunTimer = maxWallRunTime;
         if (numberOfJumps < maxJumps)
         {
             velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
+            numberOfJumps++;
         }
         if(isWallRunning)
         {
@@ -130,6 +145,7 @@ public class FirstPersonPlayer : MonoBehaviour
             Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
             Vector3 jumpForce = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
             velocity = jumpForce;
+            numberOfJumps--;
         }
     }
 
@@ -157,6 +173,20 @@ public class FirstPersonPlayer : MonoBehaviour
     private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         lockOnTarget = null;
+    }
+
+    void Dash()
+    {
+        if(dashTimer > 0)
+        {
+            dashTimer -= Time.deltaTime;
+            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+        }
+        else
+        {
+            dashTimer = dashTime;
+            dashing = false;
+        }
     }
 
     void CameraBob(float lowestPoint, float highestPoint, float speed)

@@ -21,8 +21,7 @@ public class BladeSystem : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
-
-        player.actions.Stab.performed += Stab_performed;
+        
         player.actions.Slash.performed += Slash_performed;
         player.actions.Defend.performed += Defend_performed;
         player.actions.Defend.canceled += Defend_canceled;
@@ -53,7 +52,6 @@ public class BladeSystem : MonoBehaviour
     void OnDestroy()
     {
         player.actions.Slash.performed -= Slash_performed;
-        player.actions.Stab.performed -= Stab_performed;
         player.actions.Defend.performed -= Defend_performed;
         player.actions.Defend.canceled -= Defend_canceled;
     }
@@ -64,12 +62,6 @@ public class BladeSystem : MonoBehaviour
         animator.SetTrigger("slash");
     }
     
-    private void Stab_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        weapon.defending = false;
-        animator.SetTrigger("stab");
-    }
-
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = true;
@@ -98,18 +90,6 @@ public class BladeSystem : MonoBehaviour
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         player.lookSpeed = defaultLookSpeed;
-    }
-
-    public void Stab()
-    {
-        if(Physics.Raycast(player.camera.position, player.camera.forward, out RaycastHit hit, 2.5f))
-        {
-            if(hit.transform.tag == "Solid")
-            {
-                Instantiate(weapon.impactEffectSolid, hit.point, Quaternion.identity);
-                animator.SetTrigger("recoil");
-            }
-        }
     }
 
 }
