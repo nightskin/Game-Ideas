@@ -22,9 +22,10 @@ public class FirstPersonPlayer : MonoBehaviour
     float zRot = 0;
 
     // For Jumping
+    [SerializeField] bool canJump = false;
     int numberOfJumps = 0;
-    [SerializeField] int maxJumps = 2;
-    float jumpHeight = 5;
+    [SerializeField] int maxJumps = 1;
+    [SerializeField] float jumpHeight = 2;
     Vector3 velocity = Vector3.zero;
     Transform groundCheck;
     float gravity = -9.81f;
@@ -44,10 +45,10 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
     //For Wall Jumping and Wall Running
+    [SerializeField] bool canWallRun = false;
     [SerializeField] LayerMask wallMask;
     [SerializeField] float maxWallRunTime = 5;
     float wallJumpSideForce = 15;
-    float wallJumpUpForce = 15;
     float maxWallRunTimer = 0;
     
     bool isExitingWall = false;
@@ -74,12 +75,14 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         actions.Jump.performed += Jump_performed;
+        actions.Jump.canceled += Jump_canceled;
         actions.Run.performed += Run_performed;
         actions.Run.canceled += Run_canceled;
         actions.LockOn.performed += LockOn_performed;
         actions.LockOn.canceled += LockOn_canceled;
     }
-    
+
+
     void Update()
     {
         CanJump();
@@ -132,21 +135,30 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        maxWallRunTimer = maxWallRunTime;
-        if (numberOfJumps < maxJumps)
+        if(canJump)
         {
-            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
-            numberOfJumps++;
+            maxWallRunTimer = maxWallRunTime;
+            if (numberOfJumps < maxJumps)
+            {
+                velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
+                numberOfJumps++;
+            }
+            if (isWallRunning)
+            {
+                isExitingWall = true;
+                exitWallTimer = exitingWallTime;
+                Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+                Vector3 jumpForce = transform.up * jumpHeight + wallNormal * wallJumpSideForce;
+                velocity = jumpForce;
+                numberOfJumps--;
+            }
         }
-        if(isWallRunning)
-        {
-            isExitingWall = true;
-            exitWallTimer = exitingWallTime;
-            Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
-            Vector3 jumpForce = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-            velocity = jumpForce;
-            numberOfJumps--;
-        }
+    }
+
+    private void Jump_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        velocity.x = 0;
+        velocity.z = 0;
     }
 
     private void Run_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -196,8 +208,11 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void CheckWall()
     {
-        isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, wallMask);
-        isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, wallMask);
+        if(canWallRun)
+        {
+            isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, wallMask);
+            isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, wallMask);
+        }
     }
 
     void WallRunInput()

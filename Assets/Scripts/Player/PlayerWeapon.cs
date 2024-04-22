@@ -30,7 +30,10 @@ public class PlayerWeapon: MonoBehaviour
                     Vector3 forceDirection = (transform.root.right * bladeSystem.atkVector.x + transform.root.up * bladeSystem.atkVector.y);
                     other.attachedRigidbody.AddForce(forceDirection * knockbackForce);
                 }
-
+                if(other.transform.root.GetComponent<HealthScript>())
+                {
+                    
+                }
             }
         }
     }

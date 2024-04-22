@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aabe55d23736ca244a3759bec4f85bb7, type: 2}
+  - {fileID: 2100000, guid: d7e3a870d2fd8e84cbde02fbdb1366c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -175,7 +175,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aabe55d23736ca244a3759bec4f85bb7, type: 2}
+  - {fileID: 2100000, guid: d7e3a870d2fd8e84cbde02fbdb1366c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 9176900004066731513}
   m_Layer: 7
   m_Name: Walls
-  m_TagString: Solid
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 2147483647
@@ -287,7 +287,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7b4afd6c340009b4dae9d32f532f066e, type: 2}
+  - {fileID: 2100000, guid: d7e3a870d2fd8e84cbde02fbdb1366c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -389,8 +389,8 @@ MonoBehaviour:
   navigationBaker: {fileID: 562383319}
   tilesX: 100
   tilesZ: 100
-  tileSize: 10
-  seed: 0
+  tileSize: 20
+  seed: 2024-04-22 11:00:24 AM
 --- !u!114 &562383320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,8 +433,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyTypes: []
-  spawnChance: 5
+  enemyTypes:
+  - {fileID: 2286981657975105812, guid: f00f1715c217dfd4abaf90a755bb306a, type: 3}
+  spawnChance: 1
   surface: {fileID: 562383320}
 --- !u!82 &1367449269
 AudioSource:

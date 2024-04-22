@@ -156,8 +156,11 @@ MonoBehaviour:
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
   lookSpeed: 100
-  maxJumps: 2
+  canJump: 1
+  maxJumps: 1
+  jumpHeight: 5
   gravityOn: 1
+  canWallRun: 0
   wallMask:
     serializedVersion: 2
     m_Bits: 128

@@ -32,14 +32,10 @@ public class BladeSystem : MonoBehaviour
     {
         if(player.actions.Slash.IsPressed())
         {
-            atkVector = player.actions.Look.ReadValue<Vector2>();
+            atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-            }
-            else
-            {
-                atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
             }
         }
         if (blocking)

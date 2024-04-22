@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class HealthScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] int maxHealth = 5;    
+    
+    int health;
+
+
+    private void Start()
     {
-        
+        health = maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage()
     {
-        
+        maxHealth--;
     }
+
+    public bool IsDead()
+    {
+        return health <= 0;
+    }
+
 }
