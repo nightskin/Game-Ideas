@@ -78,9 +78,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ChiSlash",
+                    "name": "Dash",
                     "type": "Button",
-                    "id": "665b4125-a149-416f-b20c-343c9f6e86c4",
+                    "id": "16bc9ce9-1604-4cb3-aff0-1f0893910b20",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -200,17 +200,6 @@
                 },
                 {
                     "name": "",
-                    "id": "fb59acfc-3d4c-405e-a42c-0c8ad753430c",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Defend",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "87942cda-d492-4ae5-a66c-8b099671ea7c",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
@@ -310,23 +299,45 @@
                 },
                 {
                     "name": "",
-                    "id": "255b589f-cfdb-42d0-bbd1-f702d6cdaee4",
-                    "path": "<Mouse>/middleButton",
+                    "id": "fb59acfc-3d4c-405e-a42c-0c8ad753430c",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ChiSlash",
+                    "action": "Defend",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "be4add52-0604-4914-8e04-990d148850cf",
+                    "id": "97e301c6-a7dd-438d-a681-5126209f7219",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "33e9889e-2f9a-4ed5-ad19-32267f4512c3",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "46ef98d3-8aed-4f6d-8220-8b83a2fdbedf",
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ChiSlash",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -433,8 +433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 9146304533616603600}
-  enemyTypes:
-  - {fileID: 2286981657975105812, guid: f00f1715c217dfd4abaf90a755bb306a, type: 3}
+  enemyTypes: []
   spawnChance: 1
   surface: {fileID: 562383320}
 --- !u!82 &1367449269

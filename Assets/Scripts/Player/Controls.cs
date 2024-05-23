@@ -100,9 +100,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ChiSlash"",
+                    ""name"": ""Dash"",
                     ""type"": ""Button"",
-                    ""id"": ""665b4125-a149-416f-b20c-343c9f6e86c4"",
+                    ""id"": ""16bc9ce9-1604-4cb3-aff0-1f0893910b20"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -222,17 +222,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fb59acfc-3d4c-405e-a42c-0c8ad753430c"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Defend"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""87942cda-d492-4ae5-a66c-8b099671ea7c"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
@@ -332,23 +321,45 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""255b589f-cfdb-42d0-bbd1-f702d6cdaee4"",
-                    ""path"": ""<Mouse>/middleButton"",
+                    ""id"": ""fb59acfc-3d4c-405e-a42c-0c8ad753430c"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChiSlash"",
+                    ""action"": ""Defend"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""be4add52-0604-4914-8e04-990d148850cf"",
+                    ""id"": ""97e301c6-a7dd-438d-a681-5126209f7219"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33e9889e-2f9a-4ed5-ad19-32267f4512c3"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46ef98d3-8aed-4f6d-8220-8b83a2fdbedf"",
                     ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChiSlash"",
+                    ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -367,7 +378,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
-        m_Player_ChiSlash = m_Player.FindAction("ChiSlash", throwIfNotFound: true);
+        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -437,7 +448,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_LockOn;
     private readonly InputAction m_Player_Run;
-    private readonly InputAction m_Player_ChiSlash;
+    private readonly InputAction m_Player_Dash;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -450,7 +461,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputAction @Run => m_Wrapper.m_Player_Run;
-        public InputAction @ChiSlash => m_Wrapper.m_Player_ChiSlash;
+        public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -484,9 +495,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Run.started += instance.OnRun;
             @Run.performed += instance.OnRun;
             @Run.canceled += instance.OnRun;
-            @ChiSlash.started += instance.OnChiSlash;
-            @ChiSlash.performed += instance.OnChiSlash;
-            @ChiSlash.canceled += instance.OnChiSlash;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -515,9 +526,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Run.started -= instance.OnRun;
             @Run.performed -= instance.OnRun;
             @Run.canceled -= instance.OnRun;
-            @ChiSlash.started -= instance.OnChiSlash;
-            @ChiSlash.performed -= instance.OnChiSlash;
-            @ChiSlash.canceled -= instance.OnChiSlash;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -545,6 +556,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnLockOn(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
-        void OnChiSlash(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }

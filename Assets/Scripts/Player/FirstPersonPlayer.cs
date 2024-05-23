@@ -37,6 +37,9 @@ public class FirstPersonPlayer : MonoBehaviour
     Transform lockOnTarget = null;
 
     //For Dashing
+    [SerializeField] bool canDash = true;
+    [SerializeField] int maxAirDashes = 3;
+    int airDashes = 0;
     Vector3 dashDirection;
     float dashTime = 0.1f;
     float dashTimer;
@@ -73,7 +76,7 @@ public class FirstPersonPlayer : MonoBehaviour
         actions = controls.Player;
         actions.Enable();
 
-
+        actions.Dash.performed += Dash_performed;
         actions.Jump.performed += Jump_performed;
         actions.Jump.canceled += Jump_canceled;
         actions.Run.performed += Run_performed;
@@ -81,7 +84,6 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.LockOn.performed += LockOn_performed;
         actions.LockOn.canceled += LockOn_canceled;
     }
-
 
     void Update()
     {
@@ -131,7 +133,29 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.LockOn.canceled -= LockOn_canceled;
     }
 
+    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(canDash)
+        {
+            float x = actions.Move.ReadValue<Vector2>().x;
+            float z = actions.Move.ReadValue<Vector2>().y;
+            if(isGrounded)
+            {
+                dashDirection = (transform.right * x) + (transform.forward * z);
+                dashing = true;
+            }
+            else
+            {
+                if(airDashes < maxAirDashes)
+                {
+                    airDashes++;
+                    dashDirection = (transform.right * x) + (camera.transform.forward * z);
+                    dashing = true;
+                }
+            }
 
+        }
+    }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -281,6 +305,7 @@ public class FirstPersonPlayer : MonoBehaviour
             numberOfJumps = 0;
             maxWallRunTimer = maxWallRunTime;
             zRot = 0;
+            airDashes = 0;
         }
 
         //Basic Motion
@@ -309,6 +334,7 @@ public class FirstPersonPlayer : MonoBehaviour
             numberOfJumps = 0;
             maxWallRunTimer = maxWallRunTime;
             zRot = 0;
+            airDashes = 0;
         }
 
         //Basic Motion

@@ -37,6 +37,10 @@ public class BladeSystem : MonoBehaviour
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
+            else
+            {
+                atkAngle = Mathf.Round(Random.Range(-180.0f, 180.0f) / 45) * 45;
+            }
         }
         if (blocking)
         {
@@ -56,13 +60,14 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.defending = false;
         animator.SetTrigger("slash");
+        player.lookSpeed *= actionDamp;
     }
     
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed *= actionDamp;
+        player.lookSpeed = 0;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -78,7 +83,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed *= actionDamp;
     }
     
     public void EndSlash()

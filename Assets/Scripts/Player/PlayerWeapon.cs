@@ -16,7 +16,7 @@ public class PlayerWeapon: MonoBehaviour
     {
         if (attacking)
         {
-            if (other.transform.tag == "Solid")
+            if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
                 Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 bladeSystem.animator.SetTrigger("recoil");
@@ -25,15 +25,22 @@ public class PlayerWeapon: MonoBehaviour
             else if (other.transform.tag == "CanBeDamaged")
             {
                 Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if(other.attachedRigidbody)
+                if (other.transform.root.GetComponent<HealthScript>())
+                {
+                    HealthScript health = other.transform.root.GetComponent<HealthScript>();
+                    health.TakeDamage();
+                    if(health.IsDead())
+                    {
+                        health.SetRagDoll(true);
+                    }
+                }
+
+                if (other.attachedRigidbody)
                 {
                     Vector3 forceDirection = (transform.root.right * bladeSystem.atkVector.x + transform.root.up * bladeSystem.atkVector.y);
                     other.attachedRigidbody.AddForce(forceDirection * knockbackForce);
                 }
-                if(other.transform.root.GetComponent<HealthScript>())
-                {
-                    
-                }
+
             }
         }
     }
