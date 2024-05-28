@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
-
     Controls controls;
     public Controls.PlayerActions actions;
 
@@ -21,18 +20,20 @@ public class FirstPersonPlayer : MonoBehaviour
     float yRot = 0;
     float zRot = 0;
 
-    // For Jumping
-    [SerializeField] bool canJump = false;
+    // For Jumping and climbing
     int numberOfJumps = 0;
     [SerializeField] int maxJumps = 1;
     [SerializeField] float jumpHeight = 2;
     Vector3 velocity = Vector3.zero;
     Transform groundCheck;
     float gravity = -9.81f;
-    public bool gravityOn = true;
     bool isGrounded = false;
 
-    
+    [SerializeField] LayerMask climbMask;
+    bool canClimb = false;
+    bool isClimbing = false;
+
+
     //For lockOn System
     Transform lockOnTarget = null;
 
@@ -46,24 +47,6 @@ public class FirstPersonPlayer : MonoBehaviour
     float dashSpeed = 100;
     bool dashing = false;
 
-
-    //For Wall Jumping and Wall Running
-    [SerializeField] bool canWallRun = false;
-    [SerializeField] LayerMask wallMask;
-    [SerializeField] float maxWallRunTime = 5;
-    float wallJumpSideForce = 15;
-    float maxWallRunTimer = 0;
-    
-    bool isExitingWall = false;
-    float exitingWallTime = 0.25f;
-    float exitWallTimer = 0;
-
-    bool isWallRunning = false;
-    float wallDistance = 0.6f;
-    bool isAgainstWallLeft = false;
-    bool isAgainstWallRight = false;
-    RaycastHit wallHitLeft;
-    RaycastHit wallHitRight;
 
     void Awake()
     {
@@ -87,10 +70,6 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Update()
     {
-        CanJump();
-        CheckWall();
-        WallRunInput();
-
         if(dashing)
         {
             Dash();
@@ -108,22 +87,31 @@ public class FirstPersonPlayer : MonoBehaviour
                 LockOnMovement();
             }
 
-            if (moveDirection.magnitude > 0 && isGrounded || isWallRunning)
+            if(canClimb)
             {
-                CameraBob(0.5f, 1.25f, currentSpeed / 4);
+                if(actions.Jump.IsPressed())
+                {
+                    controller.Move(Vector3.up * currentSpeed * Time.deltaTime);
+                    isClimbing = true;
+                }
+                else
+                {
+                    isClimbing = false;
+                }
             }
 
-            if (isWallRunning && !isExitingWall)
-            {
-                WallRunningMovement();
-            }
-            else
-            {
-                zRot = Mathf.Lerp(zRot, 0, 10 * Time.deltaTime);
-            }
         }
     }
-    
+
+    void FixedUpdate()
+    {
+        //Check If Player Can Jump
+        isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
+
+        //Check If Player Can Climb
+        canClimb = Physics.CheckSphere(transform.position, 1, climbMask);
+    }
+
     void OnDestroy()
     {
         actions.Jump.performed -= Jump_performed;
@@ -132,6 +120,7 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.LockOn.performed -= LockOn_performed;
         actions.LockOn.canceled -= LockOn_canceled;
     }
+
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -153,29 +142,15 @@ public class FirstPersonPlayer : MonoBehaviour
                     dashing = true;
                 }
             }
-
         }
     }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(canJump)
+        if (numberOfJumps < maxJumps)
         {
-            maxWallRunTimer = maxWallRunTime;
-            if (numberOfJumps < maxJumps)
-            {
-                velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
-                numberOfJumps++;
-            }
-            if (isWallRunning)
-            {
-                isExitingWall = true;
-                exitWallTimer = exitingWallTime;
-                Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
-                Vector3 jumpForce = transform.up * jumpHeight + wallNormal * wallJumpSideForce;
-                velocity = jumpForce;
-                numberOfJumps--;
-            }
+            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
+            numberOfJumps++;
         }
     }
 
@@ -224,86 +199,13 @@ public class FirstPersonPlayer : MonoBehaviour
             dashing = false;
         }
     }
-
-    void CameraBob(float lowestPoint, float highestPoint, float speed)
-    {
-        camera.localPosition = Vector3.up * (Mathf.PingPong(Time.time * speed, 1) * (highestPoint - lowestPoint) + lowestPoint);
-    }
-
-    void CheckWall()
-    {
-        if(canWallRun)
-        {
-            isAgainstWallRight = Physics.Raycast(transform.position, transform.right, out wallHitRight, wallDistance, wallMask);
-            isAgainstWallLeft = Physics.Raycast(transform.position, -transform.right, out wallHitLeft, wallDistance, wallMask);
-        }
-    }
-
-    void WallRunInput()
-    {
-        if((isAgainstWallLeft || isAgainstWallRight) && actions.Move.ReadValue<Vector2>().y > 0 && !isGrounded && !isExitingWall)
-        {
-            isWallRunning = true;
-            gravityOn = false;
-
-            if(maxWallRunTimer > 0)
-            {
-                maxWallRunTimer -= Time.deltaTime;
-            }
-            else
-            {
-                isExitingWall = true;
-                exitWallTimer = exitingWallTime;
-            }
-        }
-        else if(isExitingWall)
-        {
-            if(isWallRunning)
-            {
-                isWallRunning = false;
-                gravityOn = true;
-            }
-
-            if(exitWallTimer > 0)
-            {
-                exitWallTimer -= Time.deltaTime;
-            }
-            else
-            {
-                isExitingWall = false;
-            }
-        }
-        else
-        {
-            isWallRunning = false;
-            gravityOn = true;
-        }
-    }
-
-    void WallRunningMovement()
-    {
-        Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
-        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
-
-        float targetCameraAngle = isAgainstWallRight ? 30 : -30f;
-        zRot = Mathf.LerpAngle(zRot, targetCameraAngle, 10 * Time.deltaTime);
-        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
-        
-        if((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
-        {
-            wallForward = -wallForward;
-        }
-
-        controller.Move(wallForward * currentSpeed * Time.deltaTime);
-    }
-
+    
     void Movement()
     {
         if(isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
             numberOfJumps = 0;
-            maxWallRunTimer = maxWallRunTime;
             zRot = 0;
             airDashes = 0;
         }
@@ -317,7 +219,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         //Add Gravity
-        if (gravityOn)
+        if (!canClimb)
         {
             velocity += Vector3.up * gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
@@ -332,7 +234,6 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity = Vector3.zero;
             numberOfJumps = 0;
-            maxWallRunTimer = maxWallRunTime;
             zRot = 0;
             airDashes = 0;
         }
@@ -346,7 +247,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         //Add Gravity
-        if (gravityOn)
+        if (canClimb)
         {
             velocity += Vector3.up * gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
@@ -375,9 +276,4 @@ public class FirstPersonPlayer : MonoBehaviour
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 
-    void CanJump()
-    {
-        if(gravityOn) isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
-    }
-    
 }

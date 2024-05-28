@@ -60,14 +60,13 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.defending = false;
         animator.SetTrigger("slash");
-        player.lookSpeed *= actionDamp;
     }
     
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed = 0;
+        player.lookSpeed *= actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -89,7 +88,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        player.lookSpeed = defaultLookSpeed;
     }
 
 }
