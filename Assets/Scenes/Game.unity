@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 2
   m_FogDensity: 0.05
@@ -170,7 +170,11 @@ MonoBehaviour:
   mapType: 1
   wallTile: {fileID: 210712208211865324, guid: e6864f0e3b57a694887bdcc6184165dd, type: 3}
   floorTile: {fileID: 1813758049225628820, guid: 742009a5836b6074b8f3b44e22a75808, type: 3}
-  climbTile: {fileID: 4753653604406842129, guid: ba824323244c659438fe3e04f3b46e8f, type: 3}
+  minRoomPosition: {x: -50, y: 0, z: -50}
+  maxRoomPosition: {x: 50, y: 10, z: 50}
+  minRoomSize: {x: 2, y: 1, z: 2}
+  maxRoomSize: {x: 5, y: 1, z: 5}
+  numberOfRooms: 25
   seed: 
   steps: 500
   stepSize: 16

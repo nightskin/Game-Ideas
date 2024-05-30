@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1606871999}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.5, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -114,7 +114,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 5
+  m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 90
   m_StepOffset: 0.75
@@ -157,10 +157,7 @@ MonoBehaviour:
   controller: {fileID: 42695576058503143}
   lookSpeed: 100
   maxJumps: 1
-  jumpHeight: 5
-  climbMask:
-    serializedVersion: 2
-    m_Bits: 256
+  jumpHeight: 10
   canDash: 0
   maxAirDashes: 3
 --- !u!114 &1091619360
@@ -222,7 +219,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42695576157200106}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

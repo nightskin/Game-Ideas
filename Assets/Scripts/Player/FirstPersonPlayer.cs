@@ -18,20 +18,26 @@ public class FirstPersonPlayer : MonoBehaviour
     public float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
-    float zRot = 0;
 
-    // For Jumping and climbing
+    // For Jumping and falling
     int numberOfJumps = 0;
     [SerializeField] int maxJumps = 1;
     [SerializeField] float jumpHeight = 2;
     Vector3 velocity = Vector3.zero;
     Transform groundCheck;
-    float gravity = -9.81f;
+    float gravity = 10.0f;
     bool isGrounded = false;
 
-    [SerializeField] LayerMask climbMask;
-    bool canClimb = false;
-    bool isClimbing = false;
+
+    //For Wall Jumping
+    [SerializeField] bool canWallJump = true;
+    [SerializeField] float wallJumpPower = 10;
+    bool isWallJumping = false;
+    Vector3 wallJumpDirection = new Vector3();
+    //float wallJumpDuration = 0.4f;
+    float wallJumpTime = 0.1f;
+    float wallJumpCounter = 0;
+    
 
 
     //For lockOn System
@@ -79,37 +85,37 @@ public class FirstPersonPlayer : MonoBehaviour
             if (!lockOnTarget)
             {
                 Look();
-                Movement();
+                if(isWallJumping)
+                {
+                    WallJump();
+                }
+                else
+                {
+                    Movement();
+                }
             }
             else if (lockOnTarget)
             {
                 LookAtTarget();
-                LockOnMovement();
-            }
-
-            if(canClimb)
-            {
-                if(actions.Jump.IsPressed())
+                if(isWallJumping)
                 {
-                    controller.Move(Vector3.up * currentSpeed * Time.deltaTime);
-                    isClimbing = true;
+                    WallJump();
                 }
                 else
                 {
-                    isClimbing = false;
+                    LockOnMovement();
                 }
             }
-
         }
+
+
+
     }
 
     void FixedUpdate()
     {
         //Check If Player Can Jump
         isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
-
-        //Check If Player Can Climb
-        canClimb = Physics.CheckSphere(transform.position, 1, climbMask);
     }
 
     void OnDestroy()
@@ -120,8 +126,7 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.LockOn.performed -= LockOn_performed;
         actions.LockOn.canceled -= LockOn_canceled;
     }
-
-
+    
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if(canDash)
@@ -147,17 +152,22 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (numberOfJumps < maxJumps)
+        if(canWallJump && Physics.Raycast(transform.position, moveDirection, out RaycastHit hit, 1.5f) && !isGrounded)
         {
-            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * gravity);
+            isWallJumping = true;
+            wallJumpDirection = hit.normal + Vector3.up;
+            wallJumpCounter = wallJumpTime;
+        }
+        else if (numberOfJumps < maxJumps)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravity);
             numberOfJumps++;
         }
     }
 
     private void Jump_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        velocity.x = 0;
-        velocity.z = 0;
+        velocity = Vector3.zero;
     }
 
     private void Run_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -206,7 +216,6 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity = Vector3.zero;
             numberOfJumps = 0;
-            zRot = 0;
             airDashes = 0;
         }
 
@@ -218,12 +227,8 @@ public class FirstPersonPlayer : MonoBehaviour
         controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
 
 
-        //Add Gravity
-        if (!canClimb)
-        {
-            velocity += Vector3.up * gravity * Time.deltaTime;
-            controller.Move(velocity * Time.deltaTime);
-        }
+        velocity.y -= gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
 
 
     }
@@ -234,7 +239,6 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             velocity = Vector3.zero;
             numberOfJumps = 0;
-            zRot = 0;
             airDashes = 0;
         }
 
@@ -247,11 +251,8 @@ public class FirstPersonPlayer : MonoBehaviour
 
 
         //Add Gravity
-        if (canClimb)
-        {
-            velocity += Vector3.up * gravity * Time.deltaTime;
-            controller.Move(velocity * Time.deltaTime);
-        }
+        velocity.y -= gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     void Look()
@@ -261,7 +262,7 @@ public class FirstPersonPlayer : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 45);
-        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
+        camera.localEulerAngles = new Vector3(xRot, 0, 0);
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
@@ -272,8 +273,28 @@ public class FirstPersonPlayer : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
         xRot = targetRot.eulerAngles.x;
         yRot = targetRot.eulerAngles.y;
-        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
+        camera.localEulerAngles = new Vector3(xRot, 0, 0);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 
+    void WallJump()
+    {
+        if(isWallJumping) 
+        {
+            if(wallJumpCounter > 0)
+            {
+                wallJumpCounter -= Time.deltaTime;
+                velocity = wallJumpDirection * wallJumpPower;
+                //Add Gravity
+                velocity.y -= gravity * Time.deltaTime;
+                controller.Move(velocity * Time.deltaTime);
+            }
+            else
+            {
+                isWallJumping = false;
+            }
+        }
+
+
+    }
 }
