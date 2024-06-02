@@ -6,12 +6,14 @@ using UnityEngine;
 public enum MapAlgorithm
 {
     RandomWalker,
-    RoomFirst
+    TinyKeep
 }
 
 public class LevelGenerator : MonoBehaviour
 {
     [SerializeField] MapAlgorithm mapType;
+    [SerializeField] string seed;
+    [SerializeField] float stepSize = 2;
 
     [SerializeField] GameObject wallTile;
     [SerializeField] GameObject floorTile;
@@ -23,12 +25,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] [Min(1)] Vector3Int maxRoomSize = Vector3Int.one * 10;
     [SerializeField] [Min(1)] int numberOfRooms = 10;
 
-    [SerializeField] string seed;
+    [SerializeField] bool threeDimensionalWalk;
     [SerializeField] int steps = 100;
-    [SerializeField] float stepSize = 2;
-
-
-
+    
     Vector3 walkerPosition = new Vector3(0, 0, 0);
     List<Vector3> positions = new List<Vector3>();
 
@@ -39,53 +38,93 @@ public class LevelGenerator : MonoBehaviour
 
         if(mapType == MapAlgorithm.RandomWalker ) 
         {
-            Make2DMap();
+            RandomWalk();
             AddTiles();
         }
-        else if(mapType == MapAlgorithm.RoomFirst)
+        else if(mapType == MapAlgorithm.TinyKeep)
         {
-            Make3DMap();
+            TinyKeep();
             AddTiles();
         }
     }
 
-    void Make2DMap()
+    void RandomWalk()
     {
         positions.Add(walkerPosition);
-        for (int step = 0; step < steps; step++)
+        if(threeDimensionalWalk)
         {
-            int xz = Random.Range(0, 4);
+            for (int step = 0; step < steps; step++)
+            {
+                int direction = Random.Range(0, 6);
 
-            if (xz == 0)
-            {
-                walkerPosition += Vector3.right * stepSize;
-            }
-            else if (xz == 1)
-            {
-                walkerPosition += Vector3.left * stepSize;
-            }
-            else if (xz == 2)
-            {
-                walkerPosition += Vector3.forward * stepSize;
-            }
-            else if (xz == 3)
-            {
-                walkerPosition += Vector3.back * stepSize;
-            }
-            
-            positions.Add(walkerPosition);
+                if (direction == 0)
+                {
+                    walkerPosition += Vector3.right * stepSize;
+                }
+                else if (direction == 1)
+                {
+                    walkerPosition += Vector3.left * stepSize;
+                }
+                else if (direction == 2)
+                {
+                    walkerPosition += Vector3.forward * stepSize;
+                }
+                else if (direction == 3)
+                {
+                    walkerPosition += Vector3.back * stepSize;
+                }
+                else if(direction == 4)
+                {
+                    walkerPosition += Vector3.up * stepSize;
+                }
+                else if(direction == 5)
+                {
+                    walkerPosition += Vector3.down * stepSize;
+                }
 
+                positions.Add(walkerPosition);
+
+            }
         }
+        else
+        {
+            for (int step = 0; step < steps; step++)
+            {
+                int xz = Random.Range(0, 4);
+
+                if (xz == 0)
+                {
+                    walkerPosition += Vector3.right * stepSize;
+                }
+                else if (xz == 1)
+                {
+                    walkerPosition += Vector3.left * stepSize;
+                }
+                else if (xz == 2)
+                {
+                    walkerPosition += Vector3.forward * stepSize;
+                }
+                else if (xz == 3)
+                {
+                    walkerPosition += Vector3.back * stepSize;
+                }
+
+                positions.Add(walkerPosition);
+
+            }
+        }
+
+
         positions = positions.Distinct().ToList();
     }
 
-    void Make3DMap()
+    void TinyKeep()
     {
         //Create Rooms
         Vector3[] roomPositions = new Vector3[numberOfRooms];
         for(int r = 0; r < numberOfRooms; r++)
         {
-            roomPositions[r] = RandomTilePosition(minRoomPosition, maxRoomPosition);
+            roomPositions[r] = RandomRoomPosition(minRoomPosition, maxRoomPosition);
         }
         for(int r = 0; r < roomPositions.Length; r++)
         {
@@ -103,9 +142,9 @@ public class LevelGenerator : MonoBehaviour
                 CreateHallway2(roomPositions[i], roomPositions[i + 1]);
             }
         }
-        CreateHallway2(roomPositions[roomPositions.Length-2], roomPositions[roomPositions.Length - 1]);
+        CreateHallway2(roomPositions[roomPositions.Length - 2], roomPositions[roomPositions.Length - 1]);
 
-
+        //Remove Duplicate positions
         positions = positions.Distinct().ToList();
     }
 
@@ -254,10 +293,10 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    Vector3 RandomTilePosition(Vector3Int min, Vector3Int max)
+    Vector3 RandomRoomPosition(Vector3Int min, Vector3Int max)
     {
         int x = Random.Range(min.x, max.x);
-        int y = Random.Range(min.y, max.y);
+        int y = (Random.Range(min.y, max.y) / (maxRoomSize.y + 1)) * (maxRoomSize.y + 1);
         int z = Random.Range(min.z, max.z);
         return new Vector3(x, y, z) * stepSize;
     }

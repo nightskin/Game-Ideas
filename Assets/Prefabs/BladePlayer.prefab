@@ -156,10 +156,15 @@ MonoBehaviour:
   camera: {fileID: 42695576157200118}
   controller: {fileID: 42695576058503143}
   lookSpeed: 100
-  maxJumps: 1
-  jumpHeight: 10
-  canDash: 0
-  maxAirDashes: 3
+  maxJumps: 2
+  jumpHeight: 5
+  wallJumpPower: 5
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 503
+  wallJumpTime: 0.25
+  canDash: 1
+  maxAirDashes: 0
 --- !u!114 &1091619360
 MonoBehaviour:
   m_ObjectHideFlags: 0
