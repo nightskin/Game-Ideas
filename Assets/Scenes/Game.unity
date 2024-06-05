@@ -170,20 +170,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a380a7d527cedba4cbc6f764a7ca3682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapType: 0
   seed: 
   tileSize: 16
-  walls: {fileID: 0}
-  floors: {fileID: 0}
-  ceilings: {fileID: 0}
-  ramps: {fileID: 0}
+  walls: {fileID: 210712208211865324, guid: e6864f0e3b57a694887bdcc6184165dd, type: 3}
+  floors: {fileID: 1813758049225628820, guid: 742009a5836b6074b8f3b44e22a75808, type: 3}
+  ceilings: {fileID: 1813758049225628820, guid: 742009a5836b6074b8f3b44e22a75808, type: 3}
+  ramps: {fileID: 1308537205436237675, guid: 0e6ae8a03c3b7514aa957779ee912905, type: 3}
   minRoomPosition: {x: -30, y: 0, z: -30}
-  maxRoomPosition: {x: 30, y: 30, z: 30}
+  maxRoomPosition: {x: 30, y: 10, z: 30}
   minRoomSize: {x: 1, y: 1, z: 1}
-  maxRoomSize: {x: 2, y: 2, z: 2}
+  maxRoomSize: {x: 4, y: 1, z: 4}
   numberOfRooms: 10
-  threeDimensionalWalk: 0
-  steps: 100
 --- !u!64 &85731965
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -218,7 +215,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 880df46b65ae523479ee4505b85e2820, type: 2}
+  - {fileID: 2100000, guid: b16619ad331ed7148939316011bfc141, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

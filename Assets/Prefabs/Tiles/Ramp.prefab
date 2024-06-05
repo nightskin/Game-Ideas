@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1308537205436237674}
-  - component: {fileID: -8890687930472311037}
   m_Layer: 0
-  m_Name: StrawFloor
+  m_Name: Ramp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,24 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8890687930472311037
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308537205436237675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28d91ea87ebc4434b921d143a4221011, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileIndex: 0
-  selectableTiles:
-  - {fileID: -1028922035, guid: d7fd52daff7125149929ab18d6353e5e, type: 3}
-  - {fileID: -947174291, guid: d7fd52daff7125149929ab18d6353e5e, type: 3}
-  - {fileID: -1027517254, guid: d7fd52daff7125149929ab18d6353e5e, type: 3}
-  renderer: {fileID: 1308537205718304907}
 --- !u!1 &1308537205718304905
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,14 +57,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308537205718304905}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1308537205436237674}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!212 &1308537205718304907
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -125,7 +106,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1028922035, guid: d7fd52daff7125149929ab18d6353e5e, type: 3}
+  m_Sprite: {fileID: 273453622, guid: d7fd52daff7125149929ab18d6353e5e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
