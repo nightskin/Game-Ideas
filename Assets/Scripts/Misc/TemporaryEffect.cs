@@ -5,7 +5,8 @@ using UnityEngine.VFX;
 
 public class TemporaryEffect : MonoBehaviour
 {
-    public float timer = 1;
+    [SerializeField] float timer = 1;
+
     
     void Update()
     {

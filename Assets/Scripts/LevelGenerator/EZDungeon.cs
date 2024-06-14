@@ -58,11 +58,6 @@ public class EZDungeon : MonoBehaviour
     [SerializeField] string seed;
     [SerializeField] float tileSize = 16;
 
-    [SerializeField] GameObject walls;
-    [SerializeField] GameObject floors;
-    [SerializeField] GameObject ceilings;
-    [SerializeField] GameObject ramps;
-
     [SerializeField] Vector3Int minRoomPosition = new Vector3Int(-30, 0, -30);
     [SerializeField] Vector3Int maxRoomPosition = new Vector3Int(30, 0, 30);
 
@@ -85,15 +80,7 @@ public class EZDungeon : MonoBehaviour
         Random.InitState(seed.GetHashCode());
 
         CreateDungeon();
-
-        if (!walls || !floors)
-        {
-            CreateMesh();
-        }
-        else 
-        {
-            AddTiles();
-        }
+        CreateMesh();
     }
 
     void CreateDungeon()
@@ -381,66 +368,6 @@ public class EZDungeon : MonoBehaviour
         buffer += 4;
     }
 
-    void AddTiles()
-    {
-        for (int i = 0; i < pointMap.Count; i++)
-        {
-            //Add Floors and Ceilings
-            if (!pointMap.Contains(pointMap[i] + Vector3.up * tileSize))
-            {
-                if(ceilings)
-                {
-                    Instantiate(ceilings, pointMap[i] + (Vector3.up * (tileSize / 2)), Quaternion.identity, transform);
-                }
-                else
-                {
-                    Instantiate(floors, pointMap[i] + (Vector3.up * (tileSize / 2)), Quaternion.identity, transform);
-                }
-            }
-            else
-            {
-                if (pointMap.Contains(pointMap[i] + new Vector3(1,1,0) * tileSize))
-                {
-                    Instantiate(ramps, new Vector3(0, 0, 0), Quaternion.Euler(0,0,0), transform);
-                }
-
-
-            }
-            if (!pointMap.Contains(pointMap[i] + Vector3.down * tileSize))
-            {
-                Instantiate(floors, pointMap[i] + Vector3.down * (tileSize / 2), Quaternion.identity, transform);
-            }
-            else
-            {
-
-            }
-
-            //Add Walls
-            if (!pointMap.Contains(pointMap[i] + Vector3.forward * tileSize))
-            {
-                Vector3 pos = pointMap[i] + new Vector3(0, 0, tileSize / 2);
-                Instantiate(walls, pos, Quaternion.identity, transform);
-            }
-
-            if (!pointMap.Contains(pointMap[i] + Vector3.back * tileSize))
-            {
-                Vector3 pos = pointMap[i] + new Vector3(0, 0, -tileSize / 2);
-                Instantiate(walls, pos, Quaternion.identity, transform);
-            }
-
-            if (!pointMap.Contains(pointMap[i] + Vector3.right * tileSize))
-            {
-                Vector3 pos = pointMap[i] + new Vector3(tileSize / 2, 0, 0);
-                Instantiate(walls, pos, Quaternion.Euler(0, 90, 0), transform);
-            }
-            if (!pointMap.Contains(pointMap[i] + Vector3.left * tileSize))
-            {
-                Vector3 pos = pointMap[i] + new Vector3(-tileSize / 2, 0, 0);
-                Instantiate(walls, pos, Quaternion.Euler(0, 90, 0), transform);
-            }
-        }
-    }
-
     void CreateMesh()
     {
         //Initilize Mesh
@@ -454,34 +381,34 @@ public class EZDungeon : MonoBehaviour
             //Add Walls
             if (!pointMap.Contains(pointMap[i] + Vector3.forward * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadFront(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.back * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadBack(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.right * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadRight(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.left * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadLeft(pos, tileSize);
             }
             
             //Add Floors and Ceilings
             if (!pointMap.Contains(pointMap[i] + Vector3.up * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadTop(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.down * tileSize))
             {
-                Vector3 pos = pointMap[i] + new Vector3(0, -tileSize / 2, 0);
+                Vector3 pos = pointMap[i];
                 CreateQuadBottom(pos, tileSize);
             }
         }
@@ -496,8 +423,7 @@ public class EZDungeon : MonoBehaviour
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
-
-
+    
     Vector3 RandomRoomPosition(Vector3Int min, Vector3Int max)
     {
         int x = Random.Range(min.x, max.x);

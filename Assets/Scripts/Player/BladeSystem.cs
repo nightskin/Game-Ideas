@@ -4,6 +4,7 @@ public class BladeSystem : MonoBehaviour
 {
     [SerializeField] Transform armPivot;
     [SerializeField] PlayerWeapon weapon;
+    [SerializeField] ParticleSystem weaponTrail;
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.5f;
     float defaultLookSpeed;
@@ -82,12 +83,14 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        weaponTrail.Play();
     }
     
     public void EndSlash()
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        weaponTrail.Stop();
     }
 
 }
