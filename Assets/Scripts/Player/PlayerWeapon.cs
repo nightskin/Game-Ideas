@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerWeapon: MonoBehaviour
 {
+    public Color trailColor = Color.white;
     public BladeSystem bladeSystem;
     public GameObject impactEffectEnemy;
     public GameObject impactEffectSolid;

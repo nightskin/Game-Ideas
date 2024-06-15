@@ -41,14 +41,14 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1876719918}
   serializedVersion: 8
-  lengthInSec: 5
+  lengthInSec: 1
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
@@ -115,8 +115,8 @@ ParticleSystem:
     enabled: 1
     startLifetime:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 1.6
+      minMaxState: 0
+      scalar: 0.8
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -1363,8 +1363,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.2605207, b: 0, a: 1}
-        key1: {r: 1, g: 0.72046226, b: 0.6462264, a: 0}
+        key0: {r: 1, g: 1, b: 1, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -3991,7 +3991,7 @@ ParticleSystem:
     lifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -6900,8 +6900,8 @@ MonoBehaviour:
   camera: {fileID: 6118335469731815050}
   controller: {fileID: 6118335469902077851}
   lookSpeed: 100
-  maxJumps: 1
-  jumpHeight: 1
+  maxJumps: 2
+  jumpHeight: 3
 --- !u!114 &6088619133103884892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6932,7 +6932,7 @@ MonoBehaviour:
   armPivot: {fileID: 6794467839084879078}
   weapon: {fileID: 2110473975047495559}
   weaponTrail: {fileID: 1876719921}
-  actionDamp: 0
+  actionDamp: 0.1
   animator: {fileID: 6088619133414559687}
   atkVector: {x: 0, y: 0}
 --- !u!1 &6410853942228729130
@@ -7123,7 +7123,7 @@ GameObject:
   - component: {fileID: 627344022341491219}
   - component: {fileID: 2110473975047495559}
   m_Layer: 3
-  m_Name: Sword
+  m_Name: Jian
   m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7238,6 +7238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fc583880bd6434a851efc24b189dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trailColor: {r: 1, g: 0.5, b: 0, a: 1}
   bladeSystem: {fileID: 299712266796572059}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}

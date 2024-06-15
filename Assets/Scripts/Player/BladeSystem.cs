@@ -19,6 +19,11 @@ public class BladeSystem : MonoBehaviour
 
     void Start()
     {
+        if (weaponTrail) 
+        { 
+            weaponTrail.gameObject.SetActive(false);
+            weaponTrail.startColor = weapon.trailColor;
+        }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         defaultLookSpeed = player.lookSpeed;
@@ -37,10 +42,6 @@ public class BladeSystem : MonoBehaviour
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-            }
-            else
-            {
-                atkAngle = Mathf.Round(Random.Range(-180.0f, 180.0f) / 45) * 45;
             }
         }
         if (blocking)
@@ -67,7 +68,7 @@ public class BladeSystem : MonoBehaviour
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed *= actionDamp;
+        player.lookSpeed = player.lookSpeed * actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -83,14 +84,26 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        weaponTrail.Play();
+        player.lookSpeed = player.lookSpeed * actionDamp;
+        if(weaponTrail)
+        {
+            weaponTrail.gameObject.SetActive(true);
+            weaponTrail.Play();
+        }
+
     }
     
     public void EndSlash()
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        weaponTrail.Stop();
+        player.lookSpeed = defaultLookSpeed;
+        if(weaponTrail)
+        {
+            weaponTrail.gameObject.SetActive(false);
+            weaponTrail.Stop();
+        }
+
     }
 
 }
