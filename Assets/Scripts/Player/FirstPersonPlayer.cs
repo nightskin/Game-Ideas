@@ -108,7 +108,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (Physics.Raycast(camera.position, camera.forward, out RaycastHit hit))
+        if (Physics.SphereCast(camera.position,5,camera.forward, out RaycastHit hit, camera.GetComponent<Camera>().farClipPlane))
         {
             if (hit.transform.gameObject.layer == 6)
             {
@@ -186,8 +186,10 @@ public class FirstPersonPlayer : MonoBehaviour
     void LookAtTarget()
     {
         Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
-        xRot = targetRot.eulerAngles.x;
-        yRot = targetRot.eulerAngles.y;
+        xRot = Mathf.LerpAngle(xRot, targetRot.eulerAngles.x, 10 * Time.deltaTime);
+        yRot = Mathf.LerpAngle(yRot, targetRot.eulerAngles.y, 10 * Time.deltaTime);
+        //xRot = targetRot.eulerAngles.x;
+        //yRot = targetRot.eulerAngles.y;
         camera.localEulerAngles = new Vector3(xRot, 0, 0);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }

@@ -8,36 +8,31 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] int health;
     BladeSystem meleeSystem;
     FirstPersonPlayer player;
-    [SerializeField] PlayerHUD hud;
 
 
     void Start()
     {
         if(!player) player = GetComponent<FirstPersonPlayer>();
         if(!meleeSystem) meleeSystem = GetComponent<BladeSystem>();
-        if(!hud) hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
         health = maxHealth;
-    }
-
-    void Update()
-    {
-        
     }
 
     public void Heal(int amount)
     {
         health += amount;
-        if (health > maxHealth) health = maxHealth;
+        if (health >= maxHealth)
+        {
+            health = maxHealth;
+            Debug.Log("Health Full");
+        }
     }
 
     public void TakeDamage()
     {
         health--;
-        hud.Flicker();
-        meleeSystem.animator.SetTrigger("recoil");
         if (health == 0)
         {
-            hud.FadeToBlack();
+            Debug.Log("Player Dead");
         }
     }
     
