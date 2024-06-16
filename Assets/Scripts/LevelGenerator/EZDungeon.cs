@@ -50,9 +50,6 @@ struct EZRoom
     }
 }
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(MeshCollider))]
 public class EZDungeon : MonoBehaviour
 {
     [SerializeField] string seed;
@@ -65,22 +62,72 @@ public class EZDungeon : MonoBehaviour
     [SerializeField] [Min(1)] Vector3Int maxRoomSize = new Vector3Int(5,1,5);
     [SerializeField] [Min(1)] int numberOfRooms = 10;
 
+    [SerializeField] Material floorMaterial;
+    [SerializeField] Material wallMaterial;
+    [SerializeField] Material ceilingMaterial;
     
     List<Vector3> pointMap = new List<Vector3>();
-    
-    Mesh mesh;
-    List<Vector3> verts = new List<Vector3>();
-    List<Color> colors = new List<Color>();
-    List<Vector2> uvs = new List<Vector2>();
-    List<int> tris = new List<int>();
-    int buffer = 0;
+
+    GameObject floors;
+    GameObject ceiling;
+    GameObject walls;
+
+    Mesh floorMesh;
+    Mesh wallMesh;
+    Mesh ceilingMesh;
+
+    List<Vector3> floorVerts = new List<Vector3>();
+    List<Vector2> floorUvs = new List<Vector2>();
+    List<int> floorTris = new List<int>();
+
+    List<Vector3> wallVerts = new List<Vector3>();
+    List<Vector2> wallUvs = new List<Vector2>();
+    List<int> wallTris = new List<int>();
+
+
+    List<Vector3> ceilingVerts = new List<Vector3>();
+    List<Vector2> ceilingUvs = new List<Vector2>();
+    List<int> ceilingTris = new List<int>();
+
+    int floorBuffer = 0;
+    int wallBuffer = 0;
+    int ceilingBuffer = 0;
 
     void Start()
     {
+        walls = new GameObject();
+        walls.name = "Walls";
+        walls.AddComponent<MeshFilter>();
+        walls.AddComponent<MeshRenderer>();
+        walls.GetComponent<MeshRenderer>().material = wallMaterial;
+        walls.AddComponent<MeshCollider>();
+        walls.isStatic = true;
+        walls.transform.parent = transform;
+
+        ceiling = new GameObject();
+        ceiling.name = "Ceiling";
+        ceiling.AddComponent<MeshFilter>();
+        ceiling.AddComponent<MeshRenderer>();
+        ceiling.GetComponent<MeshRenderer>().material = ceilingMaterial;
+        ceiling.AddComponent<MeshCollider>();
+        ceiling.isStatic = true;
+        ceiling.transform.parent = transform;
+
+        floors = new GameObject();
+        floors.name = "Ceiling";
+        floors.AddComponent<MeshFilter>();
+        floors.AddComponent<MeshRenderer>();
+        floors.GetComponent<MeshRenderer>().material = floorMaterial;
+        floors.AddComponent<MeshCollider>();
+        floors.isStatic = true;
+        floors.transform.parent = transform;
+
         Random.InitState(seed.GetHashCode());
 
         CreateDungeon();
-        CreateMesh();
+        CreateFloorMesh();
+        CreateWallMesh();
+        CreateCeilingMesh();
     }
 
     void CreateDungeon()
@@ -202,178 +249,176 @@ public class EZDungeon : MonoBehaviour
 
     }
 
-    void CreateQuadBack(Vector3 position, float size)
+
+    void CreateWallBack(Vector3 position, float size)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
 
-        tris.Add(1 + buffer);
-        tris.Add(0 + buffer);
-        tris.Add(2 + buffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(2 + wallBuffer);
+        wallTris.Add(3 + wallBuffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
 
-        tris.Add(3 + buffer);
-        tris.Add(0 + buffer);
-        tris.Add(1 + buffer);
+        wallUvs.Add(new Vector2(0, 0));
+        wallUvs.Add(new Vector2(1, 0));
+        wallUvs.Add(new Vector2(0, 1));
+        wallUvs.Add(new Vector2(1, 1));
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-
-        buffer += 4;
+        wallBuffer += 4;
     }
 
-    void CreateQuadFront(Vector3 position, float size)
+    void CreateWallFront(Vector3 position, float size)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
 
-        tris.Add(1 + buffer);
-        tris.Add(2 + buffer);
-        tris.Add(0 + buffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(2 + wallBuffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(3 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
 
-        tris.Add(0 + buffer);
-        tris.Add(3 + buffer);
-        tris.Add(1 + buffer);
+        wallUvs.Add(new Vector2(0, 0));
+        wallUvs.Add(new Vector2(1, 0));
+        wallUvs.Add(new Vector2(0, 1));
+        wallUvs.Add(new Vector2(1, 1));
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-
-        buffer += 4;
+        wallBuffer += 4;
     }
 
-    void CreateQuadRight(Vector3 position, float size)
+    void CreateWallRight(Vector3 position, float size)
     {
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
 
-        tris.Add(0 + buffer);
-        tris.Add(3 + buffer);
-        tris.Add(1 + buffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(3 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(2 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(3 + wallBuffer);
 
-        tris.Add(2 + buffer);
-        tris.Add(1 + buffer);
-        tris.Add(3 + buffer);
+        wallUvs.Add(new Vector2(0, 0));
+        wallUvs.Add(new Vector2(1, 0));
+        wallUvs.Add(new Vector2(0, 1));
+        wallUvs.Add(new Vector2(1, 1));
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-
-        buffer += 4;
+        wallBuffer += 4;
     }
 
-    void CreateQuadLeft(Vector3 position, float size)
+    void CreateWallLeft(Vector3 position, float size)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
+        wallVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
 
-        tris.Add(3 + buffer);
-        tris.Add(0 + buffer);
-        tris.Add(1 + buffer);
+        wallTris.Add(3 + wallBuffer);
+        wallTris.Add(0 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(1 + wallBuffer);
+        wallTris.Add(2 + wallBuffer);
+        wallTris.Add(3 + wallBuffer);
 
-        tris.Add(1 + buffer);
-        tris.Add(2 + buffer);
-        tris.Add(3 + buffer);
+        wallUvs.Add(new Vector2(0, 0));
+        wallUvs.Add(new Vector2(1, 0));
+        wallUvs.Add(new Vector2(0, 1));
+        wallUvs.Add(new Vector2(1, 1));
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-
-        buffer += 4;
+        wallBuffer += 4;
     }
 
-    void CreateQuadBottom(Vector3 position, float size)
+    void CreateFloor(Vector3 position, float size)
     {
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
+        floorVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * size + position);
+        floorVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * size + position);
+        floorVerts.Add(new Vector3(0.5f, -0.5f, -0.5f) * size + position);
+        floorVerts.Add(new Vector3(0.5f, -0.5f, 0.5f) * size + position);
 
-        tris.Add(0 + buffer);
-        tris.Add(1 + buffer);
-        tris.Add(2 + buffer);
+        floorTris.Add(0 + floorBuffer);
+        floorTris.Add(1 + floorBuffer);
+        floorTris.Add(2 + floorBuffer);
 
-        tris.Add(1 + buffer);
-        tris.Add(3 + buffer);
-        tris.Add(2 + buffer);
+        floorTris.Add(1 + floorBuffer);
+        floorTris.Add(3 + floorBuffer);
+        floorTris.Add(2 + floorBuffer);
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
+        floorUvs.Add(new Vector2(0, 0));
+        floorUvs.Add(new Vector2(1, 0));
+        floorUvs.Add(new Vector2(0, 1));
+        floorUvs.Add(new Vector2(1, 1));
 
 
-        buffer += 4;
+        floorBuffer += 4;
 
     }
 
-    void CreateQuadTop(Vector3 position, float size)
+    void CreateCeiling(Vector3 position, float size)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
+        ceilingVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * size + position);
+        ceilingVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * size + position);
+        ceilingVerts.Add(new Vector3(0.5f, 0.5f, -0.5f) * size + position);
+        ceilingVerts.Add(new Vector3(0.5f, 0.5f, 0.5f) * size + position);
 
-        tris.Add(1 + buffer);
-        tris.Add(0 + buffer);
-        tris.Add(2 + buffer);
+        ceilingTris.Add(1 + ceilingBuffer);
+        ceilingTris.Add(0 + ceilingBuffer);
+        ceilingTris.Add(2 + ceilingBuffer);
+        ceilingTris.Add(3 + ceilingBuffer);
+        ceilingTris.Add(1 + ceilingBuffer);
+        ceilingTris.Add(2 + ceilingBuffer);
 
-        tris.Add(3 + buffer);
-        tris.Add(1 + buffer);
-        tris.Add(2 + buffer);
-
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
+        ceilingUvs.Add(new Vector2(0, 0));
+        ceilingUvs.Add(new Vector2(1, 0));
+        ceilingUvs.Add(new Vector2(0, 1));
+        ceilingUvs.Add(new Vector2(1, 1));
 
 
-        buffer += 4;
+        ceilingBuffer += 4;
 
     }
+    
 
-    void CreateRamp(Vector3 position, Vector3 size, Quaternion rotation)
-    {
-        verts.Add(rotation * new Vector3(-0.5f, 0, -0.5f) + position);
-        verts.Add(rotation * new Vector3(-0.5f, 0, 0.5f) + position);
-        verts.Add(rotation * new Vector3(0.5f, 0, -0.5f) + position);
-        verts.Add(rotation * new Vector3(0.5f, 0, 0.5f) + position);
-
-        tris.Add(0 + buffer);
-        tris.Add(1 + buffer);
-        tris.Add(2 + buffer);
-
-        tris.Add(1 + buffer);
-        tris.Add(3 + buffer);
-        tris.Add(2 + buffer);
-
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-
-
-        buffer += 4;
-    }
-
-    void CreateMesh()
+    void CreateFloorMesh()
     {
         //Initilize Mesh
-        mesh = new Mesh();
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        GetComponent<MeshFilter>().mesh = mesh;
+        floorMesh = new Mesh();
+        floors.GetComponent<MeshFilter>().mesh = floorMesh;
+
+        //Populate Mesh Values
+        for (int i = 0; i < pointMap.Count; i++)
+        {
+            if (!pointMap.Contains(pointMap[i] + Vector3.down * tileSize))
+            {
+                Vector3 pos = pointMap[i];
+                CreateFloor(pos, tileSize);
+            }
+        }
+
+        //Draw Mesh
+        floorMesh.Clear();
+        floorMesh.vertices = floorVerts.ToArray();
+        floorMesh.triangles = floorTris.ToArray();
+        floorMesh.uv = floorUvs.ToArray();
+        floorMesh.RecalculateNormals();
+        floorMesh.RecalculateTangents();
+
+        floors.GetComponent<MeshCollider>().sharedMesh = floorMesh;
+    }
+    
+    void CreateWallMesh()
+    {
+        wallMesh = new Mesh();
+        walls.GetComponent<MeshFilter>().mesh = wallMesh;
 
         //Populate Mesh Values
         for (int i = 0; i < pointMap.Count; i++)
@@ -382,48 +427,64 @@ public class EZDungeon : MonoBehaviour
             if (!pointMap.Contains(pointMap[i] + Vector3.forward * tileSize))
             {
                 Vector3 pos = pointMap[i];
-                CreateQuadFront(pos, tileSize);
+                CreateWallFront(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.back * tileSize))
             {
                 Vector3 pos = pointMap[i];
-                CreateQuadBack(pos, tileSize);
+                CreateWallBack(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.right * tileSize))
             {
                 Vector3 pos = pointMap[i];
-                CreateQuadRight(pos, tileSize);
+                CreateWallRight(pos, tileSize);
             }
             if (!pointMap.Contains(pointMap[i] + Vector3.left * tileSize))
             {
                 Vector3 pos = pointMap[i];
-                CreateQuadLeft(pos, tileSize);
-            }
-            
-            //Add Floors and Ceilings
-            if (!pointMap.Contains(pointMap[i] + Vector3.up * tileSize))
-            {
-                Vector3 pos = pointMap[i];
-                CreateQuadTop(pos, tileSize);
-            }
-            if (!pointMap.Contains(pointMap[i] + Vector3.down * tileSize))
-            {
-                Vector3 pos = pointMap[i];
-                CreateQuadBottom(pos, tileSize);
+                CreateWallLeft(pos, tileSize);
             }
         }
 
         //Draw Mesh
-        mesh.Clear();
-        mesh.vertices = verts.ToArray();
-        mesh.triangles = tris.ToArray();
-        mesh.colors = colors.ToArray();
-        mesh.uv = uvs.ToArray();
-        mesh.RecalculateNormals();
-        mesh.RecalculateTangents();
-        GetComponent<MeshCollider>().sharedMesh = mesh;
+        wallMesh.Clear();
+        wallMesh.vertices = wallVerts.ToArray();
+        wallMesh.triangles = wallTris.ToArray();
+        wallMesh.uv = wallUvs.ToArray();
+        wallMesh.RecalculateNormals();
+        wallMesh.RecalculateTangents();
+
+        walls.GetComponent<MeshCollider>().sharedMesh = floorMesh;
+
     }
-    
+
+    void CreateCeilingMesh()
+    {
+        ceilingMesh = new Mesh();
+        ceiling.GetComponent<MeshFilter>().mesh = ceilingMesh;
+
+        //Populate Mesh Values
+        for (int i = 0; i < pointMap.Count; i++)
+        {
+            if (!pointMap.Contains(pointMap[i] + Vector3.up * tileSize))
+            {
+                Vector3 pos = pointMap[i];
+                CreateCeiling(pos, tileSize);
+            }
+        }
+
+        //Draw Mesh
+        ceilingMesh.Clear();
+        ceilingMesh.vertices = ceilingVerts.ToArray();
+        ceilingMesh.triangles = ceilingTris.ToArray();
+        ceilingMesh.uv = ceilingUvs.ToArray();
+        ceilingMesh.RecalculateNormals();
+        ceilingMesh.RecalculateTangents();
+
+        ceiling.GetComponent<MeshCollider>().sharedMesh = ceilingMesh;
+
+    }
+
     Vector3 RandomRoomPosition(Vector3Int min, Vector3Int max)
     {
         int x = Random.Range(min.x, max.x);

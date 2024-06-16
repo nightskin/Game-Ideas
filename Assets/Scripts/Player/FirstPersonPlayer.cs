@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
@@ -108,7 +109,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (Physics.SphereCast(camera.position,5,camera.forward, out RaycastHit hit, camera.GetComponent<Camera>().farClipPlane))
+        if (Physics.Raycast(camera.position,camera.forward, out RaycastHit hit, camera.GetComponent<Camera>().farClipPlane))
         {
             if (hit.transform.gameObject.layer == 6)
             {

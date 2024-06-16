@@ -6368,7 +6368,7 @@ GameObject:
   - component: {fileID: 2433556364165036025}
   - component: {fileID: 7889191940631659280}
   m_Layer: 5
-  m_Name: CrossHair
+  m_Name: Reticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6392,7 +6392,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2433556364165036025
 CanvasRenderer:
