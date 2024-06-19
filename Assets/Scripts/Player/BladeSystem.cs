@@ -43,6 +43,10 @@ public class BladeSystem : MonoBehaviour
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
+            else
+            {
+                atkAngle = Random.Range(-180, 180);
+            }
         }
         if (blocking)
         {
@@ -88,7 +92,6 @@ public class BladeSystem : MonoBehaviour
         if(weaponTrail)
         {
             weaponTrail.gameObject.SetActive(true);
-            weaponTrail.Play();
         }
 
     }
@@ -101,7 +104,6 @@ public class BladeSystem : MonoBehaviour
         if(weaponTrail)
         {
             weaponTrail.gameObject.SetActive(false);
-            weaponTrail.Stop();
         }
 
     }

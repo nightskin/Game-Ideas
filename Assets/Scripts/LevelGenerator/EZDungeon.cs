@@ -114,7 +114,7 @@ public class EZDungeon : MonoBehaviour
         ceiling.transform.parent = transform;
 
         floors = new GameObject();
-        floors.name = "Ceiling";
+        floors.name = "Floors";
         floors.AddComponent<MeshFilter>();
         floors.AddComponent<MeshRenderer>();
         floors.GetComponent<MeshRenderer>().material = floorMaterial;
@@ -148,14 +148,7 @@ public class EZDungeon : MonoBehaviour
         {
             if(r+1 < numberOfRooms)
             {
-                if (rooms[r].position.y != rooms[r + 1].position.y)
-                {
-                    CreateHallway(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
-                }
-                else
-                {
-                    CreateHallway2(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
-                }
+                CreateHallway(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
             }
 
         }
@@ -180,8 +173,15 @@ public class EZDungeon : MonoBehaviour
                 (Vector3.back * tileSize),
                 (Vector3.left * tileSize),
                 (Vector3.right * tileSize),
-                (Vector3.up * tileSize),
-                (Vector3.down * tileSize),
+
+                (new Vector3(0,1,1) * tileSize),
+                (new Vector3(0,1,-1) * tileSize),
+                (new Vector3(-1,1,0) * tileSize),
+                (new Vector3(1,1,0) * tileSize),
+                (new Vector3(0,-1,1) * tileSize),
+                (new Vector3(0,-1,-1) * tileSize),
+                (new Vector3(-1,-1,0) * tileSize),
+                (new Vector3(1,-1,0) * tileSize),
             };
 
             //Calculate which direction To Go
@@ -387,7 +387,6 @@ public class EZDungeon : MonoBehaviour
 
     }
     
-
     void CreateFloorMesh()
     {
         //Initilize Mesh
