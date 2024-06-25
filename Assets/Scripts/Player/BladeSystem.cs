@@ -5,8 +5,7 @@ public class BladeSystem : MonoBehaviour
     [SerializeField] Transform armPivot;
     [SerializeField] PlayerWeapon weapon;
     [SerializeField] ParticleSystem weaponTrail;
-
-    [SerializeField][Range(0, 1)] float actionDamp = 0.5f;
+    
     float defaultLookSpeed;
     
     FirstPersonPlayer player;
@@ -45,7 +44,7 @@ public class BladeSystem : MonoBehaviour
             }
             else
             {
-                atkAngle = Random.Range(-180, 180);
+                atkAngle = Random.Range(-180.0f, 180.0f);
             }
         }
         if (blocking)
@@ -72,7 +71,7 @@ public class BladeSystem : MonoBehaviour
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed = player.lookSpeed * actionDamp;
+        player.lookSpeed = 0;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -88,7 +87,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed = player.lookSpeed * actionDamp;
         if(weaponTrail)
         {
             weaponTrail.gameObject.SetActive(true);
@@ -100,7 +98,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        player.lookSpeed = defaultLookSpeed;
         if(weaponTrail)
         {
             weaponTrail.gameObject.SetActive(false);
