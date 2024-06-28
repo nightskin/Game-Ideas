@@ -227,9 +227,9 @@ MonoBehaviour:
   seed: 
   tileSize: 10
   minRoomPosition: {x: -30, y: 0, z: -30}
-  maxRoomPosition: {x: 30, y: 10, z: 30}
+  maxRoomPosition: {x: 30, y: 0, z: 30}
   minRoomSize: {x: 2, y: 1, z: 2}
-  maxRoomSize: {x: 10, y: 5, z: 10}
+  maxRoomSize: {x: 10, y: 1, z: 10}
   numberOfRooms: 10
   floorMaterial: {fileID: 2100000, guid: 847db1ebfe68a774b8bce70432caf2e0, type: 2}
   wallMaterial: {fileID: 2100000, guid: 0668da98afb0e51489f8081a53ce81db, type: 2}
@@ -251,7 +251,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2141149857
 MonoBehaviour:
   m_ObjectHideFlags: 0

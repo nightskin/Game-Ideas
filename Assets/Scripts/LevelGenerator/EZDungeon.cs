@@ -162,15 +162,17 @@ public class EZDungeon : MonoBehaviour
         {
             if(r+1 < numberOfRooms)
             {
-                CreateHallway(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
+                if (rooms[r].position.y != rooms[r+1].position.y) 
+                {
+                    CreateHallway(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
+                }
+                else
+                {
+                    CreateHallway2(rooms[r].GetNearestExit(rooms[r + 1].position), rooms[r + 1].GetNearestExit(rooms[r + 1].position));
+                }
             }
 
         }
-
-
-
-        //Remove Duplicate positions
-       
     }
 
     void CreateHallway(Vector3 start, Vector3 end)
@@ -229,7 +231,10 @@ public class EZDungeon : MonoBehaviour
     void CreateHallway2(Vector3 start, Vector3 end)
     {
         Vector3 currentPos = start;
-        map.Add(currentPos, new EZPoint(false));
+        if (!map.ContainsKey(currentPos))
+        {
+            map.Add(currentPos, new EZPoint(false));
+        }
 
         
         while(currentPos.x != end.x)
@@ -237,11 +242,14 @@ public class EZDungeon : MonoBehaviour
             if (currentPos.x < end.x)
             {
                 currentPos.x += tileSize;
-                map.Add(currentPos, new EZPoint(false));
             }
             else if (currentPos.x > end.x)
             {
                 currentPos.x -= tileSize;
+            }
+
+            if (!map.ContainsKey(currentPos))
+            {
                 map.Add(currentPos, new EZPoint(false));
             }
         }
@@ -250,11 +258,13 @@ public class EZDungeon : MonoBehaviour
             if (currentPos.z < end.z)
             {
                 currentPos.z += tileSize;
-                map.Add(currentPos, new EZPoint(false));
             }
             else if (currentPos.z > end.z)
             {
                 currentPos.z -= tileSize;
+            }
+            if (!map.ContainsKey(currentPos))
+            {
                 map.Add(currentPos, new EZPoint(false));
             }
         }
@@ -263,11 +273,13 @@ public class EZDungeon : MonoBehaviour
             if (currentPos.y < end.y)
             {
                 currentPos.y += tileSize;
-                map.Add(currentPos, new EZPoint(false));
             }
             else if (currentPos.y > end.y)
             {
                 currentPos.y -= tileSize;
+            }
+            if (!map.ContainsKey(currentPos))
+            {
                 map.Add(currentPos, new EZPoint(false));
             }
         }
@@ -444,11 +456,6 @@ public class EZDungeon : MonoBehaviour
         floorMesh = new Mesh();
         floors.GetComponent<MeshFilter>().mesh = floorMesh;
 
-        //(new Vector3(0,-1,1) * tileSize),
-        //(new Vector3(0,-1,-1) * tileSize),
-        //(new Vector3(-1,-1,0) * tileSize),
-        //(new Vector3(1,-1,0) * tileSize),
-
         //Populate Mesh Values
         foreach(Vector3 key in map.Keys)
         {
@@ -506,7 +513,7 @@ public class EZDungeon : MonoBehaviour
         wallMesh.RecalculateNormals();
         wallMesh.RecalculateTangents();
 
-        walls.GetComponent<MeshCollider>().sharedMesh = floorMesh;
+        walls.GetComponent<MeshCollider>().sharedMesh = wallMesh;
 
     }
 
