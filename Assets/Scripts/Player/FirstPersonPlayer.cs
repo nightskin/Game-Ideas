@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FirstPersonPlayer : MonoBehaviour
 {
@@ -19,6 +18,7 @@ public class FirstPersonPlayer : MonoBehaviour
     public float lookSpeed = 100;
     float xRot = 0;
     float yRot = 0;
+    float zRot = 0;
 
     // For Jumping and falling
     int numberOfJumps = 0;
@@ -32,7 +32,6 @@ public class FirstPersonPlayer : MonoBehaviour
     //For lockOn System
     Transform lockOnTarget = null;
     
-
 
     void Awake()
     {
@@ -138,12 +137,6 @@ public class FirstPersonPlayer : MonoBehaviour
         moveDirection = transform.right * x + transform.forward * z;
         controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
 
-        if(moveDirection.magnitude > 0) 
-        {
-            velocity.x = 0;
-            velocity.z = 0;
-        }
-
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
@@ -178,10 +171,11 @@ public class FirstPersonPlayer : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 45);
-        camera.localEulerAngles = new Vector3(xRot, 0, 0);
+        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
+
     }
 
     void LookAtTarget()

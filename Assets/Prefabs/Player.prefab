@@ -6938,7 +6938,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 90
-  m_StepOffset: 0.75
+  m_StepOffset: 0.2
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -6978,7 +6978,7 @@ MonoBehaviour:
   controller: {fileID: 6118335469902077851}
   lookSpeed: 100
   maxJumps: 2
-  jumpHeight: 3
+  jumpHeight: 5.5
 --- !u!114 &6088619133103884892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7008,7 +7008,7 @@ MonoBehaviour:
   armPivot: {fileID: 6794467839084879078}
   weapon: {fileID: 2110473975047495559}
   weaponTrail: {fileID: 1876719921}
-  actionDamp: 0
+  atkDamp: 0.1
   animator: {fileID: 6088619133414559687}
   atkVector: {x: 0, y: 0}
 --- !u!1 &6410853942228729130

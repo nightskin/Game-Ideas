@@ -193,19 +193,18 @@ public class EZDungeon : MonoBehaviour
                 (Vector3.back * tileSize),
                 (Vector3.left * tileSize),
                 (Vector3.right * tileSize),
+                (Vector3.up * tileSize),
+                (Vector3.down * tileSize),
 
-                (new Vector3(0,-1,1) * tileSize),
-                (new Vector3(0,-1,-1) * tileSize),
-                (new Vector3(-1,-1,0) * tileSize),
-                (new Vector3(1,-1,0) * tileSize),
-                
-                (new Vector3(0,1,1) * tileSize),
-                (new Vector3(0,1,-1) * tileSize),
-                (new Vector3(-1,1,0) * tileSize),
-                (new Vector3(1,1,0) * tileSize),
-
-
-
+                //(new Vector3(0,-1,1) * tileSize),
+                //(new Vector3(0,-1,-1) * tileSize),
+                //(new Vector3(-1,-1,0) * tileSize),
+                //(new Vector3(1,-1,0) * tileSize),
+                //
+                //(new Vector3(0,1,1) * tileSize),
+                //(new Vector3(0,1,-1) * tileSize),
+                //(new Vector3(-1,1,0) * tileSize),
+                //(new Vector3(1,1,0) * tileSize),
             };
 
             //Calculate which direction To Go
@@ -427,10 +426,13 @@ public class EZDungeon : MonoBehaviour
 
     void CreateRamp(Vector3 position, float angle)
     {
-        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
-        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
-        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position); // 0
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position); //1
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position); //2
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position); //3
+
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position); //4
+        floorVerts.Add(Quaternion.Euler(0, angle, 0) * new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position); //5 
 
         floorTris.Add(0 + floorBuffer);
         floorTris.Add(1 + floorBuffer);
@@ -440,16 +442,25 @@ public class EZDungeon : MonoBehaviour
         floorTris.Add(3 + floorBuffer);
         floorTris.Add(2 + floorBuffer);
 
+        floorTris.Add(0 + floorBuffer);
+        floorTris.Add(4 + floorBuffer);
+        floorTris.Add(1 + floorBuffer);
+
+        floorTris.Add(2 + floorBuffer);
+        floorTris.Add(3 + floorBuffer);
+        floorTris.Add(5 + floorBuffer);
+
         floorUvs.Add(new Vector2(0, 0));
         floorUvs.Add(new Vector2(1, 0));
         floorUvs.Add(new Vector2(0, 1));
         floorUvs.Add(new Vector2(1, 1));
 
+        floorUvs.Add(new Vector2(0, 0));
+        floorUvs.Add(new Vector2(0, 0));
 
-        floorBuffer += 4;
+        floorBuffer += 6;
     }
-
-
+    
     void CreateFloorMesh()
     {
         //Initilize Mesh
@@ -461,8 +472,14 @@ public class EZDungeon : MonoBehaviour
         {
             if (!map.ContainsKey(key + Vector3.down * tileSize))
             {
-                Vector3 pos = key;
-                CreateFloor(pos);
+                CreateFloor(key);
+            }
+            else
+            {
+                if(map.ContainsKey(key + new Vector3(-1,1,0) * tileSize))
+                {
+                    CreateRamp(key + new Vector3(-1, -1, 0) * tileSize, -90);
+                }
             }
         }
 

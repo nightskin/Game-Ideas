@@ -227,7 +227,7 @@ MonoBehaviour:
   seed: 
   tileSize: 10
   minRoomPosition: {x: -30, y: 0, z: -30}
-  maxRoomPosition: {x: 30, y: 0, z: 30}
+  maxRoomPosition: {x: 30, y: 10, z: 30}
   minRoomSize: {x: 2, y: 1, z: 2}
   maxRoomSize: {x: 10, y: 1, z: 10}
   numberOfRooms: 10
