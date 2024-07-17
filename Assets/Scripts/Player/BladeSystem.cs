@@ -5,7 +5,6 @@ public class BladeSystem : MonoBehaviour
 {
     [SerializeField] Transform armPivot;
     [SerializeField] PlayerWeapon weapon;
-    [SerializeField] ParticleSystem weaponTrail;
 
     [SerializeField][Range(0, 1)] float atkDamp = 0.1f;
     float defaultLookSpeed;
@@ -20,10 +19,9 @@ public class BladeSystem : MonoBehaviour
 
     void Start()
     {
-        if (weaponTrail) 
+        if (weapon.trail) 
         { 
-            weaponTrail.gameObject.SetActive(false);
-            weaponTrail.startColor = weapon.trailColor;
+            weapon.trail.gameObject.SetActive(false);
         }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
@@ -90,9 +88,9 @@ public class BladeSystem : MonoBehaviour
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         player.lookSpeed = player.lookSpeed * atkDamp;
-        if(weaponTrail)
+        if(weapon.trail)
         {
-            weaponTrail.gameObject.SetActive(true);
+            weapon.trail.gameObject.SetActive(true);
         }
 
     }
@@ -102,9 +100,9 @@ public class BladeSystem : MonoBehaviour
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         player.lookSpeed = defaultLookSpeed;
-        if (weaponTrail)
+        if (weapon.trail)
         {
-            weaponTrail.gameObject.SetActive(false);
+            weapon.trail.gameObject.SetActive(false);
         }
 
     }

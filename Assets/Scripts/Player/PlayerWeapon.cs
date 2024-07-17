@@ -6,6 +6,7 @@ public class PlayerWeapon: MonoBehaviour
 {
     public Color trailColor = Color.white;
     public BladeSystem bladeSystem;
+    public ParticleSystem trail;
     public GameObject impactEffectEnemy;
     public GameObject impactEffectSolid;
     
@@ -13,22 +14,28 @@ public class PlayerWeapon: MonoBehaviour
     public bool defending = false;
     public float knockbackForce = 10;
 
+    private void Start()
+    {
+        bladeSystem = transform.root.GetComponent<BladeSystem>();
+        if(transform.Find("Trail")) trail = transform.Find("Trail").GetComponent<ParticleSystem>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (attacking)
         {
             if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
-                Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 bladeSystem.animator.SetTrigger("recoil");
                 attacking = false;
             }
             else if (other.transform.tag == "CanBeDamaged")
             {
-                Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if (other.transform.root.GetComponent<HealthScript>())
+                if(impactEffectEnemy) Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                if (other.transform.root.GetComponent<EnemyHealth>())
                 {
-                    HealthScript health = other.transform.root.GetComponent<HealthScript>();
+                    EnemyHealth health = other.transform.root.GetComponent<EnemyHealth>();
                     health.TakeDamage();
                     if(health.IsDead())
                     {

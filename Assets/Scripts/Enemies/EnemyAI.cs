@@ -5,14 +5,14 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    public HealthScript health;
+    public EnemyHealth health;
     public NavMeshAgent agent;
 
 
     
     void Start()
     {
-        health = GetComponent<HealthScript>();
+        health = GetComponent<EnemyHealth>();
         agent = GetComponent<NavMeshAgent>();
 
 
