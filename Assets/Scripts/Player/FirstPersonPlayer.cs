@@ -21,9 +21,7 @@ public class FirstPersonPlayer : MonoBehaviour
     float zRot = 0;
 
     // For Jumping and falling
-    int numberOfJumps = 0;
-    [SerializeField] int maxJumps = 1;
-    [SerializeField] float jumpHeight = 1;
+    [SerializeField] float jumpHeight = 3;
     Vector3 velocity = Vector3.zero;
     Transform groundCheck;
     float gravity = 10.0f;
@@ -58,7 +56,7 @@ public class FirstPersonPlayer : MonoBehaviour
             Look();
             Movement();
         }
-        else if (lockOnTarget)
+        else
         {
             LookAtTarget();
             LockOnMovement();
@@ -69,6 +67,11 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         //Check If Player Can Jump
         isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
+        //Check If Player Can Wall Jump
+        if(!isGrounded)
+        {
+                    
+        }
     }
 
     void OnDestroy()
@@ -84,10 +87,9 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (numberOfJumps < maxJumps)
+        if (isGrounded)
         {
             velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
-            numberOfJumps++;
         }
     }
 
@@ -127,9 +129,8 @@ public class FirstPersonPlayer : MonoBehaviour
         if(isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
-            numberOfJumps = 0;
         }
-
+        
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
@@ -139,8 +140,6 @@ public class FirstPersonPlayer : MonoBehaviour
 
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-
-
     }
     
     void LockOnMovement()
@@ -148,8 +147,8 @@ public class FirstPersonPlayer : MonoBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity = Vector3.zero;
-            numberOfJumps = 0;
         }
+
 
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;

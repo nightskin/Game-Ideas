@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 83c5049057851664c8c1c303758e1645, type: 2}
---- !u!1 &147558217
+--- !u!1 &998562745
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,8 +131,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 147558218}
-  - component: {fileID: 147558219}
+  - component: {fileID: 998562746}
+  - component: {fileID: 998562747}
   m_Layer: 0
   m_Name: Dungeon
   m_TagString: Untagged
@@ -140,13 +140,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!4 &147558218
+--- !u!4 &998562746
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147558217}
+  m_GameObject: {fileID: 998562745}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -155,13 +155,13 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &147558219
+--- !u!114 &998562747
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147558217}
+  m_GameObject: {fileID: 998562745}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a380a7d527cedba4cbc6f764a7ca3682, type: 3}
@@ -169,17 +169,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 
   tileSize: 10
-  minRoomPosition: {x: -30, y: 0, z: -30}
-  maxRoomPosition: {x: 30, y: 0, z: 30}
-  minRoomSize: {x: 1, y: 1, z: 1}
-  maxRoomSize: {x: 5, y: 5, z: 5}
-  numberOfRooms: 10
-  floorMaterial: {fileID: 2100000, guid: acda6da35bf0f6d44aefcf4115b51842, type: 2}
-  wallMaterial: {fileID: 2100000, guid: acda6da35bf0f6d44aefcf4115b51842, type: 2}
-  ceilingMaterial: {fileID: 2100000, guid: acda6da35bf0f6d44aefcf4115b51842, type: 2}
+  numberOfRooms: 2
+  stairPrefab: {fileID: 0}
+  wallPrefab: {fileID: 0}
+  floorPrefab: {fileID: 0}
+  floorMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
+  wallMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
+  ceilingMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
   floorMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 64
 --- !u!1 &1584071047
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,14 +286,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1584071047}
-  m_LocalRotation: {x: -0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!1001 &1588188181
 PrefabInstance:
   m_ObjectHideFlags: 0

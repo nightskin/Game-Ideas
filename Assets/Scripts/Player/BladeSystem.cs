@@ -3,19 +3,19 @@ using UnityEngine;
 
 public class BladeSystem : MonoBehaviour
 {
-    [SerializeField] Transform armPivot;
-    [SerializeField] PlayerWeapon weapon;
+    public Transform armPivot;
+    public PlayerWeapon weapon;
 
-    [SerializeField][Range(0, 1)] float atkDamp = 0.1f;
-    float defaultLookSpeed;
-    
-    FirstPersonPlayer player;
-    public Animator animator;
-
-
-    float atkAngle = 0;
+    [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     public Vector2 atkVector = Vector2.zero;
+    public float atkAngle;
+
+    public FirstPersonPlayer player;
+    public Animator animator;
+    
+    float defaultLookSpeed;
     bool blocking = false;
+    bool charging = false;
 
     void Start()
     {
@@ -28,24 +28,25 @@ public class BladeSystem : MonoBehaviour
         defaultLookSpeed = player.lookSpeed;
         
         player.actions.Slash.performed += Slash_performed;
+        player.actions.Slash.canceled += Slash_canceled;
         player.actions.Defend.performed += Defend_performed;
         player.actions.Defend.canceled += Defend_canceled;
-
     }
-
+    
     void Update()
     {
-        if(player.actions.Slash.IsPressed())
+        if(player.actions.Slash.IsPressed() ||  player.actions.Slash.WasReleasedThisFrame())
         {
             atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
-            else
-            {
-                atkAngle = Random.Range(-180.0f, 180.0f);
-            }
+        }
+        
+        if (charging)
+        {
+            weapon.ChargeWeapon();
         }
         if (blocking)
         {
@@ -57,21 +58,37 @@ public class BladeSystem : MonoBehaviour
     void OnDestroy()
     {
         player.actions.Slash.performed -= Slash_performed;
+        player.actions.Slash.canceled -= Slash_canceled;
         player.actions.Defend.performed -= Defend_performed;
         player.actions.Defend.canceled -= Defend_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        charging = true;
         weapon.defending = false;
         animator.SetTrigger("slash");
     }
-    
+
+    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(weapon.FullyCharged())
+        {
+            weapon.defending = false;
+            animator.SetTrigger("slash");
+        }
+        else
+        {
+            weapon.LoseCharge();
+        }
+        charging = false;
+    }
+
     private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed = player.lookSpeed * atkDamp;
+        player.lookSpeed = player.lookSpeed * actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -79,15 +96,13 @@ public class BladeSystem : MonoBehaviour
         blocking = false;
         player.lookSpeed = defaultLookSpeed;
     }
-
-
-
+    
     ///Animation Events
     public void StartSlash()
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed = player.lookSpeed * atkDamp;
+        player.lookSpeed *= actionDamp;
         if(weapon.trail)
         {
             weapon.trail.gameObject.SetActive(true);
@@ -106,5 +121,13 @@ public class BladeSystem : MonoBehaviour
         }
 
     }
-
+    
+    public void ChargeSlash()
+    {
+        if (weapon.FullyCharged())
+        {
+            weapon.ReleaseCharge();
+            weapon.LoseCharge();
+        }
+    }
 }
