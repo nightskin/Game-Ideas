@@ -167,9 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a380a7d527cedba4cbc6f764a7ca3682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 
+  seed: 69 lol
   tileSize: 10
-  numberOfRooms: 2
+  numberOfRooms: 5
+  roomOffset: 200
   stairPrefab: {fileID: 0}
   wallPrefab: {fileID: 0}
   floorPrefab: {fileID: 0}
