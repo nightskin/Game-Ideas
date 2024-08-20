@@ -167,16 +167,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a380a7d527cedba4cbc6f764a7ca3682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 69 lol
+  seed: asklhlaf
   tileSize: 10
   numberOfRooms: 5
   roomOffset: 200
   stairPrefab: {fileID: 0}
   wallPrefab: {fileID: 0}
   floorPrefab: {fileID: 0}
-  floorMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
-  wallMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
-  ceilingMaterial: {fileID: 2100000, guid: f463c2c8ff30a9c4283e5a5e0cd206f9, type: 2}
+  floorMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
+  ceilingMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
   floorMask:
     serializedVersion: 2
     m_Bits: 64
@@ -196,7 +196,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1584071048
 MonoBehaviour:
@@ -287,14 +287,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1584071047}
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1588188181
 PrefabInstance:
   m_ObjectHideFlags: 0

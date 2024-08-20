@@ -518,19 +518,29 @@ public class EZDungeon : MonoBehaviour
 
     void CreateRamp(Vector3 position, Vector3 angle)
     {
-        //Ramp Verts
+        //Floor Verts
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position); //0
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position); //1
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position); //2
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position); //3
-
-
-        //Ramp Verts
+        
+        //Ceiling Verts
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position); //4
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 1.5f, 0.5f) * tileSize + position); //5
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position); //6
         floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 1.5f, 0.5f) * tileSize + position); //7
 
+        //Left Wall Verts
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position); //8
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position); //9
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position); //10
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 1.5f, 0.5f) * tileSize + position); //11
+
+        //Right Wall Verts
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position); //12
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position); //13
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position); //14
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 1.5f, 0.5f) * tileSize + position); //15
 
         //Floor
         floorTris.Add(0 + floorBuffer);
@@ -549,20 +559,20 @@ public class EZDungeon : MonoBehaviour
         floorTris.Add(5 + floorBuffer);
 
         //Left Wall
-        floorTris.Add(0 + floorBuffer);
-        floorTris.Add(4 + floorBuffer);
-        floorTris.Add(5 + floorBuffer);
-        floorTris.Add(1 + floorBuffer);
-        floorTris.Add(0 + floorBuffer);
-        floorTris.Add(5 + floorBuffer);
+        floorTris.Add(8 + floorBuffer);
+        floorTris.Add(10 + floorBuffer);
+        floorTris.Add(11 + floorBuffer);
+        floorTris.Add(9 + floorBuffer);
+        floorTris.Add(8 + floorBuffer);
+        floorTris.Add(11 + floorBuffer);
 
         //Right Wall
-        floorTris.Add(2 + floorBuffer);
-        floorTris.Add(3 + floorBuffer);
-        floorTris.Add(7 + floorBuffer);
-        floorTris.Add(6 + floorBuffer);
-        floorTris.Add(2 + floorBuffer);
-        floorTris.Add(7 + floorBuffer);
+        floorTris.Add(12 + floorBuffer);
+        floorTris.Add(13 + floorBuffer);
+        floorTris.Add(15 + floorBuffer);
+        floorTris.Add(14 + floorBuffer);
+        floorTris.Add(12 + floorBuffer);
+        floorTris.Add(15 + floorBuffer);
 
         //Ramp UV
         floorUvs.Add(new Vector2(0, 0));
@@ -575,7 +585,17 @@ public class EZDungeon : MonoBehaviour
         floorUvs.Add(new Vector2(0, 1));
         floorUvs.Add(new Vector2(1, 1));
 
-        floorBuffer += 8;
+        floorUvs.Add(new Vector2(0, 0));
+        floorUvs.Add(new Vector2(1, 0));
+        floorUvs.Add(new Vector2(0, 1));
+        floorUvs.Add(new Vector2(1, 1));
+
+        floorUvs.Add(new Vector2(0, 0));
+        floorUvs.Add(new Vector2(1, 0));
+        floorUvs.Add(new Vector2(0, 1));
+        floorUvs.Add(new Vector2(1, 1));
+
+        floorBuffer += 16;
     }
     
     void CreateFloorMesh()
