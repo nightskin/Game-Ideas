@@ -169,17 +169,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: asklhlaf
   tileSize: 10
+  player: {fileID: 1069961061}
   numberOfRooms: 5
   roomOffset: 200
   stairPrefab: {fileID: 0}
   wallPrefab: {fileID: 0}
   floorPrefab: {fileID: 0}
   floorMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
-  wallMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
-  ceilingMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 155ab5f0a18be2640b3476dd10284642, type: 2}
+  ceilingMaterial: {fileID: 2100000, guid: 621c1f0e56aa56049be175668c8a74cf, type: 2}
   floorMask:
     serializedVersion: 2
     m_Bits: 64
+--- !u!4 &1069961061 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6118335469902077925, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+  m_PrefabInstance: {fileID: 1588188181}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1584071047
 GameObject:
   m_ObjectHideFlags: 0
