@@ -16,6 +16,7 @@ public class FirstPersonPlayer : MonoBehaviour
     float runSpeed = 20;
 
     public float lookSpeed = 100;
+
     float xRot = 0;
     float yRot = 0;
     float zRot = 0;
@@ -112,7 +113,7 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         if (Physics.Raycast(camera.position,camera.forward, out RaycastHit hit, camera.GetComponent<Camera>().farClipPlane))
         {
-            if (hit.transform.gameObject.layer == 6)
+            if (hit.transform.gameObject.layer == 7)
             {
                 lockOnTarget = hit.transform;
             }

@@ -7,25 +7,26 @@ public class BladeSystem : MonoBehaviour
     public PlayerWeapon weapon;
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
+    float defaultLookSpeed;
+
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle;
 
     public FirstPersonPlayer player;
     public Animator animator;
     
-    float defaultLookSpeed;
     bool blocking = false;
     bool charging = false;
 
     void Start()
     {
+        defaultLookSpeed = player.lookSpeed;
         if (weapon.trail) 
         { 
             weapon.trail.gameObject.SetActive(false);
         }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
-        defaultLookSpeed = player.lookSpeed;
         
         player.actions.Slash.performed += Slash_performed;
         player.actions.Slash.canceled += Slash_canceled;
@@ -35,7 +36,7 @@ public class BladeSystem : MonoBehaviour
     
     void Update()
     {
-        if(player.actions.Slash.IsPressed() ||  player.actions.Slash.WasReleasedThisFrame())
+        if(player.actions.Slash.IsPressed())
         {
             atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
             if (atkVector.magnitude > 0)
@@ -88,12 +89,13 @@ public class BladeSystem : MonoBehaviour
     {
         blocking = true;
         weapon.defending = true;
-        player.lookSpeed = player.lookSpeed * actionDamp;
+        player.lookSpeed *= actionDamp;
     }
 
     private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         blocking = false;
+        weapon.defending = false;
         player.lookSpeed = defaultLookSpeed;
     }
     
@@ -102,7 +104,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        player.lookSpeed *= actionDamp;
         if(weapon.trail)
         {
             weapon.trail.gameObject.SetActive(true);
@@ -114,7 +115,6 @@ public class BladeSystem : MonoBehaviour
     {
         weapon.attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        player.lookSpeed = defaultLookSpeed;
         if (weapon.trail)
         {
             weapon.trail.gameObject.SetActive(false);

@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a380a7d527cedba4cbc6f764a7ca3682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: asklhlaf
+  seed: asfasdhk
   tileSize: 10
   player: {fileID: 1069961061}
   numberOfRooms: 5
@@ -176,8 +176,8 @@ MonoBehaviour:
   wallPrefab: {fileID: 0}
   floorPrefab: {fileID: 0}
   floorMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
-  wallMaterial: {fileID: 2100000, guid: 155ab5f0a18be2640b3476dd10284642, type: 2}
-  ceilingMaterial: {fileID: 2100000, guid: 621c1f0e56aa56049be175668c8a74cf, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
+  ceilingMaterial: {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
   floorMask:
     serializedVersion: 2
     m_Bits: 64

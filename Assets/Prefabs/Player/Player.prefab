@@ -2103,7 +2103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armPivot: {fileID: 6794467839084879078}
   weapon: {fileID: 1203599411059625784}
-  atkDamp: 0.1
+  actionDamp: 0.1
   atkVector: {x: 0, y: 0}
   atkAngle: 0
   player: {fileID: 6118335469902077924}
@@ -2388,6 +2388,10 @@ PrefabInstance:
       propertyPath: trail
       value: 
       objectReference: {fileID: 1008212236614887822}
+    - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
+      propertyPath: chargeTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
       propertyPath: bladeSystem
       value: 
