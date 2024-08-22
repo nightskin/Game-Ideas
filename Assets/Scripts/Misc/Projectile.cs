@@ -5,33 +5,29 @@ public class Projectile : MonoBehaviour
     public GameObject owner = null;
     public Vector3 direction = Vector3.zero;
     public float speed = 20;
-    
 
+    BoxCollider box;
 
     void Start()
     {
-        
+        box = GetComponent<BoxCollider>();
     }
 
 
     void Update()
     {
-        if(Vector3.Distance(owner.transform.position, transform.position) <= 1000)
-        {
-            transform.position += direction * speed * Time.deltaTime;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+        Vector3 prevPosition = transform.position;
+        transform.position += direction * speed * Time.deltaTime;
 
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject != owner) 
-        {
-            Destroy(gameObject);
-        }
-    }
+        float distance = Vector3.Distance(transform.position, prevPosition);
 
+        if (Physics.BoxCast(prevPosition, box.size / 2, direction, out RaycastHit hit, transform.rotation, distance))
+        {
+            if(hit.transform.gameObject != owner) 
+            {
+                Destroy(gameObject);
+            }
+        }
+
+    }
 }

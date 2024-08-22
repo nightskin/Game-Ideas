@@ -48,7 +48,7 @@ struct EZRoom
         return nearest;
     }
 
-    public void AddRoomToMap(Dictionary<Vector3,EZPoint> map, float tileSize)
+    public void AddRoomToMap(Dictionary<Vector3,EZPoint> map, float tileSize, float tileHeight)
     {
         for (int x = -sizeInTiles.x; x <= sizeInTiles.x; x++)
         {
@@ -56,7 +56,7 @@ struct EZRoom
             {
                 for (int y = 0; y < sizeInTiles.y; y++)
                 {
-                    Vector3 pos = position + (new Vector3(x, y, z) * tileSize);
+                    Vector3 pos = position + (new Vector3(x * tileSize, y * tileHeight, z * tileSize));
                     if (!map.ContainsKey(pos))
                     {
                         map.Add(pos, new EZPoint(false));
@@ -70,11 +70,12 @@ struct EZRoom
 public class EZDungeon : MonoBehaviour
 {
     [SerializeField] string seed;
+    [SerializeField] float stairTileHeight = 10;
     [SerializeField] float tileSize = 10;
     [SerializeField] Transform player;
 
     [SerializeField] [Min(2)] int numberOfRooms = 2;
-    [SerializeField] float roomOffset = 100;
+    Vector3 roomOffset;
 
     [SerializeField] GameObject stairPrefab;
     [SerializeField] GameObject wallPrefab;
@@ -115,6 +116,7 @@ public class EZDungeon : MonoBehaviour
 
     void Start()
     {
+        roomOffset = new Vector3(tileSize * tileSize * 2, stairTileHeight * stairTileHeight * 2, tileSize * tileSize * 2);
         Random.InitState(seed.GetHashCode());
         CreateDungeon();
 
@@ -179,13 +181,13 @@ public class EZDungeon : MonoBehaviour
             if(r == 0)
             {
                 rooms[r] = new EZRoom(Vector3.zero, RandomRoomSize(2, 5), tileSize);
-                rooms[r].AddRoomToMap(map, tileSize);
+                rooms[r].AddRoomToMap(map, tileSize, stairTileHeight);
             }
             else
             {
-                Vector3 pos = rooms[r - 1].position + (RandomDirection() * roomOffset);
+                Vector3 pos = rooms[r - 1].position + MultiplyVectors(RandomDirection(), roomOffset);
                 rooms[r] = new EZRoom(pos, RandomRoomSize(2, 5), tileSize);
-                rooms[r].AddRoomToMap(map, tileSize);
+                rooms[r].AddRoomToMap(map, tileSize, stairTileHeight);
             }
         }
 
@@ -225,37 +227,37 @@ public class EZDungeon : MonoBehaviour
                 //Calculate Durrent Direction
                 if (currentPos.x < end.x) 
                 {
-                    direction = new Vector3(tileSize, tileSize, 0);
+                    direction = new Vector3(tileSize, stairTileHeight, 0);
                 }
                 else if(currentPos.x > end.x)
                 {
-                    direction = new Vector3(-tileSize, tileSize, 0);
+                    direction = new Vector3(-tileSize, stairTileHeight, 0);
                 }
                 else if(currentPos.z < end.z)
                 {
-                    direction = new Vector3(0, tileSize, tileSize);
+                    direction = new Vector3(0, stairTileHeight, tileSize);
                 }
                 else if(currentPos.z > end.z)
                 {
-                    direction = new Vector3(0, tileSize, -tileSize);
+                    direction = new Vector3(0, stairTileHeight, -tileSize);
                 }
 
                 //Calculate Next Direction
                 if ((currentPos + direction).x < end.x)
                 {
-                    nextDirection = new Vector3(tileSize, tileSize, 0);
+                    nextDirection = new Vector3(tileSize, stairTileHeight, 0);
                 }
                 else if ((currentPos + direction).x > end.x)
                 {
-                    nextDirection = new Vector3(-tileSize, tileSize, 0);
+                    nextDirection = new Vector3(-tileSize, stairTileHeight, 0);
                 }
                 else if ((currentPos + direction).z < end.z)
                 {
-                    nextDirection = new Vector3(0, tileSize, tileSize);
+                    nextDirection = new Vector3(0, stairTileHeight, tileSize);
                 }
                 else if ((currentPos + direction).z > end.z)
                 {
-                    nextDirection = new Vector3(0, tileSize, -tileSize);
+                    nextDirection = new Vector3(0, stairTileHeight, -tileSize);
                 }
 
                 if (direction != nextDirection)
@@ -289,37 +291,37 @@ public class EZDungeon : MonoBehaviour
                 //Calculate current Direction
                 if (currentPos.x < end.x)
                 {
-                    direction = new Vector3(tileSize, -tileSize, 0);
+                    direction = new Vector3(tileSize, -stairTileHeight, 0);
                 }
                 else if (currentPos.x > end.x)
                 {
-                    direction = new Vector3(-tileSize, -tileSize, 0);
+                    direction = new Vector3(-tileSize, -stairTileHeight, 0);
                 }
                 else if (currentPos.z < end.z)
                 {
-                    direction = new Vector3(0, -tileSize, tileSize);
+                    direction = new Vector3(0, -stairTileHeight, tileSize);
                 }
                 else if (currentPos.z > end.z)
                 {
-                    direction = new Vector3(0, -tileSize, -tileSize);
+                    direction = new Vector3(0, -stairTileHeight, -tileSize);
                 }
 
                 //Calculate Next Direction
                 if ((currentPos + direction).x < end.x)
                 {
-                    nextDirection = new Vector3(tileSize, -tileSize, 0);
+                    nextDirection = new Vector3(tileSize, -stairTileHeight, 0);
                 }
                 else if ((currentPos + direction).x > end.x)
                 {
-                    nextDirection = new Vector3(-tileSize, -tileSize, 0);
+                    nextDirection = new Vector3(-tileSize, -stairTileHeight, 0);
                 }
                 else if ((currentPos + direction).z < end.z)
                 {
-                    nextDirection = new Vector3(0, -tileSize, tileSize);
+                    nextDirection = new Vector3(0, -stairTileHeight, tileSize);
                 }
                 else if ((currentPos + direction).z > end.z)
                 {
-                    nextDirection = new Vector3(0, -tileSize, -tileSize);
+                    nextDirection = new Vector3(0, -stairTileHeight, -tileSize);
                 }
 
                 if (direction != nextDirection)
@@ -371,20 +373,16 @@ public class EZDungeon : MonoBehaviour
                 {
                     map.Add(currentPos, new EZPoint(false));
                 }
-                else
-                {
-
-                }
             }
         }
     }
     
     void CreateWallBack(Vector3 position)
     {
-        wallVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize, 0.5f * stairTileHeight, -0.5f * tileSize)   + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize, -0.5f * stairTileHeight, -0.5f * tileSize)   + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize,-0.5f * stairTileHeight, -0.5f * tileSize) + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize)    + position);
 
         wallTris.Add(1 + wallBuffer);
         wallTris.Add(0 + wallBuffer);
@@ -403,10 +401,10 @@ public class EZDungeon : MonoBehaviour
 
     void CreateWallFront(Vector3 position)
     {
-        wallVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize,   0.5f * stairTileHeight, 0.5f * tileSize) + position);
+        wallVerts.Add(new Vector3( 0.5f * tileSize,  -0.5f * stairTileHeight, 0.5f * tileSize) + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize,  -0.5f * stairTileHeight, 0.5f * tileSize) + position);
+        wallVerts.Add(new Vector3( 0.5f * tileSize,   0.5f * stairTileHeight, 0.5f * tileSize) + position);
 
         wallTris.Add(1 + wallBuffer);
         wallTris.Add(2 + wallBuffer);
@@ -425,10 +423,10 @@ public class EZDungeon : MonoBehaviour
 
     void CreateWallRight(Vector3 position)
     {
-        wallVerts.Add(new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize,  0.5f * stairTileHeight,  0.5f * tileSize)    + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize, -0.5f * stairTileHeight,  0.5f  * tileSize)   + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize, -0.5f * stairTileHeight, -0.5f  * tileSize)  + position);
+        wallVerts.Add(new Vector3(0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize)   + position);
 
         wallTris.Add(0 + wallBuffer);
         wallTris.Add(3 + wallBuffer);
@@ -447,10 +445,10 @@ public class EZDungeon : MonoBehaviour
 
     void CreateWallLeft(Vector3 position)
     {
-        wallVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
-        wallVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight,  0.5f * tileSize)    + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize, -0.5f * stairTileHeight, 0.5f  * tileSize)   + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize, -0.5f * stairTileHeight,-0.5f  * tileSize)  + position);
+        wallVerts.Add(new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize)   + position);
 
         wallTris.Add(3 + wallBuffer);
         wallTris.Add(0 + wallBuffer);
@@ -469,10 +467,10 @@ public class EZDungeon : MonoBehaviour
 
     void CreateFloor(Vector3 position)
     {
-        floorVerts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
-        floorVerts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
-        floorVerts.Add(new Vector3(0.5f,  -0.5f, -0.5f) * tileSize + position);
-        floorVerts.Add(new Vector3(0.5f,  -0.5f, 0.5f) * tileSize + position);
+        floorVerts.Add(new Vector3(-0.5f * tileSize, -0.5f * stairTileHeight, -0.5f * tileSize) + position);
+        floorVerts.Add(new Vector3(-0.5f * tileSize, -0.5f * stairTileHeight, 0.5f  * tileSize)  + position);
+        floorVerts.Add(new Vector3(0.5f  * tileSize,  -0.5f * stairTileHeight, -0.5f * tileSize) + position);
+        floorVerts.Add(new Vector3(0.5f  * tileSize,  -0.5f * stairTileHeight, 0.5f  * tileSize)  + position);
 
         floorTris.Add(0 + floorBuffer);
         floorTris.Add(1 + floorBuffer);
@@ -494,10 +492,10 @@ public class EZDungeon : MonoBehaviour
 
     void CreateCeiling(Vector3 position)
     {
-        ceilingVerts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
-        ceilingVerts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        ceilingVerts.Add(new Vector3(0.5f,  0.5f, -0.5f) * tileSize + position);
-        ceilingVerts.Add(new Vector3(0.5f,  0.5f, 0.5f) * tileSize + position);
+        ceilingVerts.Add(new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize)+ position);
+        ceilingVerts.Add(new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight,  0.5f * tileSize) + position);
+        ceilingVerts.Add(new Vector3( 0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize)+ position);
+        ceilingVerts.Add(new Vector3( 0.5f * tileSize,  0.5f * stairTileHeight,  0.5f * tileSize) + position);
 
         ceilingTris.Add(1 + ceilingBuffer);
         ceilingTris.Add(0 + ceilingBuffer);
@@ -519,10 +517,10 @@ public class EZDungeon : MonoBehaviour
     void CreateRampFloor(Vector3 position, Vector3 angle)
     {
         //Floor Verts
-        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position); //0
-        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position); //1
-        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position); //2
-        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position); //3
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize, -0.5f * stairTileHeight, -0.5f * tileSize) + position); //0
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight, 0.5f * tileSize) + position); //1
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize,  -0.5f * stairTileHeight, -0.5f * tileSize) + position); //2
+        floorVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize,   0.5f * stairTileHeight, 0.5f * tileSize) + position); //3
 
         //Floor Tris
         floorTris.Add(0 + floorBuffer);
@@ -544,10 +542,10 @@ public class EZDungeon : MonoBehaviour
     void CreateRampCeiling(Vector3 position, Vector3 angle)
     {
         //Ceiling Verts
-        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position); //0
-        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 1.5f, 0.5f) * tileSize + position); //1
-        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position); //2
-        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 1.5f, 0.5f) * tileSize + position); //3
+        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize) + position); //0
+        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize,  1.5f * stairTileHeight,  0.5f * tileSize) + position); //1
+        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3( 0.5f * tileSize,  0.5f * stairTileHeight, -0.5f * tileSize) + position); //2
+        ceilingVerts.Add(Quaternion.Euler(angle) * new Vector3( 0.5f * tileSize,  1.5f * stairTileHeight,  0.5f * tileSize) + position); //3
 
         //Ceiling Tris
         ceilingTris.Add(2 + ceilingBuffer);
@@ -569,16 +567,16 @@ public class EZDungeon : MonoBehaviour
     void CreateRampWalls(Vector3 position, Vector3 angle)
     {
         //Left Wall Verts
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position); //0
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position); //1
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position); //2
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f, 1.5f, 0.5f) * tileSize + position); //3
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize,-0.5f * stairTileHeight,-0.5f * tileSize)   + position); //0
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize, 0.5f * stairTileHeight, 0.5f * tileSize)   + position); //1
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize, 0.5f * stairTileHeight,-0.5f * tileSize) + position); //2
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(-0.5f * tileSize, 1.5f * stairTileHeight, 0.5f * tileSize)   + position); //3
 
         //Right Wall Verts
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position); //4
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position); //5
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position); //6
-        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f, 1.5f, 0.5f) * tileSize + position); //7
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize,-0.5f * stairTileHeight, -0.5f * tileSize)  + position); //4
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize, 0.5f * stairTileHeight,  0.5f * tileSize)    + position); //5
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize, 0.5f * stairTileHeight, -0.5f * tileSize)   + position); //6
+        wallVerts.Add(Quaternion.Euler(angle) * new Vector3(0.5f * tileSize, 1.5f * stairTileHeight,  0.5f * tileSize)    + position); //7
 
         //Left Wall Tris
         wallTris.Add(0 + wallBuffer);
@@ -618,31 +616,31 @@ public class EZDungeon : MonoBehaviour
 
         foreach(Vector3 key in map.Keys)
         {
-            if (map.ContainsKey(key + new Vector3(-1, -1, 0) * tileSize))
+            if (map.ContainsKey(key + new Vector3(-1 * tileSize, -1 * stairTileHeight, 0)))
             {
                 if (!map[key].isRamp) map[key].isRamp = true;
-                Vector3 pos = key + Vector3.down * tileSize;
+                Vector3 pos = key + Vector3.down * stairTileHeight;
                 CreateRampFloor(pos, new Vector3(0, 90, 0));
             }
-            else if (map.ContainsKey(key + new Vector3(1, -1, 0) * tileSize))
+            else if (map.ContainsKey(key + new Vector3(1 * tileSize, -1 * stairTileHeight, 0)))
             {
                 if (!map[key].isRamp) map[key].isRamp = true;
-                Vector3 pos = key + Vector3.down * tileSize;
+                Vector3 pos = key + Vector3.down * stairTileHeight;
                 CreateRampFloor(pos, new Vector3(0, -90, 0));
             }
-            else if (map.ContainsKey(key + new Vector3(0, -1, 1) * tileSize))
+            else if (map.ContainsKey(key + new Vector3(0, -1 * stairTileHeight, 1 * tileSize)))
             {
                 if (!map[key].isRamp) map[key].isRamp = true;
-                Vector3 pos = key + Vector3.down * tileSize;
+                Vector3 pos = key + Vector3.down * stairTileHeight;
                 CreateRampFloor(pos, new Vector3(0, 180, 0));
             }
-            else if (map.ContainsKey(key + new Vector3(0, -1, -1) * tileSize))
+            else if (map.ContainsKey(key + new Vector3(0, -1 * stairTileHeight, -1 * tileSize)))
             {
                 if (!map[key].isRamp) map[key].isRamp = true;
-                Vector3 pos = key + Vector3.down * tileSize;
+                Vector3 pos = key + Vector3.down * stairTileHeight;
                 CreateRampFloor(pos, new Vector3(0, 0, 0));
             }
-            else if (!map.ContainsKey(key + Vector3.down * tileSize))
+            else if (!map.ContainsKey(key + Vector3.down * stairTileHeight))
             {
                 if (map[key].isRamp) map[key].isRamp = false;
                 CreateFloor(key);
@@ -671,41 +669,41 @@ public class EZDungeon : MonoBehaviour
         {
             if (!map[key].isRamp)
             {
-                if (!map.ContainsKey(key + Vector3.forward * tileSize))
+                if (!map.ContainsKey(key + new Vector3(0,0,tileSize)))
                 {
-                    if (!map.ContainsKey(key + new Vector3(0, 1, 1) * tileSize))
+                    if (!map.ContainsKey(key + new Vector3(0, stairTileHeight, tileSize)))
                     {
-                        if (!map.ContainsKey(key + new Vector3(0, -1, 1) * tileSize))
+                        if (!map.ContainsKey(key + new Vector3(0, -stairTileHeight, tileSize)))
                         {
                             CreateWallFront(key);
                         }
                     }
                 }
-                if (!map.ContainsKey(key + Vector3.back * tileSize))
+                if (!map.ContainsKey(key + new Vector3(0,0,-tileSize)))
                 {
-                    if(!map.ContainsKey(key + new Vector3(0,1,-1) * tileSize))
+                    if(!map.ContainsKey(key + new Vector3(0,stairTileHeight,-tileSize)))
                     {
-                        if (!map.ContainsKey(key + new Vector3(0, -1, -1) * tileSize))
+                        if (!map.ContainsKey(key + new Vector3(0, -stairTileHeight -tileSize)))
                         {
                             CreateWallBack(key);
                         }
                     }
                 }
-                if (!map.ContainsKey(key + Vector3.right * tileSize))
+                if (!map.ContainsKey(key + new Vector3(tileSize, 0, 0)))
                 {
-                    if (!map.ContainsKey(key + new Vector3(1, 1, 0) * tileSize))
+                    if (!map.ContainsKey(key + new Vector3(tileSize, stairTileHeight, 0)))
                     {
-                        if (!map.ContainsKey(key + new Vector3(1, -1, 0) * tileSize))
+                        if (!map.ContainsKey(key + new Vector3(tileSize, -stairTileHeight, 0)))
                         {
                             CreateWallRight(key);
                         }
                     }
                 }
-                if (!map.ContainsKey(key + Vector3.left * tileSize))
+                if (!map.ContainsKey(key + new Vector3(-tileSize, 0,0)))
                 {
-                    if (!map.ContainsKey(key + new Vector3(-1, 1, 0) * tileSize))
+                    if (!map.ContainsKey(key + new Vector3(-tileSize, stairTileHeight, 0)))
                     {
-                        if (!map.ContainsKey(key + new Vector3(-1, -1, 0) * tileSize))
+                        if (!map.ContainsKey(key + new Vector3(-tileSize, -stairTileHeight, 0)))
                         {
                             CreateWallLeft(key);
                         }
@@ -715,24 +713,24 @@ public class EZDungeon : MonoBehaviour
             }
             else
             {
-                if (map.ContainsKey(key + new Vector3(0,-1, 1) * tileSize))
+                if (map.ContainsKey(key + new Vector3(0,-stairTileHeight, tileSize)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampWalls(pos, new Vector3(0, 180, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(0, -1, -1) * tileSize))
+                if (map.ContainsKey(key + new Vector3(0, -stairTileHeight, -tileSize)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampWalls(pos, new Vector3(0, 0, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(1, -1, 0) * tileSize))
+                if (map.ContainsKey(key + new Vector3(tileSize, -stairTileHeight, 0)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampWalls(pos, new Vector3(0, -90, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(-1, -1, 0) * tileSize))
+                if (map.ContainsKey(key + new Vector3(-tileSize, -stairTileHeight, 0)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampWalls(pos, new Vector3(0, 90, 0));
                 }
             }
@@ -760,31 +758,31 @@ public class EZDungeon : MonoBehaviour
         {
             if(!map[key].isRamp)
             {
-                if (!map.ContainsKey(key + Vector3.up * tileSize))
+                if (!map.ContainsKey(key + Vector3.up * stairTileHeight))
                 {
                     CreateCeiling(key);
                 }
             }
             else
             {
-                if (map.ContainsKey(key + new Vector3(0, -1, 1) * tileSize))
+                if (map.ContainsKey(key + new Vector3(0, -stairTileHeight, tileSize)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampCeiling(pos, new Vector3(0, 180, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(0, -1, -1) * tileSize))
+                if (map.ContainsKey(key + new Vector3(0, -stairTileHeight, -tileSize)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampCeiling(pos, new Vector3(0, 0, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(1, -1, 0) * tileSize))
+                if (map.ContainsKey(key + new Vector3(tileSize, -stairTileHeight, 0)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampCeiling(pos, new Vector3(0, -90, 0));
                 }
-                if (map.ContainsKey(key + new Vector3(-1, -1, 0) * tileSize))
+                if (map.ContainsKey(key + new Vector3(-tileSize, -stairTileHeight, 0)))
                 {
-                    Vector3 pos = key + Vector3.down * tileSize;
+                    Vector3 pos = key + Vector3.down * stairTileHeight;
                     CreateRampCeiling(pos, new Vector3(0, 90, 0));
                 }
             }
@@ -813,9 +811,22 @@ public class EZDungeon : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
+    
+
     Vector3Int RandomRoomSize(int min, int max)
     {
         int i = Random.Range(min, max);
         return new Vector3Int(i, 1, i);
     }
+
+    Vector3 MultiplyVectors(Vector3 a, Vector3 b)
+    {
+        Vector3 v = new Vector3();
+        v.x = a.x * b.x;
+        v.y = a.y * b.y;
+        v.z = a.z * b.z;
+        return v;
+    }
+
+
 }
