@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players:
   - {fileID: 1231761962}
-  gridSize: {x: 100, y: 50, z: 100}
+  gridSize: {x: 100, y: 25, z: 100}
   tileSize: 5
   seed: DOTA 2 < League Of Legends
   LevelGenerationAlgorithm: 2
@@ -216,7 +216,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 138d3218a9f5c934faa75b219bab9666, type: 2}
+  - {fileID: 2100000, guid: 9cc88924c9c227746b7d9452f0fb3ca1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -340,7 +340,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
