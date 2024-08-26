@@ -23,20 +23,18 @@ public class FirstPersonPlayer : MonoBehaviour
 
     // For Jumping and falling
     [SerializeField] float jumpHeight = 3;
+    [SerializeField] bool isGrounded;
+    [SerializeField] LayerMask jumpLayer;
     Vector3 velocity = Vector3.zero;
-    Transform groundCheck;
     float gravity = 10.0f;
-    bool isGrounded = false;
     
     //For lockOn System
     Transform lockOnTarget = null;
     
-
     void Awake()
     {
         currentSpeed = walkSpeed;
         if (!camera) camera = transform.Find("Camera");
-        if(!groundCheck) groundCheck = transform.Find("GroundCheck");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
@@ -66,13 +64,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Check If Player Can Jump
-        isGrounded = Physics.Raycast(groundCheck.position, Vector3.down, 0.25f);
-        //Check If Player Can Wall Jump
-        if(!isGrounded)
-        {
-                    
-        }
+        isGrounded = Physics.CheckSphere(transform.position + Vector3.down, controller.radius, jumpLayer); 
     }
 
     void OnDestroy()
@@ -85,7 +77,6 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.LockOn.canceled -= LockOn_canceled;
     }
     
-
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (isGrounded)
@@ -127,11 +118,12 @@ public class FirstPersonPlayer : MonoBehaviour
     
     void Movement()
     {
-        if(isGrounded && velocity.y < 0)
+        if(isGrounded && velocity.y < 0) 
         {
-            velocity = Vector3.zero;
+            velocity.y = 0;
         }
-        
+
+
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
@@ -145,11 +137,10 @@ public class FirstPersonPlayer : MonoBehaviour
     
     void LockOnMovement()
     {
-        if (isGrounded && velocity.y < 0)
+        if (isGrounded)
         {
-            velocity = Vector3.zero;
+            velocity.y = 0;
         }
-
 
         //Basic Motion
         float x = actions.Move.ReadValue<Vector2>().x;

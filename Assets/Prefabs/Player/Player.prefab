@@ -2074,7 +2074,11 @@ MonoBehaviour:
   camera: {fileID: 6118335469731815050}
   controller: {fileID: 6118335469902077851}
   lookSpeed: 100
-  jumpHeight: 3
+  jumpHeight: 10
+  isGrounded: 0
+  jumpLayer:
+    serializedVersion: 2
+    m_Bits: 119
 --- !u!114 &6088619133103884892
 MonoBehaviour:
   m_ObjectHideFlags: 0

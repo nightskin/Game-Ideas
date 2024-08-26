@@ -5,6 +5,7 @@ public class Projectile : MonoBehaviour
     public GameObject owner = null;
     public Vector3 direction = Vector3.zero;
     public float speed = 20;
+    public float lifeTime = 10;
 
     BoxCollider box;
 
@@ -12,8 +13,7 @@ public class Projectile : MonoBehaviour
     {
         box = GetComponent<BoxCollider>();
     }
-
-
+    
     void Update()
     {
         Vector3 prevPosition = transform.position;
@@ -29,5 +29,10 @@ public class Projectile : MonoBehaviour
             }
         }
 
+        lifeTime -= Time.deltaTime;
+        if (lifeTime < 0) 
+        {
+            Destroy(gameObject);
+        }
     }
 }
