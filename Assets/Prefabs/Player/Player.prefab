@@ -1995,7 +1995,7 @@ GameObject:
   - component: {fileID: 6088619133414559687}
   - component: {fileID: 6118335469902077924}
   - component: {fileID: 6088619133103884892}
-  - component: {fileID: 299712266796572059}
+  - component: {fileID: 1588188188}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -2073,9 +2073,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 6118335469731815050}
   controller: {fileID: 6118335469902077851}
-  lookSpeed: 100
-  jumpHeight: 10
-  isGrounded: 0
+  speed: 20
+  lookSpeed: 500
+  jumpHeight: 4
   jumpLayer:
     serializedVersion: 2
     m_Bits: 119
@@ -2093,7 +2093,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   health: 0
---- !u!114 &299712266796572059
+--- !u!114 &1588188188
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2102,7 +2102,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6118335469902077926}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f37b37b897cf84ab64a7623a0645d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 16582c2f7dccd9f4ba254bac8052487a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   armPivot: {fileID: 6794467839084879078}
@@ -2112,6 +2112,9 @@ MonoBehaviour:
   atkAngle: 0
   player: {fileID: 6118335469902077924}
   animator: {fileID: 6088619133414559687}
+  charging: 0
+  attacking: 0
+  defending: 0
 --- !u!1 &6410853942228729130
 GameObject:
   m_ObjectHideFlags: 0
@@ -2399,7 +2402,7 @@ PrefabInstance:
     - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
       propertyPath: bladeSystem
       value: 
-      objectReference: {fileID: 299712266796572059}
+      objectReference: {fileID: 0}
     - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
       propertyPath: slashEffect
       value: 
@@ -2416,6 +2419,10 @@ PrefabInstance:
       propertyPath: trailColor.g
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
+      propertyPath: combatControls
+      value: 
+      objectReference: {fileID: 1588188188}
     - target: {fileID: 705741489443060289, guid: bcfb8e30d22ff9f4b85a508bbdcb15bd, type: 3}
       propertyPath: chargingColor.g
       value: 0

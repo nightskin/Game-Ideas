@@ -9,11 +9,9 @@ public class FirstPersonPlayer : MonoBehaviour
     public Transform camera;
     public CharacterController controller;
 
-    //For Basic Motion/mouselook
+    //For Basic Movement/Looking
+    [SerializeField] float speed = 20;
     Vector3 moveDirection;
-    float currentSpeed;
-    float walkSpeed = 15;
-    float runSpeed = 20;
 
     public float lookSpeed = 100;
 
@@ -23,17 +21,15 @@ public class FirstPersonPlayer : MonoBehaviour
 
     // For Jumping and falling
     [SerializeField] float jumpHeight = 3;
-    [SerializeField] bool isGrounded;
     [SerializeField] LayerMask jumpLayer;
+    
+    bool isGrounded;
     Vector3 velocity = Vector3.zero;
     float gravity = 10.0f;
     
-    //For lockOn System
-    Transform lockOnTarget = null;
     
     void Awake()
     {
-        currentSpeed = walkSpeed;
         if (!camera) camera = transform.Find("Camera");
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
@@ -42,24 +38,12 @@ public class FirstPersonPlayer : MonoBehaviour
 
         actions.Jump.performed += Jump_performed;
         actions.Jump.canceled += Jump_canceled;
-        actions.Run.performed += Run_performed;
-        actions.Run.canceled += Run_canceled;
-        actions.LockOn.performed += LockOn_performed;
-        actions.LockOn.canceled += LockOn_canceled;
     }
 
     void Update()
     {
-        if (!lockOnTarget)
-        {
-            Look();
-            Movement();
-        }
-        else
-        {
-            LookAtTarget();
-            LockOnMovement();
-        }
+        Look();
+        Movement();
     }
 
     void FixedUpdate()
@@ -71,10 +55,6 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         actions.Jump.performed -= Jump_performed;
         actions.Jump.canceled -= Jump_canceled;
-        actions.Run.performed -= Run_performed;
-        actions.Run.canceled -= Run_canceled;
-        actions.LockOn.performed -= LockOn_performed;
-        actions.LockOn.canceled -= LockOn_canceled;
     }
     
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -90,31 +70,6 @@ public class FirstPersonPlayer : MonoBehaviour
         
     }
 
-    private void Run_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        currentSpeed = runSpeed;
-    }
-
-    private void Run_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        currentSpeed = walkSpeed;
-    }
-
-    private void LockOn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if (Physics.Raycast(camera.position,camera.forward, out RaycastHit hit, camera.GetComponent<Camera>().farClipPlane))
-        {
-            if (hit.transform.gameObject.layer == 7)
-            {
-                lockOnTarget = hit.transform;
-            }
-        }
-    }
-
-    private void LockOn_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        lockOnTarget = null;
-    }
     
     void Movement()
     {
@@ -129,32 +84,12 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = transform.right * x + transform.forward * z;
-        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
+        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * speed * Time.deltaTime);
 
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
     
-    void LockOnMovement()
-    {
-        if (isGrounded)
-        {
-            velocity.y = 0;
-        }
-
-        //Basic Motion
-        float x = actions.Move.ReadValue<Vector2>().x;
-        float z = actions.Move.ReadValue<Vector2>().y;
-
-        moveDirection = camera.transform.right * x + camera.transform.forward * z;
-        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * currentSpeed * Time.deltaTime);
-
-
-        //Add Gravity
-        velocity.y -= gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-    }
-
     void Look()
     {
         float x = actions.Look.ReadValue<Vector2>().x;
@@ -169,14 +104,4 @@ public class FirstPersonPlayer : MonoBehaviour
 
     }
 
-    void LookAtTarget()
-    {
-        Quaternion targetRot = Quaternion.LookRotation(lockOnTarget.position - camera.transform.position);
-        xRot = Mathf.LerpAngle(xRot, targetRot.eulerAngles.x, 10 * Time.deltaTime);
-        yRot = Mathf.LerpAngle(yRot, targetRot.eulerAngles.y, 10 * Time.deltaTime);
-        //xRot = targetRot.eulerAngles.x;
-        //yRot = targetRot.eulerAngles.y;
-        camera.localEulerAngles = new Vector3(xRot, 0, 0);
-        transform.localEulerAngles = new Vector3(0, yRot, 0);
-    }
 }

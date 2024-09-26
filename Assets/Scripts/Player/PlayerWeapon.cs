@@ -9,14 +9,12 @@ public class PlayerWeapon: MonoBehaviour
     [SerializeField] Color fullyChargedColor = Color.blue;
     public ParticleSystem trail;
 
-    [SerializeField] BladeSystem bladeSystem;
+    [SerializeField] PlayerCombatControls combatControls;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject impactEffectSolid;
     [SerializeField] GameObject slashEffect;
     [SerializeField] MeshRenderer meshRenderer;
     
-    public bool attacking = false;
-    public bool defending = false;
 
     public float knockbackForce = 10;
     public int damage = 1;
@@ -45,14 +43,14 @@ public class PlayerWeapon: MonoBehaviour
     
     public void ReleaseCharge()
     {
-        Vector3 spawnPos = bladeSystem.player.camera.transform.position + bladeSystem.player.camera.transform.forward;
+        Vector3 spawnPos = combatControls.player.camera.transform.position + combatControls.player.camera.transform.forward;
         GameObject powerSlash = Instantiate(slashEffect, spawnPos, Quaternion.identity);
 
-        float zRot = bladeSystem.armPivot.localEulerAngles.z - 90;
-        powerSlash.transform.eulerAngles = Quaternion.LookRotation(bladeSystem.player.camera.transform.forward).eulerAngles + new Vector3(0, 0, zRot);
+        float zRot = combatControls.armPivot.localEulerAngles.z - 90;
+        powerSlash.transform.eulerAngles = Quaternion.LookRotation(combatControls.player.camera.transform.forward).eulerAngles + new Vector3(0, 0, zRot);
         powerSlash.GetComponent<MeshRenderer>().material.color = fullyChargedColor;
         powerSlash.GetComponent<Projectile>().owner = gameObject;
-        powerSlash.GetComponent<Projectile>().direction = bladeSystem.player.camera.transform.forward;
+        powerSlash.GetComponent<Projectile>().direction = combatControls.player.camera.transform.forward;
 
         LoseCharge();
     }
@@ -66,20 +64,20 @@ public class PlayerWeapon: MonoBehaviour
     void Start()
     {
         LoseCharge();
-        if(!bladeSystem) bladeSystem = transform.root.GetComponent<BladeSystem>();
+        if(!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
         if(!meshRenderer) meshRenderer = transform.GetComponent<MeshRenderer>();
         if(transform.Find("Trail")) trail = transform.Find("Trail").GetComponent<ParticleSystem>();
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (attacking)
+        if (combatControls.attacking)
         {
             if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
                 if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                bladeSystem.animator.SetTrigger("recoil");
-                attacking = false;
+                combatControls.animator.SetTrigger("recoil");
+                combatControls.attacking = false;
             }
             else if (other.transform.tag == "CanBeDamaged")
             {
@@ -96,7 +94,7 @@ public class PlayerWeapon: MonoBehaviour
 
                 if (other.attachedRigidbody)
                 {
-                    Vector3 forceDirection = (transform.root.right * bladeSystem.atkVector.x + transform.root.up * bladeSystem.atkVector.y);
+                    Vector3 forceDirection = (transform.root.right * combatControls.atkVector.x + transform.root.up * combatControls.atkVector.y);
                     other.attachedRigidbody.AddForce(forceDirection * knockbackForce);
                 }
 
