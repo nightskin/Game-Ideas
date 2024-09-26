@@ -22,11 +22,14 @@ public class FirstPersonPlayer : MonoBehaviour
     // For Jumping and falling
     [SerializeField] float jumpHeight = 3;
     [SerializeField] LayerMask jumpLayer;
-    
-    bool isGrounded;
+    [SerializeField] float gravity = 10.0f;
+
+    bool isGrounded = false;
     Vector3 velocity = Vector3.zero;
-    float gravity = 10.0f;
-    
+
+    //Wall
+    RaycastHit wallHit;
+    bool isAgainstWall = false;
     
     void Awake()
     {
@@ -48,7 +51,10 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void FixedUpdate()
     {
-        isGrounded = Physics.CheckSphere(transform.position + Vector3.down, controller.radius, jumpLayer); 
+        isGrounded = Physics.CheckSphere(transform.position + Vector3.down, controller.radius, jumpLayer);
+        isAgainstWall = Physics.Raycast(transform.position, moveDirection, out wallHit, 1, jumpLayer);
+
+
     }
 
     void OnDestroy()
@@ -73,9 +79,9 @@ public class FirstPersonPlayer : MonoBehaviour
     
     void Movement()
     {
-        if(isGrounded && velocity.y < 0) 
+        if(isGrounded && velocity.magnitude > 0) 
         {
-            velocity.y = 0;
+            velocity = Vector3.zero;
         }
 
 
@@ -84,9 +90,9 @@ public class FirstPersonPlayer : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = transform.right * x + transform.forward * z;
-        controller.Move(new Vector3(moveDirection.x, 0, moveDirection.z) * speed * Time.deltaTime);
+        controller.Move(moveDirection * speed * Time.deltaTime);
 
-        velocity.y -= gravity * Time.deltaTime;
+        velocity += -transform.up * gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
     
@@ -97,10 +103,10 @@ public class FirstPersonPlayer : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 45);
-        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
+        camera.localEulerAngles = new Vector3(xRot, camera.localEulerAngles.y, camera.localEulerAngles.z);
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
-        transform.localEulerAngles = new Vector3(0, yRot, 0);
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yRot, transform.localEulerAngles.z);
 
     }
 
