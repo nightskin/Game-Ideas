@@ -11,6 +11,7 @@ public class PlayerCombatControls : MonoBehaviour
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle;
 
+    public Transform camera;
     public FirstPersonPlayer player;
     public Animator animator;
     
@@ -27,6 +28,7 @@ public class PlayerCombatControls : MonoBehaviour
         }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
+        camera = transform.root.Find("Camera");
         
         player.actions.Attack.performed += Slash_performed;
         player.actions.Attack.canceled += Slash_canceled;
@@ -49,6 +51,7 @@ public class PlayerCombatControls : MonoBehaviour
         {
             weapon.ChargeWeapon();
         }
+
         if (defending)
         {
             animator.SetInteger("blockX", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().x));
@@ -115,7 +118,7 @@ public class PlayerCombatControls : MonoBehaviour
         {
             weapon.trail.gameObject.SetActive(false);
         }
-        player.lookSpeed = defaultLookSpeed;
+        if(!defending) player.lookSpeed = defaultLookSpeed;
     }
     
     public void ChargeSlash()
