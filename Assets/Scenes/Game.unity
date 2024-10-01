@@ -157,7 +157,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1835468067}
+  m_Mesh: {fileID: 1983351628}
 --- !u!33 &631367264
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -165,7 +165,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 631367262}
-  m_Mesh: {fileID: 1835468067}
+  m_Mesh: {fileID: 1983351628}
 --- !u!23 &631367265
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2006,8 +2006,8 @@ MonoBehaviour:
     m_AreaError: 15
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
-  m_Mesh: {fileID: 1835468067}
-  m_VersionIndex: 2765
+  m_Mesh: {fileID: 1983351628}
+  m_VersionIndex: 2768
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2142,13 +2142,13 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1835468067
+--- !u!43 &1983351628
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh26422
+  m_Name: pb_Mesh26282
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2360,18 +2360,6 @@ PrefabInstance:
     - target: {fileID: 6118335469902077926, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6850318307787411096, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6850318307787411096, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6850318307787411096, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}

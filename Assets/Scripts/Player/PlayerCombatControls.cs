@@ -17,7 +17,6 @@ public class PlayerCombatControls : MonoBehaviour
     
     public bool charging = false;
     public bool attacking = false;
-    public bool defending = false;
 
     void Start()
     {
@@ -32,8 +31,6 @@ public class PlayerCombatControls : MonoBehaviour
         
         player.actions.Attack.performed += Slash_performed;
         player.actions.Attack.canceled += Slash_canceled;
-        player.actions.Defend.performed += Defend_performed;
-        player.actions.Defend.canceled += Defend_canceled;
     }
     
     void Update()
@@ -57,8 +54,6 @@ public class PlayerCombatControls : MonoBehaviour
     {
         player.actions.Attack.performed -= Slash_performed;
         player.actions.Attack.canceled -= Slash_canceled;
-        player.actions.Defend.performed -= Defend_performed;
-        player.actions.Defend.canceled -= Defend_canceled;
     }
 
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -80,17 +75,6 @@ public class PlayerCombatControls : MonoBehaviour
         charging = false;
     }
 
-    private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        defending = true;
-        player.lookSpeed *= actionDamp;
-    }
-
-    private void Defend_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        defending = false;
-        player.lookSpeed = defaultLookSpeed;
-    }
     
     ///Animation Events
     public void StartSlash()
@@ -112,7 +96,7 @@ public class PlayerCombatControls : MonoBehaviour
         {
             weapon.trail.gameObject.SetActive(false);
         }
-        if(!defending) player.lookSpeed = defaultLookSpeed;
+        player.lookSpeed = defaultLookSpeed;
     }
     
     public void ChargeSlash()
