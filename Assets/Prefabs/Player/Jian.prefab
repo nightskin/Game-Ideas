@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7613840652960945888}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Jian
-  m_TagString: Untagged
+  m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23,9 +23,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441582003538999262}
-  m_LocalRotation: {x: -0.56325287, y: -0.22319815, z: 0.37699753, w: 0.7005724}
+  m_LocalRotation: {x: -0.5632552, y: -0.22319986, z: 0.37699056, w: 0.70057374}
   m_LocalPosition: {x: 0.029, y: 0.199, z: 0.065}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7926608973928028518}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 1477924786569469161}
   - component: {fileID: 1477924786569469175}
   - component: {fileID: 1477924786569469174}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4917,7 +4917,7 @@ GameObject:
   - component: {fileID: 5805806956042443821}
   - component: {fileID: 2032920943273885653}
   - component: {fileID: 705741489443060289}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mesh
   m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
@@ -4968,7 +4968,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -905690159841262435, guid: 1c6de75e04692dc4bbf9117ed76b5d99, type: 3}
+  - {fileID: 2100000, guid: cf3abd048fbdaa1478c248dd68721a33, type: 2}
   - {fileID: 2100000, guid: b16619ad331ed7148939316011bfc141, type: 2}
   - {fileID: 2100000, guid: 880df46b65ae523479ee4505b85e2820, type: 2}
   m_StaticBatchInfo:
@@ -5034,9 +5034,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailColor: {r: 1, g: 0.5, b: 0, a: 1}
-  bladeSystem: {fileID: 0}
+  chargingColor: {r: 0, g: 1, b: 1, a: 1}
+  fullyChargedColor: {r: 0, g: 0, b: 1, a: 1}
+  trail: {fileID: 1477924786569469175}
+  combatControls: {fileID: 0}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
-  attacking: 0
-  defending: 0
+  slashEffect: {fileID: 5441370146324542072, guid: 575bba8324f314941994ff54c6fbc034, type: 3}
+  meshRenderer: {fileID: 9100600576155623945}
   knockbackForce: 10
+  damage: 1
+  chargeTime: 2.5

@@ -51,12 +51,6 @@ public class PlayerCombatControls : MonoBehaviour
         {
             weapon.ChargeWeapon();
         }
-
-        if (defending)
-        {
-            animator.SetInteger("blockX", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().x));
-            animator.SetInteger("blockY", Mathf.RoundToInt(player.actions.Look.ReadValue<Vector2>().y));
-        }
     }
 
     void OnDestroy()
