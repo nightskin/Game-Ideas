@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Defend",
+                    "name": "ZipLatch",
                     "type": "Button",
                     "id": "d5b54bdb-94af-40e8-bab8-1aafeca6d3da",
                     "expectedControlType": "Button",
@@ -217,12 +217,23 @@
                 },
                 {
                     "name": "",
+                    "id": "121240ee-c703-4957-b814-85ce1ee7da03",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "9d29e3ec-734f-4d02-9aab-65218c392134",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Defend",
+                    "action": "ZipLatch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -233,7 +244,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Defend",
+                    "action": "ZipLatch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0aac25b-2317-45d0-9746-e4c5470eeb51",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ZipLatch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c757abed-c72f-4aab-ba3c-d721710ec2ba",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ZipLatch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -361,7 +361,7 @@ struct Room
 public class DungeonMesh : MonoBehaviour
 {
     [Header("Default Parameters")]
-    [Tooltip("Player GameObjects That will be placed in the level on Runtime")] public Transform[] players;
+    [Tooltip("Player GameObjects That will be placed in the level on Runtime")] public Transform player;
     
     [Tooltip("Determines max size of the level")][Min(3)] public Vector3Int gridSize = Vector3Int.one * 100;
     [Tooltip("Controls how far apart everything is")][Min(1)] public float tileSize = 10;
@@ -401,93 +401,47 @@ public class DungeonMesh : MonoBehaviour
     
     void PlacePlayer()
     {
-        if (grid == null) return;
-        if(players.Length == 0) return;
-        else if(players.Length == 1)
+        if (grid == null || !player) return;
+
+        if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_3D)
         {
-            if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_3D)
+            for (int x = 0; x < gridSize.x; x++)
             {
-                for (int x = 0; x < gridSize.x; x++)
-                {
-                    for (int y = 0; y < gridSize.y; y++)
-                    {
-                        for (int z = 0; z < gridSize.z; z++)
-                        {
-                            if (grid[x, y, z].empty)
-                            {
-                                players[0].position = grid[x, y, z].position;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_2D)
-            {
-                for (int x = 0; x < gridSize.x; x++)
+                for (int y = 0; y < gridSize.y; y++)
                 {
                     for (int z = 0; z < gridSize.z; z++)
                     {
-                        if (grid[x, 0, z].empty)
+                        if (grid[x, y, z].empty)
                         {
-                            players[0].position = grid[x, 0, z].position;
+                            player.position = grid[x, y, z].position;
                         }
                     }
                 }
             }
-            else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.TINY_KEEP)
-            {
-                int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
-                float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
-                float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
-                float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
-
-                players[0].position = new Vector3(x, y, z);
-            }
         }
-        else if(players.Length > 1)
+        else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_2D)
         {
-            for(int p = 0; p < players.Length; p++) 
+            for (int x = 0; x < gridSize.x; x++)
             {
-                if(LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_3D)
+                for (int z = 0; z < gridSize.z; z++)
                 {
-                    for (int x = 0; x < gridSize.x; x++)
+                    if (grid[x, 0, z].empty)
                     {
-                        for (int y = 0; y < gridSize.y; y++)
-                        {
-                            for (int z = 0; z < gridSize.z; z++)
-                            {
-                                if (grid[x, y, z].empty)
-                                {
-                                    players[p].position = grid[x, y, z].position;
-                                }
-                            }
-                        }
+                        player.position = grid[x, 0, z].position;
                     }
-                }
-                else if(LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_2D)
-                {
-                    for (int x = 0; x < gridSize.x; x++)
-                    {
-                        for (int z = 0; z < gridSize.z; z++)
-                        {
-                            if (grid[x, 0, z].empty)
-                            {
-                                players[p].position = grid[x, 0, z].position;
-                            }
-                        }
-                    }
-                }
-                else if(LevelGenerationAlgorithm == LevelGenerationAlgorithm.TINY_KEEP)
-                {
-                    int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
-                    float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
-                    float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
-                    float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
-
-                    players[p].position = new Vector3(x, y, z);
                 }
             }
         }
+        else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.TINY_KEEP)
+        {
+            int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
+            float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
+            float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
+            float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
+
+            player.position = new Vector3(x, y, z);
+        }
+
     }
     
     void Init()

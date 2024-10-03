@@ -29,8 +29,8 @@ public class PlayerCombatControls : MonoBehaviour
         player = GetComponent<FirstPersonPlayer>();
         camera = transform.root.Find("Camera");
         
-        player.actions.Attack.performed += Slash_performed;
-        player.actions.Attack.canceled += Slash_canceled;
+        player.actions.Attack.performed += Attack_performed;
+        player.actions.Attack.canceled += Attack_canceled;
     }
     
     void Update()
@@ -42,6 +42,11 @@ public class PlayerCombatControls : MonoBehaviour
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
+            else
+            {
+                atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
+                atkAngle = Mathf.Clamp(atkAngle, -135, 135);
+            }
         }
         
         if (charging)
@@ -52,17 +57,17 @@ public class PlayerCombatControls : MonoBehaviour
 
     void OnDestroy()
     {
-        player.actions.Attack.performed -= Slash_performed;
-        player.actions.Attack.canceled -= Slash_canceled;
+        player.actions.Attack.performed -= Attack_performed;
+        player.actions.Attack.canceled -= Attack_canceled;
     }
 
-    private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         charging = true;
         animator.SetTrigger("slash");
     }
 
-    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if(weapon.FullyCharged())
         {
