@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 static class MarchingCubesTables
@@ -282,48 +283,43 @@ static class MarchingCubesTables
 }
 enum LevelGenerationAlgorithm
 {
-    RANDOM_WALKER_2D,
-    RANDOM_WALKER_3D,
-    TINY_KEEP
+    RANDOM_WALKER,
+    TINY_KEEP,
+    HYBRID,
 }
 class GridPoint
 {
     public Vector3 position;
-    public bool empty;
+    public float value = 0;
 
     public GridPoint()
     {
         position = Vector3.zero;
-        empty = false;
     }
 
-    public GridPoint(bool e)
-    {
-        empty = e;
-        position = Vector3.zero;
-    }
 
-    public static int GetState(GridPoint[] points)
+    public static int GetState(GridPoint[] points, float isoLevel)
     {
         int state = 0;
-        if (points[0].empty) state |= 1;
-        if (points[1].empty) state |= 2;
-        if (points[2].empty) state |= 4;
-        if (points[3].empty) state |= 8;
-        if (points[4].empty) state |= 16;
-        if (points[5].empty) state |= 32;
-        if (points[6].empty) state |= 64;
-        if (points[7].empty) state |= 128;
+        if (points[0].value >= isoLevel) state |= 1;
+        if (points[1].value >= isoLevel) state |= 2;
+        if (points[2].value >= isoLevel) state |= 4;
+        if (points[3].value >= isoLevel) state |= 8;
+        if (points[4].value >= isoLevel) state |= 16;
+        if (points[5].value >= isoLevel) state |= 32;
+        if (points[6].value >= isoLevel) state |= 64;
+        if (points[7].value >= isoLevel) state |= 128;
         return state;
     }
 
-    public static Vector3 GetMidPoint(GridPoint point1, GridPoint point2)
+    public static Vector3 LerpPoint(GridPoint p1,  GridPoint p2, float isoLevel)
     {
-        return (point1.position + point2.position) / 2;
+        float amount = (isoLevel - p1.value) / (p2.value - p1.value);
+        return Vector3.Lerp(p1.position, p2.position, amount);
     }
 
 }
-struct Room
+class Room
 {
     public Vector3Int indexPosition;
     public Vector3Int indexSize;
@@ -339,6 +335,14 @@ struct Room
         exits[2] = indexPosition + new Vector3Int(0, 0, indexSize.z);
         exits[3] = indexPosition + new Vector3Int(0, 0, -indexSize.z);
     }
+
+    public Room(Vector3Int indexPosition)
+    {
+        this.indexPosition = indexPosition;
+        indexSize = Vector3Int.zero;
+        exits = new Vector3Int[4];
+    } 
+
 
     public Vector3Int GetNearestExit(Vector3Int toIndex)
     {
@@ -367,6 +371,9 @@ public class DungeonMesh : MonoBehaviour
     [Tooltip("Controls how far apart everything is")][Min(1)] public float tileSize = 10;
     public string seed = string.Empty;
     [SerializeField] LevelGenerationAlgorithm LevelGenerationAlgorithm;
+
+    [SerializeField] float isoLevel = 0;
+    [SerializeField][Range(0, 1)] float incrementValue = 0.1f;
 
     GridPoint[,,] grid = null;
     List<Vector3> verts;
@@ -403,7 +410,7 @@ public class DungeonMesh : MonoBehaviour
     {
         if (grid == null || !player) return;
 
-        if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_3D)
+        if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
         {
             for (int x = 0; x < gridSize.x; x++)
             {
@@ -411,7 +418,7 @@ public class DungeonMesh : MonoBehaviour
                 {
                     for (int z = 0; z < gridSize.z; z++)
                     {
-                        if (grid[x, y, z].empty)
+                        if (grid[x, y, z].value >= isoLevel)
                         {
                             player.position = grid[x, y, z].position;
                         }
@@ -419,18 +426,14 @@ public class DungeonMesh : MonoBehaviour
                 }
             }
         }
-        else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER_2D)
+        else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.HYBRID)
         {
-            for (int x = 0; x < gridSize.x; x++)
-            {
-                for (int z = 0; z < gridSize.z; z++)
-                {
-                    if (grid[x, 0, z].empty)
-                    {
-                        player.position = grid[x, 0, z].position;
-                    }
-                }
-            }
+            int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
+            float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
+            float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
+            float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
+
+            player.position = new Vector3(x, y, z) + Vector3.up;
         }
         else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
@@ -439,7 +442,7 @@ public class DungeonMesh : MonoBehaviour
             float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
             float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
 
-            player.position = new Vector3(x, y, z);
+            player.position = new Vector3(x, y, z) + Vector3.up;
         }
 
     }
@@ -472,13 +475,13 @@ public class DungeonMesh : MonoBehaviour
 
     void PopulateValues(LevelGenerationAlgorithm algorithm)
     {
-        if(algorithm == LevelGenerationAlgorithm.RANDOM_WALKER_2D)
+        if(algorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
         {
-            RandomWalker(2);
+            RandomWalker();
         }
-        else if(algorithm == LevelGenerationAlgorithm.RANDOM_WALKER_3D)
+        else if(algorithm == LevelGenerationAlgorithm.HYBRID)
         {
-            RandomWalker(3);
+            Hybrid(numberOfRooms);
         }
         else if(algorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
@@ -510,7 +513,7 @@ public class DungeonMesh : MonoBehaviour
                         continue;
                     }
 
-                    grid[cell.x + x, cell.y + y, cell.z + z].empty = true;
+                    grid[cell.x + x, cell.y + y, cell.z + z].value += incrementValue; 
 
                 }
             }
@@ -543,7 +546,7 @@ public class DungeonMesh : MonoBehaviour
                             grid[x,y+1,z],
                     };
 
-                    int cubeIndex = GridPoint.GetState(pointsInBox);
+                    int cubeIndex = GridPoint.GetState(pointsInBox, isoLevel);
 
 
                     int[] triangulation = MarchingCubesTables.triTable[cubeIndex];
@@ -554,7 +557,7 @@ public class DungeonMesh : MonoBehaviour
                             int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
                             int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
                             
-                            Vector3 vertexPos = GridPoint.GetMidPoint(pointsInBox[a], pointsInBox[b]);
+                            Vector3 vertexPos = GridPoint.LerpPoint(pointsInBox[a], pointsInBox[b], isoLevel);
 
                             verts.Add(vertexPos);
                             tris.Add(buffer);
@@ -587,50 +590,23 @@ public class DungeonMesh : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
     
-    void RandomWalker(int dimensions = 2)
+    void RandomWalker()
     {
-        if(dimensions < 2) dimensions = 2;
-        if(dimensions > 3) dimensions = 3;
-
         Vector3Int currentIndex = gridSize / 2;
 
         for (int step = 0; step < numberOfSteps; step++)
         {
-            if (dimensions == 2)
+            int x = UnityEngine.Random.Range(-1, 2);
+            int z = UnityEngine.Random.Range(-1, 2);
+
+            if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
             {
-                int x = UnityEngine.Random.Range(-1, 2);
-                int z = UnityEngine.Random.Range(-1, 2);
-
-                if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
+                if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
                 {
-                    if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
-                    {
-                        currentIndex += new Vector3Int(x, 0, z);
-                    }
+                    currentIndex += new Vector3Int(x, 0, z);
                 }
-                ActivateBox(currentIndex);
-
             }
-            else if (dimensions == 3) 
-            {
-                int x = UnityEngine.Random.Range(0, 2);
-                int y = UnityEngine.Random.Range(0, 2);
-                int z = UnityEngine.Random.Range(0, 2);
-
-
-                if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
-                {
-                    if(currentIndex.y + y > 0 && currentIndex.y + y < gridSize.y - 1)
-                    {
-                        if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
-                        {
-                            currentIndex += new Vector3Int(x, y, z);
-                            ActivateBox(currentIndex);
-                        }
-                    }
-                }
-
-            }
+            ActivateBox(currentIndex);
         }
     }
 
@@ -645,7 +621,6 @@ public class DungeonMesh : MonoBehaviour
             int zi = UnityEngine.Random.Range(0, gridSize.z);
 
             int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
-            int roomSizeY = UnityEngine.Random.Range(1, maxRoomSize + 1);
             int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
 
 
@@ -675,6 +650,92 @@ public class DungeonMesh : MonoBehaviour
                     foreach (Vector3Int possibleDirection in possibleDirections)
                     {
                         if(Vector3Int.Distance(currentPos + chosenDirection, end) > Vector3Int.Distance(currentPos + possibleDirection, end))
+                        {
+                            chosenDirection = possibleDirection;
+                        }
+                    }
+
+                    currentPos += chosenDirection;
+                    ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+                }
+            }
+        }
+    }
+    
+    void Hybrid(int numberOfRooms = 2)
+    {
+        //Create Rooms
+        rooms = new Room[numberOfRooms];
+        for (int r = 0; r < numberOfRooms; r++)
+        {
+            int xi = UnityEngine.Random.Range(0, gridSize.x);
+            int yi = UnityEngine.Random.Range(0, gridSize.y);
+            int zi = UnityEngine.Random.Range(0, gridSize.z);
+
+            Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
+
+            rooms[r] = new Room(new Vector3Int(xi, yi, zi));
+
+            for (int s = 0; s < numberOfSteps; s++) 
+            {
+                int d = UnityEngine.Random.Range(0, 4);
+                if(d == 0)
+                {
+                    if(currentIndex.x + 1 <= gridSize.x - 1)
+                    {
+                        currentIndex.x++;
+                    }
+                }
+                else if(d == 1) 
+                {
+                    if (currentIndex.x - 1 >= 0)
+                    {
+                        currentIndex.x--;
+                    }
+                }
+                else if(d == 2)
+                {
+                    if (currentIndex.z + 1 <= gridSize.z - 1)
+                    {
+                        currentIndex.z++;
+                    }
+                }
+                else if(d == 3)
+                {
+                    if (currentIndex.z - 1 >= 0)
+                    {
+                        currentIndex.z--;
+                    }
+                }
+
+                ActivateBox(currentIndex);
+            }
+
+            rooms[r].exits[0] = currentIndex;
+        }
+
+        //Create Hallways
+        for (int r = 0; r < numberOfRooms; r++)
+        {
+            if (r + 1 < numberOfRooms)
+            {
+                Vector3Int currentPos = rooms[r].exits[0];
+                Vector3Int end = rooms[r + 1].exits[0];
+                while (currentPos != end)
+                {
+                    Vector3Int[] possibleDirections =
+                    {
+                        Vector3Int.left,
+                        Vector3Int.right,
+                        Vector3Int.up,
+                        Vector3Int.down,
+                        Vector3Int.forward,
+                        Vector3Int.back,
+                    };
+                    Vector3Int chosenDirection = possibleDirections[0];
+                    foreach (Vector3Int possibleDirection in possibleDirections)
+                    {
+                        if (Vector3Int.Distance(currentPos + chosenDirection, end) > Vector3Int.Distance(currentPos + possibleDirection, end))
                         {
                             chosenDirection = possibleDirection;
                         }
