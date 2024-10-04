@@ -1,4 +1,6 @@
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerCombatControls : MonoBehaviour
 {
@@ -11,12 +13,18 @@ public class PlayerCombatControls : MonoBehaviour
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle;
 
+
+    [SerializeField] LayerMask blockLayer;
+    RaycastHit blockedAtack;
+    Transform rig;
+
     public Transform camera;
     public FirstPersonPlayer player;
     public Animator animator;
     
     public bool charging = false;
     public bool attacking = false;
+    public bool defending = false;
 
     void Start()
     {
@@ -28,11 +36,14 @@ public class PlayerCombatControls : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         camera = transform.root.Find("Camera");
-        
+        Transform rig = armPivot.transform.Find("Rig");
+
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
+
+        player.actions.Defend.performed += Defend_performed;
     }
-    
+
     void Update()
     {
         if(player.actions.Attack.IsPressed())
@@ -42,13 +53,12 @@ public class PlayerCombatControls : MonoBehaviour
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
-            else
-            {
-                atkAngle = Mathf.Round(Random.Range(-180, 180) / 45) * 45;
-                atkAngle = Mathf.Clamp(atkAngle, -135, 135);
-            }
         }
-        
+        else if(defending)
+        {
+            
+        }
+
         if (charging)
         {
             weapon.ChargeWeapon();
@@ -59,8 +69,9 @@ public class PlayerCombatControls : MonoBehaviour
     {
         player.actions.Attack.performed -= Attack_performed;
         player.actions.Attack.canceled -= Attack_canceled;
+        player.actions.Defend.performed -= Defend_performed;
     }
-
+    
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         charging = true;
@@ -80,7 +91,11 @@ public class PlayerCombatControls : MonoBehaviour
         charging = false;
     }
 
-    
+    private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        
+    }
+
     ///Animation Events
     public void StartSlash()
     {

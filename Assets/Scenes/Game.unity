@@ -171,7 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2048486450166698624}
   gridSize: {x: 100, y: 10, z: 100}
-  tileSize: 10
+  tileSize: 5
   seed: 0
   LevelGenerationAlgorithm: 2
   isoLevel: 0.1
@@ -898,7 +898,7 @@ Transform:
   m_GameObject: {fileID: 2080652837867149639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: -0.5, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7124,11 +7124,15 @@ MonoBehaviour:
   actionDamp: 0.5
   atkVector: {x: 0, y: 0}
   atkAngle: 0
+  blockLayer:
+    serializedVersion: 2
+    m_Bits: 0
   camera: {fileID: 2048486450265396207}
   player: {fileID: 2048486450166698625}
   animator: {fileID: 2087982429282157218}
   charging: 0
   attacking: 0
+  defending: 0
 --- !u!1 &5474723522199093562
 GameObject:
   m_ObjectHideFlags: 0
