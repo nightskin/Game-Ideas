@@ -11,12 +11,7 @@ public class PlayerCombatControls : MonoBehaviour
     float defaultLookSpeed;
 
     public Vector2 atkVector = Vector2.zero;
-    public float atkAngle;
-
-
-    [SerializeField] LayerMask blockLayer;
-    RaycastHit blockedAtack;
-    Transform rig;
+    public float atkAngle = 90;
 
     public Transform camera;
     public FirstPersonPlayer player;
@@ -36,12 +31,9 @@ public class PlayerCombatControls : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
         camera = transform.root.Find("Camera");
-        Transform rig = armPivot.transform.Find("Rig");
 
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
-
-        player.actions.Defend.performed += Defend_performed;
     }
 
     void Update()
@@ -54,10 +46,6 @@ public class PlayerCombatControls : MonoBehaviour
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
         }
-        else if(defending)
-        {
-            
-        }
 
         if (charging)
         {
@@ -69,7 +57,6 @@ public class PlayerCombatControls : MonoBehaviour
     {
         player.actions.Attack.performed -= Attack_performed;
         player.actions.Attack.canceled -= Attack_canceled;
-        player.actions.Defend.performed -= Defend_performed;
     }
     
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -91,10 +78,6 @@ public class PlayerCombatControls : MonoBehaviour
         charging = false;
     }
 
-    private void Defend_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        
-    }
 
     ///Animation Events
     public void StartSlash()
