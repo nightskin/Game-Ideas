@@ -152,8 +152,8 @@ public class FirstPersonPlayer : MonoBehaviour
         rightChain.SetPosition(0, rightChain.transform.position);
         rightChain.SetPosition(1, latchTarget.point);
         rightChain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, rightChain.transform.position), 1);
-
-        if(dramaticPause > 0)
+        
+        if (dramaticPause > 0)
         {
             dramaticPause -= Time.deltaTime;
         }
@@ -161,9 +161,9 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             if(!boostEffect.isEmitting) boostEffect.Play();
             velocity = (latchTarget.point - transform.position).normalized * zipSpeed;
-            controller.Move(velocity * Time.deltaTime);
         }
 
+        controller.Move(velocity * Time.deltaTime);
         if (Vector3.Distance(transform.position, latchTarget.point) < controller.height)
         {
             zipping = false;
