@@ -48,8 +48,8 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] LineRenderer leftChain;
     [SerializeField] LineRenderer rightChain;
     [SerializeField] float zipSpeed = 50;
-    
 
+    float dramaticPause = 0.15f;
     bool zipping = false;
     RaycastHit latchTarget;
 
@@ -128,7 +128,7 @@ public class FirstPersonPlayer : MonoBehaviour
         if(Physics.Raycast(camera.position, camera.forward, out latchTarget, 1000, jumpLayer))
         {
             zipping = true;
-            boostEffect.Play();
+            dramaticPause = 0.15f;
             leftChain.gameObject.SetActive(true);
             rightChain.gameObject.SetActive(true);
         }
@@ -153,9 +153,16 @@ public class FirstPersonPlayer : MonoBehaviour
         rightChain.SetPosition(1, latchTarget.point);
         rightChain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, rightChain.transform.position), 1);
 
-
-        velocity = (latchTarget.point - transform.position).normalized * zipSpeed;
-        controller.Move(velocity * Time.deltaTime);
+        if(dramaticPause > 0)
+        {
+            dramaticPause -= Time.deltaTime;
+        }
+        else
+        {
+            if(!boostEffect.isEmitting) boostEffect.Play();
+            velocity = (latchTarget.point - transform.position).normalized * zipSpeed;
+            controller.Move(velocity * Time.deltaTime);
+        }
 
         if (Vector3.Distance(transform.position, latchTarget.point) < controller.height)
         {
@@ -164,6 +171,7 @@ public class FirstPersonPlayer : MonoBehaviour
             leftChain.gameObject.SetActive(false);
             velocity.y = 0;
         }
+
     }
 
     void Movement()
