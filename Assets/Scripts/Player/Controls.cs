@@ -80,6 +80,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleWeapons"",
+                    ""type"": ""Value"",
+                    ""id"": ""dbd7d1b0-18dc-4d29-9fa9-003d16fb4349"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -302,6 +311,105 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""ScrollWheel"",
+                    ""id"": ""ef46d327-e270-4464-b6fc-9afa03f8a93b"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""1926a002-57b4-4490-b81a-a4d3d934ad9d"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""003de7ca-be55-4381-b126-09d45d212678"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Keybaord"",
+                    ""id"": ""c66e2776-fd00-41a8-9498-4f76e865e906"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""d5ec56d9-c56f-4bcb-abbe-db2d5423b2c9"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""cdc99e13-9751-4238-a688-58b87f5ad84e"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Dpad"",
+                    ""id"": ""65b7847f-d8dd-4e29-be00-bea45e36c528"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""62a079e5-31bd-4c6e-addf-e0213ad3d5c6"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""d55958d0-0185-4863-aabf-6b34ff5fa8c6"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ToggleWeapons"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -893,6 +1001,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_ZipLatch = m_Player.FindAction("ZipLatch", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_ToggleWeapons = m_Player.FindAction("ToggleWeapons", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -978,6 +1087,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ZipLatch;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_ToggleWeapons;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -988,6 +1098,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @ZipLatch => m_Wrapper.m_Player_ZipLatch;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @ToggleWeapons => m_Wrapper.m_Player_ToggleWeapons;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1015,6 +1126,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @ToggleWeapons.started += instance.OnToggleWeapons;
+            @ToggleWeapons.performed += instance.OnToggleWeapons;
+            @ToggleWeapons.canceled += instance.OnToggleWeapons;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1037,6 +1151,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @ToggleWeapons.started -= instance.OnToggleWeapons;
+            @ToggleWeapons.performed -= instance.OnToggleWeapons;
+            @ToggleWeapons.canceled -= instance.OnToggleWeapons;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1225,6 +1342,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnZipLatch(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnToggleWeapons(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

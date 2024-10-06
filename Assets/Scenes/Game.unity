@@ -430,7 +430,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4465420796999265746}
-  m_Mesh: {fileID: 2283173440443175219, guid: 1c6de75e04692dc4bbf9117ed76b5d99, type: 3}
+  m_Mesh: {fileID: 4300000, guid: c1c810e3cfb67504cb35c898bde576f8, type: 2}
 --- !u!1 &313661462431099951
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,7 +916,7 @@ Transform:
   m_GameObject: {fileID: 1523485658690536593}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1392,9 +1392,10 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cf3abd048fbdaa1478c248dd68721a33, type: 2}
-  - {fileID: 2100000, guid: b16619ad331ed7148939316011bfc141, type: 2}
-  - {fileID: 2100000, guid: 880df46b65ae523479ee4505b85e2820, type: 2}
+  - {fileID: 2100000, guid: 57775bf5ed97e1d4f94a931c8785c011, type: 2}
+  - {fileID: 2100000, guid: 1d2ff8a6feaee4e4ea34dfe3308bd1e2, type: 2}
+  - {fileID: 2100000, guid: 159b4acb574a5404b8158ca361aaa755, type: 2}
+  - {fileID: 2100000, guid: 2a3a9882b85885147829ae218f4cef26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1539,14 +1540,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5526747760513440208}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.5632552, y: -0.22319986, z: 0.37699056, w: 0.70057374}
-  m_LocalPosition: {x: 0.029, y: 0.199, z: 0.065}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalRotation: {x: -0.8590269, y: -0.4769999, z: -0.023730919, w: 0.18433858}
+  m_LocalPosition: {x: -0.03, y: 0.21, z: 0.099}
+  m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3941648179815528296}
   m_Father: {fileID: 4158224999339169589}
-  m_LocalEulerAnglesHint: {x: -38.383, y: -70.175, z: 84.051}
+  m_LocalEulerAnglesHint: {x: -19.837, y: -171.743, z: 120.469}
 --- !u!4 &3621918166803319691
 Transform:
   m_ObjectHideFlags: 0
@@ -1847,7 +1848,7 @@ GameObject:
   - component: {fileID: 80035339115641037}
   - component: {fileID: 2808171382316715015}
   - component: {fileID: 585795971740971555}
-  - component: {fileID: 4937376945241706971}
+  - component: {fileID: 5870504625825469520}
   - component: {fileID: 5870504625825469519}
   m_Layer: 3
   m_Name: Mesh
@@ -1910,27 +1911,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &4937376945241706971
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4465420796999265746}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.001956991, y: 0.0009775535, z: 0.020677501}
-  m_Center: {x: -0.0000000019798423, y: -0.0000000028033502, z: 0.007864967}
 --- !u!1 &5037067831281156892
 GameObject:
   m_ObjectHideFlags: 0
@@ -6776,7 +6756,7 @@ Transform:
   m_GameObject: {fileID: 5490398380937491174}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.00029, z: 0.00821}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7494,8 +7474,8 @@ ParticleSystem:
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: 0, y: 90, z: 0}
+    m_Position: {x: 0, y: -1, z: 0}
+    m_Rotation: {x: 0, y: 0, z: 90}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -11666,7 +11646,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3538350757360515310}
   m_Layer: 3
-  m_Name: Jian
+  m_Name: Sword
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12168,6 +12148,27 @@ MonoBehaviour:
   knockbackForce: 10
   damage: 1
   chargeTime: 1
+--- !u!65 &5870504625825469520
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4465420796999265746}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.00086604845, y: 0.011777368, z: 0.00025920698}
+  m_Center: {x: 0.000038677463, y: -0.0044478225, z: 0.0000000019557733}
 --- !u!1 &5988769273256902274
 GameObject:
   m_ObjectHideFlags: 0
