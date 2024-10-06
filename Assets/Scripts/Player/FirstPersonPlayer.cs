@@ -33,7 +33,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     int consecutiveJumpsMade = 0;
     bool isGrounded = false;
-    Vector3 velocity = Vector3.zero;
+    public Vector3 velocity = Vector3.zero;
 
     //For Wall Movement
     public bool canWallRun;

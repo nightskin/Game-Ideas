@@ -1,11 +1,18 @@
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 public class PlayerCombatControls : MonoBehaviour
 {
+    enum Weapon
+    {
+        SWORD,
+        GUN,
+    }
+    [SerializeField] Weapon equipedWeapon;
+
     public Transform armPivot;
-    public PlayerWeapon weapon;
+    public PlayerSword sword;
+    public PlayerGun gun;
+
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     float defaultLookSpeed;
@@ -24,9 +31,9 @@ public class PlayerCombatControls : MonoBehaviour
     void Start()
     {
         defaultLookSpeed = player.lookSpeed;
-        if (weapon.trail) 
+        if (sword.trail) 
         { 
-            weapon.trail.gameObject.SetActive(false);
+            sword.trail.gameObject.SetActive(false);
         }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
@@ -34,22 +41,28 @@ public class PlayerCombatControls : MonoBehaviour
 
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
+        player.actions.ToggleWeapons.performed += ToggleWeapons_performed;
+
     }
 
     void Update()
     {
-        if(player.actions.Attack.IsPressed())
+        atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
+        if (player.actions.Attack.IsPressed())
         {
-            atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+            }
+            else
+            {
+                atkAngle = Random.Range(-180, 180);
             }
         }
 
         if (charging)
         {
-            weapon.ChargeWeapon();
+            sword.ChargeWeapon();
         }
     }
 
@@ -57,36 +70,85 @@ public class PlayerCombatControls : MonoBehaviour
     {
         player.actions.Attack.performed -= Attack_performed;
         player.actions.Attack.canceled -= Attack_canceled;
+        player.actions.ToggleWeapons.performed -= ToggleWeapons_performed;
     }
     
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         charging = true;
-        animator.SetTrigger("slash");
+        if(equipedWeapon == Weapon.SWORD)
+        {
+            animator.SetTrigger("slash");
+        }
+        else if(equipedWeapon == Weapon.GUN)
+        {
+            animator.SetTrigger("shoot");
+        }
     }
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(weapon.FullyCharged())
+        if(sword.FullyCharged())
         {
-            animator.SetTrigger("slash");
+            if (equipedWeapon == Weapon.SWORD)
+            {
+                animator.SetTrigger("slash");
+            }
+            else if (equipedWeapon == Weapon.GUN)
+            {
+                animator.SetTrigger("shoot");
+            }
         }
         else
         {
-            weapon.LoseCharge();
+            sword.LoseCharge();
         }
         charging = false;
     }
+    
+    private void ToggleWeapons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(equipedWeapon == Weapon.SWORD)
+        {
+            equipedWeapon = Weapon.GUN;
 
+        }
+        else if(equipedWeapon == Weapon.GUN)
+        {
+            equipedWeapon = Weapon.SWORD;
+
+        }
+        Equip(equipedWeapon);
+    }
+
+
+    void Equip(Weapon weapon)
+    {
+        if(weapon == Weapon.SWORD)
+        {
+            sword.transform.parent.gameObject.SetActive(true);
+            gun.gameObject.SetActive(false);
+        }
+        else if(weapon == Weapon.GUN)
+        {
+            sword.transform.parent.gameObject.SetActive(false);
+            gun.gameObject.SetActive(true);
+        }
+    }
 
     ///Animation Events
+    public void Shoot()
+    {
+        gun.Fire();
+    }
+    
     public void StartSlash()
     {
         attacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        if(weapon.trail)
+        if(sword.trail)
         {
-            weapon.trail.gameObject.SetActive(true);
+            sword.trail.gameObject.SetActive(true);
         }
         player.lookSpeed *= actionDamp;
     }
@@ -95,19 +157,19 @@ public class PlayerCombatControls : MonoBehaviour
     {
         attacking = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        if (weapon.trail)
+        if (sword.trail)
         {
-            weapon.trail.gameObject.SetActive(false);
+            sword.trail.gameObject.SetActive(false);
         }
         player.lookSpeed = defaultLookSpeed;
     }
     
     public void ChargeSlash()
     {
-        if (weapon.FullyCharged())
+        if (sword.FullyCharged())
         {
-            weapon.ReleaseCharge();
-            weapon.LoseCharge();
+            sword.ReleaseCharge();
+            sword.LoseCharge();
         }
     }
 }

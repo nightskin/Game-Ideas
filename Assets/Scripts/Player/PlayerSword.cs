@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerWeapon: MonoBehaviour
+public class PlayerSword: MonoBehaviour
 {
     [SerializeField] Color trailColor = Color.white;
     [SerializeField] Color chargingColor = Color.cyan;
@@ -17,7 +17,7 @@ public class PlayerWeapon: MonoBehaviour
     
 
     public float knockbackForce = 10;
-    public int damage = 1;
+    public float damage = 1;
  
     [SerializeField] float chargeTime = 2.5f;
     float chargeTimer;
