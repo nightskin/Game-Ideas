@@ -4,12 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - PlayerWeapon
-  - Solid
-  - Moveable
-  - CanBeDamaged
-  - EnemyWeapon
-  - LockAble
+  - Enemy
+  - MeleeWeapon
   layers:
   - Default
   - TransparentFX

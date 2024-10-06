@@ -45,8 +45,7 @@ public class FirstPersonPlayer : MonoBehaviour
     //For ZipLatch
     public bool canZipLatch;
     [SerializeField] ParticleSystem boostEffect;
-    [SerializeField] LineRenderer leftChain;
-    [SerializeField] LineRenderer rightChain;
+    [SerializeField] LineRenderer chain;
     [SerializeField] float zipSpeed = 50;
 
     float dramaticPause = 0.15f;
@@ -129,8 +128,7 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             zipping = true;
             dramaticPause = 0.15f;
-            leftChain.gameObject.SetActive(true);
-            rightChain.gameObject.SetActive(true);
+            chain.gameObject.SetActive(true);
         }
     }
 
@@ -138,20 +136,16 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         zipping = false;
         boostEffect.Stop();
-        leftChain.gameObject.SetActive(false);
-        rightChain.gameObject.SetActive(false);
+        chain.gameObject.SetActive(false);
         velocity.y = 0;
     }
 
     void ZipLatch()
     {
-        leftChain.SetPosition(0, leftChain.transform.position);
-        leftChain.SetPosition(1, latchTarget.point);
-        leftChain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, leftChain.transform.position), 1);
+        chain.SetPosition(0, chain.transform.position);
+        chain.SetPosition(1, latchTarget.point);
+        chain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, chain.transform.position), 1);
 
-        rightChain.SetPosition(0, rightChain.transform.position);
-        rightChain.SetPosition(1, latchTarget.point);
-        rightChain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, rightChain.transform.position), 1);
         
         if (dramaticPause > 0)
         {
@@ -168,7 +162,7 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             zipping = false;
             boostEffect.Stop();
-            leftChain.gameObject.SetActive(false);
+            chain.gameObject.SetActive(false);
             velocity.y = 0;
         }
 
