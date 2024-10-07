@@ -30,6 +30,8 @@ public class PlayerCombatControls : MonoBehaviour
 
     void Start()
     {
+        Equip(equipedWeapon);
+
         defaultLookSpeed = player.lookSpeed;
         if (sword.trail) 
         { 

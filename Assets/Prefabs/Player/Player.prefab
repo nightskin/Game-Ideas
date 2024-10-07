@@ -12061,7 +12061,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 90
-  m_StepOffset: 0.2
+  m_StepOffset: 2
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -12100,7 +12100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 30
   acceleration: 10
-  drag: 5
+  drag: 7
   lookSpeed: 100
   bobAmplitude: 0.15
   bobFrequency: 12
@@ -12116,7 +12116,7 @@ MonoBehaviour:
   canZipLatch: 1
   boostEffect: {fileID: 748692785867146178}
   chain: {fileID: 8010335371827638838}
-  zipSpeed: 100
+  zipSpeed: 50
 --- !u!114 &6088619133103884892
 MonoBehaviour:
   m_ObjectHideFlags: 0

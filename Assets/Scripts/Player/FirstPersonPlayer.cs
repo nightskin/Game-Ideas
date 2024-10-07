@@ -32,15 +32,15 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] float gravity = 10.0f;
 
     int consecutiveJumpsMade = 0;
-    bool isGrounded = false;
+    bool grounded = false;
     public Vector3 velocity = Vector3.zero;
 
     //For Wall Movement
     public bool canWallRun;
     [SerializeField] float wallRunAngle = 45;
     RaycastHit wallHit;
-    bool isAgainstWall = false;
-    bool isWallRunning = false;
+    bool againstWall = false;
+    bool wallRunning = false;
 
     //For ZipLatch
     public bool canZipLatch;
@@ -71,24 +71,28 @@ public class FirstPersonPlayer : MonoBehaviour
     void Update()
     {
         Look();
-        if(isWallRunning)
+        if(wallRunning)
         {
-            WallRunning();
-        }
-        else if(zipping)
-        {
-            ZipLatch();
+            WallRunningMovement();
         }
         else
         {
             Movement();
         }
+        
+        if(zipping)
+        {
+            ZipLatch();
+        }
+
+
+
     }
 
     void FixedUpdate()
     {
-        isGrounded = Physics.CheckSphere(transform.position + (Vector3.down * controller.height / 2), controller.radius, jumpLayer);
-        if (canWallRun) isAgainstWall = Physics.Raycast(transform.position, moveDirection, out wallHit, 1, jumpLayer);
+        grounded = Physics.CheckSphere(transform.position + (Vector3.down * controller.height / 2), controller.radius, jumpLayer);
+        if (canWallRun) againstWall = Physics.Raycast(transform.position, -transform.right, out wallHit, 1, jumpLayer) || Physics.Raycast(transform.position, transform.right, out wallHit, 1, jumpLayer);
     }
 
     void OnDestroy()
@@ -98,26 +102,27 @@ public class FirstPersonPlayer : MonoBehaviour
         actions.ZipLatch.canceled -= ZipLatch_canceled;
     }
     
+
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if ((isGrounded || consecutiveJumpsMade < maxJumps) && !isWallRunning)
+        if ((grounded || consecutiveJumpsMade < maxJumps) && !wallRunning)
         {
             //Jump Normally
             velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
             consecutiveJumpsMade++;
         }
-        if(!isGrounded && isAgainstWall)
+        if(!grounded && againstWall)
         {
-            if(!isWallRunning)
+            if(!wallRunning)
             {
-                isWallRunning = true;
+                wallRunning = true;
             }
             else
             {
                 //Wall Jump
                 consecutiveJumpsMade--;
                 velocity = (Vector3.up + wallHit.normal) * Mathf.Sqrt(jumpHeight * 2 * gravity);
-                isWallRunning = false;
+                wallRunning = false;
             }
         }
     }
@@ -155,6 +160,13 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             if(!boostEffect.isEmitting) boostEffect.Play();
             velocity = (latchTarget.point - transform.position).normalized * zipSpeed;
+
+            float x = actions.Move.ReadValue<Vector2>().x;
+            float y = actions.Move.ReadValue<Vector2>().y;
+
+            moveDirection = (transform.right * x + transform.up * y).normalized;
+            controller.Move(moveDirection * speed * Time.deltaTime);
+
         }
 
         controller.Move(velocity * Time.deltaTime);
@@ -163,7 +175,7 @@ public class FirstPersonPlayer : MonoBehaviour
             zipping = false;
             boostEffect.Stop();
             chain.gameObject.SetActive(false);
-            velocity.y = 0;
+            velocity = Vector3.zero;
         }
 
     }
@@ -172,7 +184,7 @@ public class FirstPersonPlayer : MonoBehaviour
     {
         zRot = Mathf.Lerp(zRot, 0, 10 * Time.deltaTime);
 
-        if(isGrounded && velocity.y < 0) 
+        if(grounded && velocity.y < 0) 
         {
             consecutiveJumpsMade = 0;
             velocity = Vector3.Lerp(velocity, Vector3.zero, drag * Time.deltaTime);
@@ -185,13 +197,11 @@ public class FirstPersonPlayer : MonoBehaviour
 
         if(moveDirection.magnitude > 0) 
         {
-            if(isGrounded)
+            if(grounded)
             {
                 float y = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
                 camera.localPosition = bobStartPosition + new Vector3(0, y, 0);
             }
-            velocity.x = Mathf.Lerp(velocity.x, 0, drag * Time.deltaTime);
-            velocity.z = Mathf.Lerp(velocity.z, 0, drag * Time.deltaTime);
             speed = Mathf.Lerp(speed, maxSpeed, acceleration * Time.deltaTime);
         }
         else
@@ -201,13 +211,22 @@ public class FirstPersonPlayer : MonoBehaviour
 
         controller.Move(moveDirection * speed * Time.deltaTime);
 
+        if(Vector3.Dot(velocity.normalized, moveDirection) < 0)
+        {
+            velocity.x = Mathf.Lerp(velocity.x, 0, drag * Time.deltaTime);
+            velocity.z = Mathf.Lerp(velocity.z, 0, drag * Time.deltaTime);
+        }
+
+
         velocity += Vector3.down * gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
     
-    void WallRunning()
+    void WallRunningMovement()
     {
-        if((transform.right + wallHit.normal).magnitude > (-transform.right + wallHit.normal).magnitude)
+        moveDirection = -wallHit.normal;
+
+        if ((transform.right + wallHit.normal).magnitude > (-transform.right + wallHit.normal).magnitude)
         {
             zRot = Mathf.Lerp(zRot, -wallRunAngle, 10 * Time.deltaTime);
         }
@@ -221,14 +240,15 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             wallForward = -wallForward;
         }
-        controller.Move((wallForward + new Vector3(0, camera.forward.y, 0)) * speed * Time.deltaTime);
+        controller.Move((wallForward + new Vector3(0, camera.forward.y, 0)) * maxSpeed * Time.deltaTime);
+
 
         float y = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
         camera.localPosition = bobStartPosition + new Vector3(0, y, 0);
 
-        if (!isAgainstWall)
+        if (!againstWall)
         {
-            isWallRunning = false;
+            wallRunning = false;
         }
 
     }
@@ -240,7 +260,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
-        xRot = Mathf.Clamp(xRot, -45, 45);
+        xRot = Mathf.Clamp(xRot, -90, 90);
         camera.localEulerAngles = new Vector3(xRot, 0, zRot);
         
         //Looking left right with player body

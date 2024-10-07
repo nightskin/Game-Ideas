@@ -160,5 +160,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
-  speed: 250
+  speed: 200
   lifeTime: 10
