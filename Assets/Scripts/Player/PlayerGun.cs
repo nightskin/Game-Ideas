@@ -33,7 +33,7 @@ public class PlayerGun : MonoBehaviour
                 projectile.direction = combatControls.camera.forward;
             }
 
-            projectile.speed += combatControls.player.velocity.magnitude;
+            //projectile.speed += combatControls.player.velocity.magnitude;
         }
     }
 

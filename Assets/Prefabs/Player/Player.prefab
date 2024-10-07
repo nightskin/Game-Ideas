@@ -11107,10 +11107,10 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -4660651839558579860, guid: 8f13690dba023d640b2e02673be9c881, type: 3}
-  - {fileID: -8976064437032432714, guid: 8f13690dba023d640b2e02673be9c881, type: 3}
-  - {fileID: -8896051167825165466, guid: 8f13690dba023d640b2e02673be9c881, type: 3}
-  - {fileID: 4875329586141879171, guid: 8f13690dba023d640b2e02673be9c881, type: 3}
+  - {fileID: 2100000, guid: 0913a5d81c4c40d4793cf8a4c6fc3102, type: 2}
+  - {fileID: 2100000, guid: dd36980a1b6f19a4dbd11a9626462025, type: 2}
+  - {fileID: 2100000, guid: cf854068b904c524e865eb21df01e68e, type: 2}
+  - {fileID: 2100000, guid: 8d1460f970998e04f81811046f8ef51d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12110,6 +12110,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   gravity: 10
+  velocity: {x: 0, y: 0, z: 0}
   canWallRun: 1
   wallRunAngle: 30
   canZipLatch: 1
