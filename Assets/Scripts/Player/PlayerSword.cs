@@ -43,14 +43,14 @@ public class PlayerSword: MonoBehaviour
     
     public void ReleaseCharge()
     {
-        Vector3 spawnPos = combatControls.camera.position + combatControls.camera.forward;
+        Vector3 spawnPos = combatControls.player.camera.transform.position + combatControls.player.camera.transform.forward;
         GameObject powerSlash = Instantiate(slashEffect, spawnPos, Quaternion.identity);
 
         float zRot = combatControls.armPivot.localEulerAngles.z - 90;
-        powerSlash.transform.eulerAngles = Quaternion.LookRotation(combatControls.camera.forward).eulerAngles + new Vector3(0, 0, zRot);
+        powerSlash.transform.eulerAngles = Quaternion.LookRotation(combatControls.player.camera.transform.forward).eulerAngles + new Vector3(0, 0, zRot);
         powerSlash.GetComponent<MeshRenderer>().material.color = fullyChargedColor;
         powerSlash.GetComponent<Projectile>().owner = gameObject;
-        powerSlash.GetComponent<Projectile>().direction = combatControls.camera.forward;
+        powerSlash.GetComponent<Projectile>().direction = combatControls.player.camera.transform.forward;
 
         LoseCharge();
     }

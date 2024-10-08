@@ -3,15 +3,17 @@ using UnityEngine;
 public class FirstPersonPlayer : MonoBehaviour
 {
     //Components
+    [Header("Components")]
     Controls controls;
     public Controls.PlayerActions actions;
-    Transform camera;
-    CharacterController controller;
+    public Camera camera;
+    public CharacterController controller;
 
     //For Basic Controls
-    [SerializeField] float maxSpeed = 20;
+    [Header("General")]
+    [SerializeField] float maxWalkSpeed = 20;
     [SerializeField] float acceleration = 10; 
-    float speed;
+    float currentSpeed;
     [SerializeField][Min(1)] float drag = 5;
     Vector3 moveDirection;
     public float lookSpeed = 100;
@@ -21,11 +23,13 @@ public class FirstPersonPlayer : MonoBehaviour
     float zRot = 0;
 
     //Camera Bob
+    [Header("CameraBob")]
     [SerializeField] float bobAmplitude = 0.1f;
     [SerializeField] float bobFrequency = 0.1f;
     Vector3 bobStartPosition;
 
     //For Jumping and falling
+    [Header("Jumping")]
     [SerializeField] int maxJumps = 2;
     [SerializeField] float jumpHeight = 3;
     [SerializeField] LayerMask jumpLayer;
@@ -33,16 +37,19 @@ public class FirstPersonPlayer : MonoBehaviour
 
     int consecutiveJumpsMade = 0;
     bool grounded = false;
-    public Vector3 velocity = Vector3.zero;
+    Vector3 velocity = Vector3.zero;
 
     //For Wall Movement
+    [Header("Wall Running")]
     public bool canWallRun;
+    [SerializeField] float wallRunSpeed = 30;
     [SerializeField] float wallRunAngle = 45;
     RaycastHit wallHit;
-    bool againstWall = false;
+    [SerializeField] bool againstWall = false;
     bool wallRunning = false;
 
     //For ZipLatch
+    [Header("ZipLatch")]
     public bool canZipLatch;
     [SerializeField] ParticleSystem boostEffect;
     [SerializeField] LineRenderer chain;
@@ -55,8 +62,8 @@ public class FirstPersonPlayer : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
-        camera = transform.Find("Camera");
-        bobStartPosition = camera.localPosition;
+        camera = Camera.main;
+        bobStartPosition = camera.transform.localPosition;
 
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
@@ -71,6 +78,7 @@ public class FirstPersonPlayer : MonoBehaviour
     void Update()
     {
         Look();
+
         if(wallRunning)
         {
             WallRunningMovement();
@@ -92,7 +100,17 @@ public class FirstPersonPlayer : MonoBehaviour
     void FixedUpdate()
     {
         grounded = Physics.CheckSphere(transform.position + (Vector3.down * controller.height / 2), controller.radius, jumpLayer);
-        if (canWallRun) againstWall = Physics.Raycast(transform.position, -transform.right, out wallHit, 1, jumpLayer) || Physics.Raycast(transform.position, transform.right, out wallHit, 1, jumpLayer);
+        if (canWallRun) 
+        {
+            Ray right = new Ray(transform.position, transform.right);
+            Ray left = new Ray(transform.position, -transform.right);
+
+            Ray forwardRight = new Ray(transform.position, transform.right + transform.forward);
+            Ray forwardLeft = new Ray(transform.position, -transform.right + transform.forward);
+
+            againstWall = Physics.Raycast(right, out wallHit, camera.farClipPlane, jumpLayer) || Physics.Raycast(left, out wallHit, camera.farClipPlane, jumpLayer)
+                          || Physics.Raycast(forwardLeft, out wallHit, camera.farClipPlane, jumpLayer) || Physics.Raycast(forwardRight, out wallHit, camera.farClipPlane, jumpLayer);
+        }
     }
 
     void OnDestroy()
@@ -105,15 +123,9 @@ public class FirstPersonPlayer : MonoBehaviour
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if ((grounded || consecutiveJumpsMade < maxJumps) && !wallRunning)
+        if (!grounded && againstWall)
         {
-            //Jump Normally
-            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
-            consecutiveJumpsMade++;
-        }
-        if(!grounded && againstWall)
-        {
-            if(!wallRunning)
+            if (!wallRunning)
             {
                 wallRunning = true;
             }
@@ -125,11 +137,17 @@ public class FirstPersonPlayer : MonoBehaviour
                 wallRunning = false;
             }
         }
+        if ((grounded || consecutiveJumpsMade < maxJumps) && !wallRunning)
+        {
+            //Jump Normally
+            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
+            consecutiveJumpsMade++;
+        }
     }
 
     private void ZipLatch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(Physics.Raycast(camera.position, camera.forward, out latchTarget, 1000, jumpLayer))
+        if(Physics.Raycast(camera.transform.position, camera.transform.forward, out latchTarget, camera.farClipPlane, jumpLayer))
         {
             zipping = true;
             dramaticPause = 0.15f;
@@ -165,14 +183,13 @@ public class FirstPersonPlayer : MonoBehaviour
             float y = actions.Move.ReadValue<Vector2>().y;
 
             moveDirection = (transform.right * x + transform.up * y).normalized;
-            controller.Move(moveDirection * speed * Time.deltaTime);
+            controller.Move(moveDirection * currentSpeed * Time.deltaTime);
 
         }
 
         controller.Move(velocity * Time.deltaTime);
         if (Vector3.Distance(transform.position, latchTarget.point) < controller.height)
         {
-            zipping = false;
             boostEffect.Stop();
             chain.gameObject.SetActive(false);
             velocity = Vector3.zero;
@@ -200,22 +217,23 @@ public class FirstPersonPlayer : MonoBehaviour
             if(grounded)
             {
                 float y = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
-                camera.localPosition = bobStartPosition + new Vector3(0, y, 0);
+                camera.transform.localPosition = bobStartPosition + new Vector3(0, y, 0);
             }
-            speed = Mathf.Lerp(speed, maxSpeed, acceleration * Time.deltaTime);
+            if (Vector3.Dot(velocity.normalized, moveDirection) < 0)
+            {
+                velocity.x = Mathf.Lerp(velocity.x, 0, drag * Time.deltaTime);
+                velocity.z = Mathf.Lerp(velocity.z, 0, drag * Time.deltaTime);
+            }
+            currentSpeed = Mathf.Lerp(currentSpeed, maxWalkSpeed, acceleration * Time.deltaTime);
         }
         else
         {
-            speed = Mathf.Lerp(speed, 0, drag * Time.deltaTime);
+            currentSpeed = Mathf.Lerp(currentSpeed, 0, drag * Time.deltaTime);
         }
 
-        controller.Move(moveDirection * speed * Time.deltaTime);
+        controller.Move(moveDirection * currentSpeed * Time.deltaTime);
 
-        if(Vector3.Dot(velocity.normalized, moveDirection) < 0)
-        {
-            velocity.x = Mathf.Lerp(velocity.x, 0, drag * Time.deltaTime);
-            velocity.z = Mathf.Lerp(velocity.z, 0, drag * Time.deltaTime);
-        }
+
 
 
         velocity += Vector3.down * gravity * Time.deltaTime;
@@ -240,11 +258,11 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             wallForward = -wallForward;
         }
-        controller.Move((wallForward + new Vector3(0, camera.forward.y, 0)) * maxSpeed * Time.deltaTime);
+        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)) * wallRunSpeed * Time.deltaTime);
 
 
         float y = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
-        camera.localPosition = bobStartPosition + new Vector3(0, y, 0);
+        camera.transform.localPosition = bobStartPosition + new Vector3(0, y, 0);
 
         if (!againstWall)
         {
@@ -261,7 +279,7 @@ public class FirstPersonPlayer : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -90, 90);
-        camera.localEulerAngles = new Vector3(xRot, 0, zRot);
+        camera.transform.localEulerAngles = new Vector3(xRot, 0, zRot);
         
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;

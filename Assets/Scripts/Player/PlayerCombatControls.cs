@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCombatControls : MonoBehaviour
 {
-    enum Weapon
+    public enum Weapon
     {
         SWORD,
         GUN,
     }
-    [SerializeField] Weapon equipedWeapon;
+    public Weapon equipedWeapon;
 
+    [SerializeField] Image reticle;
     public Transform armPivot;
     public PlayerSword sword;
     public PlayerGun gun;
@@ -20,7 +22,6 @@ public class PlayerCombatControls : MonoBehaviour
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle = 90;
 
-    public Transform camera;
     public FirstPersonPlayer player;
     public Animator animator;
     
@@ -39,12 +40,27 @@ public class PlayerCombatControls : MonoBehaviour
         }
         animator = GetComponent<Animator>();
         player = GetComponent<FirstPersonPlayer>();
-        camera = transform.root.Find("Camera");
 
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
         player.actions.ToggleWeapons.performed += ToggleWeapons_performed;
 
+    }
+
+    void FixedUpdate()
+    {
+        if(reticle)
+        {
+            Ray ray = player.camera.ScreenPointToRay(reticle.rectTransform.position);
+            if(Physics.Raycast(ray,player.camera.farClipPlane))
+            {
+                reticle.color = Color.red;
+            }
+            else
+            {
+                reticle.color = Color.white;
+            }
+        }
     }
 
     void Update()

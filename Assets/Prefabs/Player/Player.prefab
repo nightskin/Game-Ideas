@@ -11480,7 +11480,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2433556364165036025
 CanvasRenderer:
@@ -12098,25 +12098,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02037fbffea3007488ee3c8633db3711, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 30
+  camera: {fileID: 0}
+  controller: {fileID: 0}
+  maxWalkSpeed: 10
   acceleration: 10
   drag: 7
   lookSpeed: 100
   bobAmplitude: 0.15
   bobFrequency: 12
   maxJumps: 2
-  jumpHeight: 5
+  jumpHeight: 3
   jumpLayer:
     serializedVersion: 2
     m_Bits: 1
   gravity: 10
-  velocity: {x: 0, y: 0, z: 0}
   canWallRun: 1
+  wallRunSpeed: 30
   wallRunAngle: 30
   canZipLatch: 1
   boostEffect: {fileID: 748692785867146178}
   chain: {fileID: 8010335371827638838}
-  zipSpeed: 50
+  zipSpeed: 30
 --- !u!114 &6088619133103884892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12144,13 +12146,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipedWeapon: 1
+  reticle: {fileID: 7889191940631659280}
   armPivot: {fileID: 6794467839084879078}
   sword: {fileID: 2462784170835943555}
   gun: {fileID: 1504655224064530518}
   actionDamp: 0.5
   atkVector: {x: 0, y: 0}
   atkAngle: 50
-  camera: {fileID: 6118335469731815050}
   player: {fileID: 6118335469902077924}
   animator: {fileID: 6088619133414559687}
   charging: 0

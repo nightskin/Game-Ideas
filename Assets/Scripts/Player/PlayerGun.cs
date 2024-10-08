@@ -24,16 +24,14 @@ public class PlayerGun : MonoBehaviour
         {
             projectile.owner = transform.root.gameObject;
 
-            if(Physics.Raycast(combatControls.camera.position, combatControls.camera.forward, out RaycastHit hit))
+            if(Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
             {
                 projectile.direction = (hit.point - bulletSpawn.position).normalized;
             }
             else
             {
-                projectile.direction = combatControls.camera.forward;
+                projectile.direction = combatControls.player.camera.transform.forward;
             }
-
-            //projectile.speed += combatControls.player.velocity.magnitude;
         }
     }
 
