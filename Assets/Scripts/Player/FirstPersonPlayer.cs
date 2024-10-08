@@ -106,10 +106,9 @@ public class FirstPersonPlayer : MonoBehaviour
             Ray left = new Ray(transform.position, -transform.right);
 
             Ray forwardRight = new Ray(transform.position, transform.right + transform.forward);
-            Ray forwardLeft = new Ray(transform.position, -transform.right + transform.forward);
+            Ray forwardLeft = new Ray(transform.position, (-transform.right) + transform.forward);
 
-            againstWall = Physics.Raycast(right, out wallHit, camera.farClipPlane, jumpLayer) || Physics.Raycast(left, out wallHit, camera.farClipPlane, jumpLayer)
-                          || Physics.Raycast(forwardLeft, out wallHit, camera.farClipPlane, jumpLayer) || Physics.Raycast(forwardRight, out wallHit, camera.farClipPlane, jumpLayer);
+            againstWall = Physics.Raycast(right, out wallHit, 1, jumpLayer) || Physics.Raycast(left, out wallHit, 1, jumpLayer) || Physics.Raycast(forwardLeft, out wallHit, 1, jumpLayer) || Physics.Raycast(forwardRight, out wallHit, 1, jumpLayer);
         }
     }
 

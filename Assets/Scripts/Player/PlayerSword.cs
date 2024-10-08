@@ -71,13 +71,13 @@ public class PlayerSword: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (combatControls.attacking)
+        if (combatControls.slashing)
         {
             if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
                 if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 combatControls.animator.SetTrigger("recoil");
-                combatControls.attacking = false;
+                combatControls.slashing = false;
             }
             else if (other.transform.tag == "CanBeDamaged")
             {

@@ -11149,6 +11149,7 @@ MonoBehaviour:
   bulletSpawn: {fileID: 2740814654357376544}
   knockbackForce: 10
   damage: 1
+  fireRate: 0.05
 --- !u!1 &4995275387362117257
 GameObject:
   m_ObjectHideFlags: 0
@@ -12107,7 +12108,7 @@ MonoBehaviour:
   bobAmplitude: 0.15
   bobFrequency: 12
   maxJumps: 2
-  jumpHeight: 3
+  jumpHeight: 5
   jumpLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -12115,6 +12116,7 @@ MonoBehaviour:
   canWallRun: 1
   wallRunSpeed: 30
   wallRunAngle: 30
+  againstWall: 0
   canZipLatch: 1
   boostEffect: {fileID: 748692785867146178}
   chain: {fileID: 8010335371827638838}
@@ -12156,8 +12158,8 @@ MonoBehaviour:
   player: {fileID: 6118335469902077924}
   animator: {fileID: 6088619133414559687}
   charging: 0
-  attacking: 0
-  defending: 0
+  slashing: 0
+  shooting: 0
 --- !u!1 &6399236081915991524
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,6 +18,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     float defaultLookSpeed;
+    float shootTimer;
 
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle = 90;
@@ -26,8 +27,8 @@ public class PlayerCombatControls : MonoBehaviour
     public Animator animator;
     
     public bool charging = false;
-    public bool attacking = false;
-    public bool defending = false;
+    public bool slashing = false;
+    public bool shooting = false;
 
     void Start()
     {
@@ -68,13 +69,28 @@ public class PlayerCombatControls : MonoBehaviour
         atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
         if (player.actions.Attack.IsPressed())
         {
-            if (atkVector.magnitude > 0)
+            if(equipedWeapon == Weapon.SWORD)
             {
-                atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+                if (atkVector.magnitude > 0)
+                {
+                    atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
+                }
+                else
+                {
+                    atkAngle = Random.Range(-180, 180);
+                }
             }
-            else
+            else if(equipedWeapon == Weapon.GUN)
             {
-                atkAngle = Random.Range(-180, 180);
+                if(shootTimer > 0)
+                {
+                    shootTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    animator.SetTrigger("shoot");
+                    shootTimer = gun.fireRate;
+                }
             }
         }
 
@@ -100,28 +116,35 @@ public class PlayerCombatControls : MonoBehaviour
         }
         else if(equipedWeapon == Weapon.GUN)
         {
-            animator.SetTrigger("shoot");
+            shooting = true;
         }
     }
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(sword.FullyCharged())
+        if(equipedWeapon == Weapon.SWORD)
         {
-            if (equipedWeapon == Weapon.SWORD)
+            if (sword.FullyCharged())
             {
-                animator.SetTrigger("slash");
+                if (equipedWeapon == Weapon.SWORD)
+                {
+                    animator.SetTrigger("slash");
+                }
+                else if (equipedWeapon == Weapon.GUN)
+                {
+                    animator.SetTrigger("shoot");
+                }
             }
-            else if (equipedWeapon == Weapon.GUN)
+            else
             {
-                animator.SetTrigger("shoot");
+                sword.LoseCharge();
             }
+            charging = false;
         }
-        else
+        else if(equipedWeapon == Weapon.GUN)
         {
-            sword.LoseCharge();
+            shooting = false;
         }
-        charging = false;
     }
     
     private void ToggleWeapons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -152,6 +175,7 @@ public class PlayerCombatControls : MonoBehaviour
             sword.transform.parent.gameObject.SetActive(false);
             gun.gameObject.SetActive(true);
         }
+        equipedWeapon = weapon;
     }
 
     ///Animation Events
@@ -162,7 +186,7 @@ public class PlayerCombatControls : MonoBehaviour
     
     public void StartSlash()
     {
-        attacking = true;
+        slashing = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         if(sword.trail)
         {
@@ -173,7 +197,7 @@ public class PlayerCombatControls : MonoBehaviour
     
     public void EndSlash()
     {
-        attacking = false;
+        slashing = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         if (sword.trail)
         {

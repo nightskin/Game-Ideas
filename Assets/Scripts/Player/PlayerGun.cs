@@ -8,6 +8,7 @@ public class PlayerGun : MonoBehaviour
 
     public float knockbackForce = 10;
     public float damage = 1;
+    public float fireRate = 0.1f;
     
     void Start()
     {

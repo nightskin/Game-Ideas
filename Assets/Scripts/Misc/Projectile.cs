@@ -6,7 +6,10 @@ public class Projectile : MonoBehaviour
     public Vector3 direction = Vector3.zero;
     public float speed = 20;
     public float lifeTime = 10;
+    public int maxNumberOfBounces;
 
+
+    int bounces = 0;
     BoxCollider box;
     SphereCollider sphere;
 
@@ -18,10 +21,10 @@ public class Projectile : MonoBehaviour
         box = GetComponent<BoxCollider>();
     }
     
-    void FixedUpdate()
+    void Update()
     {
         Vector3 prevPosition = transform.position;
-        transform.position += direction * speed * Time.fixedDeltaTime;
+        transform.position += direction * speed * Time.deltaTime;
 
         float distance = Vector3.Distance(transform.position, prevPosition);
 
@@ -58,7 +61,19 @@ public class Projectile : MonoBehaviour
     {
         if (hit.transform.gameObject != owner)
         {
-            Destroy(gameObject);
+            bounces++;
+            if(bounces > maxNumberOfBounces)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                lifeTime = 10;
+                direction = Vector3.Reflect(direction, hit.normal);
+            }
+
+
+
         }
     }
 }
