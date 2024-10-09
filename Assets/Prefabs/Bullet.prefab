@@ -160,6 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
-  speed: 100
-  lifeTime: 10
-  maxNumberOfBounces: 3
+  speed: 201
+  lifeTime: 5
+  maxNumberOfBounces: 1
+  damage: 1

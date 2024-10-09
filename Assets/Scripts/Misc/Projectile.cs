@@ -7,7 +7,7 @@ public class Projectile : MonoBehaviour
     public float speed = 20;
     public float lifeTime = 10;
     public int maxNumberOfBounces;
-
+    public float damage = 1;
 
     int bounces = 0;
     BoxCollider box;
@@ -68,7 +68,6 @@ public class Projectile : MonoBehaviour
             }
             else
             {
-                lifeTime = 10;
                 direction = Vector3.Reflect(direction, hit.normal);
             }
 

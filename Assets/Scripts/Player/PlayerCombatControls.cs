@@ -5,12 +5,15 @@ public class PlayerCombatControls : MonoBehaviour
 {
     public enum Weapon
     {
+        NONE,
         SWORD,
         GUN,
     }
     public Weapon equipedWeapon;
 
     [SerializeField] Image reticle;
+    [SerializeField] LayerMask lockOnLayer;
+
     public Transform armPivot;
     public PlayerSword sword;
     public PlayerGun gun;
@@ -18,17 +21,16 @@ public class PlayerCombatControls : MonoBehaviour
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     float defaultLookSpeed;
-    float shootTimer;
 
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle = 90;
 
     public FirstPersonPlayer player;
     public Animator animator;
-    
-    public bool charging = false;
-    public bool slashing = false;
-    public bool shooting = false;
+
+
+    public bool hasSword;
+    bool charging = false;
 
     void Start()
     {
@@ -53,7 +55,7 @@ public class PlayerCombatControls : MonoBehaviour
         if(reticle)
         {
             Ray ray = player.camera.ScreenPointToRay(reticle.rectTransform.position);
-            if(Physics.Raycast(ray,player.camera.farClipPlane))
+            if(Physics.Raycast(ray,player.camera.farClipPlane,lockOnLayer))
             {
                 reticle.color = Color.red;
             }
@@ -82,15 +84,7 @@ public class PlayerCombatControls : MonoBehaviour
             }
             else if(equipedWeapon == Weapon.GUN)
             {
-                if(shootTimer > 0)
-                {
-                    shootTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    animator.SetTrigger("shoot");
-                    shootTimer = gun.fireRate;
-                }
+                gun.RapidFire();
             }
         }
 
@@ -116,7 +110,11 @@ public class PlayerCombatControls : MonoBehaviour
         }
         else if(equipedWeapon == Weapon.GUN)
         {
-            shooting = true;
+            if(!gun.shooting)
+            {
+                gun.Fire();
+                gun.shooting = true;
+            }
         }
     }
 
@@ -143,7 +141,7 @@ public class PlayerCombatControls : MonoBehaviour
         }
         else if(equipedWeapon == Weapon.GUN)
         {
-            shooting = false;
+            gun.shooting = false;
         }
     }
     
@@ -161,11 +159,10 @@ public class PlayerCombatControls : MonoBehaviour
         }
         Equip(equipedWeapon);
     }
-
-
+    
     void Equip(Weapon weapon)
     {
-        if(weapon == Weapon.SWORD)
+        if(weapon == Weapon.SWORD && hasSword)
         {
             sword.transform.parent.gameObject.SetActive(true);
             gun.gameObject.SetActive(false);
@@ -179,14 +176,10 @@ public class PlayerCombatControls : MonoBehaviour
     }
 
     ///Animation Events
-    public void Shoot()
-    {
-        gun.Fire();
-    }
     
     public void StartSlash()
     {
-        slashing = true;
+        sword.slashing = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         if(sword.trail)
         {
@@ -197,7 +190,7 @@ public class PlayerCombatControls : MonoBehaviour
     
     public void EndSlash()
     {
-        slashing = false;
+        sword.slashing = false;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         if (sword.trail)
         {

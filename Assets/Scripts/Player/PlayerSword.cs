@@ -14,12 +14,12 @@ public class PlayerSword: MonoBehaviour
     [SerializeField] GameObject impactEffectSolid;
     [SerializeField] GameObject slashEffect;
     [SerializeField] MeshRenderer meshRenderer;
-    
 
+    public bool slashing = false;
     public float knockbackForce = 10;
     public float damage = 1;
  
-    [SerializeField] float chargeTime = 2.5f;
+    float chargeTime = 1.0f;
     float chargeTimer;
 
     public bool FullyCharged()
@@ -71,15 +71,15 @@ public class PlayerSword: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (combatControls.slashing)
+        if (slashing)
         {
             if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
                 if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 combatControls.animator.SetTrigger("recoil");
-                combatControls.slashing = false;
+                slashing = false;
             }
-            else if (other.transform.tag == "CanBeDamaged")
+            else if (other.transform.tag == "Enemy")
             {
                 if(impactEffectEnemy) Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 if (other.transform.root.GetComponent<EnemyHealth>())
