@@ -11144,13 +11144,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6491fa01582184b8e099107dcc4025, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 1054610587117342225, guid: ee87bf44eb1845b4c803350bb1fb17df, type: 3}
+  normalBulletPrefab: {fileID: 1054610587117342225, guid: ee87bf44eb1845b4c803350bb1fb17df, type: 3}
+  chargeBulletPrafeb: {fileID: 799581235577980815, guid: 77ac2b484b6410b449c218bf8cd6c8e3, type: 3}
   combatControls: {fileID: 1588188188}
   bulletSpawn: {fileID: 2740814654357376544}
   baseDamage: 1
   shooting: 0
-  altFireType: 0
-  fireRate: 0.1
+  shootStyle: 1
+  fireRate: 0.3
   maxChargeTime: 1
 --- !u!1 &4995275387362117257
 GameObject:
@@ -12149,7 +12150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16582c2f7dccd9f4ba254bac8052487a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipedWeapon: 2
+  equipedWeapon: 1
   reticle: {fileID: 7889191940631659280}
   lockOnLayer:
     serializedVersion: 2

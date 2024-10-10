@@ -5,7 +5,6 @@ public class PlayerCombatControls : MonoBehaviour
 {
     public enum Weapon
     {
-        NONE,
         SWORD,
         GUN,
     }
@@ -84,7 +83,14 @@ public class PlayerCombatControls : MonoBehaviour
             }
             else if(equipedWeapon == Weapon.GUN)
             {
-                gun.RapidFire();
+                if(gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
+                {
+                    gun.RapidFire();
+                }
+                else if(gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
+                {
+                    gun.Charge();
+                }
             }
         }
 
@@ -110,11 +116,8 @@ public class PlayerCombatControls : MonoBehaviour
         }
         else if(equipedWeapon == Weapon.GUN)
         {
-            if(!gun.shooting)
-            {
-                gun.Fire();
-                gun.shooting = true;
-            }
+            gun.Fire();
+            gun.shooting = true;
         }
     }
 
@@ -141,7 +144,14 @@ public class PlayerCombatControls : MonoBehaviour
         }
         else if(equipedWeapon == Weapon.GUN)
         {
-            gun.shooting = false;
+            if(gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
+            {
+                gun.shooting = false;
+            }
+            else if(gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
+            {
+                gun.ReleaseCharge();
+            }
         }
     }
     

@@ -1,20 +1,23 @@
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 public class PlayerGun : MonoBehaviour
 {
-    [SerializeField] GameObject bullet;
+    [SerializeField] GameObject normalBulletPrefab;
+    [SerializeField] GameObject chargeBulletPrafeb;
     [SerializeField] PlayerCombatControls combatControls;
     [SerializeField] Transform bulletSpawn;
-    
+
     public float baseDamage = 1;
     public bool shooting = false;
    
-    public enum AltFireType
+    public enum ShootStyle
     {
         RAPID_FIRE,
         CHARGE_BLAST
     }
-    public AltFireType altFireType;
+    public ShootStyle shootStyle;
+
 
     [Header("Rapid Fire Settings")]
     public float fireRate = 0.1f;
@@ -23,6 +26,7 @@ public class PlayerGun : MonoBehaviour
     [Header("Charge Blast Settings")]
     public float maxChargeTime = 1;
     float chargeTimer = 0;
+    Projectile currentChargeShot = null;
 
     void Start()
     {
@@ -32,27 +36,39 @@ public class PlayerGun : MonoBehaviour
     
     public void Fire()
     {
-        var b = Instantiate(bullet, bulletSpawn.position, Quaternion.identity);
-        Projectile projectile = b.GetComponent<Projectile>();
-        if (projectile)
+        if(shootStyle == ShootStyle.RAPID_FIRE)
         {
-            projectile.owner = transform.root.gameObject;
-            projectile.damage = baseDamage;
-            if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+            var b = Instantiate(normalBulletPrefab, bulletSpawn.position, Quaternion.identity);
+            Projectile projectile = b.GetComponent<Projectile>();
+            if (projectile)
             {
-                projectile.direction = (hit.point - bulletSpawn.position).normalized;
+                projectile.owner = transform.root.gameObject;
+                projectile.damage = baseDamage;
+                if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+                {
+                    projectile.direction = (hit.point - bulletSpawn.position).normalized;
+                }
+                else
+                {
+                    projectile.direction = combatControls.player.camera.transform.forward;
+                }
             }
-            else
+            shootTimer = fireRate;
+        }
+        else if(shootStyle == ShootStyle.CHARGE_BLAST)
+        {
+            currentChargeShot = Instantiate(chargeBulletPrafeb, bulletSpawn.position, Quaternion.identity).GetComponent<Projectile>();
+            if (currentChargeShot)
             {
-                projectile.direction = combatControls.player.camera.transform.forward;
+                currentChargeShot.owner = transform.root.gameObject;
+                currentChargeShot.damage = baseDamage;
             }
         }
-        shootTimer = fireRate;
     }
 
     public void RapidFire()
     {
-        if(altFireType == AltFireType.RAPID_FIRE)
+        if(shootStyle == ShootStyle.RAPID_FIRE)
         {
             if (shootTimer > 0)
             {
@@ -60,7 +76,7 @@ public class PlayerGun : MonoBehaviour
             }
             else
             {
-                var b = Instantiate(bullet, bulletSpawn.position, Quaternion.identity);
+                var b = Instantiate(normalBulletPrefab, bulletSpawn.position, Quaternion.identity);
                 Projectile projectile = b.GetComponent<Projectile>();
                 if (projectile)
                 {
@@ -80,13 +96,37 @@ public class PlayerGun : MonoBehaviour
         }
     }
 
-    public void ChargeShot()
+    public void Charge()
     {
-        if(chargeTimer < maxChargeTime)
+        if (currentChargeShot)
         {
-            chargeTimer += Time.deltaTime;
-        }
+            currentChargeShot.transform.position = bulletSpawn.position;
 
+            if (chargeTimer < maxChargeTime)
+            {
+                chargeTimer += Time.deltaTime;
+                currentChargeShot.damage += Time.deltaTime;
+                currentChargeShot.transform.localScale += Vector3.one * Time.deltaTime;
+            }
+        }
+    }
+    
+    public void ReleaseCharge()
+    {
+        if (currentChargeShot)
+        {
+            currentChargeShot.GetComponent<TrailRenderer>().startWidth = currentChargeShot.transform.localScale.x;
+            if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+            {
+                currentChargeShot.direction = (hit.point - bulletSpawn.position).normalized;
+            }
+            else
+            {
+                currentChargeShot.direction = combatControls.player.camera.transform.forward;
+            }
+            chargeTimer = 0;
+            currentChargeShot = null;
+        }
 
     }
 }

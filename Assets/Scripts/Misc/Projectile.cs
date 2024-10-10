@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour
     BoxCollider box;
     SphereCollider sphere;
 
+
     RaycastHit hit;
 
     void Start()
