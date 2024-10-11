@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     public float lifeTime = 10;
     public int maxNumberOfBounces;
     public float damage = 1;
+    public bool released;
 
     int bounces = 0;
     BoxCollider box;
@@ -29,7 +30,7 @@ public class Projectile : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, prevPosition);
 
-        if(box)
+        if (box)
         {
             if (Physics.BoxCast(prevPosition, box.size / 2, direction, out hit, transform.rotation, distance))
             {
@@ -38,42 +39,48 @@ public class Projectile : MonoBehaviour
         }
         else if (sphere)
         {
-            if(Physics.SphereCast(prevPosition, sphere.radius, direction ,out hit, distance))
+            if (Physics.SphereCast(prevPosition, sphere.radius, direction, out hit, distance))
             {
                 CheckCollisions();
             }
         }
         else
         {
-            if(Physics.Raycast(prevPosition, direction, out hit, distance))
+            if (Physics.Raycast(prevPosition, direction, out hit, distance))
             {
                 CheckCollisions();
             }
         }
 
-        lifeTime -= Time.deltaTime;
-        if (lifeTime < 0) 
+        if(released)
         {
-            Destroy(gameObject);
+            lifeTime -= Time.deltaTime;
+            if (lifeTime < 0)
+            {
+                Destroy(gameObject);
+            }
         }
+
     }
 
     void CheckCollisions()
     {
-        if (hit.transform.gameObject != owner)
+        if(released)
         {
-            bounces++;
-            if(bounces > maxNumberOfBounces)
+            if (hit.transform.gameObject != owner && !hit.collider.isTrigger)
             {
-                Destroy(gameObject);
+                bounces++;
+                if (bounces > maxNumberOfBounces)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    direction = Vector3.Reflect(direction, hit.normal);
+                }
             }
-            else
-            {
-                direction = Vector3.Reflect(direction, hit.normal);
-            }
-
-
-
         }
+
     }
+
 }

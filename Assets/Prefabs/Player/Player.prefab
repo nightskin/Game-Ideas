@@ -12114,7 +12114,7 @@ MonoBehaviour:
   jumpHeight: 5
   jumpLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   gravity: 10
   canWallRun: 1
   wallRunSpeed: 30

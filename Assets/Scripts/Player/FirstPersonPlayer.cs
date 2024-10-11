@@ -164,9 +164,20 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void ZipLatch()
     {
+        Vector3 latchPoint;
+        if(latchTarget.transform.gameObject.isStatic)
+        {
+            latchPoint = latchTarget.point;
+        }
+        else
+        {
+            Vector3 offset = (latchTarget.point - latchTarget.transform.position);
+            latchPoint = offset + latchTarget.transform.position;
+        }
+
         chain.SetPosition(0, chain.transform.position);
-        chain.SetPosition(1, latchTarget.point);
-        chain.textureScale = new Vector2(Vector3.Distance(latchTarget.point, chain.transform.position), 1);
+        chain.SetPosition(1, latchPoint);
+        chain.textureScale = new Vector2(Vector3.Distance(latchPoint, chain.transform.position), 1);
 
         
         if (dramaticPause > 0)
@@ -176,7 +187,7 @@ public class FirstPersonPlayer : MonoBehaviour
         else
         {
             if(!boostEffect.isEmitting) boostEffect.Play();
-            velocity = (latchTarget.point - transform.position).normalized * zipSpeed;
+            velocity = (latchPoint - transform.position).normalized * zipSpeed;
 
             float x = actions.Move.ReadValue<Vector2>().x;
             float y = actions.Move.ReadValue<Vector2>().y;
@@ -187,7 +198,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
-        if (Vector3.Distance(transform.position, latchTarget.point) < controller.height)
+        if (Vector3.Distance(transform.position, latchPoint) < controller.height)
         {
             boostEffect.Stop();
             chain.gameObject.SetActive(false);

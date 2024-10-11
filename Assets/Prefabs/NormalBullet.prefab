@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7256303135660717028}
   - component: {fileID: 355790936489680177}
   - component: {fileID: 5153501235474194966}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NormalBullet
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

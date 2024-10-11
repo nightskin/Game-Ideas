@@ -60,6 +60,7 @@ public class PlayerGun : MonoBehaviour
             currentChargeShot = Instantiate(chargeBulletPrafeb, bulletSpawn.position, Quaternion.identity).GetComponent<Projectile>();
             if (currentChargeShot)
             {
+                currentChargeShot.GetComponent<TrailRenderer>().enabled = false;
                 currentChargeShot.owner = transform.root.gameObject;
                 currentChargeShot.damage = baseDamage;
             }
@@ -115,7 +116,9 @@ public class PlayerGun : MonoBehaviour
     {
         if (currentChargeShot)
         {
+            currentChargeShot.GetComponent<TrailRenderer>().enabled = true;
             currentChargeShot.GetComponent<TrailRenderer>().startWidth = currentChargeShot.transform.localScale.x;
+            
             if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
             {
                 currentChargeShot.direction = (hit.point - bulletSpawn.position).normalized;
@@ -124,6 +127,7 @@ public class PlayerGun : MonoBehaviour
             {
                 currentChargeShot.direction = combatControls.player.camera.transform.forward;
             }
+            currentChargeShot.released = true;
             chargeTimer = 0;
             currentChargeShot = null;
         }

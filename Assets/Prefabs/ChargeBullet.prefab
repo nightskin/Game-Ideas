@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 8368677006665304197}
   - component: {fileID: 3067362748578299757}
   - component: {fileID: 8833510412662150876}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ChargeBullet
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,6 +54,7 @@ MonoBehaviour:
   lifeTime: 5
   maxNumberOfBounces: 1
   damage: 1
+  released: 0
 --- !u!33 &3890036134800280423
 MeshFilter:
   m_ObjectHideFlags: 0
