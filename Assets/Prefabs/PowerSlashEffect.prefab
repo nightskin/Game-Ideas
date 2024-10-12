@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5801583144280347565}
   - component: {fileID: 5134886978899922735}
   - component: {fileID: -3830635437268723995}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PowerSlashEffect
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,7 +120,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
-  speed: 100
+  speed: 300
   lifeTime: 11
   maxNumberOfBounces: 0
   damage: 1
+  released: 1

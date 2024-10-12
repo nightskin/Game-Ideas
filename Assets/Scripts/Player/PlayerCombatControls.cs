@@ -1,17 +1,21 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerCombatControls : MonoBehaviour
 {
-    public enum Weapon
+    public enum Weapons
     {
+        GUN_DEFAULT,
+        GUN_CHARGE_BLAST,
         SWORD,
-        GUN,
     }
-    public Weapon equipedWeapon;
+    public List<Weapons> inventory;
+    int equipIndex = 0;
 
-    [SerializeField] Image reticle;
-    [SerializeField] LayerMask lockOnLayer;
+    public Image reticle;
+    public LayerMask lockOnLayer;
+    public RaycastHit lockOnHit;
 
     public Transform armPivot;
     public PlayerSword sword;
@@ -24,16 +28,12 @@ public class PlayerCombatControls : MonoBehaviour
     public Vector2 atkVector = Vector2.zero;
     public float atkAngle = 90;
 
-    public FirstPersonPlayer player;
+    public PlayerMovement player;
     public Animator animator;
-
-
-    public bool hasSword;
-    bool charging = false;
 
     void Start()
     {
-        Equip(equipedWeapon);
+        Equip(inventory[equipIndex]);
 
         defaultLookSpeed = player.lookSpeed;
         if (sword.trail) 
@@ -41,7 +41,7 @@ public class PlayerCombatControls : MonoBehaviour
             sword.trail.gameObject.SetActive(false);
         }
         animator = GetComponent<Animator>();
-        player = GetComponent<FirstPersonPlayer>();
+        player = GetComponent<PlayerMovement>();
 
         player.actions.Attack.performed += Attack_performed;
         player.actions.Attack.canceled += Attack_canceled;
@@ -53,8 +53,8 @@ public class PlayerCombatControls : MonoBehaviour
     {
         if(reticle)
         {
-            Ray ray = player.camera.ScreenPointToRay(reticle.rectTransform.position);
-            if(Physics.Raycast(ray,player.camera.farClipPlane,lockOnLayer))
+            Ray ray = new Ray(player.camera.transform.position, player.camera.transform.forward);
+            if(Physics.Raycast(ray, out lockOnHit ,player.camera.farClipPlane,lockOnLayer))
             {
                 reticle.color = Color.red;
             }
@@ -70,7 +70,7 @@ public class PlayerCombatControls : MonoBehaviour
         atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
         if (player.actions.Attack.IsPressed())
         {
-            if(equipedWeapon == Weapon.SWORD)
+            if(inventory[equipIndex] == Weapons.SWORD)
             {
                 if (atkVector.magnitude > 0)
                 {
@@ -81,7 +81,7 @@ public class PlayerCombatControls : MonoBehaviour
                     atkAngle = Random.Range(-180, 180);
                 }
             }
-            else if(equipedWeapon == Weapon.GUN)
+            else
             {
                 if(gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
                 {
@@ -94,10 +94,6 @@ public class PlayerCombatControls : MonoBehaviour
             }
         }
 
-        if (charging)
-        {
-            sword.ChargeWeapon();
-        }
     }
 
     void OnDestroy()
@@ -109,12 +105,11 @@ public class PlayerCombatControls : MonoBehaviour
     
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        charging = true;
-        if(equipedWeapon == Weapon.SWORD)
+        if(inventory[equipIndex] == Weapons.SWORD)
         {
             animator.SetTrigger("slash");
         }
-        else if(equipedWeapon == Weapon.GUN)
+        else
         {
             gun.Fire();
             gun.shooting = true;
@@ -123,32 +118,13 @@ public class PlayerCombatControls : MonoBehaviour
 
     private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(equipedWeapon == Weapon.SWORD)
+        if (inventory[equipIndex] != Weapons.SWORD)
         {
-            if (sword.FullyCharged())
-            {
-                if (equipedWeapon == Weapon.SWORD)
-                {
-                    animator.SetTrigger("slash");
-                }
-                else if (equipedWeapon == Weapon.GUN)
-                {
-                    animator.SetTrigger("shoot");
-                }
-            }
-            else
-            {
-                sword.LoseCharge();
-            }
-            charging = false;
-        }
-        else if(equipedWeapon == Weapon.GUN)
-        {
-            if(gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
+            if (gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
             {
                 gun.shooting = false;
             }
-            else if(gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
+            else if (gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
             {
                 gun.ReleaseCharge();
             }
@@ -157,32 +133,53 @@ public class PlayerCombatControls : MonoBehaviour
     
     private void ToggleWeapons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(equipedWeapon == Weapon.SWORD)
+        if(obj.ReadValue<float>() > 0)
         {
-            equipedWeapon = Weapon.GUN;
-
+            if(equipIndex < inventory.Count - 1) 
+            {
+                equipIndex++;
+            }
+            else
+            {
+                equipIndex = 0;
+            }
         }
-        else if(equipedWeapon == Weapon.GUN)
+        else if(obj.ReadValue<float>() < 0)
         {
-            equipedWeapon = Weapon.SWORD;
-
+            if (equipIndex > 0)
+            {
+                equipIndex--;
+            }
+            else
+            {
+                equipIndex = inventory.Count - 1;
+            }
         }
-        Equip(equipedWeapon);
+        Equip(inventory[equipIndex]);
     }
     
-    void Equip(Weapon weapon)
+    void Equip(Weapons weapon)
     {
-        if(weapon == Weapon.SWORD && hasSword)
+        if(weapon == Weapons.SWORD)
         {
             sword.transform.parent.gameObject.SetActive(true);
             gun.gameObject.SetActive(false);
         }
-        else if(weapon == Weapon.GUN)
+        else if(weapon == Weapons.GUN_DEFAULT)
         {
             sword.transform.parent.gameObject.SetActive(false);
             gun.gameObject.SetActive(true);
+            gun.shootStyle = PlayerGun.ShootStyle.RAPID_FIRE;
+            gun.GetComponent<MeshRenderer>().materials[3].color = Color.blue;
         }
-        equipedWeapon = weapon;
+        else if(weapon == Weapons.GUN_CHARGE_BLAST)
+        {
+            sword.transform.parent.gameObject.SetActive(false);
+            gun.gameObject.SetActive(true);
+            gun.shootStyle = PlayerGun.ShootStyle.CHARGE_BLAST;
+            gun.GetComponent<MeshRenderer>().materials[3].color = new Color(0.5f, 0, 1);
+        }
+        inventory[equipIndex] = weapon;
     }
 
     ///Animation Events
@@ -209,12 +206,4 @@ public class PlayerCombatControls : MonoBehaviour
         player.lookSpeed = defaultLookSpeed;
     }
     
-    public void ChargeSlash()
-    {
-        if (sword.FullyCharged())
-        {
-            sword.ReleaseCharge();
-            sword.LoseCharge();
-        }
-    }
 }

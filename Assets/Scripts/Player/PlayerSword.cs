@@ -1,69 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSword: MonoBehaviour
 {
-    [SerializeField] Color trailColor = Color.white;
-    [SerializeField] Color chargingColor = Color.cyan;
-    [SerializeField] Color fullyChargedColor = Color.blue;
     public ParticleSystem trail;
 
     [SerializeField] PlayerCombatControls combatControls;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject impactEffectSolid;
-    [SerializeField] GameObject slashEffect;
     [SerializeField] MeshRenderer meshRenderer;
 
     public bool slashing = false;
     public float knockbackForce = 10;
     public float damage = 1;
- 
-    float chargeTime = 1.0f;
-    float chargeTimer;
-
-    public bool FullyCharged()
-    {
-        return chargeTimer >= chargeTime;
-    }
-
-    public void ChargeWeapon()
-    {
-        chargeTimer += Time.deltaTime;
-        if(FullyCharged())
-        {
-            meshRenderer.materials[1].color = fullyChargedColor;
-        }
-        else
-        {
-            meshRenderer.materials[1].color = Color.Lerp(meshRenderer.material.color, chargingColor, chargeTimer / chargeTime);
-        }
-
-    }
-    
-    public void ReleaseCharge()
-    {
-        Vector3 spawnPos = combatControls.player.camera.transform.position + combatControls.player.camera.transform.forward;
-        GameObject powerSlash = Instantiate(slashEffect, spawnPos, Quaternion.identity);
-
-        float zRot = combatControls.armPivot.localEulerAngles.z - 90;
-        powerSlash.transform.eulerAngles = Quaternion.LookRotation(combatControls.player.camera.transform.forward).eulerAngles + new Vector3(0, 0, zRot);
-        powerSlash.GetComponent<MeshRenderer>().material.color = fullyChargedColor;
-        powerSlash.GetComponent<Projectile>().owner = gameObject;
-        powerSlash.GetComponent<Projectile>().direction = combatControls.player.camera.transform.forward;
-
-        LoseCharge();
-    }
-
-    public void LoseCharge()
-    {
-        chargeTimer = 0;
-        meshRenderer.materials[1].color = Color.white;
-    }
 
     void Start()
     {
-        LoseCharge();
         if(!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
         if(!meshRenderer) meshRenderer = transform.GetComponent<MeshRenderer>();
         if(transform.Find("Trail")) trail = transform.Find("Trail").GetComponent<ParticleSystem>();

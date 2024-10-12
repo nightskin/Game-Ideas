@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 public class PlayerGun : MonoBehaviour
 {
@@ -44,9 +43,9 @@ public class PlayerGun : MonoBehaviour
             {
                 projectile.owner = transform.root.gameObject;
                 projectile.damage = baseDamage;
-                if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+                if (combatControls.reticle.color == Color.red)
                 {
-                    projectile.direction = (hit.point - bulletSpawn.position).normalized;
+                    projectile.direction = (combatControls.lockOnHit.point - bulletSpawn.position).normalized;
                 }
                 else
                 {
@@ -83,9 +82,10 @@ public class PlayerGun : MonoBehaviour
                 {
                     projectile.owner = transform.root.gameObject;
                     projectile.damage = baseDamage;
-                    if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+
+                    if (combatControls.reticle.color == Color.red)
                     {
-                        projectile.direction = (hit.point - bulletSpawn.position).normalized;
+                        projectile.direction = (combatControls.lockOnHit.point - bulletSpawn.position).normalized;
                     }
                     else
                     {
@@ -118,10 +118,10 @@ public class PlayerGun : MonoBehaviour
         {
             currentChargeShot.GetComponent<TrailRenderer>().enabled = true;
             currentChargeShot.GetComponent<TrailRenderer>().startWidth = currentChargeShot.transform.localScale.x;
-            
-            if (Physics.Raycast(combatControls.player.camera.transform.position, combatControls.player.camera.transform.forward, out RaycastHit hit))
+
+            if(combatControls.reticle.color == Color.red)
             {
-                currentChargeShot.direction = (hit.point - bulletSpawn.position).normalized;
+                currentChargeShot.direction = (combatControls.lockOnHit.point - bulletSpawn.position).normalized;
             }
             else
             {

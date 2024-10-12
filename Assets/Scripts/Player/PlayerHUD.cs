@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHUD : MonoBehaviour
 {
-    [SerializeField] FirstPersonPlayer player;
+    [SerializeField] PlayerMovement player;
     public Image hitOverlay;
     public GameObject pauseMenu;
     public bool paused;
@@ -16,7 +16,7 @@ public class PlayerHUD : MonoBehaviour
 
     void Start()
     {
-        if(!player) player = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonPlayer>();
+        if(!player) player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         paused = false;
         flicker = false;
         fadeToBlack = false;

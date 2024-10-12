@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FirstPersonPlayer : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     //Components
     [Header("Components")]
@@ -8,6 +8,7 @@ public class FirstPersonPlayer : MonoBehaviour
     public Controls.PlayerActions actions;
     public Camera camera;
     public CharacterController controller;
+    public PlayerCombatControls combatControls;
 
     //For Basic Controls
     [Header("General")]
@@ -62,6 +63,7 @@ public class FirstPersonPlayer : MonoBehaviour
 
     void Awake()
     {
+        combatControls = GetComponent<PlayerCombatControls>();
         controller = GetComponent<CharacterController>();
         camera = Camera.main;
         bobStartPosition = camera.transform.localPosition;

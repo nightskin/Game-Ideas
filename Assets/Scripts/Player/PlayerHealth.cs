@@ -7,12 +7,12 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] int maxHealth = 100;
     [SerializeField] int health;
     PlayerCombatControls meleeSystem;
-    FirstPersonPlayer player;
+    PlayerMovement player;
 
 
     void Start()
     {
-        if(!player) player = GetComponent<FirstPersonPlayer>();
+        if(!player) player = GetComponent<PlayerMovement>();
         if(!meleeSystem) meleeSystem = GetComponent<PlayerCombatControls>();
         health = maxHealth;
     }
