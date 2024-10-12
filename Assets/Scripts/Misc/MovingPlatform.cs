@@ -13,7 +13,7 @@ public class MovingPlatform : MonoBehaviour
     [Header("FOR DEBUG")]
     [SerializeField] List<Vector3> points = new List<Vector3>();
     [SerializeField] Color pointColor = Color.yellow;
-
+    [SerializeField] bool showDebug = true;
 
     
     void OnValidate()
@@ -26,14 +26,18 @@ public class MovingPlatform : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if(points.Count > 0)
+        if(showDebug)
         {
-            for(int i = 0;  i < points.Count; i++) 
+            if (points.Count > 0)
             {
-                Gizmos.color = pointColor;
-                Gizmos.DrawSphere(points[i], 1);
+                for (int i = 0; i < points.Count; i++)
+                {
+                    Gizmos.color = pointColor;
+                    Gizmos.DrawSphere(points[i], 1);
+                }
             }
         }
+
     }
 
     void FixedUpdate()

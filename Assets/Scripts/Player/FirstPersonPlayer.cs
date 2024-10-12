@@ -58,6 +58,7 @@ public class FirstPersonPlayer : MonoBehaviour
     float dramaticPause = 0.15f;
     bool zipping = false;
     RaycastHit latchTarget;
+    Vector3 latchOffset;
 
     void Awake()
     {
@@ -92,9 +93,6 @@ public class FirstPersonPlayer : MonoBehaviour
         {
             ZipLatch();
         }
-
-
-
     }
 
     void FixedUpdate()
@@ -151,6 +149,7 @@ public class FirstPersonPlayer : MonoBehaviour
             zipping = true;
             dramaticPause = 0.15f;
             chain.gameObject.SetActive(true);
+            latchOffset = latchTarget.point - latchTarget.transform.position;
         }
     }
 
@@ -171,8 +170,7 @@ public class FirstPersonPlayer : MonoBehaviour
         }
         else
         {
-            Vector3 offset = (latchTarget.point - latchTarget.transform.position);
-            latchPoint = offset + latchTarget.transform.position;
+            latchPoint = latchTarget.transform.position + latchOffset;
         }
 
         chain.SetPosition(0, chain.transform.position);
