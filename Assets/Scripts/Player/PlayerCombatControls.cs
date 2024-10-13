@@ -56,7 +56,14 @@ public class PlayerCombatControls : MonoBehaviour
             Ray ray = new Ray(player.camera.transform.position, player.camera.transform.forward);
             if(Physics.Raycast(ray, out lockOnHit ,player.camera.farClipPlane,lockOnLayer))
             {
-                reticle.color = Color.red;
+                if(!lockOnHit.collider.isTrigger)
+                {
+                    reticle.color = Color.red;
+                }
+                else
+                {
+                    reticle.color = Color.white;
+                }
             }
             else
             {

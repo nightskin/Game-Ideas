@@ -148,10 +148,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Physics.Raycast(camera.transform.position, camera.transform.forward, out latchTarget, camera.farClipPlane, jumpLayer))
         {
-            zipping = true;
-            dramaticPause = 0.15f;
-            chain.gameObject.SetActive(true);
-            latchOffset = latchTarget.point - latchTarget.transform.position;
+            if(!latchTarget.collider.isTrigger)
+            {
+                zipping = true;
+                dramaticPause = 0.15f;
+                chain.gameObject.SetActive(true);
+                latchOffset = latchTarget.point - latchTarget.transform.position;
+            }
         }
     }
 
