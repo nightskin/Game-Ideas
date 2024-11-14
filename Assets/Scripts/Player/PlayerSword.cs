@@ -33,13 +33,13 @@ public class PlayerSword: MonoBehaviour
             else if (other.transform.tag == "Enemy")
             {
                 if(impactEffectEnemy) Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if (other.transform.root.GetComponent<EnemyHealth>())
+                if (other.transform.root.GetComponent<HealthScript>())
                 {
-                    EnemyHealth health = other.transform.root.GetComponent<EnemyHealth>();
-                    health.TakeDamage();
+                    HealthScript health = other.transform.root.GetComponent<HealthScript>();
+                    health.TakeDamage(damage);
                     if(health.IsDead())
                     {
-                        health.SetRagDoll(true);
+                        
                     }
                 }
 

@@ -12103,7 +12103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
-  health: 0
 --- !u!114 &1588188188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12116,7 +12115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16582c2f7dccd9f4ba254bac8052487a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: 000000000100000002000000
+  inventory: 02000000
   reticle: {fileID: 7889191940631659280}
   lockOnLayer:
     serializedVersion: 2
@@ -12156,7 +12155,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   gravity: 10
-  canWallRun: 1
+  canWallRun: 0
   wallRunSpeed: 30
   wallRunAngle: 45
   againstWall: 0
@@ -12772,18 +12771,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b52402b083cc540b0be7c4c6c85d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chargingColor: {r: 0, g: 64, b: 64, a: 1}
-  chargedColor: {r: 0, g: 128, b: 128, a: 1}
   trail: {fileID: 1008212236614887822}
   combatControls: {fileID: 1588188188}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
-  slashEffect: {fileID: 5441370146324542072, guid: 575bba8324f314941994ff54c6fbc034, type: 3}
   meshRenderer: {fileID: 7436730982699276144}
   slashing: 0
   knockbackForce: 10
   damage: 1
-  chargeTime: 1.5
 --- !u!136 &3619849111854288886
 CapsuleCollider:
   m_ObjectHideFlags: 0
