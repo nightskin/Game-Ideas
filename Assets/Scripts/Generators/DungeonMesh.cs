@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using UnityEngine;
 
 static class MarchingCubesTables
@@ -301,14 +300,14 @@ class GridPoint
     public static int GetState(GridPoint[] points, float isoLevel)
     {
         int state = 0;
-        if (points[0].value >= isoLevel) state |= 1;
-        if (points[1].value >= isoLevel) state |= 2;
-        if (points[2].value >= isoLevel) state |= 4;
-        if (points[3].value >= isoLevel) state |= 8;
-        if (points[4].value >= isoLevel) state |= 16;
-        if (points[5].value >= isoLevel) state |= 32;
-        if (points[6].value >= isoLevel) state |= 64;
-        if (points[7].value >= isoLevel) state |= 128;
+        if (points[0].value > isoLevel) state |= 1;
+        if (points[1].value > isoLevel) state |= 2;
+        if (points[2].value > isoLevel) state |= 4;
+        if (points[3].value > isoLevel) state |= 8;
+        if (points[4].value > isoLevel) state |= 16;
+        if (points[5].value > isoLevel) state |= 32;
+        if (points[6].value > isoLevel) state |= 64;
+        if (points[7].value > isoLevel) state |= 128;
         return state;
     }
 
@@ -372,7 +371,7 @@ public class DungeonMesh : MonoBehaviour
     public string seed = string.Empty;
     [SerializeField] LevelGenerationAlgorithm LevelGenerationAlgorithm;
 
-    [SerializeField] float isoLevel = 0;
+    [SerializeField] float isoLevel = 0.1f;
     [SerializeField][Range(0, 1)] float incrementValue = 0.1f;
 
     GridPoint[,,] grid = null;
@@ -385,6 +384,7 @@ public class DungeonMesh : MonoBehaviour
     [Space]
     [Header("RANDOM_WALKER Parameters")]
     [SerializeField][Min(1)] int numberOfSteps = 200;
+    [SerializeField][Range(2, 3)] int dimensions = 2;
 
     [Space]
     [Header("TINY_KEEP Parameters")]
@@ -401,26 +401,26 @@ public class DungeonMesh : MonoBehaviour
         Init();
         PopulateValues(LevelGenerationAlgorithm);
         GenerateMesh();
-
         PlacePlayer();
-
     }
     
     void PlacePlayer()
     {
-        if (grid == null || !player) return;
+
+        if (grid == null) return;
 
         if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
         {
-            for (int x = 0; x < gridSize.x; x++)
+            for(int x = 0; x < gridSize.x; x++)
             {
                 for (int y = 0; y < gridSize.y; y++)
                 {
                     for (int z = 0; z < gridSize.z; z++)
                     {
-                        if (grid[x, y, z].value >= isoLevel)
+                        if (grid[x,y,z].value > isoLevel)
                         {
-                            player.position = grid[x, y, z].position;
+                            player.position = grid[x,y,z].position;
+                            return;
                         }
                     }
                 }
@@ -429,26 +429,19 @@ public class DungeonMesh : MonoBehaviour
         else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.HYBRID)
         {
             int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
-            float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
-            float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
-            float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
-
-            player.position = new Vector3(x, y, z) + Vector3.up;
+            player.position = (Vector3)(rooms[roomIndex].indexPosition - (gridSize / 2)) * tileSize;
         }
         else if (LevelGenerationAlgorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
             int roomIndex = UnityEngine.Random.Range(0, rooms.Length);
-            float x = (rooms[roomIndex].indexPosition.x - (gridSize.x / 2)) * tileSize;
-            float y = (rooms[roomIndex].indexPosition.y - (gridSize.y / 2)) * tileSize;
-            float z = (rooms[roomIndex].indexPosition.z - (gridSize.z / 2)) * tileSize;
-
-            player.position = new Vector3(x, y, z) + Vector3.up;
+            player.position = (Vector3)(rooms[roomIndex].indexPosition - (gridSize / 2)) * tileSize;
         }
 
     }
     
     void Init()
     {
+        if (!player) player = GameObject.FindWithTag("Player").transform;
         if(seed == string.Empty) seed = DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
 
@@ -467,7 +460,7 @@ public class DungeonMesh : MonoBehaviour
                 for (int z = 0; z < gridSize.z; z++)
                 {
                     grid[x, y, z] = new GridPoint();
-                    grid[x, y, z].position = new Vector3(x - gridSize.x / 2, y - gridSize.y / 2, z - gridSize.z / 2) * tileSize;
+                    grid[x, y, z].position = new Vector3(x - gridSize.x/2, y - gridSize.y/2, z - gridSize.z / 2) * tileSize;
                 }
             }
         }
@@ -477,11 +470,11 @@ public class DungeonMesh : MonoBehaviour
     {
         if(algorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
         {
-            RandomWalker();
+            RandomWalker(dimensions);
         }
         else if(algorithm == LevelGenerationAlgorithm.HYBRID)
         {
-            Hybrid(numberOfRooms);
+            Hybrid(numberOfRooms, dimensions);
         }
         else if(algorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
@@ -590,36 +583,75 @@ public class DungeonMesh : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
     
-    void RandomWalker()
+    void RandomWalker(int dimensions)
     {
-        Vector3Int currentIndex = gridSize / 2;
-
-        for (int step = 0; step < numberOfSteps; step++)
+        if(dimensions <= 2) 
         {
-            int x = UnityEngine.Random.Range(-1, 2);
-            int z = UnityEngine.Random.Range(-1, 2);
+            Vector3Int currentIndex = Vector3Int.zero;
 
-            if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
+            for (int step = 0; step < numberOfSteps; step++)
             {
-                if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
+                int x = UnityEngine.Random.Range(-1, 2);
+                int z = UnityEngine.Random.Range(-1, 2);
+
+                if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
                 {
-                    currentIndex += new Vector3Int(x, 0, z);
+                    if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
+                    {
+                        currentIndex += new Vector3Int(x, 0, z);
+                    }
                 }
+                ActivateBox(currentIndex);
             }
-            ActivateBox(currentIndex);
+        }
+        else
+        {
+            Vector3Int currentIndex = Vector3Int.zero;
+
+            for (int step = 0; step < numberOfSteps; step++)
+            {
+                int x = UnityEngine.Random.Range(-1, 2);
+                int z = UnityEngine.Random.Range(-1, 2);
+                int y = UnityEngine.Random.Range(-1, 2);
+
+                if (currentIndex.x + x > 0 && currentIndex.x + x < gridSize.x - 1)
+                {
+                    if (currentIndex.z + z > 0 && currentIndex.z + z < gridSize.z - 1)
+                    {
+                        if(currentIndex.y + y > 0 && currentIndex.y + y < gridSize.y - 1)
+                        {
+                            currentIndex += new Vector3Int(x, y, z);
+                        }
+                    }
+                }
+                ActivateBox(currentIndex);
+            }
+
+
         }
     }
 
-    void TinyKeep(int numberOfRooms = 2)
+    void TinyKeep(int numberOfRooms)
     {
         //Create Rooms
         rooms = new Room[numberOfRooms];
         for(int r = 0; r < numberOfRooms; r++) 
         {
-            int xi = UnityEngine.Random.Range(0, gridSize.x);
-            int yi = UnityEngine.Random.Range(0, gridSize.y);
-            int zi = UnityEngine.Random.Range(0, gridSize.z);
-
+            int xi;
+            int yi;
+            int zi;
+            if(r == 0)
+            {
+                xi = gridSize.x/2;
+                yi = gridSize.y/2;
+                zi = gridSize.z/2;
+            }
+            else
+            {
+                xi = UnityEngine.Random.Range(0, gridSize.x);
+                yi = UnityEngine.Random.Range(0, gridSize.y);
+                zi = UnityEngine.Random.Range(0, gridSize.z);
+            }
             int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
             int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
 
@@ -662,7 +694,7 @@ public class DungeonMesh : MonoBehaviour
         }
     }
     
-    void Hybrid(int numberOfRooms = 2)
+    void Hybrid(int numberOfRooms, int dimensions)
     {
         //Create Rooms
         rooms = new Room[numberOfRooms];
@@ -678,7 +710,16 @@ public class DungeonMesh : MonoBehaviour
 
             for (int s = 0; s < numberOfSteps; s++) 
             {
-                int d = UnityEngine.Random.Range(0, 4);
+                int d;
+                if(dimensions == 2)
+                {
+                    d = UnityEngine.Random.Range(0, 4);
+                }
+                else
+                {
+                    d = UnityEngine.Random.Range(0, 6);
+                }
+
                 if(d == 0)
                 {
                     if(currentIndex.x + 1 <= gridSize.x - 1)
@@ -706,6 +747,17 @@ public class DungeonMesh : MonoBehaviour
                     {
                         currentIndex.z--;
                     }
+                }
+                else if(d == 4)
+                {
+                    if (currentIndex.y + 1 <= gridSize.y - 1)
+                    {
+                        currentIndex.y++;
+                    }
+                }
+                else if(d == 5)
+                {
+
                 }
 
                 ActivateBox(currentIndex);

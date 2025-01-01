@@ -81,17 +81,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Look();
-
-        if(wallRunning)
-        {
-            WallRunningMovement();
-        }
-        else
-        {
-            Movement();
-        }
-        
-        if(zipping)
+        Movement();
+        if (zipping)
         {
             ZipLatch();
         }
@@ -100,16 +91,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         grounded = Physics.CheckSphere(transform.position + (Vector3.down * controller.height / 2), controller.radius, jumpLayer);
-        if (canWallRun) 
-        {
-            Ray right = new Ray(transform.position, transform.right);
-            Ray left = new Ray(transform.position, -transform.right);
-
-            Ray forwardRight = new Ray(transform.position, transform.right + transform.forward);
-            Ray forwardLeft = new Ray(transform.position, (-transform.right) + transform.forward);
-
-            againstWall = Physics.Raycast(right, out wallHit, 1, jumpLayer) || Physics.Raycast(left, out wallHit, 1, jumpLayer) || Physics.Raycast(forwardLeft, out wallHit, 1, jumpLayer) || Physics.Raycast(forwardRight, out wallHit, 1, jumpLayer);
-        }
     }
 
     void OnDestroy()
@@ -119,7 +100,6 @@ public class PlayerMovement : MonoBehaviour
         actions.ZipLatch.canceled -= ZipLatch_canceled;
     }
     
-
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (!grounded && againstWall)
@@ -253,36 +233,6 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
     
-    void WallRunningMovement()
-    {
-        moveDirection = -wallHit.normal;
-
-        if ((transform.right + wallHit.normal).magnitude > (-transform.right + wallHit.normal).magnitude)
-        {
-            zRot = Mathf.Lerp(zRot, -wallRunAngle, 10 * Time.deltaTime);
-        }
-        else if ((transform.right + wallHit.normal).magnitude < (-transform.right + wallHit.normal).magnitude)
-        {
-            zRot = Mathf.Lerp(zRot, wallRunAngle, 10 * Time.deltaTime);
-        }
-
-        Vector3 wallForward = Vector3.Cross(wallHit.normal, transform.up);
-        if((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude)
-        {
-            wallForward = -wallForward;
-        }
-        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)) * wallRunSpeed * Time.deltaTime);
-
-
-        float y = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
-        camera.transform.localPosition = bobStartPosition + new Vector3(0, y, 0);
-
-        if (!againstWall)
-        {
-            wallRunning = false;
-        }
-
-    }
 
     void Look()
     {

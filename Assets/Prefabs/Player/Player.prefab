@@ -11466,7 +11466,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7351344135878471348
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12155,7 +12155,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   gravity: 10
-  canWallRun: 0
+  canWallRun: 1
   wallRunSpeed: 30
   wallRunAngle: 45
   againstWall: 0
