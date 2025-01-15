@@ -79,6 +79,7 @@ public class PlayerCombatControls : MonoBehaviour
         {
             if(inventory[equipIndex] == Weapons.SWORD)
             {
+                sword.ChargeWeapon();
                 if (atkVector.magnitude > 0)
                 {
                     atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
@@ -135,6 +136,10 @@ public class PlayerCombatControls : MonoBehaviour
             {
                 gun.ReleaseCharge();
             }
+        }
+        else
+        {
+            if(sword.chargeValue > sword.maxChargeValue) animator.SetTrigger("slash");
         }
     }
     
@@ -213,4 +218,8 @@ public class PlayerCombatControls : MonoBehaviour
         player.lookSpeed = defaultLookSpeed;
     }
     
+    public void ChargeSlash()
+    {
+        sword.ReleaseCharge();
+    }
 }

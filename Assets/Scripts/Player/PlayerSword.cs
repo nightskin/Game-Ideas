@@ -6,15 +6,37 @@ public class PlayerSword: MonoBehaviour
 
     [SerializeField] PlayerCombatControls combatControls;
     [SerializeField] GameObject impactEffectEnemy;
+    [SerializeField] GameObject slashProjectile;
     [SerializeField] GameObject impactEffectSolid;
     [SerializeField] MeshRenderer meshRenderer;
 
+    public float chargeValue = 0;
+    public float maxChargeValue = 2;
     public bool slashing = false;
     public float knockbackForce = 10;
     public float damage = 1;
 
+    public void ChargeWeapon()
+    {
+        chargeValue += Time.deltaTime;
+    }
+
+    public void ReleaseCharge()
+    {
+        if(chargeValue > maxChargeValue) 
+        {
+            var p = Instantiate(slashProjectile);
+            p.transform.position = Camera.main.transform.position;
+            p.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, combatControls.atkAngle + 90);
+            p.GetComponent<Projectile>().owner = transform.root.gameObject;
+            p.GetComponent<Projectile>().direction = Camera.main.transform.forward;
+        }
+        chargeValue = 0;
+    }
+
     void Start()
     {
+        chargeValue = 0;
         if(!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
         if(!meshRenderer) meshRenderer = transform.GetComponent<MeshRenderer>();
         if(transform.Find("Trail")) trail = transform.Find("Trail").GetComponent<ParticleSystem>();
