@@ -369,7 +369,7 @@ public class DungeonMesh : MonoBehaviour
     [Tooltip("Determines max size of the level")][Min(3)] public Vector3Int gridSize = Vector3Int.one * 100;
     [Tooltip("Controls how far apart everything is")][Min(1)] public float tileSize = 10;
     public string seed = string.Empty;
-    [SerializeField] LevelGenerationAlgorithm LevelGenerationAlgorithm;
+    [SerializeField] LevelGenerationAlgorithm LevelGenerationAlgorithm = LevelGenerationAlgorithm.HYBRID;
 
     [SerializeField] float isoLevel = 0.1f;
     [SerializeField][Range(0, 1)] float incrementValue = 0.1f;

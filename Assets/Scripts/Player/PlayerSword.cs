@@ -27,7 +27,7 @@ public class PlayerSword: MonoBehaviour
         {
             var p = Instantiate(slashProjectile);
             p.transform.position = Camera.main.transform.position;
-            p.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, combatControls.atkAngle + 90);
+            p.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, transform.root.localEulerAngles.y , combatControls.atkAngle + 90);
             p.GetComponent<Projectile>().owner = transform.root.gameObject;
             p.GetComponent<Projectile>().direction = Camera.main.transform.forward;
         }

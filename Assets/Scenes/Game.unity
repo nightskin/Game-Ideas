@@ -313,7 +313,7 @@ MonoBehaviour:
   player: {fileID: 1651526079}
   gridSize: {x: 100, y: 100, z: 100}
   tileSize: 10
-  seed: 
+  seed: poop
   LevelGenerationAlgorithm: 2
   isoLevel: 0.1
   incrementValue: 0.1
