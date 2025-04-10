@@ -4,13 +4,6 @@ using UnityEngine.UI;
 
 public class PlayerCombatControls : MonoBehaviour
 {
-    public enum Weapons
-    {
-        GUN_DEFAULT,
-        GUN_CHARGE_BLAST,
-        SWORD,
-    }
-    public List<Weapons> inventory;
     int equipIndex = 0;
 
     public Image reticle;
@@ -19,7 +12,6 @@ public class PlayerCombatControls : MonoBehaviour
 
     public Transform armPivot;
     public PlayerSword sword;
-    public PlayerGun gun;
 
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
@@ -33,8 +25,6 @@ public class PlayerCombatControls : MonoBehaviour
 
     void Start()
     {
-        Equip(inventory[equipIndex]);
-
         defaultLookSpeed = player.lookSpeed;
         if (sword.trail) 
         { 
@@ -43,9 +33,8 @@ public class PlayerCombatControls : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GetComponent<PlayerMovement>();
 
-        player.actions.Attack.performed += Attack_performed;
-        player.actions.Attack.canceled += Attack_canceled;
-        player.actions.ToggleWeapons.performed += ToggleWeapons_performed;
+        player.actions.Attack.performed += Slash_performed;
+        player.actions.Attack.canceled += Slash_canceled;
 
     }
 
@@ -77,28 +66,14 @@ public class PlayerCombatControls : MonoBehaviour
         atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
         if (player.actions.Attack.IsPressed())
         {
-            if(inventory[equipIndex] == Weapons.SWORD)
+            sword.ChargeWeapon();
+            if (atkVector.magnitude > 0)
             {
-                sword.ChargeWeapon();
-                if (atkVector.magnitude > 0)
-                {
-                    atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-                }
-                else
-                {
-                    atkAngle = Random.Range(-180, 180);
-                }
+                atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             }
             else
             {
-                if(gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
-                {
-                    gun.RapidFire();
-                }
-                else if(gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
-                {
-                    gun.Charge();
-                }
+                atkAngle = Random.Range(-180, 180);
             }
         }
 
@@ -106,93 +81,21 @@ public class PlayerCombatControls : MonoBehaviour
 
     void OnDestroy()
     {
-        player.actions.Attack.performed -= Attack_performed;
-        player.actions.Attack.canceled -= Attack_canceled;
-        player.actions.ToggleWeapons.performed -= ToggleWeapons_performed;
+        player.actions.Attack.performed -= Slash_performed;
+        player.actions.Attack.canceled -= Slash_canceled;
     }
     
-    private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(inventory[equipIndex] == Weapons.SWORD)
-        {
-            animator.SetTrigger("slash");
-        }
-        else
-        {
-            gun.Fire();
-            gun.shooting = true;
-        }
+        animator.SetTrigger("slash");
     }
 
-    private void Attack_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (inventory[equipIndex] != Weapons.SWORD)
-        {
-            if (gun.shootStyle == PlayerGun.ShootStyle.RAPID_FIRE)
-            {
-                gun.shooting = false;
-            }
-            else if (gun.shootStyle == PlayerGun.ShootStyle.CHARGE_BLAST)
-            {
-                gun.ReleaseCharge();
-            }
-        }
-        else
-        {
-            if(sword.chargeValue > sword.maxChargeValue) animator.SetTrigger("slash");
-        }
+        if(sword.chargeValue > sword.maxChargeValue) animator.SetTrigger("slash");
     }
     
-    private void ToggleWeapons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if(obj.ReadValue<float>() > 0)
-        {
-            if(equipIndex < inventory.Count - 1) 
-            {
-                equipIndex++;
-            }
-            else
-            {
-                equipIndex = 0;
-            }
-        }
-        else if(obj.ReadValue<float>() < 0)
-        {
-            if (equipIndex > 0)
-            {
-                equipIndex--;
-            }
-            else
-            {
-                equipIndex = inventory.Count - 1;
-            }
-        }
-        Equip(inventory[equipIndex]);
-    }
     
-    void Equip(Weapons weapon)
-    {
-        if(weapon == Weapons.SWORD)
-        {
-            sword.transform.parent.gameObject.SetActive(true);
-            gun.gameObject.SetActive(false);
-        }
-        else if(weapon == Weapons.GUN_DEFAULT)
-        {
-            sword.transform.parent.gameObject.SetActive(false);
-            gun.gameObject.SetActive(true);
-            gun.shootStyle = PlayerGun.ShootStyle.RAPID_FIRE;
-            gun.GetComponent<MeshRenderer>().materials[3].color = Color.blue;
-        }
-        else if(weapon == Weapons.GUN_CHARGE_BLAST)
-        {
-            sword.transform.parent.gameObject.SetActive(false);
-            gun.gameObject.SetActive(true);
-            gun.shootStyle = PlayerGun.ShootStyle.CHARGE_BLAST;
-            gun.GetComponent<MeshRenderer>().materials[3].color = new Color(0.5f, 0, 1);
-        }
-        inventory[equipIndex] = weapon;
-    }
 
     ///Animation Events
     
