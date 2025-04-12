@@ -4,21 +4,15 @@ using UnityEngine.UI;
 
 public class PlayerCombatControls : MonoBehaviour
 {
-    int equipIndex = 0;
-
-    public Image reticle;
-    public LayerMask lockOnLayer;
-    public RaycastHit lockOnHit;
-
     public Transform armPivot;
-    public PlayerSword sword;
+    public PlayerMeleeWeapon sword;
 
 
     [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     float defaultLookSpeed;
 
     public Vector2 atkVector = Vector2.zero;
-    public float atkAngle = 90;
+    public float atkAngle = 180;
 
     public PlayerMovement player;
     public Animator animator;
@@ -37,30 +31,7 @@ public class PlayerCombatControls : MonoBehaviour
         player.actions.Attack.canceled += Slash_canceled;
 
     }
-
-    void FixedUpdate()
-    {
-        if(reticle)
-        {
-            Ray ray = new Ray(player.camera.transform.position, player.camera.transform.forward);
-            if(Physics.Raycast(ray, out lockOnHit ,player.camera.farClipPlane,lockOnLayer))
-            {
-                if(!lockOnHit.collider.isTrigger)
-                {
-                    reticle.color = Color.red;
-                }
-                else
-                {
-                    reticle.color = Color.white;
-                }
-            }
-            else
-            {
-                reticle.color = Color.white;
-            }
-        }
-    }
-
+    
     void Update()
     {
         atkVector = player.actions.Look.ReadValue<Vector2>().normalized;
@@ -70,10 +41,6 @@ public class PlayerCombatControls : MonoBehaviour
             if (atkVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-            }
-            else
-            {
-                atkAngle = Random.Range(-180, 180);
             }
         }
 
@@ -92,13 +59,29 @@ public class PlayerCombatControls : MonoBehaviour
 
     private void Slash_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(sword.chargeValue > sword.maxChargeValue) animator.SetTrigger("slash");
+        if(sword.chargeValue >= sword.maxChargeValue) 
+        {
+            animator.SetTrigger("slash");
+        }
+        else
+        {
+            sword.ReleaseCharge();
+        }
     }
     
     
 
     ///Animation Events
-    
+    public void BlockCharge()
+    {
+        sword.canCharge = false;
+    }
+
+    public void AllowCharge()
+    {
+        sword.canCharge = true;
+    }
+
     public void StartSlash()
     {
         sword.slashing = true;

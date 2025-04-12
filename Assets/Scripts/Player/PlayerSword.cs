@@ -1,15 +1,22 @@
 using UnityEngine;
 
-public class PlayerSword: MonoBehaviour
+public class PlayerMeleeWeapon: MonoBehaviour
 {
-    public ParticleSystem trail;
 
+    public ParticleSystem trail;
+    public ParticleSystem chargeEffect;
+    public  Material glowMaterial;
+
+    [SerializeField] Color unChargedColor = Color.cyan;
+    [SerializeField] Color chargedColor = new Color(1,0.5f,0);
     [SerializeField] PlayerCombatControls combatControls;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject slashProjectile;
     [SerializeField] GameObject impactEffectSolid;
     [SerializeField] MeshRenderer meshRenderer;
 
+    public bool canCharge = true;
+    float chargeTime = 0;
     public float chargeValue = 0;
     public float maxChargeValue = 2;
     public bool slashing = false;
@@ -18,12 +25,22 @@ public class PlayerSword: MonoBehaviour
 
     public void ChargeWeapon()
     {
-        chargeValue += Time.deltaTime;
+        if(canCharge)
+        {
+            if(!chargeEffect.gameObject.activeSelf)
+            {
+                chargeEffect.gameObject.SetActive(true);
+            }
+            chargeTime += Time.deltaTime;
+            chargeValue = Mathf.Lerp(0, maxChargeValue, chargeTime);
+            glowMaterial.SetColor("_EmissionColor", Color.Lerp(unChargedColor * 8, chargedColor * 8, chargeTime));
+        }
+
     }
 
     public void ReleaseCharge()
     {
-        if(chargeValue > maxChargeValue) 
+        if(chargeValue >= maxChargeValue) 
         {
             var p = Instantiate(slashProjectile);
             p.transform.position = Camera.main.transform.position;
@@ -31,15 +48,10 @@ public class PlayerSword: MonoBehaviour
             p.GetComponent<Projectile>().owner = transform.root.gameObject;
             p.GetComponent<Projectile>().direction = Camera.main.transform.forward;
         }
+        chargeTime = 0;
         chargeValue = 0;
-    }
-
-    void Start()
-    {
-        chargeValue = 0;
-        if(!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
-        if(!meshRenderer) meshRenderer = transform.GetComponent<MeshRenderer>();
-        if(transform.Find("Trail")) trail = transform.Find("Trail").GetComponent<ParticleSystem>();
+        chargeEffect.gameObject.SetActive(false);
+        glowMaterial.SetColor("_EmissionColor", unChargedColor * 8);
     }
 
     void OnTriggerEnter(Collider other)

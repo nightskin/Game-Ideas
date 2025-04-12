@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public float intensity = 8;
+    public Color color;
+
     public GameObject owner = null;
     public Vector3 direction = Vector3.zero;
     public float speed = 20;
@@ -13,12 +16,11 @@ public class Projectile : MonoBehaviour
     int bounces = 0;
     BoxCollider box;
     SphereCollider sphere;
-
-
     RaycastHit hit;
 
     void Start()
     {
+        GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", color * intensity);
         sphere = GetComponent<SphereCollider>();
         box = GetComponent<BoxCollider>();
     }

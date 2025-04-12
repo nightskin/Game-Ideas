@@ -12,8 +12,6 @@ public class PlayerMovement : MonoBehaviour
 
     //For Basic Controls
     [Header("General")]
-    [SerializeField] float maxWalkSpeed = 20;
-    [SerializeField] float acceleration = 10; 
     [SerializeField] float moveSpeed = 10;
     Vector3 moveDirection;
     public float lookSpeed = 100;
@@ -81,8 +79,10 @@ public class PlayerMovement : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = (transform.right * x + transform.forward * z).normalized;
-
+        combatControls.animator.SetFloat("speed", moveDirection.magnitude);
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+
 
         velocity += Vector3.down * gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);

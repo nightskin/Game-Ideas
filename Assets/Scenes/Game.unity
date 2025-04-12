@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.02
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 1700337144}
   - component: {fileID: 1700337143}
   m_Layer: 0
-  m_Name: Dungeon
+  m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -221,16 +221,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 671801230}
-  gridSize: {x: 50, y: 4, z: 50}
-  tileSize: 6
+  gridSize: {x: 75, y: 4, z: 75}
+  tileSize: 5
   seed: 
   algorithm: 1
   numberOfSteps: 200
   walk3D: 0
   oneFloor: 1
   numberOfRooms: 10
-  hallwaySize: 1
-  roomHeight: 1
+  hallwaySize: 2
+  roomHeight: 2
   minRoomSize: 2
   maxRoomSize: 10
 --- !u!64 &1700337144
@@ -316,13 +316,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1687929924762437777, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: bobAmplitude
-      value: 0.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1687929924762437777, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: bobFrequency
-      value: 0.2
+    - target: {fileID: 504142093285021058, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6118335469902077925, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -368,10 +364,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6118335469902077926, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -381,6 +373,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1468890134554319863}
   - {fileID: 424632010}
+  - {fileID: 1468890134554319863}
   - {fileID: 1700337142}
