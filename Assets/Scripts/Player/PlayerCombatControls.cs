@@ -54,6 +54,7 @@ public class PlayerCombatControls : MonoBehaviour
     
     private void Slash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        player.lookSpeed = player.lookSpeed * actionDamp;
         animator.SetTrigger("slash");
     }
 
@@ -70,7 +71,6 @@ public class PlayerCombatControls : MonoBehaviour
     }
     
     
-
     ///Animation Events
     public void BlockCharge()
     {
@@ -90,7 +90,6 @@ public class PlayerCombatControls : MonoBehaviour
         {
             sword.trail.gameObject.SetActive(true);
         }
-        player.lookSpeed *= actionDamp;
     }
     
     public void EndSlash()

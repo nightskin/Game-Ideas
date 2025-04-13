@@ -4,7 +4,7 @@ public class GridPoint
 {
     public Vector3 position;
     public float value = 0;
-
+    
     public GridPoint()
     {
         position = Vector3.zero;
@@ -22,6 +22,11 @@ public class GridPoint
         if (points[6].value > isoLevel) state |= 64;
         if (points[7].value > isoLevel) state |= 128;
         return state;
+    }
+
+    public static Vector3 MidPoint(GridPoint p1, GridPoint p2)
+    {
+        return p1.position + p2.position / 2;
     }
 
     public static Vector3 LerpPoint(GridPoint p1,  GridPoint p2, float isoLevel)

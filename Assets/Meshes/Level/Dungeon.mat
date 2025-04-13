@@ -47,7 +47,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CeilingTexture:
-        m_Texture: {fileID: 2800000, guid: 229beb177e41cfa42b1e22ca536e6126, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8b6470bf86d209942b57db21d8154c88, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor:
@@ -67,7 +67,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_BaseColor:
-        m_Texture: {fileID: 2800000, guid: 1393f81a0baa0d640bc4e2c5bece3cc6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9a787f7e31352444da0753d33c2e1ae0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_NormalMap:
@@ -99,7 +99,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_BaseColor:
-        m_Texture: {fileID: 2800000, guid: a1a3b9c8a3a57f44da3d09c71015e9c6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 885195e8f496d1348af02e83e26b7c28, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_NormalMap:
@@ -130,8 +130,8 @@ Material:
     m_Colors:
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _OffsetWall: {r: 0, g: 0, b: 0, a: 0}
-    - _Tile: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _TileWall: {r: 0.064, g: 0.064, b: 0, a: 0}
+    - _Tile: {r: 1, g: 1, b: 0, a: 0}
+    - _TileWall: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

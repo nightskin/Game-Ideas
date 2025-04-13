@@ -34,7 +34,7 @@ public class Projectile : MonoBehaviour
 
         if (box)
         {
-            if (Physics.BoxCast(prevPosition, box.size / 2, direction, out hit, transform.rotation, distance))
+            if (Physics.BoxCast(prevPosition, box.size, direction, out hit, transform.rotation, distance))
             {
                 CheckCollisions();
             }
@@ -48,7 +48,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            if (Physics.Raycast(prevPosition, direction, out hit, distance))
+            if (Physics.Linecast(prevPosition, transform.position, out hit))
             {
                 CheckCollisions();
             }

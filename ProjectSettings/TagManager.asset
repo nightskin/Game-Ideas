@@ -15,8 +15,8 @@ TagManager:
   - Water
   - UI
   - Navigation
-  - Enemy
-  - UnTargetable
+  - Targetable
+  - 
   - 
   - 
   - 

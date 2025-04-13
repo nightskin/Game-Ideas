@@ -35,7 +35,13 @@ public class PlayerMeleeWeapon: MonoBehaviour
             chargeValue = Mathf.Lerp(0, maxChargeValue, chargeTime);
             glowMaterial.SetColor("_EmissionColor", Color.Lerp(unChargedColor * 8, chargedColor * 8, chargeTime));
         }
-
+        else
+        {
+            chargeTime = 0;
+            chargeValue = 0;
+            chargeEffect.gameObject.SetActive(false);
+            glowMaterial.SetColor("_EmissionColor", unChargedColor * 8);
+        }
     }
 
     public void ReleaseCharge()

@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     //For Basic Controls
     [Header("General")]
-    [SerializeField] float moveSpeed = 10;
+    [SerializeField][Min(1)] float moveSpeed = 10;
     Vector3 moveDirection;
     public float lookSpeed = 100;
 
@@ -28,6 +31,13 @@ public class PlayerMovement : MonoBehaviour
     bool grounded = false;
     Vector3 velocity = Vector3.zero;
 
+    //LockOn System
+    [Header("LockOnSystem")]
+    [SerializeField] float lockOnDistance = 500;
+    [SerializeField] LayerMask lockOnLayer;
+    Transform mainTarget = null;
+
+
     void Awake()
     {
         combatControls = GetComponent<PlayerCombatControls>();
@@ -40,11 +50,20 @@ public class PlayerMovement : MonoBehaviour
         actions.Enable();
 
         actions.Jump.performed += Jump_performed;
+        actions.LockOn.performed += LockOn_performed;
     }
 
     void Update()
     {
-        Look();
+        if(mainTarget != null)
+        {
+            LookAtTarget();
+        }
+        else
+        {
+            LookAround();
+        }
+
         Movement();
     }
 
@@ -59,12 +78,17 @@ public class PlayerMovement : MonoBehaviour
 
     }
     
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Jump_performed(InputAction.CallbackContext obj)
     {
         if (grounded)
         {
             velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
         }
+    }
+
+    private void LockOn_performed(InputAction.CallbackContext context)
+    {
+        
     }
 
     void Movement()
@@ -88,14 +112,14 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    void Look()
+    void LookAround()
     {
         float x = actions.Look.ReadValue<Vector2>().x;
         float y = actions.Look.ReadValue<Vector2>().y;
 
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
-        xRot = Mathf.Clamp(xRot, -90, 90);
+        xRot = Mathf.Clamp(xRot, -45, 45);
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
         
         //Looking left right with player body
@@ -104,4 +128,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
     
+    void LookAtTarget()
+    {
+        
+    }
 }

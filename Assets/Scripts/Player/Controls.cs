@@ -55,9 +55,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ZipLatch"",
+                    ""name"": ""Defend"",
                     ""type"": ""Button"",
-                    ""id"": ""d5b54bdb-94af-40e8-bab8-1aafeca6d3da"",
+                    ""id"": ""d556359c-4afc-4326-9ef1-29e01ffcc8d8"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -82,13 +82,31 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ToggleWeapons"",
+                    ""name"": ""ToggleTarget"",
                     ""type"": ""Value"",
                     ""id"": ""dbd7d1b0-18dc-4d29-9fa9-003d16fb4349"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LockOn"",
+                    ""type"": ""Button"",
+                    ""id"": ""ebfc13b9-5b8c-4114-9499-91ef480c9463"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""f13b47dc-3406-495d-9ba6-0fb0a7cf777a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -248,28 +266,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""9d29e3ec-734f-4d02-9aab-65218c392134"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""ZipLatch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4d0f77f3-be1b-48eb-8867-f215ff73ec10"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""ZipLatch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""b43a79a6-71ee-4796-9833-84c5238dd651"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
@@ -319,7 +315,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -330,7 +326,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -341,7 +337,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -352,7 +348,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -363,7 +359,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -374,7 +370,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -385,7 +381,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -396,7 +392,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -407,9 +403,108 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""ToggleWeapons"",
+                    ""action"": ""ToggleTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""66831afb-2c58-4ed0-a7c0-859e91cf85b3"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2a850df7-fa80-46b5-8335-17241ca9a3b4"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a30d5ac3-d573-40cc-949c-d16256426d8a"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f2e18119-2cc3-4eef-ac28-a6d006fe7a04"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""085bc93a-7441-4f3c-ba54-c224310b1c36"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6ea719ee-bf7f-4769-b4b1-3fa1be79f5b1"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c24d015a-b712-43ef-9dfe-cffcca84ab8a"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c208dfc-c725-489c-8408-7c0507116985"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Defend"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e30acc58-7345-4a6f-afcb-b5fd447dbef2"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Defend"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -998,10 +1093,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
-        m_Player_ZipLatch = m_Player.FindAction("ZipLatch", throwIfNotFound: true);
+        m_Player_Defend = m_Player.FindAction("Defend", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
-        m_Player_ToggleWeapons = m_Player.FindAction("ToggleWeapons", throwIfNotFound: true);
+        m_Player_ToggleTarget = m_Player.FindAction("ToggleTarget", throwIfNotFound: true);
+        m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
+        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1084,10 +1181,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Attack;
-    private readonly InputAction m_Player_ZipLatch;
+    private readonly InputAction m_Player_Defend;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Pause;
-    private readonly InputAction m_Player_ToggleWeapons;
+    private readonly InputAction m_Player_ToggleTarget;
+    private readonly InputAction m_Player_LockOn;
+    private readonly InputAction m_Player_Dash;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -1095,10 +1194,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
-        public InputAction @ZipLatch => m_Wrapper.m_Player_ZipLatch;
+        public InputAction @Defend => m_Wrapper.m_Player_Defend;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
-        public InputAction @ToggleWeapons => m_Wrapper.m_Player_ToggleWeapons;
+        public InputAction @ToggleTarget => m_Wrapper.m_Player_ToggleTarget;
+        public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
+        public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1117,18 +1218,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
-            @ZipLatch.started += instance.OnZipLatch;
-            @ZipLatch.performed += instance.OnZipLatch;
-            @ZipLatch.canceled += instance.OnZipLatch;
+            @Defend.started += instance.OnDefend;
+            @Defend.performed += instance.OnDefend;
+            @Defend.canceled += instance.OnDefend;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @ToggleWeapons.started += instance.OnToggleWeapons;
-            @ToggleWeapons.performed += instance.OnToggleWeapons;
-            @ToggleWeapons.canceled += instance.OnToggleWeapons;
+            @ToggleTarget.started += instance.OnToggleTarget;
+            @ToggleTarget.performed += instance.OnToggleTarget;
+            @ToggleTarget.canceled += instance.OnToggleTarget;
+            @LockOn.started += instance.OnLockOn;
+            @LockOn.performed += instance.OnLockOn;
+            @LockOn.canceled += instance.OnLockOn;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1142,18 +1249,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
-            @ZipLatch.started -= instance.OnZipLatch;
-            @ZipLatch.performed -= instance.OnZipLatch;
-            @ZipLatch.canceled -= instance.OnZipLatch;
+            @Defend.started -= instance.OnDefend;
+            @Defend.performed -= instance.OnDefend;
+            @Defend.canceled -= instance.OnDefend;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @ToggleWeapons.started -= instance.OnToggleWeapons;
-            @ToggleWeapons.performed -= instance.OnToggleWeapons;
-            @ToggleWeapons.canceled -= instance.OnToggleWeapons;
+            @ToggleTarget.started -= instance.OnToggleTarget;
+            @ToggleTarget.performed -= instance.OnToggleTarget;
+            @ToggleTarget.canceled -= instance.OnToggleTarget;
+            @LockOn.started -= instance.OnLockOn;
+            @LockOn.performed -= instance.OnLockOn;
+            @LockOn.canceled -= instance.OnLockOn;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1339,10 +1452,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnZipLatch(InputAction.CallbackContext context);
+        void OnDefend(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
-        void OnToggleWeapons(InputAction.CallbackContext context);
+        void OnToggleTarget(InputAction.CallbackContext context);
+        void OnLockOn(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
