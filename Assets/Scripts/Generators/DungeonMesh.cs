@@ -204,42 +204,42 @@ public class DungeonMesh : MonoBehaviour
                             {
                                 if(grid[x,y - 1,z].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(0,0,0));
+                                    DrawQuadBottom(grid[x,y,z].position);
                                 }
                             }
                             if(y < gridSize.y - 1)
                             {
                                 if(grid[x,y + 1,z].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(180,0,0));
+                                    DrawQuadTop(grid[x, y, z].position);
                                 }
                             }
                             if(x > 0)
                             {
                                 if(grid[x - 1,y,z].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(0,0,-90));
+                                    DrawQuadLeft(grid[x, y, z].position);
                                 }
                             }
                             if(x < gridSize.x - 1)
                             {
                                 if(grid[x + 1,y,z].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(0,0,90));
+                                    DrawQuadRight(grid[x, y, z].position);
                                 }
                             }
                             if(z > 0)
                             {
                                 if(grid[x,y,z - 1].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(90,0,0), true);
+                                    DrawQuadBack(grid[x, y, z].position);
                                 }
                             }
                             if(z < gridSize.z - 1)
                             {
                                 if(grid[x,y,z + 1].value <= isoLevel)
                                 {
-                                    DrawQuad(grid[x,y,z].position, Quaternion.Euler(-90,0,0), true);
+                                    DrawQuadFront(grid[x, y, z].position);
                                 }
                             }
                         }
@@ -426,12 +426,12 @@ public class DungeonMesh : MonoBehaviour
         return uvs;
     }
 
-    void DrawQuad(Vector3 position, Quaternion rotation, bool rotateTile = false)
+    void DrawQuadBottom(Vector3 position)
     {
-        verts.Add(rotation * new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
-        verts.Add(rotation * new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
-        verts.Add(rotation * new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
-        verts.Add(rotation * new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -439,21 +439,127 @@ public class DungeonMesh : MonoBehaviour
         tris.Add(buffer + 3);
         tris.Add(buffer + 0);
         tris.Add(buffer + 2);
-        
-        if(rotateTile)
-        {
-            uvs.Add(new Vector2(0,1));
-            uvs.Add(new Vector2(1,1));
-            uvs.Add(new Vector2(1,0));
-            uvs.Add(new Vector2(0,0));
-        }
-        else
-        {
-            uvs.Add(new Vector2(1,1));
-            uvs.Add(new Vector2(1,0));
-            uvs.Add(new Vector2(0,0));
-            uvs.Add(new Vector2(0,1));
-        }
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
+        buffer += 4;
+    }
+
+    void DrawQuadTop(Vector3 position)
+    {
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f,  0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f,  0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 1);
+        tris.Add(buffer + 0);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 3);
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
+        buffer += 4;
+    }
+
+    void DrawQuadFront(Vector3 position)
+    {
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f,  0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
+
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 1);
+        tris.Add(buffer + 2);
+
+        tris.Add(buffer + 3);
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 2);
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
+        buffer += 4;
+    }
+
+    void DrawQuadBack(Vector3 position)
+    {
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 1);
+        tris.Add(buffer + 0);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 3);
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
+        buffer += 4;
+    }
+
+    void DrawQuadLeft(Vector3 position)
+    {
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * tileSize + position);
+
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 1);
+        tris.Add(buffer + 2);
+
+        tris.Add(buffer + 3);
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 2);
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
+        buffer += 4;
+    }
+
+    void DrawQuadRight(Vector3 position)
+    {
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * tileSize + position);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 1);
+        tris.Add(buffer + 0);
+
+        tris.Add(buffer + 2);
+        tris.Add(buffer + 0);
+        tris.Add(buffer + 3);
+
+        uvs.Add(new Vector2(1, 1));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 1));
+
         buffer += 4;
     }
 
@@ -464,12 +570,10 @@ public class DungeonMesh : MonoBehaviour
             if(levelGeneration == LevelGenerationAlgorithm.TINY_KEEP)
             {
                 player.transform.position =  grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
-                if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH) player.transform.position += Vector3.up * tileSize / 2;
             }
             else if(levelGeneration == LevelGenerationAlgorithm.HYBRID)
             {
                 player.transform.position =  grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
-                if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH) player.transform.position += Vector3.up * tileSize / 2;
             }
             else if(levelGeneration == LevelGenerationAlgorithm.RANDOM_WALKER)
             {
@@ -482,13 +586,18 @@ public class DungeonMesh : MonoBehaviour
                             if(grid[x,y,z].value > isoLevel)
                             {
                                 player.transform.position = grid[x,y,z].position;
-                                if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH) player.transform.position += Vector3.up * tileSize / 2;
                                 return;
                             }
                         }
                     }
                 }
             }
+
+            if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
+            {
+                player.transform.position += Vector3.up * 2;
+            }
+
         }
     }
 }

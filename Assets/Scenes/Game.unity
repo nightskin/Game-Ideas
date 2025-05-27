@@ -342,11 +342,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 671801230}
-  gridSize: {x: 100, y: 4, z: 100}
+  gridSize: {x: 100, y: 5, z: 100}
   tileSize: 5
   seed: 2025-04-13 3:38:41 PM
   levelGeneration: 1
-  meshGeneration: 0
+  meshGeneration: 1
   numberOfSteps: 200
   walk3D: 0
   numberOfRooms: 10
@@ -437,10 +437,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5562371450215578994, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6118335469902077925, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -484,14 +480,6 @@ PrefabInstance:
     - target: {fileID: 6118335469902077926, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 7351344135878471348, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7351344135878471348, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
