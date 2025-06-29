@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        grounded = Physics.CheckSphere(transform.position + (Vector3.down * controller.height / 2), controller.radius, jumpLayer);
+        grounded = Physics.CheckSphere(transform.position, controller.radius, jumpLayer);
     }
 
     void OnDestroy()

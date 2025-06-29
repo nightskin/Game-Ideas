@@ -168,6 +168,8 @@ public class DungeonMesh : MonoBehaviour
 
                         int cubeIndex = GridPoint.GetState(pointsInBox, isoLevel);
 
+                        Vector3[] triVerts = new Vector3[3];
+                        int triIndex = 0;
 
                         int[] triangulation = MarchingCubesTables.triTable[cubeIndex];
                         foreach (int edgeIndex in triangulation)
@@ -179,6 +181,24 @@ public class DungeonMesh : MonoBehaviour
                                 Vector3 vertexPos = GridPoint.LerpPoint(pointsInBox[a], pointsInBox[b], isoLevel);
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
+
+                                if (triIndex == 0)
+                                {
+                                    triVerts[0] = vertexPos;
+                                    triIndex++;
+                                }
+                                else if (triIndex == 1)
+                                {
+                                    triVerts[1] = vertexPos;
+                                    triIndex++;
+                                }
+                                else if (triIndex == 2)
+                                {
+                                    triVerts[2] = vertexPos;
+                                    uvs.AddRange(GetUVs(triVerts[0], triVerts[1], triVerts[2]));
+                                    triIndex = 0;
+                                }
+
                                 buffer++;
                             }
                             else
@@ -252,16 +272,6 @@ public class DungeonMesh : MonoBehaviour
         mesh.Clear();
         mesh.vertices = verts.ToArray();
         mesh.triangles = tris.ToArray();
-
-        if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES || meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
-        {
-            for(int v = 0; v < verts.Count - 2; v+=3)
-            {
-                Vector2[] uvForTri = GetUVs(verts[v], verts[v + 1], verts[v + 2]);
-                uvs.AddRange(uvForTri);
-            }
-        }
-        
         mesh.uv = uvs.ToArray();
 
         mesh.RecalculateBounds();
@@ -406,21 +416,21 @@ public class DungeonMesh : MonoBehaviour
         Vector2[] uvs = new Vector2[3];
         if (norm.x >= norm.z && norm.x >= norm.y) // x plane
         {
-            uvs[0] = new Vector2(a.z, a.y);
-            uvs[1] = new Vector2(b.z, b.y);
-            uvs[2] = new Vector2(c.z, c.y);
+            uvs[0] = new Vector2(a.z, a.y) / tileSize;
+            uvs[1] = new Vector2(b.z, b.y) / tileSize;
+            uvs[2] = new Vector2(c.z, c.y) / tileSize;
         }
         else if (norm.z >= norm.x && norm.z >= norm.y) // z plane
         {
-            uvs[0] = new Vector2(a.x, a.y);
-            uvs[1] = new Vector2(b.x, b.y);
-            uvs[2] = new Vector2(c.x, c.y);
+            uvs[0] = new Vector2(a.x, a.y) / tileSize;
+            uvs[1] = new Vector2(b.x, b.y) / tileSize;
+            uvs[2] = new Vector2(c.x, c.y) / tileSize;
         }
         else if (norm.y >= norm.x && norm.y >= norm.z) // y plane
         {
-            uvs[0] = new Vector2(a.x, a.z);
-            uvs[1] = new Vector2(b.x, b.z);
-            uvs[2] = new Vector2(c.x, c.z);
+            uvs[0] = new Vector2(a.x, a.z) / tileSize;
+            uvs[1] = new Vector2(b.x, b.z) / tileSize;
+            uvs[2] = new Vector2(c.x, c.z) / tileSize;
         }
 
         return uvs;
@@ -593,9 +603,9 @@ public class DungeonMesh : MonoBehaviour
                 }
             }
 
-            if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
+            if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
             {
-                player.transform.position += Vector3.up * 2;
+                player.position = hit.point;
             }
 
         }
