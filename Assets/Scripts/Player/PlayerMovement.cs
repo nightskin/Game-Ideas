@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
     public float lookSpeed = 100;
 
-    float xRot = 0;
-    float yRot = 0;
+    [SerializeField] float xRot = 0;
+    [SerializeField] float yRot = 0;
 
 
     //For Jumping and falling
@@ -33,9 +33,10 @@ public class PlayerMovement : MonoBehaviour
 
     //LockOn System
     [Header("LockOnSystem")]
+    [SerializeField] float lockOnSpeed = 20;
     [SerializeField] float lockOnDistance = 500;
     [SerializeField] LayerMask lockOnLayer;
-    Transform mainTarget = null;
+    [HideInInspector] public Transform target = null;
 
 
     void Awake()
@@ -55,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if(mainTarget != null)
+        if(target != null)
         {
             LookAtTarget();
         }
@@ -75,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
     void OnDestroy()
     {
         actions.Jump.performed -= Jump_performed;
-
+        actions.LockOn.performed -= LockOn_performed;
     }
     
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -88,12 +89,21 @@ public class PlayerMovement : MonoBehaviour
 
     private void LockOn_performed(InputAction.CallbackContext context)
     {
-        
+        if(target == null)
+        {
+            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
+            {
+                target = hit.transform;
+            }
+        }
+        else
+        {
+            target = null;
+        }
     }
 
     void Movement()
     {
-
         if(grounded && velocity.y < 0) 
         {
             velocity = Vector3.zero;
@@ -103,11 +113,13 @@ public class PlayerMovement : MonoBehaviour
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = (transform.right * x + transform.forward * z).normalized;
-        combatControls.animator.SetFloat("speed", moveDirection.magnitude);
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
+        //Camera Bob TODO
 
 
+
+        //Gravity
         velocity += Vector3.down * gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
@@ -130,6 +142,15 @@ public class PlayerMovement : MonoBehaviour
     
     void LookAtTarget()
     {
-        
+        Vector3 dirToTarget = (target.position - camera.transform.position).normalized;
+        Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
+
+        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnSpeed * Time.deltaTime);
+        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
+
+        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnSpeed * Time.deltaTime);
+        transform.localEulerAngles = new Vector3(0, yRot, 0);
+
+
     }
 }

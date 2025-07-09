@@ -8,8 +8,8 @@ using UnityEngine;
 public class DungeonMesh : MonoBehaviour
 {
     [Header("Default Parameters")]
-    [Tooltip("Player GameObjects That will be placed in the level on Runtime")] public Transform player;
-    
+    [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
+
     [Tooltip("Determines max size of the level")][Min(4)] public Vector3Int gridSize = Vector3Int.one * 100;
     [Tooltip("Controls how far apart everything is")][Min(1)] public float tileSize = 5;
     public string seed = string.Empty;
@@ -45,10 +45,11 @@ public class DungeonMesh : MonoBehaviour
     [Space]
     [Header("TINY_KEEP Parameters")]
     [SerializeField][Min(1)] int numberOfRooms = 2;
-    [SerializeField][Min(2)] int hallwaySize = 2;
-    [SerializeField][Min(2)] int roomHeight = 2;
-    [SerializeField][Min(2)] int minRoomSize = 2;
-    [SerializeField][Min(3)] int maxRoomSize = 10;
+    [SerializeField][Min(1)] int hallwaySize = 2;
+    [SerializeField][Min(1)] int roomHeight = 2;
+    [SerializeField][Min(1)] int minRoomSize = 2;
+    [SerializeField][Min(1)] int maxRoomSize = 10;
+    [SerializeField] bool useIndirectHallways = false;
 
     Room[] rooms = null;
 
@@ -321,7 +322,15 @@ public class DungeonMesh : MonoBehaviour
             {
                 Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
                 Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
-                GenerateHallway(start, end);
+                if(useIndirectHallways)
+                {
+                    GenerateHallway2(start, end);
+                }
+                else
+                {
+                    GenerateHallway(start, end);
+                }
+
             }
         }
     }
@@ -357,7 +366,15 @@ public class DungeonMesh : MonoBehaviour
         {
             if (r < numberOfRooms - 1)
             {
-                GenerateHallway(rooms[r].indexPosition, rooms[r+1].indexPosition);
+                if(useIndirectHallways)
+                {
+                    GenerateHallway2(rooms[r].indexPosition, rooms[r + 1].indexPosition);
+                }
+                else
+                {
+                    GenerateHallway(rooms[r].indexPosition, rooms[r + 1].indexPosition);
+                }
+
             }
         }
     }
@@ -376,18 +393,6 @@ public class DungeonMesh : MonoBehaviour
                 Vector3Int.down,
                 Vector3Int.forward,
                 Vector3Int.back,
-                new Vector3Int(1,0,1),
-                new Vector3Int(-1,0,1),
-                new Vector3Int(1,0,-1),
-                new Vector3Int(-1,0,-1),
-                new Vector3Int(1,1,1),
-                new Vector3Int(-1,1,1),
-                new Vector3Int(1,1,-1),
-                new Vector3Int(-1,1,-1),
-                new Vector3Int(1,-1,1),
-                new Vector3Int(-1,-1,1),
-                new Vector3Int(1,-1,-1),
-                new Vector3Int(-1,-1,-1),
             };
             Vector3Int chosenDirection = possibleDirections[0];
             foreach (Vector3Int possibleDirection in possibleDirections)
@@ -401,6 +406,51 @@ public class DungeonMesh : MonoBehaviour
             currentPos += chosenDirection;
             ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
         }
+    }
+
+    void GenerateHallway2(Vector3Int start, Vector3Int end)
+    {
+        Vector3Int currentPos = start;
+
+        while (currentPos.x != end.x)
+        {
+            if (currentPos.x < end.x)
+            {
+                currentPos.x++;
+            }
+            else if (currentPos.x > end.x)
+            {
+                currentPos.x--;
+            }
+            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+        }
+
+        while (currentPos.z != end.z)
+        {
+            if (currentPos.z < end.z)
+            {
+                currentPos.z++;
+            }
+            else if (currentPos.z > end.z)
+            {
+                currentPos.z--;
+            }
+            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+        }
+
+        while (currentPos.y != end.y)
+        {
+            if (currentPos.y < end.y)
+            {
+                currentPos.y++;
+            }
+            else if (currentPos.y > end.y)
+            {
+                currentPos.y--;
+            }
+        }
+        ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+
     }
 
     Vector2[] GetUVs(Vector3 a, Vector3 b, Vector3 c)
@@ -603,6 +653,8 @@ public class DungeonMesh : MonoBehaviour
                 }
             }
 
+            player.transform.position += Vector3.up * 1000;
+
             if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
             {
                 player.position = hit.point;
@@ -610,4 +662,6 @@ public class DungeonMesh : MonoBehaviour
 
         }
     }
+
+
 }

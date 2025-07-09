@@ -21,12 +21,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Dungeon
-  m_Shader: {fileID: -6465566751694194690, guid: a93714f0a97804d49818d79292de0435, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 6ccfe626cfe1ea74a8cf3c44789eb970, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _TYPE_FLOOR
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -38,6 +37,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Layer_2A465F26:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Layer_39F5C95C:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Ceiling:
         m_Texture: {fileID: 2800000, guid: bcd71a13e823b69429d1d458db28595c, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -47,7 +54,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CeilingTexture:
-        m_Texture: {fileID: 2800000, guid: 8b6470bf86d209942b57db21d8154c88, type: 3}
+        m_Texture: {fileID: 2800000, guid: 31745291b2d3aa945b8bb47ae41badbc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor:
@@ -67,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_BaseColor:
-        m_Texture: {fileID: 2800000, guid: 9a787f7e31352444da0753d33c2e1ae0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 64321ced3a540ad4fad3025526379ce4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_NormalMap:
@@ -86,6 +93,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2D_Array:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Wall:
         m_Texture: {fileID: 2800000, guid: 96ca6da16baf661478881d1cf826ba8d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -99,7 +110,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_BaseColor:
-        m_Texture: {fileID: 2800000, guid: 885195e8f496d1348af02e83e26b7c28, type: 3}
+        m_Texture: {fileID: 2800000, guid: 35495cadeb7f1d4449978cdda1131c48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_NormalMap:
