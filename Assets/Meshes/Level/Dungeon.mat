@@ -54,7 +54,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CeilingTexture:
-        m_Texture: {fileID: 2800000, guid: 31745291b2d3aa945b8bb47ae41badbc, type: 3}
+        m_Texture: {fileID: 2800000, guid: 23b1906efb76b5b498b80d676fbf3562, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor:
@@ -74,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_BaseColor:
-        m_Texture: {fileID: 2800000, guid: 64321ced3a540ad4fad3025526379ce4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 76cf902b01bcada48a3ed3b612aae4b7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Floor_NormalMap:
@@ -110,7 +110,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_BaseColor:
-        m_Texture: {fileID: 2800000, guid: 35495cadeb7f1d4449978cdda1131c48, type: 3}
+        m_Texture: {fileID: 2800000, guid: 76cf902b01bcada48a3ed3b612aae4b7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Wall_NormalMap:

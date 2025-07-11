@@ -17,17 +17,19 @@ public class DungeonMesh : MonoBehaviour
     {
         RANDOM_WALKER,
         TINY_KEEP,
-        HYBRID,
+        TINY_KEEP_MODIFIED,
+        RANDOM_KEEP,
+        RANDOM_KEEP_MODIFIED,
     }   
-    [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.HYBRID;
+    [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.RANDOM_KEEP;
     public enum MeshGenerationAlgorithm
     {
         VOXEL_MESH,
         MARCHING_CUBES,
         MARCHING_CUBES_SMOOTH,
     }
-    float isoLevel = 0;
-    float incrementValue = 0.1f;
+    float isoLevel;
+    [SerializeField] float incrementValue = 0.01f;
     [SerializeField] MeshGenerationAlgorithm meshGeneration = MeshGenerationAlgorithm.MARCHING_CUBES;
 
     GridPoint[,,] grid = null;
@@ -44,9 +46,9 @@ public class DungeonMesh : MonoBehaviour
 
     [Space]
     [Header("TINY_KEEP Parameters")]
-    [SerializeField][Min(1)] int numberOfRooms = 2;
-    [SerializeField][Min(1)] int hallwaySize = 2;
-    [SerializeField][Min(1)] int roomHeight = 2;
+    [SerializeField][Min(2)] int numberOfRooms = 2;
+    [SerializeField][Min(1)] int hallwaySize = 1;
+    [SerializeField][Min(1)] int ceilngHeight = 2;
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
     [SerializeField] bool useIndirectHallways = false;
@@ -65,7 +67,8 @@ public class DungeonMesh : MonoBehaviour
     {
         if (!player) player = GameObject.FindWithTag("Player").transform;
         if(seed == string.Empty) seed = DateTime.Now.ToString();
-        if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.1f;
+        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.1f;
+        else isoLevel = 0;
         UnityEngine.Random.InitState(seed.GetHashCode());
 
         grid = new GridPoint[gridSize.x, gridSize.y, gridSize.z];
@@ -89,17 +92,25 @@ public class DungeonMesh : MonoBehaviour
 
     void GenerateDungeon(LevelGenerationAlgorithm algorithm)
     {
-        if(algorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
+        if (algorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
         {
             RandomWalker();
         }
-        else if(algorithm == LevelGenerationAlgorithm.HYBRID)
+        else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP)
         {
-            Hybrid(numberOfRooms);
+            RandomKeep(numberOfRooms);
         }
-        else if(algorithm == LevelGenerationAlgorithm.TINY_KEEP)
+        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
             TinyKeep(numberOfRooms);
+        }
+        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP_MODIFIED)
+        {
+            TinyKeepModified(numberOfRooms);
+        }
+        else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP_MODIFIED)
+        {
+            RandomKeepModified(numberOfRooms);
         }
     }
 
@@ -114,7 +125,7 @@ public class DungeonMesh : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= gridSize.x - 1|| cell.x + x <= 0)
+                    if (cell.x + x >= gridSize.x - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
@@ -122,19 +133,29 @@ public class DungeonMesh : MonoBehaviour
                     {
                         continue;
                     }
-                    if (cell.z + z >= gridSize.z - 1|| cell.z + z <= 0)
+                    if (cell.z + z >= gridSize.z - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
-                    
-                    if(grid[cell.x + x, cell.y + y, cell.z + z].value + incrementValue < isoLevel)
+
+                    if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z].value = isoLevel + incrementValue; 
+
+                        if (grid[cell.x + x, cell.y + y, cell.z + z].value + incrementValue <= isoLevel)
+                        {
+                            grid[cell.x + x, cell.y + y, cell.z + z].value = isoLevel + incrementValue;
+                        }
+                        else
+                        {
+                            grid[cell.x + x, cell.y + y, cell.z + z].value += incrementValue;
+                        }
                     }
                     else
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z].value += incrementValue;
+                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1;
                     }
+
+                     
                 }
             }
         }
@@ -283,7 +304,7 @@ public class DungeonMesh : MonoBehaviour
     
     void RandomWalker()
     {
-            Vector3Int currentIndex = new Vector3Int(gridSize.x/2, gridSize.y/2, gridSize.z/2);
+        Vector3Int currentIndex = gridSize / 2;
 
             for (int step = 0; step < numberOfSteps; step++)
             {
@@ -295,9 +316,6 @@ public class DungeonMesh : MonoBehaviour
                 currentIndex += new Vector3Int(x,y,z);
                 ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
             }
-
-            if(player) player.transform.position =  grid[currentIndex.x, currentIndex.y, currentIndex.z].position;
-
     }   
 
     void TinyKeep(int numberOfRooms)
@@ -311,31 +329,77 @@ public class DungeonMesh : MonoBehaviour
             int zi = UnityEngine.Random.Range(0, gridSize.z);
             int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
             int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
-            rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, roomHeight, roomSizeZ));
-            ActivateBox(new Vector3Int(xi, yi, zi), roomSizeX, roomHeight, roomSizeZ);
+            rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
+            ActivateBox(new Vector3Int(xi, yi, zi), roomSizeX, ceilngHeight, roomSizeZ);
         }
 
         //Create Hallways
-        for (int r = 0; r < numberOfRooms; r++)
+        for (int r = 0; r < numberOfRooms - 1; r++)
         {
-            if (r < numberOfRooms - 1)
+            Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
+            Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
+            if(useIndirectHallways)
             {
-                Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
-                Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
-                if(useIndirectHallways)
-                {
-                    GenerateHallway2(start, end);
-                }
-                else
-                {
-                    GenerateHallway(start, end);
-                }
-
+                GenerateHallway2(start, end);
+            }
+            else
+            {
+                GenerateHallway(start, end);
             }
         }
     }
-    
-    void Hybrid(int numberOfRooms)
+
+    void TinyKeepModified(int numberOfRooms)
+    {
+        rooms = new Room[numberOfRooms];
+        Vector3Int currenPos = gridSize / 2;
+        for (int r = 0; r < numberOfRooms; r++)
+        {
+            //Create Room
+            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
+            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
+            rooms[r] = new Room(currenPos, new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
+            ActivateBox(currenPos, roomSizeX, ceilngHeight, roomSizeZ);
+            int hallDirection = UnityEngine.Random.Range(0, 4);
+            int hallLength = maxRoomSize + UnityEngine.Random.Range(5, 10);            
+
+            
+            if (hallDirection == 0)
+            {
+                currenPos += new Vector3Int(0, 0, roomSizeZ + hallLength);
+            }
+            else if (hallDirection == 1)
+            {
+                currenPos -= new Vector3Int(0, 0, roomSizeZ + hallLength);
+            }
+            else if (hallDirection == 2)
+            {
+                currenPos += new Vector3Int(roomSizeX + hallLength, 0, 0);
+            }
+            else if (hallDirection == 3)
+            {
+                currenPos -= new Vector3Int(roomSizeX + hallLength, 0, 0);
+            }
+        }
+
+        //Create Hallways
+        for (int r = 0; r < numberOfRooms - 1; r++)
+        {
+            Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
+            Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
+            if (useIndirectHallways)
+            {
+                GenerateHallway2(start, end);
+            }
+            else
+            {
+                GenerateHallway(start, end);
+            }
+        }
+
+    }
+
+    void RandomKeep(int numberOfRooms)
     {
         //Create Rooms
         rooms = new Room[numberOfRooms];
@@ -348,36 +412,85 @@ public class DungeonMesh : MonoBehaviour
             Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
 
             rooms[r] = new Room(new Vector3Int(xi, yi, zi));
-            for (int s = 0; s < numberOfSteps; s++) 
+            for (int s = 0; s < numberOfSteps; s++)
             {
                 int x = UnityEngine.Random.Range(-1, 2);
                 int y = 0;
-                if(walk3D) y = UnityEngine.Random.Range(-1,2);
+                if (walk3D) y = UnityEngine.Random.Range(-1, 2);
                 int z = UnityEngine.Random.Range(-1, 2);
 
-                currentIndex += new Vector3Int(x,y,z);
-                ActivateBox(currentIndex,hallwaySize, hallwaySize,hallwaySize);
+                currentIndex += new Vector3Int(x, y, z);
+                ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
             }
         }
         
 
         //Create Hallways
-        for (int r = 0; r < numberOfRooms; r++)
+        for (int r = 0; r < numberOfRooms - 1; r++)
         {
-            if (r < numberOfRooms - 1)
+            Vector3Int start = rooms[r].indexPosition;
+            Vector3Int end = rooms[r + 1].indexPosition;
+            if (useIndirectHallways)
             {
-                if(useIndirectHallways)
-                {
-                    GenerateHallway2(rooms[r].indexPosition, rooms[r + 1].indexPosition);
-                }
-                else
-                {
-                    GenerateHallway(rooms[r].indexPosition, rooms[r + 1].indexPosition);
-                }
-
+                GenerateHallway2(start, end);
+            }
+            else
+            {
+                GenerateHallway(start, end);
             }
         }
     }
+
+    void RandomKeepModified(int numberOfRooms)
+    {
+        //Create Rooms
+        rooms = new Room[numberOfRooms];
+        int roomX = UnityEngine.Random.Range(0, gridSize.x);
+        int roomY = UnityEngine.Random.Range(0, gridSize.y);
+        int roomZ = UnityEngine.Random.Range(0, gridSize.z);
+        for (int r = 0; r < numberOfRooms; r++)
+        {
+            Vector3Int currentIndex = new Vector3Int(roomX, roomY, roomZ);
+            rooms[r] = new Room(new Vector3Int(roomX, roomY, roomZ));
+            for (int s = 0; s < numberOfSteps; s++)
+            {
+                int x = UnityEngine.Random.Range(-1, 2);
+                int y = 0;
+                if (walk3D) y = UnityEngine.Random.Range(-1, 2);
+                int z = UnityEngine.Random.Range(-1, 2);
+
+                currentIndex += new Vector3Int(x, y, z);
+                ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
+            }
+
+            int x2 = UnityEngine.Random.Range(-1, 2);
+            int y2 = UnityEngine.Random.Range(-1, 2);
+            
+            int z2 = UnityEngine.Random.Range(-1, 2);
+            int size = UnityEngine.Random.Range(5, 10);
+
+            roomX += x2 * size;
+            roomY += y2 * size;
+            roomZ += z2 * size;
+
+        }
+
+        //Create Hallways
+        for (int r = 0; r < numberOfRooms - 1; r++)
+        {
+            Vector3Int start = rooms[r].indexPosition;
+            Vector3Int end = rooms[r + 1].indexPosition;
+            if (useIndirectHallways)
+            {
+                GenerateHallway2(start, end);
+            }
+            else
+            {
+                GenerateHallway(start, end);
+            }
+        }
+    }
+
 
     void GenerateHallway(Vector3Int start, Vector3Int end)
     {
@@ -393,6 +506,18 @@ public class DungeonMesh : MonoBehaviour
                 Vector3Int.down,
                 Vector3Int.forward,
                 Vector3Int.back,
+                new Vector3Int(1,-1,1),
+                new Vector3Int(-1,-1,-1),
+                new Vector3Int(1,-1,-1),
+                new Vector3Int(-1,-1,1),
+                new Vector3Int(1,1,1),
+                new Vector3Int(-1,1,-1),
+                new Vector3Int(1,1,-1),
+                new Vector3Int(-1,1,1),
+                new Vector3Int(1,0,1),
+                new Vector3Int(-1,0,-1),
+                new Vector3Int(1,0,-1),
+                new Vector3Int(-1,0,1),
             };
             Vector3Int chosenDirection = possibleDirections[0];
             foreach (Vector3Int possibleDirection in possibleDirections)
@@ -404,7 +529,7 @@ public class DungeonMesh : MonoBehaviour
             }
 
             currentPos += chosenDirection;
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
     }
 
@@ -422,7 +547,7 @@ public class DungeonMesh : MonoBehaviour
             {
                 currentPos.x--;
             }
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
 
         while (currentPos.z != end.z)
@@ -435,7 +560,7 @@ public class DungeonMesh : MonoBehaviour
             {
                 currentPos.z--;
             }
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
+            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
 
         while (currentPos.y != end.y)
@@ -448,9 +573,8 @@ public class DungeonMesh : MonoBehaviour
             {
                 currentPos.y--;
             }
+            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
-        ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
-
     }
 
     Vector2[] GetUVs(Vector3 a, Vector3 b, Vector3 c)
@@ -626,34 +750,31 @@ public class DungeonMesh : MonoBehaviour
     void PlacePlayer()
     {
         if(player)
-        { 
-            if(levelGeneration == LevelGenerationAlgorithm.TINY_KEEP)
+        {
+
+            if (levelGeneration == LevelGenerationAlgorithm.RANDOM_WALKER)
             {
-                player.transform.position =  grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
-            }
-            else if(levelGeneration == LevelGenerationAlgorithm.HYBRID)
-            {
-                player.transform.position =  grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
-            }
-            else if(levelGeneration == LevelGenerationAlgorithm.RANDOM_WALKER)
-            {
-                for(int x = 0; x < gridSize.x; x++)
+                for (int x = 0; x < gridSize.x; x++)
                 {
-                    for(int y = 0; y < gridSize.y; y++)
+                    for (int y = 0; y < gridSize.y; y++)
                     {
-                        for(int z = 0; z < gridSize.z; z++)
+                        for (int z = 0; z < gridSize.z; z++)
                         {
-                            if(grid[x,y,z].value > isoLevel)
+                            if (grid[x, y, z].value > isoLevel)
                             {
-                                player.transform.position = grid[x,y,z].position;
-                                return;
+                                player.transform.position = grid[x, y, z].position;
+                                break;
                             }
                         }
                     }
                 }
             }
+            else
+            {
+                player.transform.position = grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
+            }
 
-            player.transform.position += Vector3.up * 1000;
+            player.transform.position += Vector3.up * gridSize.y * tileSize;
 
             if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
             {

@@ -3,7 +3,7 @@ using UnityEngine;
 public class GridPoint
 {
     public Vector3 position;
-    public float value = 0;
+    public float value = 0.0f;
     
     public GridPoint()
     {

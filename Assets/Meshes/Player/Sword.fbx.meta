@@ -3,7 +3,22 @@ guid: ae6ed3b955cbab44fbf6e1b175eee484
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blade
+    second: {fileID: 2100000, guid: f763e62034ab87d4a910fa36087cf3a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Handle
+    second: {fileID: 2100000, guid: 7265689a3f8bce742b0519c3b3939d5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hilt
+    second: {fileID: 2100000, guid: c0aebf1a609d65047bb46ab40cfffeca, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

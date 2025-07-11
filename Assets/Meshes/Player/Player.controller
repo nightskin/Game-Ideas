@@ -439,9 +439,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 3
     m_ConditionEvent: defY
     m_EventTreshold: 0
-  - m_ConditionMode: 3
-    m_ConditionEvent: defX
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -696699019773616435}
   m_Solo: 0

@@ -11,10 +11,10 @@ class Room
         this.indexPosition = indexPosition;
         this.indexSize = indexSize;
         exits = new Vector3Int[4];
-        exits[0] = indexPosition + new Vector3Int(indexSize.x, 0, 0);
-        exits[1] = indexPosition + new Vector3Int(-indexSize.x, 0, 0);
-        exits[2] = indexPosition + new Vector3Int(0, 0, indexSize.z);
-        exits[3] = indexPosition + new Vector3Int(0, 0, -indexSize.z);
+        exits[0] = indexPosition + new Vector3Int(indexSize.x - 1, 0, 0);
+        exits[1] = indexPosition + new Vector3Int(-indexSize.x + 1, 0, 0);
+        exits[2] = indexPosition + new Vector3Int(0, 0, indexSize.z - 1);
+        exits[3] = indexPosition + new Vector3Int(0, 0, -indexSize.z + 1);
     }
 
     public Room(Vector3Int indexPosition)

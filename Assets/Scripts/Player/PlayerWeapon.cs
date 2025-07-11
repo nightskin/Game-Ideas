@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class PlayerMeleeWeapon: MonoBehaviour
+public class PlayerWeapon: MonoBehaviour
 {
 
-    [SerializeField] PlayerCombatControls combatControls;
+    [SerializeField] Player player;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject impactEffectSolid;
 
@@ -21,7 +21,7 @@ public class PlayerMeleeWeapon: MonoBehaviour
             if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
             {
                 if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                combatControls.animator.SetTrigger("recoil");
+                player.animator.SetTrigger("recoil");
                 slashing = false;
             }
             else if (other.transform.tag == "Enemy")
