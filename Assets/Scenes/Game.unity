@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.02
+  m_FogDensity: 0.05
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
@@ -337,19 +337,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 3755596727080288110}
-  gridSize: {x: 100, y: 100, z: 100}
+  gridSize: {x: 100, y: 10, z: 100}
   tileSize: 5
-  seed: poop
-  levelGeneration: 2
+  seed: none piece
+  levelGeneration: 3
   incrementValue: 0.01
-  meshGeneration: 1
-  numberOfSteps: 300
+  meshGeneration: 2
+  numberOfSteps: 500
   walk3D: 0
   numberOfRooms: 10
   hallwaySize: 1
-  ceilngHeight: 1
-  minRoomSize: 3
-  maxRoomSize: 5
+  ceilngHeight: 2
+  minRoomSize: 5
+  maxRoomSize: 10
   useIndirectHallways: 0
 --- !u!64 &1700337144
 MeshCollider:

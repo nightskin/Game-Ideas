@@ -124,19 +124,12 @@ public class Player : MonoBehaviour
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!actions.Defend.IsPressed())
-        {
-            animator.SetTrigger("slash");
-        }
+        animator.SetTrigger("slash");
     }
 
     private void Defend_performed(InputAction.CallbackContext context)
     {
-        if (!actions.Attack.IsPressed())
-        {
-            lookSpeed = combatLookSpeed;
-        }
-
+        lookSpeed = combatLookSpeed;
     }
 
     private void Defend_canceled(InputAction.CallbackContext context)
@@ -210,7 +203,7 @@ public class Player : MonoBehaviour
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
-        else if(actions.Defend.IsPressed())
+        if(actions.Defend.IsPressed())
         {
             if (actionVector.magnitude > 0.1f)
             {

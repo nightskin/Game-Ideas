@@ -154,8 +154,6 @@ public class DungeonMesh : MonoBehaviour
                     {
                         grid[cell.x + x, cell.y + y, cell.z + z].value = 1;
                     }
-
-                     
                 }
             }
         }
@@ -445,13 +443,10 @@ public class DungeonMesh : MonoBehaviour
     {
         //Create Rooms
         rooms = new Room[numberOfRooms];
-        int roomX = UnityEngine.Random.Range(0, gridSize.x);
-        int roomY = UnityEngine.Random.Range(0, gridSize.y);
-        int roomZ = UnityEngine.Random.Range(0, gridSize.z);
+        Vector3Int currentIndex = gridSize / 2;
         for (int r = 0; r < numberOfRooms; r++)
         {
-            Vector3Int currentIndex = new Vector3Int(roomX, roomY, roomZ);
-            rooms[r] = new Room(new Vector3Int(roomX, roomY, roomZ));
+            rooms[r] = new Room(currentIndex);
             for (int s = 0; s < numberOfSteps; s++)
             {
                 int x = UnityEngine.Random.Range(-1, 2);
@@ -465,13 +460,10 @@ public class DungeonMesh : MonoBehaviour
 
             int x2 = UnityEngine.Random.Range(-1, 2);
             int y2 = UnityEngine.Random.Range(-1, 2);
-            
             int z2 = UnityEngine.Random.Range(-1, 2);
             int size = UnityEngine.Random.Range(5, 10);
 
-            roomX += x2 * size;
-            roomY += y2 * size;
-            roomZ += z2 * size;
+            currentIndex += new Vector3Int(x2, y2, z2) * size;
 
         }
 
