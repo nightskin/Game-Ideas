@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 6085794676669806484}
   m_Layer: 3
   m_Name: Sword
-  m_TagString: MeleeWeapon
+  m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -453,10 +453,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b52402b083cc540b0be7c4c6c85d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 5489226551138001691}
   impactEffectEnemy: {fileID: 2400329596978692464, guid: aa8871a41d3f23e41a14eeb8c6f443e0, type: 3}
   impactEffectSolid: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
-  slashing: 0
+  state: 0
   knockbackForce: 10
   damage: 1
 --- !u!65 &1012696283107613039
@@ -478,8 +478,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.11560048, y: 1.1251323, z: 0.065395735}
-  m_Center: {x: -0.00018567548, y: 0.7746922, z: 0.000001971456}
+  m_Size: {x: 0.11560048, y: 1.1390882, z: 0.065395735}
+  m_Center: {x: -0.00018383018, y: 0.76517797, z: 0.000004533005}
 --- !u!54 &6085794676669806484
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -791,7 +791,7 @@ GameObject:
   - component: {fileID: 7081441573340236134}
   m_Layer: 3
   m_Name: MeleeWeapon
-  m_TagString: MeleeWeapon
+  m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1019,7 +1019,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 90
-  m_StepOffset: 2
+  m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
@@ -1079,7 +1079,6 @@ MonoBehaviour:
   moveSpeed: 25
   cameraBobSpeed: 2
   armSwaySpeed: 0.1
-  lookSpeed: 100
   jumpHeight: 6
   jumpLayer:
     serializedVersion: 2
@@ -1091,6 +1090,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   target: {fileID: 0}
+  normalLookSpeed: 100
   combatLookSpeed: 10
   stunned: 0
 --- !u!1 &6941931712799309858

@@ -134,6 +134,8 @@ Material:
     - _Alpha: 1
     - _AlphaClip: 1
     - _Blend: 1
+    - _CeilingThreshold: -0.75
+    - _FloorThreshold: 0.75
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TYPE: 0

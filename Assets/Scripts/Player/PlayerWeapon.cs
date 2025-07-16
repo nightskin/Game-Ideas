@@ -1,42 +1,47 @@
 using UnityEngine;
 
-public class PlayerWeapon: MonoBehaviour
+public class PlayerWeapon : MonoBehaviour
 {
+
+    public enum WeaponState
+    {
+        IDLE,
+        ATTACKING,
+        DEFENDING,
+    }
 
     [SerializeField] Player player;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject impactEffectSolid;
+    BoxCollider boxCollider;
 
-
-    [HideInInspector] public bool slashing = false;
+    [HideInInspector] public WeaponState state;
     public float knockbackForce = 10;
     public float damage = 1;
 
-
-
-    void OnTriggerEnter(Collider other)
+    void Start()
     {
-        if (slashing)
+        boxCollider = transform.GetComponent<BoxCollider>();
+    }
+
+
+    void OnTriggerEnter(Collider hit)
+    {
+        if (state == WeaponState.ATTACKING)
         {
-            if (other.transform.tag == "Solid" || other.tag == "EnemyWeapon")
+            if (hit.tag == "Solid" || hit.tag == "EnemyWeapon")
             {
-                if(impactEffectSolid) Instantiate(impactEffectSolid, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                if (impactEffectSolid) Instantiate(impactEffectSolid, hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
                 player.animator.SetTrigger("recoil");
-                slashing = false;
             }
-            else if (other.transform.tag == "Enemy")
+            else if (hit.tag == "Enemy")
             {
-                if(impactEffectEnemy) Instantiate(impactEffectEnemy, other.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                if (other.transform.root.GetComponent<HealthScript>())
-                {
-                    HealthScript health = other.transform.root.GetComponent<HealthScript>();
-                    health.TakeDamage(damage);
-                    if(health.IsDead())
-                    {
-                        
-                    }
-                }
+                if (impactEffectEnemy) Instantiate(impactEffectEnemy, hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
             }
+        }
+        else if (state == WeaponState.DEFENDING)
+        {
+            
         }
     }
 }

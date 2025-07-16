@@ -10,16 +10,14 @@ public class DungeonMesh : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
 
-    [Tooltip("Determines max size of the level")][Min(4)] public Vector3Int gridSize = Vector3Int.one * 100;
-    [Tooltip("Controls how far apart everything is")][Min(1)] public float tileSize = 5;
+    [Tooltip("Determines max size of the level")][Min(1)] public Vector3Int gridSize = Vector3Int.one * 100;
+    [Tooltip("Controls how far apart everything is")][Min(0)] public float tileSize = 5;
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
     {
         RANDOM_WALKER,
         TINY_KEEP,
-        TINY_KEEP_MODIFIED,
         RANDOM_KEEP,
-        RANDOM_KEEP_MODIFIED,
     }   
     [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.RANDOM_KEEP;
     public enum MeshGenerationAlgorithm
@@ -46,7 +44,7 @@ public class DungeonMesh : MonoBehaviour
 
     [Space]
     [Header("TINY_KEEP Parameters")]
-    [SerializeField][Min(2)] int numberOfRooms = 2;
+    [SerializeField][Min(1)] int numberOfRooms = 2;
     [SerializeField][Min(1)] int hallwaySize = 1;
     [SerializeField][Min(1)] int ceilngHeight = 2;
     [SerializeField][Min(1)] int minRoomSize = 2;
@@ -54,6 +52,19 @@ public class DungeonMesh : MonoBehaviour
     [SerializeField] bool useIndirectHallways = false;
 
     Room[] rooms = null;
+
+    [Header("Debug")]
+    [SerializeField] bool showBounds = false;
+    [SerializeField] Color boundColor = Color.rebeccaPurple;
+
+    void OnDrawGizmos()
+    {
+        if (showBounds)
+        {
+            Gizmos.color = boundColor;
+            Gizmos.DrawWireCube(transform.position, (Vector3)gridSize * tileSize);
+        }
+    }
 
     void Start()
     {
@@ -84,7 +95,7 @@ public class DungeonMesh : MonoBehaviour
                 for (int z = 0; z < gridSize.z; z++)
                 {
                     grid[x, y, z] = new GridPoint();
-                    grid[x, y, z].position = new Vector3(x, y, z) * tileSize;
+                    grid[x, y, z].position = new Vector3(x - gridSize.x / 2, y - gridSize.y / 2, z - gridSize.z / 2) * tileSize;
                 }
             }
         }
@@ -103,14 +114,6 @@ public class DungeonMesh : MonoBehaviour
         else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP)
         {
             TinyKeep(numberOfRooms);
-        }
-        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP_MODIFIED)
-        {
-            TinyKeepModified(numberOfRooms);
-        }
-        else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP_MODIFIED)
-        {
-            RandomKeepModified(numberOfRooms);
         }
     }
 
@@ -322,13 +325,14 @@ public class DungeonMesh : MonoBehaviour
         rooms = new Room[numberOfRooms];
         for(int r = 0; r < numberOfRooms; r++) 
         {
-            int xi = UnityEngine.Random.Range(0, gridSize.x);
-            int yi = UnityEngine.Random.Range(0, gridSize.y);
-            int zi = UnityEngine.Random.Range(0, gridSize.z);
-            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
-            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
+            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+            int xi = UnityEngine.Random.Range(roomSizeX, gridSize.x - roomSizeX);
+            int yi = UnityEngine.Random.Range(ceilngHeight, gridSize.y - ceilngHeight);
+            int zi = UnityEngine.Random.Range(roomSizeZ, gridSize.z - roomSizeZ);
+
             rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
-            ActivateBox(new Vector3Int(xi, yi, zi), roomSizeX, ceilngHeight, roomSizeZ);
+            ActivateBox(rooms[r].indexPosition, rooms[r].indexSize.x, rooms[r].indexSize.y, rooms[r].indexSize.z);
         }
 
         //Create Hallways
@@ -345,56 +349,6 @@ public class DungeonMesh : MonoBehaviour
                 GenerateHallway(start, end);
             }
         }
-    }
-
-    void TinyKeepModified(int numberOfRooms)
-    {
-        rooms = new Room[numberOfRooms];
-        Vector3Int currenPos = gridSize / 2;
-        for (int r = 0; r < numberOfRooms; r++)
-        {
-            //Create Room
-            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
-            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize + 1);
-            rooms[r] = new Room(currenPos, new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
-            ActivateBox(currenPos, roomSizeX, ceilngHeight, roomSizeZ);
-            int hallDirection = UnityEngine.Random.Range(0, 4);
-            int hallLength = maxRoomSize + UnityEngine.Random.Range(5, 10);            
-
-            
-            if (hallDirection == 0)
-            {
-                currenPos += new Vector3Int(0, 0, roomSizeZ + hallLength);
-            }
-            else if (hallDirection == 1)
-            {
-                currenPos -= new Vector3Int(0, 0, roomSizeZ + hallLength);
-            }
-            else if (hallDirection == 2)
-            {
-                currenPos += new Vector3Int(roomSizeX + hallLength, 0, 0);
-            }
-            else if (hallDirection == 3)
-            {
-                currenPos -= new Vector3Int(roomSizeX + hallLength, 0, 0);
-            }
-        }
-
-        //Create Hallways
-        for (int r = 0; r < numberOfRooms - 1; r++)
-        {
-            Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
-            Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
-            if (useIndirectHallways)
-            {
-                GenerateHallway2(start, end);
-            }
-            else
-            {
-                GenerateHallway(start, end);
-            }
-        }
-
     }
 
     void RandomKeep(int numberOfRooms)
@@ -422,50 +376,6 @@ public class DungeonMesh : MonoBehaviour
             }
         }
         
-
-        //Create Hallways
-        for (int r = 0; r < numberOfRooms - 1; r++)
-        {
-            Vector3Int start = rooms[r].indexPosition;
-            Vector3Int end = rooms[r + 1].indexPosition;
-            if (useIndirectHallways)
-            {
-                GenerateHallway2(start, end);
-            }
-            else
-            {
-                GenerateHallway(start, end);
-            }
-        }
-    }
-
-    void RandomKeepModified(int numberOfRooms)
-    {
-        //Create Rooms
-        rooms = new Room[numberOfRooms];
-        Vector3Int currentIndex = gridSize / 2;
-        for (int r = 0; r < numberOfRooms; r++)
-        {
-            rooms[r] = new Room(currentIndex);
-            for (int s = 0; s < numberOfSteps; s++)
-            {
-                int x = UnityEngine.Random.Range(-1, 2);
-                int y = 0;
-                if (walk3D) y = UnityEngine.Random.Range(-1, 2);
-                int z = UnityEngine.Random.Range(-1, 2);
-
-                currentIndex += new Vector3Int(x, y, z);
-                ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
-            }
-
-            int x2 = UnityEngine.Random.Range(-1, 2);
-            int y2 = UnityEngine.Random.Range(-1, 2);
-            int z2 = UnityEngine.Random.Range(-1, 2);
-            int size = UnityEngine.Random.Range(5, 10);
-
-            currentIndex += new Vector3Int(x2, y2, z2) * size;
-
-        }
 
         //Create Hallways
         for (int r = 0; r < numberOfRooms - 1; r++)

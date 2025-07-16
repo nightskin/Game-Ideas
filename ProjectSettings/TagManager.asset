@@ -5,9 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Enemy
-  - MeleeWeapon
   - Projectile
   - Solid
+  - EnemyWeapon
+  - PlayerWeapon
   layers:
   - Default
   - TransparentFX

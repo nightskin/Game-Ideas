@@ -20,10 +20,10 @@ public class Player : MonoBehaviour
     [SerializeField][Min(1)] float moveSpeed = 10;
     [SerializeField] float cameraBobSpeed = 2.0f;
     [SerializeField] float armSwaySpeed = 0.1f;
-    [SerializeField][Min(1)] float lookSpeed = 100;
+
 
     Vector3 moveDirection;
-    float defaultLookSpeed;
+    float lookSpeed;
     float xRot = 0;
     float yRot = 0;
 
@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
 
     //For Combat Systems
     [Header("CombatControls")]
+    [SerializeField][Min(1)] float normalLookSpeed = 100;
     [SerializeField][Min(0)] float combatLookSpeed = 10;
     Vector2 actionVector = Vector2.zero;
     float atkAngle = 180;
@@ -56,7 +57,7 @@ public class Player : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         camera = Camera.main;
-        defaultLookSpeed = lookSpeed;
+        lookSpeed = normalLookSpeed;
 
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
@@ -69,7 +70,7 @@ public class Player : MonoBehaviour
         actions.Defend.performed += Defend_performed;
         actions.Defend.canceled += Defend_canceled;
     }
-    
+
     void Update()
     {
         if (target != null)
@@ -124,6 +125,11 @@ public class Player : MonoBehaviour
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        //lookSpeed = combatLookSpeed;
+        if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
+        {
+            target = hit.transform;
+        }
         animator.SetTrigger("slash");
     }
 
@@ -134,8 +140,8 @@ public class Player : MonoBehaviour
 
     private void Defend_canceled(InputAction.CallbackContext context)
     {
-        lookSpeed = defaultLookSpeed;
-    }    
+        lookSpeed = normalLookSpeed;
+    }
 
     void Movement()
     {
@@ -203,7 +209,7 @@ public class Player : MonoBehaviour
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
-        if(actions.Defend.IsPressed())
+        else if (actions.Defend.IsPressed())
         {
             if (actionVector.magnitude > 0.1f)
             {
@@ -214,20 +220,36 @@ public class Player : MonoBehaviour
     }
 
     //Animation Events
-    public void StartSlash()
+    public void StartAttack()
     {
-        weapon.slashing = true;
+        weapon.state = PlayerWeapon.WeaponState.ATTACKING;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        lookSpeed = combatLookSpeed;
     }
 
-    public void EndSlash()
+    public void EndAttack()
     {
-        weapon.slashing = false;
+        weapon.state = PlayerWeapon.WeaponState.IDLE;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        lookSpeed = defaultLookSpeed;
+        lookSpeed = normalLookSpeed;
         animator.SetInteger("defX", 0);
         animator.SetInteger("defY", 0);
     }
 
+    public void StartDefense()
+    {
+        weapon.state = PlayerWeapon.WeaponState.DEFENDING;
+    }
+
+    public void EndDefense()
+    {
+        weapon.state = PlayerWeapon.WeaponState.IDLE;
+    }
+
+    public void Recoil()
+    {
+        weapon.state = PlayerWeapon.WeaponState.IDLE;
+        armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        animator.SetInteger("defX", 0);
+        animator.SetInteger("defY", 0);
+    }
 }
