@@ -135,12 +135,16 @@ Material:
     - _AlphaClip: 1
     - _Blend: 1
     - _CeilingThreshold: -0.75
+    - _DitherScale: 1
     - _FloorThreshold: 0.75
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TYPE: 0
     - _Tile: 0.1
+    - _UseDither: 1
     m_Colors:
+    - _DitherDark: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _OffsetWall: {r: 0, g: 0, b: 0, a: 0}
     - _Tile: {r: 1, g: 1, b: 0, a: 0}
