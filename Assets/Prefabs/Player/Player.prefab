@@ -362,8 +362,8 @@ GameObject:
   - component: {fileID: 217511737603309828}
   - component: {fileID: 238302588565335364}
   - component: {fileID: 3553846875516006696}
-  - component: {fileID: 1012696283107613039}
   - component: {fileID: 6085794676669806484}
+  - component: {fileID: 4404600578774010631}
   m_Layer: 3
   m_Name: Sword
   m_TagString: PlayerWeapon
@@ -459,27 +459,6 @@ MonoBehaviour:
   state: 0
   knockbackForce: 10
   damage: 1
---- !u!65 &1012696283107613039
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3122728627487300394}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.11560048, y: 1.1390882, z: 0.065395735}
-  m_Center: {x: -0.00018383018, y: 0.76517797, z: 0.000004533005}
 --- !u!54 &6085794676669806484
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -507,6 +486,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &4404600578774010631
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3122728627487300394}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.20166129, y: 1.1369764, z: 0.06539575}
+  m_Center: {x: 0.0000026059201, y: 0.7687727, z: 0.0000004223407}
 --- !u!1 &3388906567083365516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1091,7 +1091,7 @@ MonoBehaviour:
     m_Bits: 128
   target: {fileID: 0}
   normalLookSpeed: 100
-  combatLookSpeed: 10
+  combatLookSpeed: 100
   stunned: 0
 --- !u!1 &6941931712799309858
 GameObject:

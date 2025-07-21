@@ -141,8 +141,10 @@ Material:
     - _QueueOffset: 0
     - _TYPE: 0
     - _Tile: 0.1
-    - _UseDither: 0
+    - _UseDither: 1
     m_Colors:
+    - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
+    - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}
     - _DitherDark: {r: 0, g: 0, b: 0, a: 1}
     - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}

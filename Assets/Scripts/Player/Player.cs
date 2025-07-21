@@ -125,7 +125,7 @@ public class Player : MonoBehaviour
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        //lookSpeed = combatLookSpeed;
+        lookSpeed = combatLookSpeed;
         if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
         {
             target = hit.transform;
@@ -201,9 +201,9 @@ public class Player : MonoBehaviour
 
     void CombatControls()
     {
-        actionVector = actions.Look.ReadValue<Vector2>().normalized;
         if (actions.Attack.IsPressed())
         {
+            actionVector = actions.Look.ReadValue<Vector2>().normalized;
             if (actionVector.magnitude > 0.1f)
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
@@ -211,6 +211,7 @@ public class Player : MonoBehaviour
         }
         else if (actions.Defend.IsPressed())
         {
+            actionVector = actions.Look.ReadValue<Vector2>().normalized;
             if (actionVector.magnitude > 0.1f)
             {
                 animator.SetInteger("defX", Mathf.RoundToInt(actionVector.x));

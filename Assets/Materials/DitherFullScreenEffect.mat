@@ -40,7 +40,7 @@ Material:
     - _DitherScale: 1
     - _Threshold: 0
     - _Use: 0
-    - _UseDither: 1
+    - _UseDither: 0
     m_Colors:
     - _Color1: {r: 0, g: 0, b: 0, a: 1}
     - _Color2: {r: 1, g: 1, b: 1, a: 1}
