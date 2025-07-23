@@ -371,6 +371,15 @@ public class DungeonMesh : MonoBehaviour
                 if (walk3D) y = UnityEngine.Random.Range(-1, 2);
                 int z = UnityEngine.Random.Range(-1, 2);
 
+                if (x == -1 && currentIndex.x == 0) x = 0;
+                if (x == 1 && currentIndex.x == gridSize.x - 1) x = 0;
+
+                if (z == -1 && currentIndex.z == 0) z = 0;
+                if (z == 1 && currentIndex.z == gridSize.z - 1) z = 0;
+
+                if (y == -1 && currentIndex.y == 0) y = 0;
+                if (y == 1 && currentIndex.y == gridSize.y - 1) y = 0;
+
                 currentIndex += new Vector3Int(x, y, z);
                 ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
             }
@@ -392,7 +401,6 @@ public class DungeonMesh : MonoBehaviour
             }
         }
     }
-
 
     void GenerateHallway(Vector3Int start, Vector3Int end)
     {
@@ -678,7 +686,7 @@ public class DungeonMesh : MonoBehaviour
 
             player.transform.position += Vector3.up * gridSize.y * tileSize;
 
-            if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
+            if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
             {
                 player.position = hit.point;
             }

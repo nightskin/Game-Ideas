@@ -1075,9 +1075,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
-  normalMoveSpeed: 25
-  dashSpeed: 150
-  sprintMultiplier: 2
+  walkSpeed: 25
+  dashSpeed: 300
+  runSpeed: 50
   lockOnDistance: 500
   lockOnLayer:
     serializedVersion: 2

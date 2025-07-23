@@ -1,3 +1,4 @@
+using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,22 +18,22 @@ public class Player : MonoBehaviour
 
     //For Basic Controls
     [Header("General")]
-    float speed;
+    float moveSpeed;
+    public static float lookSpeed;
+
     [SerializeField] float cameraBobSpeed = 2.0f;
     [SerializeField] float armSwaySpeed = 0.1f;
-
     [SerializeField] LayerMask groundLayer;
 
     Vector3 moveDirection;
-    float lookSpeed;
     float xRot = 0;
     float yRot = 0;
 
     bool dashing = false;
 
-    [SerializeField][Min(1)] float normalMoveSpeed = 25;
+    [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField] float dashSpeed = 150;
-    [SerializeField][Range(1, 4)] float sprintMultiplier = 1.5f;
+    [SerializeField][Min(2)] float runSpeed = 50;
 
     float dashTime = 0.1f;
     float dashTimer = 0;
@@ -47,8 +48,8 @@ public class Player : MonoBehaviour
 
     //For Combat Systems
     [Header("CombatControls")]
-    [SerializeField][Min(1)] float normalLookSpeed = 100;
-    [SerializeField][Min(0)] float combatLookSpeed = 10;
+    [SerializeField][Range(0,1)] float atkDamp = 0.1f;
+    [SerializeField][Range(0,1)] float defDamp = 0.1f;
     Vector2 actionVector = Vector2.zero;
     float atkAngle = 0;
     [HideInInspector] public bool stunned = false;
@@ -57,15 +58,14 @@ public class Player : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         camera = Camera.main;
-        lookSpeed = normalLookSpeed;
-        speed = normalMoveSpeed;
+        moveSpeed = walkSpeed;
+        lookSpeed = GameSettings.aimSensitivity;
 
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
 
-        actions.Sprint.performed += Sprint_performed;
         actions.Sprint.canceled += Sprint_canceled;
         actions.Dash.performed += Dash_performed;
         actions.LockOn.performed += LockOn_performed;
@@ -87,8 +87,6 @@ public class Player : MonoBehaviour
 
         Movement();
         CombatControls();
-
-
     }
 
     void FixedUpdate()
@@ -106,6 +104,7 @@ public class Player : MonoBehaviour
 
     void OnDestroy()
     {
+        actions.Sprint.canceled -= Sprint_canceled;
         actions.Dash.performed -= Dash_performed;
         actions.LockOn.performed -= LockOn_performed;
         actions.Attack.performed -= Attack_performed;
@@ -118,19 +117,18 @@ public class Player : MonoBehaviour
         if (!dashing)
         {
             dashing = true;
-            speed = dashSpeed;
+            moveSpeed = dashSpeed;
             dashTimer = dashTime;
         }
     }
 
-    private void Sprint_performed(InputAction.CallbackContext obj)
-    {
-        speed *= sprintMultiplier;
-    }
-
     private void Sprint_canceled(InputAction.CallbackContext obj)
     {
-        speed /= sprintMultiplier;
+        if (!dashing)
+        {
+            moveSpeed = walkSpeed;
+        }
+
     }
 
     private void LockOn_performed(InputAction.CallbackContext context)
@@ -161,20 +159,20 @@ public class Player : MonoBehaviour
             }            
         }
 
-        lookSpeed = combatLookSpeed;
+        if(GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= atkDamp;
         animator.SetTrigger("slash");
 
     }
 
     private void Defend_performed(InputAction.CallbackContext context)
     {
-        lookSpeed = combatLookSpeed;
+        if(GameSettings.slowCameraMovementWhenDefending) lookSpeed *= defDamp;
         weapon.SetState(PlayerWeapon.WeaponState.DEFENDING);
     }
 
     private void Defend_canceled(InputAction.CallbackContext context)
     {
-        lookSpeed = normalLookSpeed;
+        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed = GameSettings.aimSensitivity;
         animator.SetFloat("x", 0);
         animator.SetFloat("y", 0);
         weapon.SetState(PlayerWeapon.WeaponState.IDLE);
@@ -191,29 +189,36 @@ public class Player : MonoBehaviour
             dashTimer -= Time.deltaTime;
             if (dashTimer > 0)
             {
-                controller.Move(moveDirection * speed * Time.deltaTime);
+                controller.Move(moveDirection * moveSpeed * Time.deltaTime);
             }
             else
             {
-                speed = normalMoveSpeed;
+                moveSpeed = walkSpeed;
                 dashing = false;
             }
         }
         else
         {
-            controller.Move(moveDirection * speed * actions.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
+            if (actions.Sprint.IsPressed() && z > 0.5f)
+            {
+                moveSpeed = runSpeed;
+            }
+            else
+            {
+                moveSpeed = walkSpeed;
+            }
+            controller.Move(moveDirection * moveSpeed * actions.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
         }
         
-
-
         //Camera Bob
-        if (moveDirection.magnitude > 0 && !dashing)
+        if (GameSettings.cameraBob)
         {
-            camera.transform.localPosition = Vector3.up * (1.75f + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
-            arm.transform.localPosition = new Vector3(0, Mathf.PingPong(Time.time * armSwaySpeed, 0.1f), 0);
+            if (moveDirection.magnitude > 0 && !dashing)
+            {
+                camera.transform.localPosition = Vector3.up * (1.75f + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
+                arm.transform.localPosition = new Vector3(0, Mathf.PingPong(Time.time * armSwaySpeed, 0.1f), 0);
+            }
         }
-
-
     }
 
     void LookAround()
@@ -224,11 +229,11 @@ public class Player : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
-        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
+        camera.transform.localEulerAngles = new Vector3(Mathf.LerpAngle(camera.transform.localEulerAngles.x, xRot, 20 * Time.deltaTime), 0, 0);
 
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
-        transform.localEulerAngles = new Vector3(0, yRot, 0);
+        transform.localEulerAngles = new Vector3(0, Mathf.LerpAngle(transform.localEulerAngles.y, yRot, 20 * Time.deltaTime), 0);
 
     }
 
@@ -237,10 +242,10 @@ public class Player : MonoBehaviour
         Vector3 dirToTarget = (lockOnTarget.position - camera.transform.position).normalized;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, normalMoveSpeed * Time.deltaTime);
+        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, walkSpeed * Time.deltaTime);
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
 
-        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, normalMoveSpeed * Time.deltaTime);
+        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, walkSpeed * Time.deltaTime);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
 
 
@@ -248,7 +253,7 @@ public class Player : MonoBehaviour
 
     void CombatControls()
     {
-        actionVector = actions.Look.ReadValue<Vector2>();
+        actionVector = actions.Look.ReadValue<Vector2>().normalized;
         if (actions.Attack.IsPressed())
         {
 
@@ -279,9 +284,9 @@ public class Player : MonoBehaviour
     public void EndAttack()
     {
         weapon.SetState(PlayerWeapon.WeaponState.IDLE);
-        armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        if(!lockedOn) lockOnTarget = null;
-        lookSpeed = normalLookSpeed;
+        if(GameSettings.slowCameraMovementWhenAttacking) armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        lookSpeed = GameSettings.aimSensitivity;
+        if (!lockedOn) lockOnTarget = null;
     }
 
     public void Recoil()
