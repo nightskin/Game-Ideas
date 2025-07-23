@@ -45,8 +45,8 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
-  - {fileID: 2676191201551924045}
-  m_RendererFeatureMap: 4d3b87ffb7bd2325
+  - {fileID: 4372534028048029933}
+  m_RendererFeatureMap: ed581c26885cae3c
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -72,7 +72,7 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
---- !u!114 &2676191201551924045
+--- !u!114 &4372534028048029933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -84,11 +84,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: FullScreenPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 0
-  passMaterial: {fileID: 2100000, guid: 434457551863b78439b969d255e06158, type: 2}
+  passMaterial: {fileID: 2100000, guid: ffc29180c7c0a9f489849ff8111c186d, type: 2}
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1

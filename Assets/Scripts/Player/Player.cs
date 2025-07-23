@@ -17,31 +17,32 @@ public class Player : MonoBehaviour
 
     //For Basic Controls
     [Header("General")]
-    [SerializeField][Min(1)] float moveSpeed = 10;
+    float speed;
     [SerializeField] float cameraBobSpeed = 2.0f;
     [SerializeField] float armSwaySpeed = 0.1f;
 
+    [SerializeField] LayerMask groundLayer;
 
     Vector3 moveDirection;
     float lookSpeed;
     float xRot = 0;
     float yRot = 0;
 
+    bool dashing = false;
 
-    //For Jumping and falling
-    [Header("Jumping")]
-    [SerializeField] float jumpHeight = 3;
-    [SerializeField] LayerMask jumpLayer;
-    [SerializeField] float gravity = 10.0f;
-    bool grounded = false;
-    Vector3 velocity = Vector3.zero;
+    [SerializeField][Min(1)] float normalMoveSpeed = 25;
+    [SerializeField] float dashSpeed = 150;
+    [SerializeField][Range(1, 4)] float sprintMultiplier = 1.5f;
+
+    float dashTime = 0.1f;
+    float dashTimer = 0;
 
     //LockOn System
     [Header("LockOnSystem")]
-    [SerializeField] float lockOnSpeed = 20;
     [SerializeField] float lockOnDistance = 500;
     [SerializeField] LayerMask lockOnLayer;
-    [HideInInspector] public Transform target = null;
+    [HideInInspector] public Transform lockOnTarget = null;
+    bool lockedOn = false;
 
 
     //For Combat Systems
@@ -49,22 +50,24 @@ public class Player : MonoBehaviour
     [SerializeField][Min(1)] float normalLookSpeed = 100;
     [SerializeField][Min(0)] float combatLookSpeed = 10;
     Vector2 actionVector = Vector2.zero;
-    float atkAngle = 180;
+    float atkAngle = 0;
     [HideInInspector] public bool stunned = false;
-
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         camera = Camera.main;
         lookSpeed = normalLookSpeed;
+        speed = normalMoveSpeed;
 
         Cursor.lockState = CursorLockMode.Locked;
         controls = new Controls();
         actions = controls.Player;
         actions.Enable();
 
-        actions.Jump.performed += Jump_performed;
+        actions.Sprint.performed += Sprint_performed;
+        actions.Sprint.canceled += Sprint_canceled;
+        actions.Dash.performed += Dash_performed;
         actions.LockOn.performed += LockOn_performed;
         actions.Attack.performed += Attack_performed;
         actions.Defend.performed += Defend_performed;
@@ -73,7 +76,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (target != null)
+        if (lockOnTarget != null)
         {
             LookAtTarget();
         }
@@ -90,83 +93,127 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        grounded = Physics.CheckSphere(transform.position, controller.radius, jumpLayer);
+        //Make Sure Player Is Always on ground
+        if (moveDirection.magnitude > 0)
+        {
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit,1,groundLayer))
+            {
+                controller.transform.position = hit.point;
+            }
+        }
+
     }
 
     void OnDestroy()
     {
-        actions.Jump.performed -= Jump_performed;
+        actions.Dash.performed -= Dash_performed;
         actions.LockOn.performed -= LockOn_performed;
         actions.Attack.performed -= Attack_performed;
+        actions.Defend.performed -= Defend_performed;
+        actions.Defend.canceled -= Defend_canceled;
     }
 
-    private void Jump_performed(InputAction.CallbackContext obj)
+    private void Dash_performed(InputAction.CallbackContext obj)
     {
-        if (grounded)
+        if (!dashing)
         {
-            velocity = Vector3.up * Mathf.Sqrt(jumpHeight * 2 * gravity);
+            dashing = true;
+            speed = dashSpeed;
+            dashTimer = dashTime;
         }
+    }
+
+    private void Sprint_performed(InputAction.CallbackContext obj)
+    {
+        speed *= sprintMultiplier;
+    }
+
+    private void Sprint_canceled(InputAction.CallbackContext obj)
+    {
+        speed /= sprintMultiplier;
     }
 
     private void LockOn_performed(InputAction.CallbackContext context)
     {
-        if (target == null)
+        if (lockOnTarget == null)
         {
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
             {
-                target = hit.transform;
+                lockOnTarget = hit.transform;
+                lockedOn = true;
             }
         }
         else
         {
-            target = null;
+            lockOnTarget = null;
+            lockedOn = false;
         }
     }
 
     private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        lookSpeed = combatLookSpeed;
-        if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
+        if (!lockedOn && lockOnTarget != null)
         {
-            target = hit.transform;
+            Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+            if (Physics.Raycast(ray, out RaycastHit hit, lockOnDistance, lockOnLayer))
+            {
+                lockOnTarget = hit.transform;
+            }            
         }
+
+        lookSpeed = combatLookSpeed;
         animator.SetTrigger("slash");
+
     }
 
     private void Defend_performed(InputAction.CallbackContext context)
     {
         lookSpeed = combatLookSpeed;
+        weapon.SetState(PlayerWeapon.WeaponState.DEFENDING);
     }
 
     private void Defend_canceled(InputAction.CallbackContext context)
     {
         lookSpeed = normalLookSpeed;
+        animator.SetFloat("x", 0);
+        animator.SetFloat("y", 0);
+        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
     }
 
     void Movement()
     {
-        if (grounded && velocity.y < 0)
-        {
-            velocity = Vector3.zero;
-        }
-
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
 
         moveDirection = (transform.right * x + transform.forward * z).normalized;
-        controller.Move(moveDirection * moveSpeed * actions.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer > 0)
+            {
+                controller.Move(moveDirection * speed * Time.deltaTime);
+            }
+            else
+            {
+                speed = normalMoveSpeed;
+                dashing = false;
+            }
+        }
+        else
+        {
+            controller.Move(moveDirection * speed * actions.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
+        }
+        
+
 
         //Camera Bob
-        if (moveDirection.magnitude > 0 && grounded)
+        if (moveDirection.magnitude > 0 && !dashing)
         {
-            camera.transform.localPosition = Vector3.up * (2 + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
+            camera.transform.localPosition = Vector3.up * (1.75f + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
             arm.transform.localPosition = new Vector3(0, Mathf.PingPong(Time.time * armSwaySpeed, 0.1f), 0);
         }
 
 
-        //Gravity
-        velocity += Vector3.down * gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 
     void LookAround()
@@ -187,13 +234,13 @@ public class Player : MonoBehaviour
 
     void LookAtTarget()
     {
-        Vector3 dirToTarget = (target.position - camera.transform.position).normalized;
+        Vector3 dirToTarget = (lockOnTarget.position - camera.transform.position).normalized;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnSpeed * Time.deltaTime);
+        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, normalMoveSpeed * Time.deltaTime);
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
 
-        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnSpeed * Time.deltaTime);
+        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, normalMoveSpeed * Time.deltaTime);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
 
 
@@ -201,21 +248,21 @@ public class Player : MonoBehaviour
 
     void CombatControls()
     {
+        actionVector = actions.Look.ReadValue<Vector2>();
         if (actions.Attack.IsPressed())
         {
-            actionVector = actions.Look.ReadValue<Vector2>().normalized;
-            if (actionVector.magnitude > 0.1f)
+
+            if (actionVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
-        else if (actions.Defend.IsPressed())
+        if (actions.Defend.IsPressed())
         {
-            actionVector = actions.Look.ReadValue<Vector2>().normalized;
-            if (actionVector.magnitude > 0.1f)
+            if (actionVector.magnitude > 0)
             {
-                animator.SetInteger("defX", Mathf.RoundToInt(actionVector.x));
-                animator.SetInteger("defY", Mathf.RoundToInt(actionVector.y));
+                animator.SetFloat("x", actionVector.x);
+                animator.SetFloat("y", actionVector.y);
             }
         }
     }
@@ -223,34 +270,23 @@ public class Player : MonoBehaviour
     //Animation Events
     public void StartAttack()
     {
-        weapon.state = PlayerWeapon.WeaponState.ATTACKING;
+        animator.SetFloat("x", 0);
+        animator.SetFloat("y", 0);
+        weapon.SetState(PlayerWeapon.WeaponState.ATTACKING);
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
 
     public void EndAttack()
     {
-        weapon.state = PlayerWeapon.WeaponState.IDLE;
+        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        if(!lockedOn) lockOnTarget = null;
         lookSpeed = normalLookSpeed;
-        animator.SetInteger("defX", 0);
-        animator.SetInteger("defY", 0);
-    }
-
-    public void StartDefense()
-    {
-        weapon.state = PlayerWeapon.WeaponState.DEFENDING;
-    }
-
-    public void EndDefense()
-    {
-        weapon.state = PlayerWeapon.WeaponState.IDLE;
     }
 
     public void Recoil()
     {
-        weapon.state = PlayerWeapon.WeaponState.IDLE;
+        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        animator.SetInteger("defX", 0);
-        animator.SetInteger("defY", 0);
     }
 }

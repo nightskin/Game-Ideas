@@ -42,15 +42,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "37a6387e-dd43-4fcb-bec8-280419347141",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Pause",
                     "type": "Button",
                     "id": "3fd4518c-9de0-4773-9c9b-cbaf23fe2d9d",
@@ -81,6 +72,15 @@
                     "name": "Dash",
                     "type": "Button",
                     "id": "f13b47dc-3406-495d-9ba6-0fb0a7cf777a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "0d163d0c-b24c-43b7-9dc5-79d9de55918f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -244,28 +244,6 @@
                 },
                 {
                     "name": "",
-                    "id": "b43a79a6-71ee-4796-9833-84c5238dd651",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9710046d-49de-480b-a888-17c6a2d3f7ed",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e102af31-e553-48f9-850e-c465de7f5568",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -353,7 +331,7 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Dpad",
+                    "name": "ShoulderBtns",
                     "id": "65b7847f-d8dd-4e29-be00-bea45e36c528",
                     "path": "1DAxis",
                     "interactions": "",
@@ -366,7 +344,7 @@
                 {
                     "name": "negative",
                     "id": "62a079e5-31bd-4c6e-addf-e0213ad3d5c6",
-                    "path": "<Gamepad>/dpad/down",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -377,7 +355,7 @@
                 {
                     "name": "positive",
                     "id": "d55958d0-0185-4863-aabf-6b34ff5fa8c6",
-                    "path": "<Gamepad>/dpad/up",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -399,7 +377,7 @@
                 {
                     "name": "",
                     "id": "d692d1c9-d14b-4575-93b2-b3037ec1144f",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/rightStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -410,7 +388,7 @@
                 {
                     "name": "",
                     "id": "085bc93a-7441-4f3c-ba54-c224310b1c36",
-                    "path": "<Keyboard>/shift",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -422,17 +400,6 @@
                     "name": "",
                     "id": "6ea719ee-bf7f-4769-b4b1-3fa1be79f5b1",
                     "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c24d015a-b712-43ef-9dfe-cffcca84ab8a",
-                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -459,6 +426,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Defend",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0a99784b-3b1f-4972-a55a-8f4af1eca186",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d8025778-9f94-45c0-9fd3-a04558ddff44",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

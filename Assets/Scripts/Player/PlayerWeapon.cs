@@ -13,35 +13,48 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] Player player;
     [SerializeField] GameObject impactEffectEnemy;
     [SerializeField] GameObject impactEffectSolid;
-    BoxCollider boxCollider;
+    [SerializeField] BoxCollider atkCollider;
+    [SerializeField] BoxCollider defCollider;
 
-    [HideInInspector] public WeaponState state;
+    WeaponState weaponState;
+
     public float knockbackForce = 10;
     public float damage = 1;
 
-    void Start()
+    public void SetState(WeaponState state)
     {
-        boxCollider = transform.GetComponent<BoxCollider>();
-    }
-
-
-    void OnTriggerEnter(Collider hit)
-    {
+        weaponState = state;
         if (state == WeaponState.ATTACKING)
         {
-            if (hit.tag == "Solid" || hit.tag == "EnemyWeapon")
-            {
-                if (impactEffectSolid) Instantiate(impactEffectSolid, hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                player.animator.SetTrigger("recoil");
-            }
-            else if (hit.tag == "Enemy")
-            {
-                if (impactEffectEnemy) Instantiate(impactEffectEnemy, hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
-            }
+            atkCollider.enabled = true;
+            defCollider.enabled = false;
         }
         else if (state == WeaponState.DEFENDING)
         {
-            
+            atkCollider.enabled = false;
+            defCollider.enabled = true;
+        }
+        else
+        {
+            atkCollider.enabled = false;
+            defCollider.enabled = false;
         }
     }
+
+    void LateUpdate()
+    {
+        if (weaponState == WeaponState.ATTACKING)
+        {
+            if (Physics.BoxCast(transform.TransformPoint(atkCollider.center), atkCollider.size, -transform.right, out RaycastHit hit, transform.rotation, 1))
+            {
+                if (hit.transform.tag == "Enemy")
+                {
+                    if (impactEffectEnemy) Instantiate(impactEffectEnemy, hit.point, Quaternion.LookRotation(hit.normal));
+
+                    SetState(WeaponState.IDLE);   
+                }
+            }
+        }
+    }
+    
 }

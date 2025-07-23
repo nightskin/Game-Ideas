@@ -113,6 +113,8 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _Brightness: 1
+    - _Brishtness: 1
     - _BumpScale: 1
     - _CastShadows: 1
     - _ClearCoatMask: 0
@@ -121,6 +123,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DitherDark: 0
+    - _DitherLight: 1
     - _DitherScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
@@ -152,10 +156,12 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DitherColor: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}
     - _DitherDark: {r: 0, g: 0, b: 0, a: 1}
     - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
+    - _DitherTint: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightColor: {r: 1, g: 1, b: 1, a: 1}
     - _MainColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}

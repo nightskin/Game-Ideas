@@ -63,7 +63,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientTexture:
-        m_Texture: {fileID: 2800000, guid: ca41d5fc47236184ebb32cdadb7e322f, type: 3}
+        m_Texture: {fileID: 2800000, guid: f6ba04a2f5a025a4f944bb786ef3c27d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -113,6 +113,8 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _Brightness: 1
+    - _Brishtness: 1
     - _BumpScale: 1
     - _CastShadows: 1
     - _ClearCoatMask: 0
@@ -122,6 +124,8 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DissolveEdgeWidth: 0.015
+    - _DitherDark: 0
+    - _DitherLight: 1
     - _DitherScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
@@ -156,10 +160,12 @@ Material:
     - _Color: {r: 1, g: 0.8009822, b: 0.6367924, a: 1}
     - _DarkColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _DissolveColor: {r: 0, g: 16, b: 0, a: 1}
+    - _DitherColor: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}
     - _DitherDark: {r: 0, g: 0, b: 0, a: 1}
     - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
+    - _DitherTint: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightColor: {r: 1, g: 0.7935808, b: 0.7122642, a: 1}
     - _LitColor: {r: 1, g: 1, b: 1, a: 1}
@@ -168,7 +174,7 @@ Material:
     - _ShadowColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 1, g: 0.5028866, b: 0.31854683, a: 1}
-    - _Tint2: {r: 0.3490566, g: 0.13626692, b: 0.05762726, a: 1}
+    - _Tint1: {r: 0.9716981, g: 0.75874877, b: 0.62793696, a: 1}
+    - _Tint2: {r: 0.8113208, g: 0.55557054, b: 0.46306515, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
