@@ -78,7 +78,7 @@ public class DungeonMesh : MonoBehaviour
     {
         if (!player) player = GameObject.FindWithTag("Player").transform;
         if(seed == string.Empty) seed = DateTime.Now.ToString();
-        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.1f;
+        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.25f;
         else isoLevel = 0;
         UnityEngine.Random.InitState(seed.GetHashCode());
 
@@ -160,6 +160,46 @@ public class DungeonMesh : MonoBehaviour
                 }
             }
         }
+    }
+
+    void ActivateSphere(Vector3Int cell, int maxX = 1, int maxY = 1, int maxZ = 1)
+    {
+        if (grid == null) return;
+        if (maxX < 1 || maxY < 1 || maxZ < 1) return;
+
+        for (int x = -maxX; x <= maxX; x++)
+        {
+            for (int y = -maxY; y <= maxY; y++)
+            {
+                for (int z = -maxZ; z <= maxZ; z++)
+                {
+                    if (cell.x + x >= gridSize.x - 1 || cell.x + x <= 0)
+                    {
+                        continue;
+                    }
+                    if (cell.y + y >= gridSize.y - 1 || cell.y + y <= 0)
+                    {
+                        continue;
+                    }
+                    if (cell.z + z >= gridSize.z - 1 || cell.z + z <= 0)
+                    {
+                        continue;
+                    }
+
+                    if (new Vector3Int(x, y, z) == Vector3Int.zero)
+                    {
+                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1;
+                    }
+                    else
+                    {
+                        float v = Vector3Int.Distance(cell, cell + new Vector3Int(x, y, z));
+                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1 / v;
+                    }
+                    
+                }
+            }
+        }
+
     }
 
     void GenerateMesh()
@@ -416,18 +456,18 @@ public class DungeonMesh : MonoBehaviour
                 Vector3Int.down,
                 Vector3Int.forward,
                 Vector3Int.back,
-                new Vector3Int(1,-1,1),
-                new Vector3Int(-1,-1,-1),
-                new Vector3Int(1,-1,-1),
-                new Vector3Int(-1,-1,1),
-                new Vector3Int(1,1,1),
-                new Vector3Int(-1,1,-1),
-                new Vector3Int(1,1,-1),
-                new Vector3Int(-1,1,1),
-                new Vector3Int(1,0,1),
-                new Vector3Int(-1,0,-1),
-                new Vector3Int(1,0,-1),
-                new Vector3Int(-1,0,1),
+                //new Vector3Int(1,-1,1),
+                //new Vector3Int(-1,-1,-1),
+                //new Vector3Int(1,-1,-1),
+                //new Vector3Int(-1,-1,1),
+                //new Vector3Int(1,1,1),
+                //new Vector3Int(-1,1,-1),
+                //new Vector3Int(1,1,-1),
+                //new Vector3Int(-1,1,1),
+                //new Vector3Int(1,0,1),
+                //new Vector3Int(-1,0,-1),
+                //new Vector3Int(1,0,-1),
+                //new Vector3Int(-1,0,1),
             };
             Vector3Int chosenDirection = possibleDirections[0];
             foreach (Vector3Int possibleDirection in possibleDirections)
@@ -439,7 +479,7 @@ public class DungeonMesh : MonoBehaviour
             }
 
             currentPos += chosenDirection;
-            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateSphere(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
     }
 

@@ -41,7 +41,7 @@ public class PlayerWeapon : MonoBehaviour
         }
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (weaponState == WeaponState.ATTACKING)
         {

@@ -19,11 +19,18 @@ public class Player : MonoBehaviour
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
+
+    Vector3 velocity = Vector3.zero;
+
+    [SerializeField] LayerMask groundLayer;
+    bool grounded;
+    RaycastHit slopeHit;
+
     public static float lookSpeed;
 
     [SerializeField] float cameraBobSpeed = 2.0f;
     [SerializeField] float armSwaySpeed = 0.1f;
-    [SerializeField] LayerMask groundLayer;
+
 
     Vector3 moveDirection;
     float xRot = 0;
@@ -66,6 +73,7 @@ public class Player : MonoBehaviour
         actions = controls.Player;
         actions.Enable();
 
+        actions.Sprint.performed += Sprint_performed;
         actions.Sprint.canceled += Sprint_canceled;
         actions.Dash.performed += Dash_performed;
         actions.LockOn.performed += LockOn_performed;
@@ -92,18 +100,13 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         //Make Sure Player Is Always on ground
-        if (moveDirection.magnitude > 0)
-        {
-            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit,1,groundLayer))
-            {
-                controller.transform.position = hit.point;
-            }
-        }
-
+        Ray ray = new Ray(transform.position, Vector3.down);
+        grounded = Physics.Raycast(ray, out slopeHit, 0.5f, groundLayer);
     }
 
     void OnDestroy()
     {
+        actions.Sprint.performed -= Sprint_performed;
         actions.Sprint.canceled -= Sprint_canceled;
         actions.Dash.performed -= Dash_performed;
         actions.LockOn.performed -= LockOn_performed;
@@ -122,13 +125,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void Sprint_performed(InputAction.CallbackContext obj)
+    {
+        if (actions.Move.ReadValue<Vector2>().y > 0.5f)
+        {
+            moveSpeed = runSpeed;
+        }
+    }
+
     private void Sprint_canceled(InputAction.CallbackContext obj)
     {
-        if (!dashing)
-        {
-            moveSpeed = walkSpeed;
-        }
-
+        moveSpeed = walkSpeed;
     }
 
     private void LockOn_performed(InputAction.CallbackContext context)
@@ -180,16 +187,23 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
+        if (grounded && velocity.y < 0)
+        {
+            velocity.y = 0;
+        }
+
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
+        float m = actions.Move.ReadValue<Vector2>().magnitude;
 
+        //Move Input
         moveDirection = (transform.right * x + transform.forward * z).normalized;
         if (dashing)
         {
             dashTimer -= Time.deltaTime;
             if (dashTimer > 0)
             {
-                controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+                controller.Move(moveDirection * dashSpeed * Time.deltaTime);
             }
             else
             {
@@ -199,17 +213,9 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (actions.Sprint.IsPressed() && z > 0.5f)
-            {
-                moveSpeed = runSpeed;
-            }
-            else
-            {
-                moveSpeed = walkSpeed;
-            }
-            controller.Move(moveDirection * moveSpeed * actions.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
+            controller.Move(moveDirection * moveSpeed * m * Time.deltaTime);
         }
-        
+
         //Camera Bob
         if (GameSettings.cameraBob)
         {
@@ -218,6 +224,15 @@ public class Player : MonoBehaviour
                 camera.transform.localPosition = Vector3.up * (1.75f + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
                 arm.transform.localPosition = new Vector3(0, Mathf.PingPong(Time.time * armSwaySpeed, 0.1f), 0);
             }
+        }
+
+        //Gravity
+        velocity += Physics.gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+
+        if (grounded)
+        {
+            controller.Move(new Vector3(0, -slopeHit.distance, 0));
         }
     }
 
@@ -271,7 +286,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-
+    
     //Animation Events
     public void StartAttack()
     {

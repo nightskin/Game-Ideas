@@ -1012,7 +1012,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 65
   m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -1070,21 +1070,21 @@ MonoBehaviour:
   armPivot: {fileID: 1580257571142137265}
   arm: {fileID: 3127082587684661715}
   weapon: {fileID: 3553846875516006696}
-  cameraBobSpeed: 2
-  armSwaySpeed: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
+  cameraBobSpeed: 2
+  armSwaySpeed: 0.1
   walkSpeed: 25
-  dashSpeed: 300
+  dashSpeed: 100
   runSpeed: 50
   lockOnDistance: 500
   lockOnLayer:
     serializedVersion: 2
     m_Bits: 128
   lockOnTarget: {fileID: 0}
-  normalLookSpeed: 100
-  combatLookSpeed: 10
+  atkDamp: 0.1
+  defDamp: 0.1
   stunned: 0
 --- !u!1 &6941931712799309858
 GameObject:
