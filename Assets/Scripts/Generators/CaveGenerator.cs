@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
-public class DungeonMesh : MonoBehaviour
+public class CaveGenerator : MonoBehaviour
 {
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
@@ -16,9 +16,8 @@ public class DungeonMesh : MonoBehaviour
     public enum LevelGenerationAlgorithm
     {
         RANDOM_WALKER,
-        TINY_KEEP,
         RANDOM_KEEP,
-    }   
+    }
     [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.RANDOM_KEEP;
     public enum MeshGenerationAlgorithm
     {
@@ -30,7 +29,7 @@ public class DungeonMesh : MonoBehaviour
     [SerializeField] float incrementValue = 0.01f;
     [SerializeField] MeshGenerationAlgorithm meshGeneration = MeshGenerationAlgorithm.MARCHING_CUBES;
 
-    GridPoint[,,] grid = null;
+    float[,,] grid = null;
     List<Vector3> verts;
     List<Vector2> uvs;
     List<int> tris;
@@ -40,7 +39,7 @@ public class DungeonMesh : MonoBehaviour
     [Space]
     [Header("RANDOM_WALKER Parameters")]
     [SerializeField][Min(1)] int numberOfSteps = 200;
-    [SerializeField]bool walk3D = false;
+    [SerializeField] bool walk3D = false;
 
     [Space]
     [Header("TINY_KEEP Parameters")]
@@ -50,9 +49,7 @@ public class DungeonMesh : MonoBehaviour
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
     [SerializeField] bool useIndirectHallways = false;
-
-    Room[] rooms = null;
-
+    
     [Header("Debug")]
     [SerializeField] bool showBounds = false;
     [SerializeField] Color boundColor = Color.rebeccaPurple;
@@ -62,7 +59,7 @@ public class DungeonMesh : MonoBehaviour
         if (showBounds)
         {
             Gizmos.color = boundColor;
-            Gizmos.DrawWireCube(transform.position, (Vector3)gridSize * tileSize);
+            Gizmos.DrawWireCube(transform.position + ((Vector3)gridSize / 2 * tileSize), (Vector3)gridSize * tileSize);
         }
     }
 
@@ -73,32 +70,20 @@ public class DungeonMesh : MonoBehaviour
         GenerateMesh();
         PlacePlayer();
     }
-        
+
     void Init()
     {
         if (!player) player = GameObject.FindWithTag("Player").transform;
-        if(seed == string.Empty) seed = DateTime.Now.ToString();
+        if (seed == string.Empty) seed = DateTime.Now.ToString();
         if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.25f;
         else isoLevel = 0;
         UnityEngine.Random.InitState(seed.GetHashCode());
 
-        grid = new GridPoint[gridSize.x, gridSize.y, gridSize.z];
+        grid = new float[gridSize.x, gridSize.y, gridSize.z];
         verts = new List<Vector3>();
         uvs = new List<Vector2>();
         tris = new List<int>();
         buffer = 0;
-
-        for (int x = 0;  x < gridSize.x; x++) 
-        {
-            for (int y = 0; y < gridSize.y; y++)
-            {
-                for (int z = 0; z < gridSize.z; z++)
-                {
-                    grid[x, y, z] = new GridPoint();
-                    grid[x, y, z].position = new Vector3(x - gridSize.x / 2, y - gridSize.y / 2, z - gridSize.z / 2) * tileSize;
-                }
-            }
-        }
     }
 
     void GenerateDungeon(LevelGenerationAlgorithm algorithm)
@@ -110,10 +95,6 @@ public class DungeonMesh : MonoBehaviour
         else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP)
         {
             RandomKeep(numberOfRooms);
-        }
-        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP)
-        {
-            TinyKeep(numberOfRooms);
         }
     }
 
@@ -144,18 +125,18 @@ public class DungeonMesh : MonoBehaviour
                     if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
                     {
 
-                        if (grid[cell.x + x, cell.y + y, cell.z + z].value + incrementValue <= isoLevel)
+                        if (grid[cell.x + x, cell.y + y, cell.z + z] + incrementValue <= isoLevel)
                         {
-                            grid[cell.x + x, cell.y + y, cell.z + z].value = isoLevel + incrementValue;
+                            grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel + incrementValue;
                         }
                         else
                         {
-                            grid[cell.x + x, cell.y + y, cell.z + z].value += incrementValue;
+                            grid[cell.x + x, cell.y + y, cell.z + z] += incrementValue;
                         }
                     }
                     else
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1;
+                        grid[cell.x + x, cell.y + y, cell.z + z] = 1;
                     }
                 }
             }
@@ -188,14 +169,14 @@ public class DungeonMesh : MonoBehaviour
 
                     if (new Vector3Int(x, y, z) == Vector3Int.zero)
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1;
+                        grid[cell.x + x, cell.y + y, cell.z + z] = 1;
                     }
                     else
                     {
                         float v = Vector3Int.Distance(cell, cell + new Vector3Int(x, y, z));
-                        grid[cell.x + x, cell.y + y, cell.z + z].value = 1 / v;
+                        grid[cell.x + x, cell.y + y, cell.z + z] = 1 / v;
                     }
-                    
+
                 }
             }
         }
@@ -208,7 +189,7 @@ public class DungeonMesh : MonoBehaviour
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
-        if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES || meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
+        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES || meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
         {
             for (int x = 0; x < gridSize.x - 1; x++)
             {
@@ -217,7 +198,7 @@ public class DungeonMesh : MonoBehaviour
                     for (int z = 0; z < gridSize.z - 1; z++)
                     {
 
-                        GridPoint[] pointsInBox = new GridPoint[]
+                        float[] values = new float[]
                         {
                             grid[x,y,z+1],
                             grid[x+1,y,z+1],
@@ -229,7 +210,19 @@ public class DungeonMesh : MonoBehaviour
                             grid[x,y+1,z],
                         };
 
-                        int cubeIndex = GridPoint.GetState(pointsInBox, isoLevel);
+                        Vector3[] points = new Vector3[]
+                        {
+                            new Vector3(x,y,z+1) * tileSize,
+                            new Vector3(x+1,y,z+1) * tileSize,
+                            new Vector3(x+1,y,z) * tileSize,
+                            new Vector3(x,y,z) * tileSize,
+                            new Vector3(x,y+1,z+1) * tileSize,
+                            new Vector3(x+1,y+1,z+1) * tileSize,
+                            new Vector3(x+1,y+1,z) * tileSize,
+                            new Vector3(x,y+1,z) * tileSize,
+                        };
+
+                        int cubeIndex = GetState(values);
 
                         Vector3[] triVerts = new Vector3[3];
                         int triIndex = 0;
@@ -241,7 +234,8 @@ public class DungeonMesh : MonoBehaviour
                             {
                                 int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
-                                Vector3 vertexPos = GridPoint.LerpPoint(pointsInBox[a], pointsInBox[b], isoLevel);
+
+                                Vector3 vertexPos = LerpPoint(values[a], values[b], points[a], points[b]);
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
 
@@ -268,61 +262,61 @@ public class DungeonMesh : MonoBehaviour
                             {
                                 break;
                             }
-                    }
+                        }
                     }
                 }
-            }            
-        } 
-        else if(meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
+            }
+        }
+        else if (meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
         {
-            for(int x = 0; x < gridSize.x; x++)
+            for (int x = 0; x < gridSize.x; x++)
             {
-                for(int y = 0; y < gridSize.y; y++)
+                for (int y = 0; y < gridSize.y; y++)
                 {
-                    for(int z = 0; z < gridSize.z; z++)
+                    for (int z = 0; z < gridSize.z; z++)
                     {
-                        if(grid[x,y,z].value > isoLevel)
+                        if (grid[x, y, z] > isoLevel)
                         {
-                            if(y > 0)
+                            if (y > 0)
                             {
-                                if(grid[x,y - 1,z].value <= isoLevel)
+                                if (grid[x, y - 1, z] <= isoLevel)
                                 {
-                                    DrawQuadBottom(grid[x,y,z].position);
+                                    DrawQuadBottom(new Vector3(x, y, z) * tileSize);
                                 }
                             }
-                            if(y < gridSize.y - 1)
+                            if (y < gridSize.y - 1)
                             {
-                                if(grid[x,y + 1,z].value <= isoLevel)
+                                if (grid[x, y + 1, z] <= isoLevel)
                                 {
-                                    DrawQuadTop(grid[x, y, z].position);
+                                    DrawQuadTop(new Vector3(x, y, z) * tileSize);
                                 }
                             }
-                            if(x > 0)
+                            if (x > 0)
                             {
-                                if(grid[x - 1,y,z].value <= isoLevel)
+                                if (grid[x - 1, y, z] <= isoLevel)
                                 {
-                                    DrawQuadLeft(grid[x, y, z].position);
+                                    DrawQuadLeft(new Vector3(x, y, z) * tileSize);
                                 }
                             }
-                            if(x < gridSize.x - 1)
+                            if (x < gridSize.x - 1)
                             {
-                                if(grid[x + 1,y,z].value <= isoLevel)
+                                if (grid[x + 1, y, z] <= isoLevel)
                                 {
-                                    DrawQuadRight(grid[x, y, z].position);
+                                    DrawQuadRight(new Vector3(x, y, z) * tileSize);
                                 }
                             }
-                            if(z > 0)
+                            if (z > 0)
                             {
-                                if(grid[x,y,z - 1].value <= isoLevel)
+                                if (grid[x, y, z - 1] <= isoLevel)
                                 {
-                                    DrawQuadBack(grid[x, y, z].position);
+                                    DrawQuadBack(new Vector3(x, y, z) * tileSize);
                                 }
                             }
-                            if(z < gridSize.z - 1)
+                            if (z < gridSize.z - 1)
                             {
-                                if(grid[x,y,z + 1].value <= isoLevel)
+                                if (grid[x, y, z + 1] <= isoLevel)
                                 {
-                                    DrawQuadFront(grid[x, y, z].position);
+                                    DrawQuadFront(new Vector3(x, y, z) * tileSize);
                                 }
                             }
                         }
@@ -342,59 +336,59 @@ public class DungeonMesh : MonoBehaviour
         mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
-    
+
     void RandomWalker()
     {
         Vector3Int currentIndex = gridSize / 2;
 
-            for (int step = 0; step < numberOfSteps; step++)
-            {
-                int x = UnityEngine.Random.Range(-1, 2);
-                int y = 0;
-                if(walk3D) y = UnityEngine.Random.Range(-1,2);
-                int z = UnityEngine.Random.Range(-1, 2);
-
-                currentIndex += new Vector3Int(x,y,z);
-                ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
-            }
-    }   
-
-    void TinyKeep(int numberOfRooms)
-    {
-        //Create Rooms
-        rooms = new Room[numberOfRooms];
-        for(int r = 0; r < numberOfRooms; r++) 
+        for (int step = 0; step < numberOfSteps; step++)
         {
-            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
-            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
-            int xi = UnityEngine.Random.Range(roomSizeX, gridSize.x - roomSizeX);
-            int yi = UnityEngine.Random.Range(ceilngHeight, gridSize.y - ceilngHeight);
-            int zi = UnityEngine.Random.Range(roomSizeZ, gridSize.z - roomSizeZ);
+            int x = UnityEngine.Random.Range(-1, 2);
+            int y = 0;
+            if (walk3D) y = UnityEngine.Random.Range(-1, 2);
+            int z = UnityEngine.Random.Range(-1, 2);
 
-            rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
-            ActivateBox(rooms[r].indexPosition, rooms[r].indexSize.x, rooms[r].indexSize.y, rooms[r].indexSize.z);
-        }
-
-        //Create Hallways
-        for (int r = 0; r < numberOfRooms - 1; r++)
-        {
-            Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
-            Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
-            if(useIndirectHallways)
-            {
-                GenerateHallway2(start, end);
-            }
-            else
-            {
-                GenerateHallway(start, end);
-            }
+            currentIndex += new Vector3Int(x, y, z);
+            ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
         }
     }
+
+    //void TinyKeep(int numberOfRooms)
+    //{
+    //    //Create Rooms
+    //    rooms = new Room[numberOfRooms];
+    //    for (int r = 0; r < numberOfRooms; r++)
+    //    {
+    //        int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+    //        int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+    //        int xi = UnityEngine.Random.Range(roomSizeX, gridSize.x - roomSizeX);
+    //        int yi = UnityEngine.Random.Range(ceilngHeight, gridSize.y - ceilngHeight);
+    //        int zi = UnityEngine.Random.Range(roomSizeZ, gridSize.z - roomSizeZ);
+    //
+    //        rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
+    //        ActivateBox(rooms[r].indexPosition, rooms[r].indexSize.x, rooms[r].indexSize.y, rooms[r].indexSize.z);
+    //    }
+    //
+    //    //Create Hallways
+    //    for (int r = 0; r < numberOfRooms - 1; r++)
+    //    {
+    //        Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
+    //        Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
+    //        if (useIndirectHallways)
+    //        {
+    //            GenerateHallway2(start, end);
+    //        }
+    //        else
+    //        {
+    //            GenerateHallway(start, end);
+    //        }
+    //    }
+    //}
 
     void RandomKeep(int numberOfRooms)
     {
         //Create Rooms
-        rooms = new Room[numberOfRooms];
+        List<Vector3Int> rooms = new List<Vector3Int>();
         for (int r = 0; r < numberOfRooms; r++)
         {
             int xi = UnityEngine.Random.Range(0, gridSize.x);
@@ -403,7 +397,7 @@ public class DungeonMesh : MonoBehaviour
 
             Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
 
-            rooms[r] = new Room(new Vector3Int(xi, yi, zi));
+            rooms.Add(new Vector3Int(xi, yi, zi));
             for (int s = 0; s < numberOfSteps; s++)
             {
                 int x = UnityEngine.Random.Range(-1, 2);
@@ -424,13 +418,13 @@ public class DungeonMesh : MonoBehaviour
                 ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
             }
         }
-        
+
 
         //Create Hallways
         for (int r = 0; r < numberOfRooms - 1; r++)
         {
-            Vector3Int start = rooms[r].indexPosition;
-            Vector3Int end = rooms[r + 1].indexPosition;
+            Vector3Int start = rooms[r];
+            Vector3Int end = rooms[r + 1];
             if (useIndirectHallways)
             {
                 GenerateHallway2(start, end);
@@ -585,8 +579,8 @@ public class DungeonMesh : MonoBehaviour
     void DrawQuadTop(Vector3 position)
     {
         verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        verts.Add(new Vector3(0.5f,  0.5f, 0.5f) * tileSize + position);
-        verts.Add(new Vector3(0.5f,  0.5f, -0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) * tileSize + position);
         verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * tileSize + position);
 
         tris.Add(buffer + 2);
@@ -608,7 +602,7 @@ public class DungeonMesh : MonoBehaviour
     void DrawQuadFront(Vector3 position)
     {
         verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) * tileSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f,  0.5f) * tileSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) * tileSize + position);
         verts.Add(new Vector3(0.5f, -0.5f, 0.5f) * tileSize + position);
         verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * tileSize + position);
 
@@ -699,40 +693,51 @@ public class DungeonMesh : MonoBehaviour
 
     void PlacePlayer()
     {
-        if(player)
+        if (player)
         {
 
-            if (levelGeneration == LevelGenerationAlgorithm.RANDOM_WALKER)
+            for (int x = 0; x < gridSize.x; x++)
             {
-                for (int x = 0; x < gridSize.x; x++)
+                for (int y = 0; y < gridSize.y; y++)
                 {
-                    for (int y = 0; y < gridSize.y; y++)
+                    for (int z = 0; z < gridSize.z; z++)
                     {
-                        for (int z = 0; z < gridSize.z; z++)
+                        if (grid[x, y, z] > isoLevel)
                         {
-                            if (grid[x, y, z].value > isoLevel)
+                            player.transform.position = new Vector3(x, y, z) * tileSize;
+                            player.transform.position += Vector3.up * gridSize.y * tileSize;
+                            if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
                             {
-                                player.transform.position = grid[x, y, z].position;
-                                break;
+                                player.position = hit.point;
                             }
+                            return;
                         }
                     }
                 }
             }
-            else
-            {
-                player.transform.position = grid[rooms[0].indexPosition.x, rooms[0].indexPosition.y, rooms[0].indexPosition.z].position;
-            }
 
-            player.transform.position += Vector3.up * gridSize.y * tileSize;
-
-            if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
-            {
-                player.position = hit.point;
-            }
 
         }
     }
 
+    int GetState(float[] points)
+    {
+        int state = 0;
+        if (points[0] > isoLevel) state |= 1;
+        if (points[1] > isoLevel) state |= 2;
+        if (points[2] > isoLevel) state |= 4;
+        if (points[3] > isoLevel) state |= 8;
+        if (points[4] > isoLevel) state |= 16;
+        if (points[5] > isoLevel) state |= 32;
+        if (points[6] > isoLevel) state |= 64;
+        if (points[7] > isoLevel) state |= 128;
+        return state;
+    }
+
+    Vector3 LerpPoint(float v1, float v2, Vector3 pos1, Vector3 pos2)
+    {
+        float amount = (isoLevel - v1) / (v2 - v1);
+        return Vector3.Lerp(pos1, pos2, amount);
+    }
 
 }

@@ -23,12 +23,7 @@ public class GridPoint
         if (points[7].value > isoLevel) state |= 128;
         return state;
     }
-
-    public static Vector3 MidPoint(GridPoint p1, GridPoint p2)
-    {
-        return p1.position + p2.position / 2;
-    }
-
+    
     public static Vector3 LerpPoint(GridPoint p1,  GridPoint p2, float isoLevel)
     {
         float amount = (isoLevel - p1.value) / (p2.value - p1.value);
