@@ -25,7 +25,7 @@ public class CaveGenerator : MonoBehaviour
         MARCHING_CUBES,
         MARCHING_CUBES_SMOOTH,
     }
-    float isoLevel;
+    [SerializeField] float isoLevel = 0.1f;
     [SerializeField] float incrementValue = 0.01f;
     [SerializeField] MeshGenerationAlgorithm meshGeneration = MeshGenerationAlgorithm.MARCHING_CUBES;
 
@@ -35,6 +35,8 @@ public class CaveGenerator : MonoBehaviour
     List<int> tris;
     int buffer;
     Mesh mesh;
+
+    Noise noise;
 
     [Space]
     [Header("RANDOM_WALKER Parameters")]
@@ -75,9 +77,8 @@ public class CaveGenerator : MonoBehaviour
     {
         if (!player) player = GameObject.FindWithTag("Player").transform;
         if (seed == string.Empty) seed = DateTime.Now.ToString();
-        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) isoLevel = 0.25f;
-        else isoLevel = 0;
         UnityEngine.Random.InitState(seed.GetHashCode());
+        noise = new Noise(seed.GetHashCode());
 
         grid = new float[gridSize.x, gridSize.y, gridSize.z];
         verts = new List<Vector3>();
@@ -142,47 +143,7 @@ public class CaveGenerator : MonoBehaviour
             }
         }
     }
-
-    void ActivateSphere(Vector3Int cell, int maxX = 1, int maxY = 1, int maxZ = 1)
-    {
-        if (grid == null) return;
-        if (maxX < 1 || maxY < 1 || maxZ < 1) return;
-
-        for (int x = -maxX; x <= maxX; x++)
-        {
-            for (int y = -maxY; y <= maxY; y++)
-            {
-                for (int z = -maxZ; z <= maxZ; z++)
-                {
-                    if (cell.x + x >= gridSize.x - 1 || cell.x + x <= 0)
-                    {
-                        continue;
-                    }
-                    if (cell.y + y >= gridSize.y - 1 || cell.y + y <= 0)
-                    {
-                        continue;
-                    }
-                    if (cell.z + z >= gridSize.z - 1 || cell.z + z <= 0)
-                    {
-                        continue;
-                    }
-
-                    if (new Vector3Int(x, y, z) == Vector3Int.zero)
-                    {
-                        grid[cell.x + x, cell.y + y, cell.z + z] = 1;
-                    }
-                    else
-                    {
-                        float v = Vector3Int.Distance(cell, cell + new Vector3Int(x, y, z));
-                        grid[cell.x + x, cell.y + y, cell.z + z] = 1 / v;
-                    }
-
-                }
-            }
-        }
-
-    }
-
+    
     void GenerateMesh()
     {
         mesh = new Mesh();
@@ -341,54 +302,23 @@ public class CaveGenerator : MonoBehaviour
     {
         Vector3Int currentIndex = gridSize / 2;
 
-        for (int step = 0; step < numberOfSteps; step++)
-        {
-            int x = UnityEngine.Random.Range(-1, 2);
-            int y = 0;
-            if (walk3D) y = UnityEngine.Random.Range(-1, 2);
-            int z = UnityEngine.Random.Range(-1, 2);
+            for (int step = 0; step < numberOfSteps; step++)
+            {
+                int x = UnityEngine.Random.Range(-1, 2);
+                int y = 0;
+                if (walk3D) y = UnityEngine.Random.Range(-1, 2);
+                int z = UnityEngine.Random.Range(-1, 2);
 
-            currentIndex += new Vector3Int(x, y, z);
-            ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
-        }
+                currentIndex += new Vector3Int(x, y, z);
+                ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
+            }
     }
-
-    //void TinyKeep(int numberOfRooms)
-    //{
-    //    //Create Rooms
-    //    rooms = new Room[numberOfRooms];
-    //    for (int r = 0; r < numberOfRooms; r++)
-    //    {
-    //        int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
-    //        int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
-    //        int xi = UnityEngine.Random.Range(roomSizeX, gridSize.x - roomSizeX);
-    //        int yi = UnityEngine.Random.Range(ceilngHeight, gridSize.y - ceilngHeight);
-    //        int zi = UnityEngine.Random.Range(roomSizeZ, gridSize.z - roomSizeZ);
-    //
-    //        rooms[r] = new Room(new Vector3Int(xi, yi, zi), new Vector3Int(roomSizeX, ceilngHeight, roomSizeZ));
-    //        ActivateBox(rooms[r].indexPosition, rooms[r].indexSize.x, rooms[r].indexSize.y, rooms[r].indexSize.z);
-    //    }
-    //
-    //    //Create Hallways
-    //    for (int r = 0; r < numberOfRooms - 1; r++)
-    //    {
-    //        Vector3Int start = rooms[r].GetNearestExit(rooms[r + 1].indexPosition);
-    //        Vector3Int end = rooms[r + 1].GetNearestExit(rooms[r].indexPosition);
-    //        if (useIndirectHallways)
-    //        {
-    //            GenerateHallway2(start, end);
-    //        }
-    //        else
-    //        {
-    //            GenerateHallway(start, end);
-    //        }
-    //    }
-    //}
 
     void RandomKeep(int numberOfRooms)
     {
         //Create Rooms
-        List<Vector3Int> rooms = new List<Vector3Int>();
+        List<Vector3Int> entrances = new List<Vector3Int>();
+        List<Vector3Int> exits = new List<Vector3Int>();
         for (int r = 0; r < numberOfRooms; r++)
         {
             int xi = UnityEngine.Random.Range(0, gridSize.x);
@@ -396,8 +326,7 @@ public class CaveGenerator : MonoBehaviour
             int zi = UnityEngine.Random.Range(0, gridSize.z);
 
             Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
-
-            rooms.Add(new Vector3Int(xi, yi, zi));
+            entrances.Add(currentIndex);
             for (int s = 0; s < numberOfSteps; s++)
             {
                 int x = UnityEngine.Random.Range(-1, 2);
@@ -405,26 +334,29 @@ public class CaveGenerator : MonoBehaviour
                 if (walk3D) y = UnityEngine.Random.Range(-1, 2);
                 int z = UnityEngine.Random.Range(-1, 2);
 
-                if (x == -1 && currentIndex.x == 0) x = 0;
-                if (x == 1 && currentIndex.x == gridSize.x - 1) x = 0;
+                if (x == -1 && currentIndex.x <= 0) x = 1;
+                if (x == 1 && currentIndex.x >= gridSize.x - 1) x = -1;
 
-                if (z == -1 && currentIndex.z == 0) z = 0;
-                if (z == 1 && currentIndex.z == gridSize.z - 1) z = 0;
+                if (z == -1 && currentIndex.z <= 0) z = 1;
+                if (z == 1 && currentIndex.z >= gridSize.z - 1) z = -1;
 
-                if (y == -1 && currentIndex.y == 0) y = 0;
-                if (y == 1 && currentIndex.y == gridSize.y - 1) y = 0;
+                if (y == -1 && currentIndex.y <= 0) y = 1;
+                if (y == 1 && currentIndex.y >= gridSize.y - 1) y = -1;
+
 
                 currentIndex += new Vector3Int(x, y, z);
                 ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
+
             }
+            exits.Add(currentIndex);
         }
 
 
         //Create Hallways
         for (int r = 0; r < numberOfRooms - 1; r++)
         {
-            Vector3Int start = rooms[r];
-            Vector3Int end = rooms[r + 1];
+            Vector3Int start = entrances[r];
+            Vector3Int end = exits[r + 1];
             if (useIndirectHallways)
             {
                 GenerateHallway2(start, end);
@@ -450,18 +382,6 @@ public class CaveGenerator : MonoBehaviour
                 Vector3Int.down,
                 Vector3Int.forward,
                 Vector3Int.back,
-                //new Vector3Int(1,-1,1),
-                //new Vector3Int(-1,-1,-1),
-                //new Vector3Int(1,-1,-1),
-                //new Vector3Int(-1,-1,1),
-                //new Vector3Int(1,1,1),
-                //new Vector3Int(-1,1,-1),
-                //new Vector3Int(1,1,-1),
-                //new Vector3Int(-1,1,1),
-                //new Vector3Int(1,0,1),
-                //new Vector3Int(-1,0,-1),
-                //new Vector3Int(1,0,-1),
-                //new Vector3Int(-1,0,1),
             };
             Vector3Int chosenDirection = possibleDirections[0];
             foreach (Vector3Int possibleDirection in possibleDirections)
@@ -473,7 +393,7 @@ public class CaveGenerator : MonoBehaviour
             }
 
             currentPos += chosenDirection;
-            ActivateSphere(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
         }
     }
 

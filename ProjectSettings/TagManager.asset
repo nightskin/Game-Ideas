@@ -9,6 +9,7 @@ TagManager:
   - Solid
   - EnemyWeapon
   - PlayerWeapon
+  - PlayerShield
   layers:
   - Default
   - TransparentFX

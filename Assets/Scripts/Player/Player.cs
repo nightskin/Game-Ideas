@@ -1,9 +1,16 @@
-using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public enum PlayerCombatState
+    {
+        IDLE,
+        ATK,
+        DEF,
+    }
+    [HideInInspector] public PlayerCombatState state = PlayerCombatState.IDLE;
+
     //Components
     [Header("Components")]
     Controls controls;
@@ -12,7 +19,6 @@ public class Player : MonoBehaviour
     [SerializeField] CharacterController controller;
     public Animator animator;
     [SerializeField] Transform armPivot;
-    [SerializeField] Transform arm;
     [SerializeField] PlayerWeapon weapon;
 
 
@@ -21,16 +27,15 @@ public class Player : MonoBehaviour
     float moveSpeed;
 
     Vector3 velocity = Vector3.zero;
+    [SerializeField][Min(1)] float jumpHeight = 3;
+    [SerializeField][Min(0)] float cameraBobSpeed = 1f;
 
+    [SerializeField][Min(0)] float groundDistance = 0.5f;
     [SerializeField] LayerMask groundLayer;
     bool grounded;
     RaycastHit slopeHit;
-
+    bool jumping = false;
     public static float lookSpeed;
-
-    [SerializeField] float cameraBobSpeed = 2.0f;
-    [SerializeField] float armSwaySpeed = 0.1f;
-
 
     Vector3 moveDirection;
     float xRot = 0;
@@ -56,14 +61,24 @@ public class Player : MonoBehaviour
     //For Combat Systems
     [Header("CombatControls")]
     [SerializeField][Range(0,1)] float atkDamp = 0.1f;
-    [SerializeField][Range(0,1)] float defDamp = 0.1f;
     Vector2 actionVector = Vector2.zero;
     float atkAngle = 0;
     [HideInInspector] public bool stunned = false;
 
+    [Header("Wall Movement")]
+    [SerializeField] float wallRunCamAngle = 35;
+    [SerializeField][Min(0)] float wallDistance = 0.7f;
+
+    bool isWallJumping = false;
+    bool isWallRunning = false;
+    bool isAgainstWallLeft = false;
+    bool isAgainstWallRight = false;
+    RaycastHit wallHitLeft;
+    RaycastHit wallHitRight;
+
     void Awake()
     {
-        controller = GetComponent<CharacterController>();
+        if(!controller) controller = GetComponent<CharacterController>();
         camera = Camera.main;
         moveSpeed = walkSpeed;
         lookSpeed = GameSettings.aimSensitivity;
@@ -73,13 +88,13 @@ public class Player : MonoBehaviour
         actions = controls.Player;
         actions.Enable();
 
+        actions.Jump.performed += Jump_performed;
         actions.Sprint.performed += Sprint_performed;
         actions.Sprint.canceled += Sprint_canceled;
         actions.Dash.performed += Dash_performed;
         actions.LockOn.performed += LockOn_performed;
         actions.Attack.performed += Attack_performed;
         actions.Defend.performed += Defend_performed;
-        actions.Defend.canceled += Defend_canceled;
     }
 
     void Update()
@@ -93,26 +108,68 @@ public class Player : MonoBehaviour
             LookAround();
         }
 
-        Movement();
+        if ((isAgainstWallLeft || isAgainstWallRight) && actions.Move.ReadValue<Vector2>().y > 0.25f && !grounded && !isWallJumping)
+        {
+            isWallRunning = true;
+        }
+        else
+        {
+            isWallRunning = false;
+        }
+
+        if (isWallRunning)
+        {
+            float z;
+            if (isAgainstWallLeft) z = -wallRunCamAngle;
+            else if (isAgainstWallRight) z = wallRunCamAngle;
+            else z = 0;
+            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, z);
+            WallRun();
+        }
+        else
+        {
+            NormalMovement();
+        }
+
         CombatControls();
     }
 
     void FixedUpdate()
     {
-        //Make Sure Player Is Always on ground
-        Ray ray = new Ray(transform.position, Vector3.down);
-        grounded = Physics.Raycast(ray, out slopeHit, 0.5f, groundLayer);
+        Ray groundRay = new Ray(transform.position, Vector3.down);
+        grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
+
+        Ray wallRayRight = new Ray(transform.position, transform.right);
+        Ray wallRayLeft = new Ray(transform.position, -transform.right);
+        isAgainstWallLeft = Physics.Raycast(wallRayLeft, out wallHitLeft, wallDistance);
+        isAgainstWallRight = Physics.Raycast(wallRayRight, out wallHitRight, wallDistance);
     }
 
     void OnDestroy()
     {
+        actions.Jump.performed -= Jump_performed;
         actions.Sprint.performed -= Sprint_performed;
         actions.Sprint.canceled -= Sprint_canceled;
         actions.Dash.performed -= Dash_performed;
         actions.LockOn.performed -= LockOn_performed;
         actions.Attack.performed -= Attack_performed;
         actions.Defend.performed -= Defend_performed;
-        actions.Defend.canceled -= Defend_canceled;
+    }
+
+    private void Jump_performed(InputAction.CallbackContext obj)
+    {
+        if (grounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            jumping = true;
+        }
+        else if (isWallRunning)
+        {
+            Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+            velocity = (wallNormal + Vector3.up).normalized * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            isWallJumping = true;
+        }
+
     }
 
     private void Dash_performed(InputAction.CallbackContext obj)
@@ -127,10 +184,7 @@ public class Player : MonoBehaviour
 
     private void Sprint_performed(InputAction.CallbackContext obj)
     {
-        if (actions.Move.ReadValue<Vector2>().y > 0.5f)
-        {
-            moveSpeed = runSpeed;
-        }
+        moveSpeed = runSpeed;
     }
 
     private void Sprint_canceled(InputAction.CallbackContext obj)
@@ -155,41 +209,28 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Attack_performed(InputAction.CallbackContext obj)
     {
-        if (!lockedOn && lockOnTarget != null)
+        if (!actions.Defend.IsPressed())
         {
-            Ray ray = new Ray(camera.transform.position, camera.transform.forward);
-            if (Physics.Raycast(ray, out RaycastHit hit, lockOnDistance, lockOnLayer))
-            {
-                lockOnTarget = hit.transform;
-            }            
+            if (GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= atkDamp;
+            animator.SetTrigger("slash");
         }
-
-        if(GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= atkDamp;
-        animator.SetTrigger("slash");
 
     }
 
     private void Defend_performed(InputAction.CallbackContext context)
     {
-        if(GameSettings.slowCameraMovementWhenDefending) lookSpeed *= defDamp;
-        weapon.SetState(PlayerWeapon.WeaponState.DEFENDING);
+        if(!actions.Attack.IsPressed()) animator.SetTrigger("defend");
     }
 
-    private void Defend_canceled(InputAction.CallbackContext context)
-    {
-        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed = GameSettings.aimSensitivity;
-        animator.SetFloat("x", 0);
-        animator.SetFloat("y", 0);
-        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
-    }
 
-    void Movement()
+    void NormalMovement()
     {
         if (grounded && velocity.y < 0)
         {
-            velocity.y = 0;
+            velocity = Vector3.zero;
+            jumping = false;
         }
 
         float x = actions.Move.ReadValue<Vector2>().x;
@@ -197,7 +238,7 @@ public class Player : MonoBehaviour
         float m = actions.Move.ReadValue<Vector2>().magnitude;
 
         //Move Input
-        moveDirection = (transform.right * x + transform.forward * z).normalized;
+        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
         if (dashing)
         {
             dashTimer -= Time.deltaTime;
@@ -213,28 +254,49 @@ public class Player : MonoBehaviour
         }
         else
         {
-            controller.Move(moveDirection * moveSpeed * m * Time.deltaTime);
+            controller.Move(moveDirection * moveSpeed * Time.deltaTime);
         }
 
         //Camera Bob
         if (GameSettings.cameraBob)
         {
-            if (moveDirection.magnitude > 0 && !dashing)
+            if (moveDirection.magnitude > 0 && grounded)
             {
-                camera.transform.localPosition = Vector3.up * (1.75f + Mathf.PingPong(Time.time * cameraBobSpeed, 1));
-                arm.transform.localPosition = new Vector3(0, Mathf.PingPong(Time.time * armSwaySpeed, 0.1f), 0);
+                camera.transform.localPosition = new Vector3(0, 2 - Mathf.PingPong(Time.time * cameraBobSpeed, 0.25f), 0);
             }
         }
 
         //Gravity
-        velocity += Physics.gravity * Time.deltaTime;
+        velocity.y += Physics.gravity.y * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-        if (grounded)
+        //Handle Moving Down slopes
+        if (grounded && !jumping)
         {
             controller.Move(new Vector3(0, -slopeHit.distance, 0));
         }
     }
+
+    void WallRun()
+    {
+        Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
+        {
+            wallForward = -wallForward;
+        }
+        
+        controller.Move((wallForward + new Vector3(0,camera.transform.forward.y, 0)).normalized * runSpeed * Time.deltaTime);
+
+        if (!(isAgainstWallLeft && actions.Move.ReadValue<Vector2>().x > 0 || isAgainstWallRight && actions.Move.ReadValue<Vector2>().x < 0))
+        {
+            isWallRunning = false;
+        }
+
+    }
+
+
 
     void LookAround()
     {
@@ -271,42 +333,44 @@ public class Player : MonoBehaviour
         actionVector = actions.Look.ReadValue<Vector2>().normalized;
         if (actions.Attack.IsPressed())
         {
-
             if (actionVector.magnitude > 0)
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
-        if (actions.Defend.IsPressed())
-        {
-            if (actionVector.magnitude > 0)
-            {
-                animator.SetFloat("x", actionVector.x);
-                animator.SetFloat("y", actionVector.y);
-            }
-        }
     }
     
+
     //Animation Events
     public void StartAttack()
     {
-        animator.SetFloat("x", 0);
-        animator.SetFloat("y", 0);
-        weapon.SetState(PlayerWeapon.WeaponState.ATTACKING);
+        state = PlayerCombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
     }
 
     public void EndAttack()
     {
-        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
-        if(GameSettings.slowCameraMovementWhenAttacking) armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        state = PlayerCombatState.IDLE;
+        armPivot.localEulerAngles = new Vector3(0, 0, 0);
         lookSpeed = GameSettings.aimSensitivity;
         if (!lockedOn) lockOnTarget = null;
     }
 
+    public void StartBlock()
+    {
+        armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        state = PlayerCombatState.DEF;
+        lookSpeed = GameSettings.aimSensitivity;
+    }
+
+    public void EndBlock()
+    {
+        state = PlayerCombatState.IDLE;
+    }
+
     public void Recoil()
     {
-        weapon.SetState(PlayerWeapon.WeaponState.IDLE);
+        state = PlayerCombatState.IDLE;
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
     }
 }
