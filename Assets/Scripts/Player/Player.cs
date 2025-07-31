@@ -66,15 +66,14 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool stunned = false;
 
     [Header("Wall Movement")]
+
+    [SerializeField] int maxJumps = 2;
     [SerializeField] float wallRunCamAngle = 35;
     [SerializeField][Min(0)] float wallDistance = 0.7f;
-
-    bool isWallJumping = false;
+    int numberOfJumps = 0;
     bool isWallRunning = false;
-    bool isAgainstWallLeft = false;
-    bool isAgainstWallRight = false;
-    RaycastHit wallHitLeft;
-    RaycastHit wallHitRight;
+    bool isAgainstWall = false;
+    RaycastHit wallHit;
 
     void Awake()
     {
@@ -108,28 +107,16 @@ public class Player : MonoBehaviour
             LookAround();
         }
 
-        if ((isAgainstWallLeft || isAgainstWallRight) && actions.Move.ReadValue<Vector2>().y > 0.25f && !grounded && !isWallJumping)
-        {
-            isWallRunning = true;
-        }
-        else
-        {
-            isWallRunning = false;
-        }
 
         if (isWallRunning)
-        {
-            float z;
-            if (isAgainstWallLeft) z = -wallRunCamAngle;
-            else if (isAgainstWallRight) z = wallRunCamAngle;
-            else z = 0;
-            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, z);
+        {   
             WallRun();
         }
         else
         {
             NormalMovement();
         }
+
 
         CombatControls();
     }
@@ -139,10 +126,11 @@ public class Player : MonoBehaviour
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
 
-        Ray wallRayRight = new Ray(transform.position, transform.right);
         Ray wallRayLeft = new Ray(transform.position, -transform.right);
-        isAgainstWallLeft = Physics.Raycast(wallRayLeft, out wallHitLeft, wallDistance);
-        isAgainstWallRight = Physics.Raycast(wallRayRight, out wallHitRight, wallDistance);
+        Ray wallRayRight = new Ray(transform.position, transform.right);
+        Ray wallRayFLeft = new Ray(transform.position, -transform.right + transform.forward);
+        Ray wallRayFRight = new Ray(transform.position, transform.right + transform.forward);
+        isAgainstWall = Physics.Raycast(wallRayLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayRight, out wallHit, wallDistance) || Physics.Raycast(wallRayFLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayFRight, out wallHit, wallDistance);
     }
 
     void OnDestroy()
@@ -158,18 +146,28 @@ public class Player : MonoBehaviour
 
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        if (grounded)
+        if (isWallRunning)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            jumping = true;
+            //Wall jump
+            velocity = wallHit.normal + Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            isWallRunning = false;
         }
-        else if (isWallRunning)
+        else
         {
-            Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
-            velocity = (wallNormal + Vector3.up).normalized * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            isWallJumping = true;
+            //start wall Run
+            if (isAgainstWall && !grounded)
+            {
+                numberOfJumps = 0;
+                isWallRunning = true;
+            }
+            // Normal Jump
+            if (grounded || numberOfJumps < maxJumps)
+            {
+                velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+                jumping = true;
+                numberOfJumps++;
+            }
         }
-
     }
 
     private void Dash_performed(InputAction.CallbackContext obj)
@@ -229,6 +227,7 @@ public class Player : MonoBehaviour
     {
         if (grounded && velocity.y < 0)
         {
+            numberOfJumps = 0;
             velocity = Vector3.zero;
             jumping = false;
         }
@@ -262,7 +261,7 @@ public class Player : MonoBehaviour
         {
             if (moveDirection.magnitude > 0 && grounded)
             {
-                camera.transform.localPosition = new Vector3(0, 2 - Mathf.PingPong(Time.time * cameraBobSpeed, 0.25f), 0);
+                camera.transform.localPosition = new Vector3(0, 2 + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
             }
         }
 
@@ -279,24 +278,29 @@ public class Player : MonoBehaviour
 
     void WallRun()
     {
-        Vector3 wallNormal = isAgainstWallRight ? wallHitRight.normal : wallHitLeft.normal;
+        float x = actions.Move.ReadValue<Vector2>().x;
+        float z = actions.Move.ReadValue<Vector2>().y;
+        float m = actions.Move.ReadValue<Vector2>().magnitude;
+
+        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+
+        Vector3 wallNormal = wallHit.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
         if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
         {
             wallForward = -wallForward;
         }
-        
-        controller.Move((wallForward + new Vector3(0,camera.transform.forward.y, 0)).normalized * runSpeed * Time.deltaTime);
 
-        if (!(isAgainstWallLeft && actions.Move.ReadValue<Vector2>().x > 0 || isAgainstWallRight && actions.Move.ReadValue<Vector2>().x < 0))
+        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)).normalized * runSpeed * Time.deltaTime);
+
+
+        if (grounded || !isAgainstWall || Vector3.Dot(moveDirection, -wallNormal) < 0)
         {
             isWallRunning = false;
         }
 
     }
-
-
 
     void LookAround()
     {

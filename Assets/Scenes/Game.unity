@@ -427,7 +427,7 @@ MonoBehaviour:
   minRoomSize: 2
   maxRoomSize: 10
   useIndirectHallways: 0
-  showBounds: 1
+  showBounds: 0
   boundColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
 --- !u!114 &155718873535856012
 MonoBehaviour:

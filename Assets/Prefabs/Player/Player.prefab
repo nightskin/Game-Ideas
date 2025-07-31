@@ -1745,7 +1745,7 @@ MonoBehaviour:
   atkDamp: 0.5
   stunned: 0
   wallRunCamAngle: 20
-  wallDistance: 0.7
+  wallDistance: 1
 --- !u!1 &6499288538188433762
 GameObject:
   m_ObjectHideFlags: 0
