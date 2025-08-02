@@ -159,7 +159,7 @@ Material:
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 1, g: 0.81666666, b: 0, a: 1}
-    - _Tint2: {r: 0.38679248, g: 0.22584526, b: 0, a: 1}
+    - _Tint1: {r: 0.5377358, g: 0.21220487, b: 0, a: 1}
+    - _Tint2: {r: 0.3207547, g: 0.12642886, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -66,9 +67,12 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool stunned = false;
 
     [Header("Wall Movement")]
-
+    [SerializeField] bool wallRunningEnabled = false;
+    
     [SerializeField] int maxJumps = 2;
-    [SerializeField] float wallRunCamAngle = 35;
+    [SerializeField] float maxCameraTiltAngle = 35;
+    [SerializeField] float cameraTiltSpeed = 5;
+    float wallRunCamTiltTime;
     [SerializeField][Min(0)] float wallDistance = 0.7f;
     int numberOfJumps = 0;
     bool isWallRunning = false;
@@ -155,10 +159,15 @@ public class Player : MonoBehaviour
         else
         {
             //start wall Run
-            if (isAgainstWall && !grounded)
+            if (isAgainstWall && !grounded && wallRunningEnabled)
             {
-                numberOfJumps = 0;
-                isWallRunning = true;
+                if (wallHit.normal.y < 0.75f && wallHit.normal.y > -0.75f)
+                {
+                    wallRunCamTiltTime = 0;
+                    numberOfJumps = 0;
+                    isWallRunning = true;
+                }
+
             }
             // Normal Jump
             if (grounded || numberOfJumps < maxJumps)
@@ -225,6 +234,7 @@ public class Player : MonoBehaviour
 
     void NormalMovement()
     {
+        TiltCamera(0);
         if (grounded && velocity.y < 0)
         {
             numberOfJumps = 0;
@@ -278,6 +288,7 @@ public class Player : MonoBehaviour
 
     void WallRun()
     {
+
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
         float m = actions.Move.ReadValue<Vector2>().magnitude;
@@ -300,6 +311,23 @@ public class Player : MonoBehaviour
             isWallRunning = false;
         }
 
+        TiltCamera(Vector3.Dot(wallNormal, transform.right) * maxCameraTiltAngle * -1);
+
+    }
+
+    void TiltCamera(float amount)
+    {
+        if (wallRunCamTiltTime < 1)
+        {
+            float z = Mathf.LerpAngle(camera.transform.localEulerAngles.z, amount, wallRunCamTiltTime);
+            wallRunCamTiltTime += cameraTiltSpeed * Time.deltaTime;
+            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, z);
+        }
+        else
+        {
+            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, amount);
+        }
+  
     }
 
     void LookAround()

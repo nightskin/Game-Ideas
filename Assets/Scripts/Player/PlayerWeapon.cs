@@ -5,8 +5,7 @@ public class PlayerWeapon : MonoBehaviour
 
 
     [SerializeField] Player player;
-    [SerializeField] GameObject impactEffectEnemy;
-    [SerializeField] GameObject impactEffectSolid;
+    [SerializeField] GameObject hitEffect;
     [SerializeField] BoxCollider collider;
 
     public float knockbackForce = 10;
@@ -21,9 +20,7 @@ public class PlayerWeapon : MonoBehaviour
             {
                 if (hit.transform.tag == "Enemy")
                 {
-                    if (impactEffectEnemy) Instantiate(impactEffectEnemy, hit.point, Quaternion.LookRotation(hit.normal));
-
-                    
+                    if (hitEffect) Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
                 }
             }
         }
