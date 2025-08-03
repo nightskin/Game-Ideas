@@ -61,14 +61,14 @@ public class Player : MonoBehaviour
 
     //For Combat Systems
     [Header("CombatControls")]
-    [SerializeField][Range(0,1)] float atkDamp = 0.1f;
+    [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
     Vector2 actionVector = Vector2.zero;
     float atkAngle = 0;
     [HideInInspector] public bool stunned = false;
 
     [Header("Wall Movement")]
     [SerializeField] bool wallRunningEnabled = false;
-    
+
     [SerializeField] int maxJumps = 2;
     [SerializeField] float maxCameraTiltAngle = 35;
     [SerializeField] float cameraTiltSpeed = 5;
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        if(!controller) controller = GetComponent<CharacterController>();
+        if (!controller) controller = GetComponent<CharacterController>();
         camera = Camera.main;
         moveSpeed = walkSpeed;
         lookSpeed = GameSettings.aimSensitivity;
@@ -98,6 +98,7 @@ public class Player : MonoBehaviour
         actions.LockOn.performed += LockOn_performed;
         actions.Attack.performed += Attack_performed;
         actions.Defend.performed += Defend_performed;
+        actions.Defend.canceled += Defend_canceled;
     }
 
     void Update()
@@ -113,7 +114,7 @@ public class Player : MonoBehaviour
 
 
         if (isWallRunning)
-        {   
+        {
             WallRun();
         }
         else
@@ -146,6 +147,7 @@ public class Player : MonoBehaviour
         actions.LockOn.performed -= LockOn_performed;
         actions.Attack.performed -= Attack_performed;
         actions.Defend.performed -= Defend_performed;
+        actions.Defend.canceled -= Defend_canceled;
     }
 
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -199,7 +201,7 @@ public class Player : MonoBehaviour
         moveSpeed = walkSpeed;
     }
 
-    private void LockOn_performed(InputAction.CallbackContext context)
+    private void LockOn_performed(InputAction.CallbackContext obj)
     {
         if (lockOnTarget == null)
         {
@@ -220,17 +222,21 @@ public class Player : MonoBehaviour
     {
         if (!actions.Defend.IsPressed())
         {
-            if (GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= atkDamp;
+            if (GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= actionDamp;
             animator.SetTrigger("slash");
         }
 
     }
 
-    private void Defend_performed(InputAction.CallbackContext context)
+    private void Defend_performed(InputAction.CallbackContext obj)
     {
-        if(!actions.Attack.IsPressed()) animator.SetTrigger("defend");
+        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed *= actionDamp;
     }
 
+    private void Defend_canceled(InputAction.CallbackContext obj)
+    {
+        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed = GameSettings.aimSensitivity;
+    }
 
     void NormalMovement()
     {
@@ -327,7 +333,7 @@ public class Player : MonoBehaviour
         {
             camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, amount);
         }
-  
+
     }
 
     void LookAround()
@@ -370,8 +376,13 @@ public class Player : MonoBehaviour
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
+        else if (actions.Defend.IsPressed())
+        {
+            animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
+            animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
+        }
     }
-    
+
 
     //Animation Events
     public void StartAttack()
@@ -392,17 +403,8 @@ public class Player : MonoBehaviour
     {
         armPivot.localEulerAngles = new Vector3(0, 0, 0);
         state = PlayerCombatState.DEF;
-        lookSpeed = GameSettings.aimSensitivity;
     }
 
-    public void EndBlock()
-    {
-        state = PlayerCombatState.IDLE;
-    }
 
-    public void Recoil()
-    {
-        state = PlayerCombatState.IDLE;
-        armPivot.localEulerAngles = new Vector3(0, 0, 0);
-    }
+
 }

@@ -128,7 +128,7 @@ public class CaveGenerator : MonoBehaviour
 
                         if (grid[cell.x + x, cell.y + y, cell.z + z] + incrementValue <= isoLevel)
                         {
-                            grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel + incrementValue;
+                            grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel;
                         }
                         else
                         {
@@ -643,14 +643,14 @@ public class CaveGenerator : MonoBehaviour
     int GetState(float[] points)
     {
         int state = 0;
-        if (points[0] > isoLevel) state |= 1;
-        if (points[1] > isoLevel) state |= 2;
-        if (points[2] > isoLevel) state |= 4;
-        if (points[3] > isoLevel) state |= 8;
-        if (points[4] > isoLevel) state |= 16;
-        if (points[5] > isoLevel) state |= 32;
-        if (points[6] > isoLevel) state |= 64;
-        if (points[7] > isoLevel) state |= 128;
+        if (points[0] >= isoLevel) state |= 1;
+        if (points[1] >= isoLevel) state |= 2;
+        if (points[2] >= isoLevel) state |= 4;
+        if (points[3] >= isoLevel) state |= 8;
+        if (points[4] >= isoLevel) state |= 16;
+        if (points[5] >= isoLevel) state |= 32;
+        if (points[6] >= isoLevel) state |= 64;
+        if (points[7] >= isoLevel) state |= 128;
         return state;
     }
 

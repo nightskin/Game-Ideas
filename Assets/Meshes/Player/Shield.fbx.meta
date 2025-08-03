@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Backing
-    second: {fileID: 2100000, guid: 762fa515fe2984f4a86a42bb10347147, type: 2}
+    second: {fileID: 2100000, guid: 2dd0ca2f666ad1044b472340e7f0971d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

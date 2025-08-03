@@ -676,7 +676,7 @@ MonoBehaviour:
   incrementValue: 0.01
   meshGeneration: 1
   numberOfSteps: 500
-  walk3D: 1
+  walk3D: 0
   numberOfRooms: 10
   hallwaySize: 1
   ceilngHeight: 2
