@@ -1,8 +1,7 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class SwordPlayer : MonoBehaviour
 {
     public enum PlayerCombatState
     {
@@ -20,7 +19,6 @@ public class Player : MonoBehaviour
     [SerializeField] CharacterController controller;
     public Animator animator;
     [SerializeField] Transform armPivot;
-    [SerializeField] PlayerWeapon weapon;
 
 
     //For Basic Controls
@@ -28,6 +26,7 @@ public class Player : MonoBehaviour
     float moveSpeed;
 
     Vector3 velocity = Vector3.zero;
+    [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
     [SerializeField][Min(0)] float cameraBobSpeed = 1f;
 
@@ -68,8 +67,6 @@ public class Player : MonoBehaviour
 
     [Header("Wall Movement")]
     [SerializeField] bool wallRunningEnabled = false;
-
-    [SerializeField] int maxJumps = 2;
     [SerializeField] float maxCameraTiltAngle = 35;
     [SerializeField] float cameraTiltSpeed = 5;
     float wallRunCamTiltTime;
@@ -131,11 +128,13 @@ public class Player : MonoBehaviour
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
 
-        Ray wallRayLeft = new Ray(transform.position, -transform.right);
-        Ray wallRayRight = new Ray(transform.position, transform.right);
-        Ray wallRayFLeft = new Ray(transform.position, -transform.right + transform.forward);
-        Ray wallRayFRight = new Ray(transform.position, transform.right + transform.forward);
-        isAgainstWall = Physics.Raycast(wallRayLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayRight, out wallHit, wallDistance) || Physics.Raycast(wallRayFLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayFRight, out wallHit, wallDistance);
+        if (wallRunningEnabled)
+        {
+            Ray wallRayLeft = new Ray(transform.position, -transform.right);
+            Ray wallRayRight = new Ray(transform.position, transform.right);
+            isAgainstWall = Physics.Raycast(wallRayLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayRight, out wallHit, wallDistance);
+        }
+        
     }
 
     void OnDestroy()
@@ -161,7 +160,7 @@ public class Player : MonoBehaviour
         else
         {
             //start wall Run
-            if (isAgainstWall && !grounded && wallRunningEnabled)
+            if (isAgainstWall && !grounded)
             {
                 if (wallHit.normal.y < 0.75f && wallHit.normal.y > -0.75f)
                 {
@@ -376,7 +375,7 @@ public class Player : MonoBehaviour
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
         }
-        else if (actions.Defend.IsPressed())
+        if (actions.Defend.IsPressed())
         {
             animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
             animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
@@ -389,12 +388,14 @@ public class Player : MonoBehaviour
     {
         state = PlayerCombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        animator.SetInteger("x", 0);
+        animator.SetInteger("y", 0);
     }
 
     public void EndAttack()
     {
         state = PlayerCombatState.IDLE;
-        armPivot.localEulerAngles = new Vector3(0, 0, 0);
+        armPivot.localEulerAngles = Vector3.zero;
         lookSpeed = GameSettings.aimSensitivity;
         if (!lockedOn) lockOnTarget = null;
     }

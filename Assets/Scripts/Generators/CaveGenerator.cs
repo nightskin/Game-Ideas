@@ -10,12 +10,13 @@ public class CaveGenerator : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
 
-    [Tooltip("Determines max size of the level")][Min(1)] public Vector3Int gridSize = Vector3Int.one * 100;
+    [Tooltip("Determines max size of the level")][Min(10)] public Vector3Int gridSize = Vector3Int.one * 100;
     [Tooltip("Controls how far apart everything is")][Min(0)] public float tileSize = 5;
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
     {
         RANDOM_WALKER,
+        TINY_KEEP,
         RANDOM_KEEP,
     }
     [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.RANDOM_KEEP;
@@ -26,9 +27,9 @@ public class CaveGenerator : MonoBehaviour
         MARCHING_CUBES_SMOOTH,
     }
     [SerializeField] float isoLevel = 0.1f;
-    [SerializeField] float incrementValue = 0.01f;
+    [SerializeField] float incrementLevel = 0.01f;
     [SerializeField] MeshGenerationAlgorithm meshGeneration = MeshGenerationAlgorithm.MARCHING_CUBES;
-
+    [SerializeField] float hallwayRadius = 1;
     float[,,] grid = null;
     List<Vector3> verts;
     List<Vector2> uvs;
@@ -46,7 +47,6 @@ public class CaveGenerator : MonoBehaviour
     [Space]
     [Header("TINY_KEEP Parameters")]
     [SerializeField][Min(1)] int numberOfRooms = 2;
-    [SerializeField][Min(1)] int hallwaySize = 1;
     [SerializeField][Min(1)] int ceilngHeight = 2;
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
@@ -93,9 +93,13 @@ public class CaveGenerator : MonoBehaviour
         {
             RandomWalker();
         }
+        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP)
+        {
+            TinyKeep();
+        }
         else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP)
         {
-            RandomKeep(numberOfRooms);
+            RandomKeep();
         }
     }
 
@@ -123,112 +127,66 @@ public class CaveGenerator : MonoBehaviour
                         continue;
                     }
 
-                    if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
-                    {
+                    
 
-                        if (grid[cell.x + x, cell.y + y, cell.z + z] + incrementValue <= isoLevel)
-                        {
-                            grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel;
-                        }
-                        else
-                        {
-                            grid[cell.x + x, cell.y + y, cell.z + z] += incrementValue;
-                        }
+                    if (grid[cell.x + x, cell.y + y, cell.z + z] < isoLevel)
+                    {
+                        grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel;
                     }
                     else
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z] = 1;
+                        grid[cell.x + x, cell.y + y, cell.z + z] += incrementLevel;
                     }
                 }
             }
         }
     }
     
+    void ActivateSphere(Vector3Int cell, float radius ,int maxX = 1, int maxY = 1, int maxZ = 1)
+    {
+        if (grid == null) return;
+        if (maxX < 1 || maxY < 1 || maxZ < 1) return;
+        for (int x = -maxX; x <= maxX; x++)
+        {
+            for (int y = -maxY; y <= maxY; y++)
+            {
+                for (int z = -maxZ; z <= maxZ; z++)
+                {
+                    if (cell.x + x >= gridSize.x - 1 || cell.x + x <= 0)
+                    {
+                        continue;
+                    }
+                    if (cell.y + y >= gridSize.y - 1 || cell.y + y <= 0)
+                    {
+                        continue;
+                    }
+                    if (cell.z + z >= gridSize.z - 1 || cell.z + z <= 0)
+                    {
+                        continue;
+                    }
+
+                    float dist = Vector3Int.Distance(cell, cell + new Vector3Int(x, y, z));
+
+                    if (dist < radius)
+                    {
+                        if (dist == 0) grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel;
+                        else grid[cell.x + x, cell.y + y, cell.z + z] += 1 / dist;
+                    }
+
+
+                }
+            }
+        }
+    }
+
     void GenerateMesh()
     {
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
-        if (meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES || meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH)
-        {
-            for (int x = 0; x < gridSize.x - 1; x++)
-            {
-                for (int y = 0; y < gridSize.y - 1; y++)
-                {
-                    for (int z = 0; z < gridSize.z - 1; z++)
-                    {
 
-                        float[] values = new float[]
-                        {
-                            grid[x,y,z+1],
-                            grid[x+1,y,z+1],
-                            grid[x+1,y,z],
-                            grid[x,y,z],
-                            grid[x,y+1,z+1],
-                            grid[x+1,y+1,z+1],
-                            grid[x+1,y+1,z],
-                            grid[x,y+1,z],
-                        };
-
-                        Vector3[] points = new Vector3[]
-                        {
-                            new Vector3(x,y,z+1) * tileSize,
-                            new Vector3(x+1,y,z+1) * tileSize,
-                            new Vector3(x+1,y,z) * tileSize,
-                            new Vector3(x,y,z) * tileSize,
-                            new Vector3(x,y+1,z+1) * tileSize,
-                            new Vector3(x+1,y+1,z+1) * tileSize,
-                            new Vector3(x+1,y+1,z) * tileSize,
-                            new Vector3(x,y+1,z) * tileSize,
-                        };
-
-                        int cubeIndex = GetState(values);
-
-                        Vector3[] triVerts = new Vector3[3];
-                        int triIndex = 0;
-
-                        int[] triangulation = MarchingCubesTables.triTable[cubeIndex];
-                        foreach (int edgeIndex in triangulation)
-                        {
-                            if (edgeIndex > -1)
-                            {
-                                int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
-                                int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
-
-                                Vector3 vertexPos = LerpPoint(values[a], values[b], points[a], points[b]);
-                                verts.Add(vertexPos);
-                                tris.Add(buffer);
-
-                                if (triIndex == 0)
-                                {
-                                    triVerts[0] = vertexPos;
-                                    triIndex++;
-                                }
-                                else if (triIndex == 1)
-                                {
-                                    triVerts[1] = vertexPos;
-                                    triIndex++;
-                                }
-                                else if (triIndex == 2)
-                                {
-                                    triVerts[2] = vertexPos;
-                                    uvs.AddRange(GetUVs(triVerts[0], triVerts[1], triVerts[2]));
-                                    triIndex = 0;
-                                }
-
-                                buffer++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else if (meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
+        if (meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
         {
             for (int x = 0; x < gridSize.x; x++)
             {
@@ -285,7 +243,86 @@ public class CaveGenerator : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            for (int x = 0; x < gridSize.x - 1; x++)
+            {
+                for (int y = 0; y < gridSize.y - 1; y++)
+                {
+                    for (int z = 0; z < gridSize.z - 1; z++)
+                    {
 
+                        float[] values = new float[]
+                        {
+                            grid[x,y,z+1],
+                            grid[x+1,y,z+1],
+                            grid[x+1,y,z],
+                            grid[x,y,z],
+                            grid[x,y+1,z+1],
+                            grid[x+1,y+1,z+1],
+                            grid[x+1,y+1,z],
+                            grid[x,y+1,z],
+                        };
+
+                        Vector3[] points = new Vector3[]
+                        {
+                            new Vector3(x,y,z+1) * tileSize,
+                            new Vector3(x+1,y,z+1) * tileSize,
+                            new Vector3(x+1,y,z) * tileSize,
+                            new Vector3(x,y,z) * tileSize,
+                            new Vector3(x,y+1,z+1) * tileSize,
+                            new Vector3(x+1,y+1,z+1) * tileSize,
+                            new Vector3(x+1,y+1,z) * tileSize,
+                            new Vector3(x,y+1,z) * tileSize,
+                        };
+
+                        int cubeIndex = GetState(values);
+
+                        Vector3[] triVerts = new Vector3[3];
+                        int triIndex = 0;
+
+                        int[] triangulation = MarchingCubesTables.triTable[cubeIndex];
+                        foreach (int edgeIndex in triangulation)
+                        {
+                            if (edgeIndex > -1)
+                            {
+                                int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
+                                int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
+
+                                Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
+                                if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = LerpPoint(values[a], values[b], points[a], points[b]);
+                                
+                                verts.Add(vertexPos);
+                                tris.Add(buffer);
+
+                                if (triIndex == 0)
+                                {
+                                    triVerts[0] = vertexPos;
+                                    triIndex++;
+                                }
+                                else if (triIndex == 1)
+                                {
+                                    triVerts[1] = vertexPos;
+                                    triIndex++;
+                                }
+                                else if (triIndex == 2)
+                                {
+                                    triVerts[2] = vertexPos;
+                                    uvs.AddRange(GetUVs(triVerts[0], triVerts[1], triVerts[2]));
+                                    triIndex = 0;
+                                }
+
+                                buffer++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         mesh.Clear();
         mesh.vertices = verts.ToArray();
@@ -302,19 +339,19 @@ public class CaveGenerator : MonoBehaviour
     {
         Vector3Int currentIndex = gridSize / 2;
 
-            for (int step = 0; step < numberOfSteps; step++)
-            {
-                int x = UnityEngine.Random.Range(-1, 2);
-                int y = 0;
-                if (walk3D) y = UnityEngine.Random.Range(-1, 2);
-                int z = UnityEngine.Random.Range(-1, 2);
+        for (int step = 0; step < numberOfSteps; step++)
+        {
+            int x = UnityEngine.Random.Range(-1, 2);
+            int y = 0;
+            if (walk3D) y = UnityEngine.Random.Range(-1, 2);
+            int z = UnityEngine.Random.Range(-1, 2);
 
-                currentIndex += new Vector3Int(x, y, z);
-                ActivateBox(currentIndex, hallwaySize, hallwaySize, hallwaySize);
-            }
+            currentIndex += new Vector3Int(x, y, z);
+            ActivateBox(currentIndex, ceilngHeight, ceilngHeight, ceilngHeight);
+        }
     }
 
-    void RandomKeep(int numberOfRooms)
+    void RandomKeep()
     {
         //Create Rooms
         List<Vector3Int> entrances = new List<Vector3Int>();
@@ -345,18 +382,51 @@ public class CaveGenerator : MonoBehaviour
 
 
                 currentIndex += new Vector3Int(x, y, z);
-                ActivateBox(currentIndex, hallwaySize, ceilngHeight, hallwaySize);
+                ActivateBox(currentIndex, ceilngHeight, ceilngHeight, ceilngHeight);
 
             }
             exits.Add(currentIndex);
         }
-
 
         //Create Hallways
         for (int r = 0; r < numberOfRooms - 1; r++)
         {
             Vector3Int start = entrances[r];
             Vector3Int end = exits[r + 1];
+            if (useIndirectHallways)
+            {
+                GenerateHallway2(start, end);
+            }
+            else
+            {
+                GenerateHallway(start, end);
+            }
+        }
+    }
+
+    void TinyKeep()
+    {
+        //Create Rooms
+        List<Vector3Int> pointsOfInterest = new List<Vector3Int>();
+        for (int r = 0; r < numberOfRooms; r++)
+        {
+            int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+            int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+
+            int rx = UnityEngine.Random.Range(roomSizeX, gridSize.x - roomSizeX);
+            int ry = UnityEngine.Random.Range(ceilngHeight, gridSize.y - ceilngHeight);
+            int rz = UnityEngine.Random.Range(roomSizeZ, gridSize.z - roomSizeZ);
+            Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
+            ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
+            pointsOfInterest.Add(roomPosition);
+        }
+
+        //Create Hallways
+        for (int r = 0; r < numberOfRooms - 1; r++)
+        {
+            Vector3Int start = pointsOfInterest[r];
+            Vector3Int end = pointsOfInterest[r + 1];
+            
             if (useIndirectHallways)
             {
                 GenerateHallway2(start, end);
@@ -393,7 +463,7 @@ public class CaveGenerator : MonoBehaviour
             }
 
             currentPos += chosenDirection;
-            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateSphere(currentPos, hallwayRadius ,ceilngHeight, ceilngHeight, ceilngHeight);
         }
     }
 
@@ -411,7 +481,7 @@ public class CaveGenerator : MonoBehaviour
             {
                 currentPos.x--;
             }
-            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateSphere(currentPos, hallwayRadius, ceilngHeight, ceilngHeight, ceilngHeight);
         }
 
         while (currentPos.z != end.z)
@@ -424,7 +494,7 @@ public class CaveGenerator : MonoBehaviour
             {
                 currentPos.z--;
             }
-            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateSphere(currentPos, hallwayRadius, ceilngHeight, ceilngHeight, ceilngHeight);
         }
 
         while (currentPos.y != end.y)
@@ -437,7 +507,7 @@ public class CaveGenerator : MonoBehaviour
             {
                 currentPos.y--;
             }
-            ActivateBox(currentPos, hallwaySize, ceilngHeight, hallwaySize);
+            ActivateSphere(currentPos, hallwayRadius, ceilngHeight, ceilngHeight, ceilngHeight);
         }
     }
 
@@ -659,5 +729,5 @@ public class CaveGenerator : MonoBehaviour
         float amount = (isoLevel - v1) / (v2 - v1);
         return Vector3.Lerp(pos1, pos2, amount);
     }
-
+    
 }

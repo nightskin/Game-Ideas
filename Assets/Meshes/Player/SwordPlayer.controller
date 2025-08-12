@@ -156,6 +156,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 4
     m_ConditionEvent: x
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: y
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6074802698183388383}
   m_Solo: 0
@@ -253,6 +256,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 4
     m_ConditionEvent: y
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: x
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5047561350567517767}
   m_Solo: 0
@@ -299,6 +305,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: x
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: y
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -839420465104839411}
@@ -372,6 +381,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 3
     m_ConditionEvent: y
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: x
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -839420465104839411}
   m_Solo: 0
@@ -436,6 +448,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: x
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: y
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5047561350567517767}
@@ -567,7 +582,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Player
+  m_Name: SwordPlayer
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: slash
@@ -799,6 +814,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 4
     m_ConditionEvent: y
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: x
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -500687515630379947}
   m_Solo: 0
@@ -823,6 +841,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: x
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: y
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -500687515630379947}
@@ -1006,6 +1027,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: y
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: x
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6074802698183388383}

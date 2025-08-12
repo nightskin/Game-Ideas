@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shield
+  m_Name: Accent
   m_Shader: {fileID: -6465566751694194690, guid: 55a2864a9d1a77e45b7df2182f4af488, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

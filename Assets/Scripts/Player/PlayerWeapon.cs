@@ -2,9 +2,7 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
-
-
-    [SerializeField] Player player;
+    [SerializeField] SwordPlayer player;
     [SerializeField] GameObject hitEffect;
     [SerializeField] BoxCollider collider;
 
@@ -14,7 +12,7 @@ public class PlayerWeapon : MonoBehaviour
 
     void Update()
     {
-        if (player.state == Player.PlayerCombatState.ATK)
+        if (player.state == SwordPlayer.PlayerCombatState.ATK)
         {
             if (Physics.BoxCast(transform.TransformPoint(collider.center), collider.size, -transform.right, out RaycastHit hit, transform.rotation, 1))
             {
