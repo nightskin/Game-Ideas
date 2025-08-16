@@ -407,6 +407,17 @@
                 },
                 {
                     "name": "",
+                    "id": "94de06df-5465-4790-82c9-4950f13c32a1",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6ea719ee-bf7f-4769-b4b1-3fa1be79f5b1",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",

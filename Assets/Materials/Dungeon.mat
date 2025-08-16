@@ -144,18 +144,18 @@ Material:
     - _Tile: 0.1
     - _UseDither: 1
     m_Colors:
-    - _CeilingTint: {r: 0.8307701, g: 0.23839766, b: 0.16826946, a: 1}
+    - _CeilingTint: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}
     - _DitherDark: {r: 0, g: 0, b: 0, a: 1}
     - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
-    - _FloorTint: {r: 0.8307701, g: 0.23839766, b: 0.16826946, a: 1}
+    - _FloorTint: {r: 1, g: 1, b: 1, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _OffsetWall: {r: 0, g: 0, b: 0, a: 0}
     - _Tile: {r: 1, g: 1, b: 0, a: 0}
     - _TileWall: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _WallTint: {r: 0.4339623, g: 0.096822724, b: 0.059362777, a: 1}
+    - _WallTint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

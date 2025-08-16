@@ -1,30 +1,21 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SwordPlayer : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    public enum PlayerCombatState
-    {
-        IDLE,
-        ATK,
-        DEF,
-    }
-    [HideInInspector] public PlayerCombatState state = PlayerCombatState.IDLE;
 
     //Components
     [Header("Components")]
     Controls controls;
-    public static Controls.PlayerActions actions;
+    [HideInInspector] public Controls.PlayerActions actions;
+    [SerializeField] PlayerHUD hud;
     [SerializeField] Camera camera;
     [SerializeField] CharacterController controller;
-    public Animator animator;
-    [SerializeField] Transform armPivot;
 
 
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
-
     Vector3 velocity = Vector3.zero;
     [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
@@ -35,9 +26,10 @@ public class SwordPlayer : MonoBehaviour
     bool grounded;
     RaycastHit slopeHit;
     bool jumping = false;
-    public static float lookSpeed;
+    [HideInInspector] public float lookSpeed;
 
     Vector3 moveDirection;
+    Vector3 dashDirection;
     float xRot = 0;
     float yRot = 0;
 
@@ -52,25 +44,25 @@ public class SwordPlayer : MonoBehaviour
 
     //LockOn System
     [Header("LockOnSystem")]
+    [SerializeField] bool lockOnSystemEnabled = true;
     [SerializeField] float lockOnDistance = 500;
     [SerializeField] LayerMask lockOnLayer;
     [HideInInspector] public Transform lockOnTarget = null;
-    bool lockedOn = false;
+    [HideInInspector] public bool lockedOn = false;
 
 
-    //For Combat Systems
-    [Header("CombatControls")]
-    [SerializeField][Range(0, 1)] float actionDamp = 0.1f;
-    Vector2 actionVector = Vector2.zero;
-    float atkAngle = 0;
-    [HideInInspector] public bool stunned = false;
 
     [Header("Wall Movement")]
     [SerializeField] bool wallRunningEnabled = false;
+    [SerializeField] float maxWallRunTime = 5;
+    [SerializeField] float wallRunSpeed = 30;
+    [SerializeField] float wallJumpForce = 5;
     [SerializeField] float maxCameraTiltAngle = 35;
     [SerializeField] float cameraTiltSpeed = 5;
-    float wallRunCamTiltTime;
     [SerializeField][Min(0)] float wallDistance = 0.7f;
+
+    float wallRunCamTiltTime;
+    float wallRunTimer = 0;
     int numberOfJumps = 0;
     bool isWallRunning = false;
     bool isAgainstWall = false;
@@ -79,6 +71,7 @@ public class SwordPlayer : MonoBehaviour
     void Awake()
     {
         if (!controller) controller = GetComponent<CharacterController>();
+        if (!hud) hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
         camera = Camera.main;
         moveSpeed = walkSpeed;
         lookSpeed = GameSettings.aimSensitivity;
@@ -93,9 +86,7 @@ public class SwordPlayer : MonoBehaviour
         actions.Sprint.canceled += Sprint_canceled;
         actions.Dash.performed += Dash_performed;
         actions.LockOn.performed += LockOn_performed;
-        actions.Attack.performed += Attack_performed;
-        actions.Defend.performed += Defend_performed;
-        actions.Defend.canceled += Defend_canceled;
+
     }
 
     void Update()
@@ -119,8 +110,6 @@ public class SwordPlayer : MonoBehaviour
             NormalMovement();
         }
 
-
-        CombatControls();
     }
 
     void FixedUpdate()
@@ -144,9 +133,7 @@ public class SwordPlayer : MonoBehaviour
         actions.Sprint.canceled -= Sprint_canceled;
         actions.Dash.performed -= Dash_performed;
         actions.LockOn.performed -= LockOn_performed;
-        actions.Attack.performed -= Attack_performed;
-        actions.Defend.performed -= Defend_performed;
-        actions.Defend.canceled -= Defend_canceled;
+
     }
 
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -154,21 +141,20 @@ public class SwordPlayer : MonoBehaviour
         if (isWallRunning)
         {
             //Wall jump
-            velocity = wallHit.normal + Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(wallJumpForce * -2 * Physics.gravity.y);
             isWallRunning = false;
+            return;
         }
         else
         {
             //start wall Run
             if (isAgainstWall && !grounded)
             {
-                if (wallHit.normal.y < 0.75f && wallHit.normal.y > -0.75f)
-                {
-                    wallRunCamTiltTime = 0;
-                    numberOfJumps = 0;
-                    isWallRunning = true;
-                }
-
+                wallRunTimer = maxWallRunTime;
+                wallRunCamTiltTime = 0;
+                numberOfJumps = 0;
+                isWallRunning = true;
+                return;
             }
             // Normal Jump
             if (grounded || numberOfJumps < maxJumps)
@@ -176,16 +162,17 @@ public class SwordPlayer : MonoBehaviour
                 velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
                 jumping = true;
                 numberOfJumps++;
+                return;
             }
         }
     }
 
     private void Dash_performed(InputAction.CallbackContext obj)
     {
-        if (!dashing)
+        if (!dashing && grounded)
         {
+            dashDirection = moveDirection.normalized;
             dashing = true;
-            moveSpeed = dashSpeed;
             dashTimer = dashTime;
         }
     }
@@ -202,39 +189,24 @@ public class SwordPlayer : MonoBehaviour
 
     private void LockOn_performed(InputAction.CallbackContext obj)
     {
-        if (lockOnTarget == null)
+        if (lockOnSystemEnabled)
         {
-            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
+            if (lockOnTarget == null)
             {
-                lockOnTarget = hit.transform;
-                lockedOn = true;
+                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
+                {
+                    hud.animator.SetBool("lock", true);
+                    lockOnTarget = hit.transform;
+                    lockedOn = true;
+                }
+            }
+            else
+            {
+                lockOnTarget = null;
+                lockedOn = false;
+                hud.animator.SetBool("lock", false);
             }
         }
-        else
-        {
-            lockOnTarget = null;
-            lockedOn = false;
-        }
-    }
-
-    private void Attack_performed(InputAction.CallbackContext obj)
-    {
-        if (!actions.Defend.IsPressed())
-        {
-            if (GameSettings.slowCameraMovementWhenAttacking) lookSpeed *= actionDamp;
-            animator.SetTrigger("slash");
-        }
-
-    }
-
-    private void Defend_performed(InputAction.CallbackContext obj)
-    {
-        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed *= actionDamp;
-    }
-
-    private void Defend_canceled(InputAction.CallbackContext obj)
-    {
-        if (GameSettings.slowCameraMovementWhenDefending) lookSpeed = GameSettings.aimSensitivity;
     }
 
     void NormalMovement()
@@ -250,19 +222,18 @@ public class SwordPlayer : MonoBehaviour
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
         float m = actions.Move.ReadValue<Vector2>().magnitude;
+        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
 
         //Move Input
-        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
         if (dashing)
         {
             dashTimer -= Time.deltaTime;
             if (dashTimer > 0)
             {
-                controller.Move(moveDirection * dashSpeed * Time.deltaTime);
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
             }
             else
             {
-                moveSpeed = walkSpeed;
                 dashing = false;
             }
         }
@@ -281,7 +252,7 @@ public class SwordPlayer : MonoBehaviour
         }
 
         //Gravity
-        velocity.y += Physics.gravity.y * Time.deltaTime;
+        velocity += new Vector3(0, -10, 0) * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
         //Handle Moving Down slopes
@@ -293,12 +264,10 @@ public class SwordPlayer : MonoBehaviour
 
     void WallRun()
     {
-
         float x = actions.Move.ReadValue<Vector2>().x;
         float z = actions.Move.ReadValue<Vector2>().y;
-        float m = actions.Move.ReadValue<Vector2>().magnitude;
 
-        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+        moveDirection = transform.right * x + transform.forward * z;
 
         Vector3 wallNormal = wallHit.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
@@ -308,10 +277,10 @@ public class SwordPlayer : MonoBehaviour
             wallForward = -wallForward;
         }
 
-        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)).normalized * runSpeed * Time.deltaTime);
+        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)).normalized * wallRunSpeed * Time.deltaTime);
+        wallRunTimer -= Time.deltaTime;
 
-
-        if (grounded || !isAgainstWall || Vector3.Dot(moveDirection, -wallNormal) < 0)
+        if (grounded || !isAgainstWall || Vector3.Dot(moveDirection, -wallNormal) < 0 || wallRunTimer <= 0)
         {
             isWallRunning = false;
         }
@@ -356,56 +325,13 @@ public class SwordPlayer : MonoBehaviour
         Vector3 dirToTarget = (lockOnTarget.position - camera.transform.position).normalized;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, walkSpeed * Time.deltaTime);
+        //xRot = Mathf.LerpAngle(xRot, rotToTarget.x, walkSpeed * Time.deltaTime);
+        xRot = rotToTarget.x;
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
 
-        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, walkSpeed * Time.deltaTime);
+        //yRot = Mathf.LerpAngle(yRot, rotToTarget.y, walkSpeed * Time.deltaTime);
+        yRot = rotToTarget.y;
         transform.localEulerAngles = new Vector3(0, yRot, 0);
-
-
     }
-
-    void CombatControls()
-    {
-        actionVector = actions.Look.ReadValue<Vector2>().normalized;
-        if (actions.Attack.IsPressed())
-        {
-            if (actionVector.magnitude > 0)
-            {
-                atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
-            }
-        }
-        if (actions.Defend.IsPressed())
-        {
-            animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
-            animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
-        }
-    }
-
-
-    //Animation Events
-    public void StartAttack()
-    {
-        state = PlayerCombatState.ATK;
-        armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
-        animator.SetInteger("x", 0);
-        animator.SetInteger("y", 0);
-    }
-
-    public void EndAttack()
-    {
-        state = PlayerCombatState.IDLE;
-        armPivot.localEulerAngles = Vector3.zero;
-        lookSpeed = GameSettings.aimSensitivity;
-        if (!lockedOn) lockOnTarget = null;
-    }
-
-    public void StartBlock()
-    {
-        armPivot.localEulerAngles = new Vector3(0, 0, 0);
-        state = PlayerCombatState.DEF;
-    }
-
-
 
 }
