@@ -1,14 +1,9 @@
 fileFormatVersion: 2
-guid: c8ddc2fcb40ee7548ad9a222ef9fa23c
+guid: 03228a598f707a64f85c5e17eda8df81
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Accent
-    second: {fileID: 2100000, guid: 2dd0ca2f666ad1044b472340e7f0971d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -19,11 +14,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Handle
     second: {fileID: 2100000, guid: 7265689a3f8bce742b0519c3b3939d5e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Hilt
-    second: {fileID: 2100000, guid: c0aebf1a609d65047bb46ab40cfffeca, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -53,7 +43,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.01
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -108,7 +98,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.0001
+    globalScale: 0.01
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

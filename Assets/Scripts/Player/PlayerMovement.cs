@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("General")]
     float moveSpeed;
     Vector3 velocity = Vector3.zero;
+    [SerializeField] bool jumpingEnabled;
     [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
     [SerializeField][Min(0)] float cameraBobSpeed = 1f;
@@ -48,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float lockOnDistance = 500;
     [SerializeField] LayerMask lockOnLayer;
     [HideInInspector] public Transform lockOnTarget = null;
-    [HideInInspector] public bool lockedOn = false;
+    float lockOnLerp = 0;
 
 
 
@@ -70,9 +71,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
-        if (!controller) controller = GetComponent<CharacterController>();
-        if (!hud) hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
-        camera = Camera.main;
         moveSpeed = walkSpeed;
         lookSpeed = GameSettings.aimSensitivity;
 
@@ -116,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
-
+        
         if (wallRunningEnabled)
         {
             Ray wallRayLeft = new Ray(transform.position, -transform.right);
@@ -147,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            //start wall Run
+            // Start Wall Run
             if (isAgainstWall && !grounded)
             {
                 wallRunTimer = maxWallRunTime;
@@ -157,19 +155,22 @@ public class PlayerMovement : MonoBehaviour
                 return;
             }
             // Normal Jump
-            if (grounded || numberOfJumps < maxJumps)
+            if (jumpingEnabled)
             {
-                velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-                jumping = true;
-                numberOfJumps++;
-                return;
+                if (numberOfJumps < maxJumps)
+                {
+                    velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+                    jumping = true;
+                    numberOfJumps++;
+                    return;
+                }
             }
         }
     }
 
     private void Dash_performed(InputAction.CallbackContext obj)
     {
-        if (!dashing && grounded)
+        if (!dashing)
         {
             dashDirection = moveDirection.normalized;
             dashing = true;
@@ -197,13 +198,12 @@ public class PlayerMovement : MonoBehaviour
                 {
                     hud.animator.SetBool("lock", true);
                     lockOnTarget = hit.transform;
-                    lockedOn = true;
+                    lockOnLerp = 0;
                 }
             }
             else
             {
                 lockOnTarget = null;
-                lockedOn = false;
                 hud.animator.SetBool("lock", false);
             }
         }
@@ -322,15 +322,15 @@ public class PlayerMovement : MonoBehaviour
 
     void LookAtTarget()
     {
-        Vector3 dirToTarget = (lockOnTarget.position - camera.transform.position).normalized;
+        Vector3 dirToTarget = lockOnTarget.position - camera.transform.position;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        //xRot = Mathf.LerpAngle(xRot, rotToTarget.x, walkSpeed * Time.deltaTime);
-        xRot = rotToTarget.x;
-        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
+        if (lockOnLerp < 1) lockOnLerp += 2 * Time.deltaTime;
 
-        //yRot = Mathf.LerpAngle(yRot, rotToTarget.y, walkSpeed * Time.deltaTime);
-        yRot = rotToTarget.y;
+        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnLerp);
+        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnLerp);
+
+        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }
 

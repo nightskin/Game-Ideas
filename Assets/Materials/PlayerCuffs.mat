@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sleeve
+  m_Name: PlayerCuffs
   m_Shader: {fileID: -6465566751694194690, guid: 55a2864a9d1a77e45b7df2182f4af488, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -39,7 +39,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 3c803c35b6579e2428728f763cfaaee0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3c19888b7c8b38a449c212fffe538982, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -136,7 +136,6 @@ Material:
     - _Metallic: 0
     - _Min: 0.3
     - _OcclusionStrength: 1
-    - _OutlineWidth: 7.17
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -155,9 +154,8 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.3679245, g: 0.13562721, b: 0, a: 1}
-    - _Color: {r: 0.36792448, g: 0.13562718, b: 0, a: 1}
-    - _DarkColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}
@@ -165,14 +163,12 @@ Material:
     - _DitherLight: {r: 1, g: 1, b: 1, a: 1}
     - _DitherTint: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _LightColor: {r: 0.6886792, g: 0.24681868, b: 0.18516374, a: 1}
-    - _LitColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MainColor: {r: 0.5754717, g: 0.23841508, b: 0.19272874, a: 1}
+    - _LightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MainColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
-    - _ShadowColor: {r: 0.4056604, g: 0.13866308, b: 0.047837302, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 0.20392159, g: 0.20392159, b: 1, a: 1}
-    - _Tint2: {r: 0, g: 0, b: 1, a: 1}
+    - _Tint1: {r: 0, g: 0, b: 1, a: 1}
+    - _Tint2: {r: 0, g: 0, b: 0.5, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
