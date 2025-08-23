@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 public class PlayerSword : MonoBehaviour
 {
     [SerializeField] PlayerCombatControls combatControls;
@@ -10,10 +11,9 @@ public class PlayerSword : MonoBehaviour
 
     [Min(1)] public int damage = 1;
 
-    [HideInInspector] public bool trailOn;
     void RenderTrail()
     {
-        if (trailOn)
+        if (trail.gameObject.activeSelf)
         {
             for (int t = 0; t < trail.positionCount; t++)
             {
@@ -24,29 +24,37 @@ public class PlayerSword : MonoBehaviour
 
     void Start()
     {
-        trailOn = false;
-        trail.positionCount = 5;
-        trail.useWorldSpace = false;
+        if (trail)
+        {
+            trail.startWidth = Vector3.Distance(bladeBase.position, bladeTip.position);
+            trail.endWidth = 0;
+            trail.positionCount = 5;
+            trail.useWorldSpace = false;
+            trail.gameObject.SetActive(false);
+        }
+
     }
 
     void Update()
     {
-        if (combatControls.state == PlayerCombatControls.PlayerSwordState.ATK)
+        if (combatControls.state == PlayerCombatControls.PlayerCombatState.ATK)
         {
             RenderTrail();
             if (Physics.Linecast(bladeBase.position, bladeTip.position, out RaycastHit rayHit, hitLayer))
             {
                 if (rayHit.transform.tag == "Enemy")
                 {
-                    Debug.Log("You Scored A Hit");
+                    var fx = Instantiate(hitEffectPrefab, rayHit.point, Quaternion.identity);
                 }
-                else if (rayHit.transform.tag == "EnemyWeapon")
+                else if (rayHit.transform.tag == "EnemyWeapon" || rayHit.transform.tag == "Solid")
                 {
-                    Debug.Log("Your Attack Was Blocked");
+                    var fx = Instantiate(hitEffectPrefab, rayHit.point, Quaternion.identity);
+                    fx.GetComponent<VisualEffect>().SetVector4("Color", new Vector4(4, 4, 4, 1));
+                    combatControls.state = PlayerCombatControls.PlayerCombatState.IDLE;
                 }
             }
         }
-        else if (combatControls.state == PlayerCombatControls.PlayerSwordState.DEF)
+        else if (combatControls.state == PlayerCombatControls.PlayerCombatState.DEF)
         {
             if (Physics.Linecast(bladeBase.position, bladeTip.position, out RaycastHit rayHit, hitLayer))
             {

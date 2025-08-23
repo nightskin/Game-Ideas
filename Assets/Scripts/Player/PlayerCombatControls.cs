@@ -4,13 +4,13 @@ using UnityEngine.InputSystem;
 public class PlayerCombatControls : MonoBehaviour
 {
 
-    public enum PlayerSwordState
+    public enum PlayerCombatState
     {
         IDLE,
         ATK,
         DEF,
     }
-    [HideInInspector] public PlayerSwordState state = PlayerSwordState.IDLE;
+    [HideInInspector] public PlayerCombatState state = PlayerCombatState.IDLE;
     public Animator animator;
     public Transform armPivot;
     public PlayerMovement movementControls;
@@ -22,20 +22,20 @@ public class PlayerCombatControls : MonoBehaviour
 
     void Start()
     {
-        movementControls.actions.Attack.performed += Attack_performed;
-        movementControls.actions.Defend.performed += Defend_performed;
-        movementControls.actions.Defend.canceled += Defend_canceled;
+        Game.controls.Player.Attack.performed += Attack_performed;
+        Game.controls.Player.Defend.performed += Defend_performed;
+        Game.controls.Player.Defend.canceled += Defend_canceled;
     }
 
     void Update()
     {
-        Vector2 actionVector = movementControls.actions.Look.ReadValue<Vector2>();
-        if (movementControls.actions.Defend.ReadValue<float>() > triggerThreshold)
+        Vector2 actionVector = Game.controls.Player.Look.ReadValue<Vector2>();
+        if (Game.controls.Player.Defend.ReadValue<float>() > triggerThreshold)
         {
             animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
             animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
         }
-        if (movementControls.actions.Attack.ReadValue<float>() > triggerThreshold)
+        if (Game.controls.Player.Attack.ReadValue<float>() > triggerThreshold)
         {
             atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
         }
@@ -43,16 +43,16 @@ public class PlayerCombatControls : MonoBehaviour
 
     void OnDestroy()
     {
-        movementControls.actions.Attack.performed -= Attack_performed;
-        movementControls.actions.Defend.performed -= Defend_performed;
-        movementControls.actions.Defend.canceled -= Defend_canceled;
+        Game.controls.Player.Attack.performed -= Attack_performed;
+        Game.controls.Player.Defend.performed -= Defend_performed;
+        Game.controls.Player.Defend.canceled -= Defend_canceled;
     }
 
     private void Attack_performed(InputAction.CallbackContext obj)
     {
         if (obj.ReadValue<float>() > triggerThreshold)
         {
-            if (GameSettings.slowCameraMovementWhenAttacking) movementControls.lookSpeed *= actionDamp;
+            if (Game.slowCameraMovementWhenAttacking) movementControls.lookSpeed *= actionDamp;
             animator.SetTrigger("slash");
         }
     }
@@ -61,40 +61,39 @@ public class PlayerCombatControls : MonoBehaviour
     {
         if (obj.ReadValue<float>() > triggerThreshold)
         {
-            if (GameSettings.slowCameraMovementWhenDefending) movementControls.lookSpeed *= actionDamp;
+            if (Game.slowCameraMovementWhenDefending) movementControls.lookSpeed *= actionDamp;
         }
     }
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
-        if (GameSettings.slowCameraMovementWhenDefending) movementControls.lookSpeed = GameSettings.aimSensitivity;
+        if (Game.slowCameraMovementWhenDefending) movementControls.lookSpeed = Game.aimSensitivity;
     }
 
     //Animation Events
-    [SerializeField] void TurnOnTrail()
+    [SerializeField]
+    void TurnOnTrail()
     {
-        if (!sword.trailOn) sword.trailOn = true;
+        if (!sword.trail.gameObject.activeSelf) sword.trail.gameObject.SetActive(true);
     }
 
     [SerializeField] void TurnOffTrail()
     {
-        if (sword.trailOn) sword.trailOn = false;
-
+        if (sword.trail.gameObject.activeSelf) sword.trail.gameObject.SetActive(false);
         for (int t = 0; t < sword.trail.positionCount; t++)
         {
             sword.trail.SetPosition(t, Vector3.zero);
         }
-
     }
 
     [SerializeField] void Reset()
     {
-        state = PlayerSwordState.IDLE;
+        if(state != PlayerCombatState.IDLE) state = PlayerCombatState.IDLE;
     }
 
     [SerializeField] void StartSlash()
     {
-        state = PlayerSwordState.ATK;
+        state = PlayerCombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         animator.SetInteger("x", 0);
         animator.SetInteger("y", 0);
@@ -102,14 +101,14 @@ public class PlayerCombatControls : MonoBehaviour
 
     [SerializeField] void EndSlash()
     {
-        state = PlayerSwordState.IDLE;
+        state = PlayerCombatState.IDLE;
         armPivot.localEulerAngles = Vector3.zero;
-        movementControls.lookSpeed = GameSettings.aimSensitivity;
+        movementControls.lookSpeed = Game.aimSensitivity;
     }
 
     [SerializeField] void Block()
     {
-        state = PlayerSwordState.DEF;
+        state = PlayerCombatState.DEF;
         armPivot.localEulerAngles = Vector3.zero;
     }
 }

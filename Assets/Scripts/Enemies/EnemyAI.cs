@@ -2,28 +2,26 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] float speed = 20;
+    [SerializeField] float speed = 10;
     [SerializeField] float visibilityDistance;
+    [SerializeField] float combatDistance = 50;
     [SerializeField] float minStrikingDistance = 2;
     [SerializeField] float maxStrikingDistance = 4;
 
-     
+    [SerializeField] LayerMask targetLayer;
     [SerializeField] PlayerCombatControls target;
-    [SerializeField] EnemyWeapon weapon;
     [SerializeField] Animator animator;
-    [SerializeField] Transform armPivot;
-    [SerializeField] LayerMask targetMask;
+
 
     bool canSeePlayer = false;
-    bool finishedCurrentAction = true;
-    int currentAction = 0;
-    float transition = 0;
-    float atkAngle = 0;
+    float transitionTimer = 0;
+    float transitionTime = 0;
+    int strafeDirection;
 
     void OnDrawGizmos()
     {
-        Gizmos.color = new Color(1, 0, 0, 0.5f);
-        Gizmos.DrawSphere(transform.position, visibilityDistance);
+        Gizmos.color = new Color(1, 0, 0, 1);
+        Gizmos.DrawLine(transform.position, transform.position + (transform.forward * visibilityDistance));
     }
 
     void Start()
@@ -39,37 +37,23 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        Fight();
-    }
-    //Patrol Functions
-    void Patrol()
-    {
-        transform.eulerAngles += Vector3.up * 45 * Time.deltaTime;
-    }
-
-    bool CheckLineOfSightToTarget()
-    {
-        if (Vector3.Distance(transform.position, target.transform.position) <= visibilityDistance)
+        if (canSeePlayer || Vector3.Distance(target.transform.position, transform.position) <= combatDistance)
         {
-            Vector3 toTarget = target.transform.position - transform.position;
-            if (Physics.Raycast(transform.position, toTarget, out RaycastHit hitInfo, visibilityDistance, targetMask))
-            {
-                if (hitInfo.transform.tag == "Player")
-                {
-                    return true;
-                }
-            }
+            Fight();
         }
-        return false;
+        else
+        {
+            Patrol();
+        }
     }
 
-    //Combat Functions
+    //States
     void Fight()
     {
-        //Look Towards Player
+        //Look At Target
         Vector3 lookDir = target.transform.position - transform.position;
         Quaternion lookRot = Quaternion.LookRotation(lookDir);
-        transform.localEulerAngles = new Vector3(0, Mathf.LerpAngle(transform.localEulerAngles.y, lookRot.eulerAngles.y, 10 * Time.deltaTime), 0);
+        transform.localEulerAngles = new Vector3(0, lookRot.eulerAngles.y, 0);
 
         float distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
         if (distanceToTarget > maxStrikingDistance)
@@ -82,19 +66,50 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            if (finishedCurrentAction)
+            if (transitionTimer < transitionTime)
             {
-                currentAction = Random.Range(0, 2);
-                finishedCurrentAction = false;
-                transition = 0;
+                transitionTimer += Time.deltaTime;
+                Strafe();
             }
             else
             {
-                if (currentAction == 0) Attack();
-                else if (currentAction == 1) ChangeGaurd();
+                int d = Random.Range(0, 3);
+                if (d == 0)
+                {
+                    ChangeGaurd();
+                }
+                else
+                {
+                    Attack();
+                }
+                strafeDirection = Random.Range(-1, 2);
+                transitionTime = Random.Range(0, 5);
+                transitionTimer = 0;
             }
         }
     }
+
+    void Patrol()
+    {
+        transform.eulerAngles += Vector3.up * 45 * Time.deltaTime;
+    }
+
+    //Patrol Functions
+    bool CheckLineOfSightToTarget()
+    {
+        if (Physics.SphereCast(transform.position, 0.5f ,transform.forward, out RaycastHit hitInfo, visibilityDistance, targetLayer))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //Combat Functions
+    void Strafe()
+    {
+        transform.position += transform.right * speed * Time.deltaTime * strafeDirection;
+    }
+
     void Advance()
     {
         transform.position += transform.forward * speed * Time.deltaTime;
@@ -107,46 +122,12 @@ public class EnemyAI : MonoBehaviour
 
     void Attack()
     {
-        if (transition == 0)
-        {
-            int a = Random.Range(0, 5);
-            if (a == 0) atkAngle = 0;
-            else if (a == 1) atkAngle = -90;
-            else if (a == 2) atkAngle = 90;
-            else if (a == 3) atkAngle = -45;
-            else atkAngle = 45;
-        }
-
-        transition += Time.deltaTime;
-        armPivot.localEulerAngles = new Vector3(0, 0, Mathf.LerpAngle(armPivot.localEulerAngles.z, atkAngle, transition));
-        if (armPivot.localEulerAngles.z == atkAngle)
-        {
-            animator.SetTrigger("atk");
-        }
-
+        animator.SetTrigger("atk");
+        animator.SetFloat("atkAngle", Random.Range(0f, 1f));
     }
 
     void ChangeGaurd()
     {
-        if(transition == 0)
-        {
-            int g = Random.Range(0, 3);
-            if (g == 0) animator.SetTrigger("defL");
-            else if (g == 1) animator.SetTrigger("defR");
-            else if (g == 2) animator.SetTrigger("defU");
-        }
-        transition += Time.deltaTime;
-        if (transition >= 1)
-        {
-            EndCurrentAction();
-        }
-
-    }
-
-    [SerializeField]
-    void EndCurrentAction()
-    {
-        if (currentAction == 0) armPivot.localEulerAngles = Vector3.zero;
-        finishedCurrentAction = true;
+        animator.SetFloat("defAngle", Random.Range(0, 3));
     }
 }

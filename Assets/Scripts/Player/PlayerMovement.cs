@@ -6,8 +6,6 @@ public class PlayerMovement : MonoBehaviour
 
     //Components
     [Header("Components")]
-    Controls controls;
-    [HideInInspector] public Controls.PlayerActions actions;
     [SerializeField] PlayerHUD hud;
     [SerializeField] Camera camera;
     [SerializeField] CharacterController controller;
@@ -27,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     bool grounded;
     RaycastHit slopeHit;
     bool jumping = false;
+    bool crouching = false;
     [HideInInspector] public float lookSpeed;
 
     Vector3 moveDirection;
@@ -69,24 +68,21 @@ public class PlayerMovement : MonoBehaviour
     bool isAgainstWall = false;
     RaycastHit wallHit;
 
-    void Awake()
+    void Start()
     {
         moveSpeed = walkSpeed;
-        lookSpeed = GameSettings.aimSensitivity;
+        lookSpeed = Game.aimSensitivity;
 
         Cursor.lockState = CursorLockMode.Locked;
-        controls = new Controls();
-        actions = controls.Player;
-        actions.Enable();
 
-        actions.Jump.performed += Jump_performed;
-        actions.Sprint.performed += Sprint_performed;
-        actions.Sprint.canceled += Sprint_canceled;
-        actions.Dash.performed += Dash_performed;
-        actions.LockOn.performed += LockOn_performed;
-
+        Game.controls.Player.Jump.performed += Jump_performed;
+        Game.controls.Player.Sprint.performed += Sprint_performed;
+        Game.controls.Player.Sprint.canceled += Sprint_canceled;
+        Game.controls.Player.Dash.performed += Dash_performed;
+        Game.controls.Player.LockOn.performed += LockOn_performed;
+        Game.controls.Player.Crouch.performed += Crouch_performed;
     }
-
+    
     void Update()
     {
         if (lockOnTarget != null)
@@ -126,12 +122,12 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDestroy()
     {
-        actions.Jump.performed -= Jump_performed;
-        actions.Sprint.performed -= Sprint_performed;
-        actions.Sprint.canceled -= Sprint_canceled;
-        actions.Dash.performed -= Dash_performed;
-        actions.LockOn.performed -= LockOn_performed;
-
+        Game.controls.Player.Jump.performed -= Jump_performed;
+        Game.controls.Player.Sprint.performed -= Sprint_performed;
+        Game.controls.Player.Sprint.canceled -= Sprint_canceled;
+        Game.controls.Player.Dash.performed -= Dash_performed;
+        Game.controls.Player.LockOn.performed -= LockOn_performed;
+        Game.controls.Player.Crouch.performed -= Crouch_performed;
     }
 
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -150,7 +146,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 wallRunTimer = maxWallRunTime;
                 wallRunCamTiltTime = 0;
-                numberOfJumps = 0;
                 isWallRunning = true;
                 return;
             }
@@ -209,6 +204,27 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void Crouch_performed(InputAction.CallbackContext obj)
+    {
+        if (grounded)
+        {
+            if (crouching)
+            {
+                camera.transform.localPosition = new Vector3(0, 2, 0);
+                controller.center = new Vector3(0, 1, 0);
+                controller.height = 2;
+                crouching = false;
+            }
+            else
+            {
+                camera.transform.localPosition = new Vector3(0, 1, 0);
+                controller.center = new Vector3(0, 0.5f, 0);
+                controller.height = 1;
+                crouching = true;
+            }
+        }
+    }
+
     void NormalMovement()
     {
         TiltCamera(0);
@@ -219,9 +235,9 @@ public class PlayerMovement : MonoBehaviour
             jumping = false;
         }
 
-        float x = actions.Move.ReadValue<Vector2>().x;
-        float z = actions.Move.ReadValue<Vector2>().y;
-        float m = actions.Move.ReadValue<Vector2>().magnitude;
+        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
+        float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
         moveDirection = (transform.right * x + transform.forward * z).normalized * m;
 
         //Move Input
@@ -243,9 +259,9 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Camera Bob
-        if (GameSettings.cameraBob)
+        if (Game.cameraBob)
         {
-            if (moveDirection.magnitude > 0 && grounded)
+            if (moveDirection.magnitude > 0 && grounded && !crouching)
             {
                 camera.transform.localPosition = new Vector3(0, 2 + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
             }
@@ -264,8 +280,8 @@ public class PlayerMovement : MonoBehaviour
 
     void WallRun()
     {
-        float x = actions.Move.ReadValue<Vector2>().x;
-        float z = actions.Move.ReadValue<Vector2>().y;
+        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
 
         moveDirection = transform.right * x + transform.forward * z;
 
@@ -306,17 +322,17 @@ public class PlayerMovement : MonoBehaviour
 
     void LookAround()
     {
-        float x = actions.Look.ReadValue<Vector2>().x;
-        float y = actions.Look.ReadValue<Vector2>().y;
+        float x = Game.controls.Player.Look.ReadValue<Vector2>().x;
+        float y = Game.controls.Player.Look.ReadValue<Vector2>().y;
 
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
-        camera.transform.localEulerAngles = new Vector3(Mathf.LerpAngle(camera.transform.localEulerAngles.x, xRot, 20 * Time.deltaTime), 0, 0);
+        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
 
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
-        transform.localEulerAngles = new Vector3(0, Mathf.LerpAngle(transform.localEulerAngles.y, yRot, 20 * Time.deltaTime), 0);
+        transform.localEulerAngles = new Vector3(0, yRot, 0);
 
     }
 
@@ -325,11 +341,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dirToTarget = lockOnTarget.position - camera.transform.position;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        if (lockOnLerp < 1) lockOnLerp += 2 * Time.deltaTime;
+        if (lockOnLerp < 1) lockOnLerp += Time.deltaTime;
 
         xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnLerp);
         yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnLerp);
-
+        
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
         transform.localEulerAngles = new Vector3(0, yRot, 0);
     }

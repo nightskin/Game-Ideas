@@ -206,7 +206,6 @@ MonoBehaviour:
     m_Bits: 129
   trail: {fileID: 5689127835663424208}
   damage: 1
-  trailOn: 0
 --- !u!1 &3369742966452738838
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +295,7 @@ Transform:
   m_GameObject: {fileID: 3797049487557511276}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.9, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -587,7 +586,7 @@ MonoBehaviour:
   camera: {fileID: 975310663941252238}
   controller: {fileID: 4885958065297890024}
   jumpingEnabled: 1
-  maxJumps: 2
+  maxJumps: 1
   jumpHeight: 7
   cameraBobSpeed: 1
   groundDistance: 0.5
@@ -628,7 +627,7 @@ MonoBehaviour:
   armPivot: {fileID: 1580257571142137265}
   movementControls: {fileID: 963150078609031530}
   sword: {fileID: 5154610564559027603}
-  triggerThreshold: 0.25
+  triggerThreshold: 0.5
   actionDamp: 0.1
   stunned: 0
 --- !u!1 &6773704001723993537
@@ -789,6 +788,15 @@ LineRenderer:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.995338
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -822,10 +830,10 @@ LineRenderer:
       m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
+    numCornerVertices: 5
+    numCapVertices: 5
     alignment: 1
-    textureMode: 0
+    textureMode: 1
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
@@ -986,7 +994,7 @@ Transform:
   m_GameObject: {fileID: 8514868954429792860}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalPosition: {x: -0, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
