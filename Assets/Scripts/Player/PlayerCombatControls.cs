@@ -67,7 +67,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) movementControls.lookSpeed = Game.aimSensitivity;
+        if (Game.slowCameraMovementWhenDefending) movementControls.lookSpeed = Game.mouseSensitivity;
     }
 
     //Animation Events
@@ -103,7 +103,7 @@ public class PlayerCombatControls : MonoBehaviour
     {
         state = PlayerCombatState.IDLE;
         armPivot.localEulerAngles = Vector3.zero;
-        movementControls.lookSpeed = Game.aimSensitivity;
+        movementControls.lookSpeed = Game.mouseSensitivity;
     }
 
     [SerializeField] void Block()

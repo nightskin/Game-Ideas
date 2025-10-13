@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         moveSpeed = walkSpeed;
-        lookSpeed = Game.aimSensitivity;
+        lookSpeed = Game.mouseSensitivity;
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -193,13 +193,13 @@ public class PlayerMovement : MonoBehaviour
                 {
                     hud.animator.SetBool("lock", true);
                     lockOnTarget = hit.transform;
-                    lockOnLerp = 0;
                 }
             }
             else
             {
                 lockOnTarget = null;
                 hud.animator.SetBool("lock", false);
+                lockOnLerp = 0;
             }
         }
     }
@@ -341,10 +341,18 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dirToTarget = lockOnTarget.position - camera.transform.position;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
-        if (lockOnLerp < 1) lockOnLerp += Time.deltaTime;
 
-        xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnLerp);
-        yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnLerp);
+        if (lockOnLerp < 1)
+        {
+            lockOnLerp += Time.deltaTime;
+            xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnLerp);
+            yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnLerp);
+        }
+        else
+        {
+            xRot = rotToTarget.x;
+            yRot = rotToTarget.y;
+        }
         
         camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
         transform.localEulerAngles = new Vector3(0, yRot, 0);

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -90,6 +90,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -122,6 +126,7 @@ Material:
     - _DitherDark: 0
     - _DitherLight: 1
     - _DitherScale: 1
+    - _DitherThreshold: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
@@ -149,6 +154,8 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 0.7807937, b: 0, a: 1}
     - _Color: {r: 1, g: 0.7807937, b: 0, a: 1}
+    - _Color1: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor: {r: 1, g: 1, b: 1, a: 1}
     - _DitherColor1: {r: 0, g: 0, b: 0, a: 1}
     - _DitherColor2: {r: 1, g: 1, b: 1, a: 1}

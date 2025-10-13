@@ -14,6 +14,12 @@
         },
         {
             "m_Id": "f0449c8048e54f6ea3b702247a1ad689"
+        },
+        {
+            "m_Id": "ff5c37825d894593a98a5c55c77ef33b"
+        },
+        {
+            "m_Id": "f6741b93a332486c9f92e85c9cb96f08"
         }
     ],
     "m_Keywords": [],
@@ -304,8 +310,8 @@
     ],
     "m_VertexContext": {
         "m_Position": {
-            "x": 4894.0,
-            "y": -789.9998779296875
+            "x": 5273.99951171875,
+            "y": -671.0
         },
         "m_Blocks": [
             {
@@ -321,8 +327,8 @@
     },
     "m_FragmentContext": {
         "m_Position": {
-            "x": 4894.0,
-            "y": -463.0000305175781
+            "x": 5273.99951171875,
+            "y": -344.0
         },
         "m_Blocks": [
             {
@@ -1106,6 +1112,12 @@
         },
         {
             "m_Id": "fcb9a56fa6da45c1a4dee7f9f9cc7dd4"
+        },
+        {
+            "m_Id": "ff5c37825d894593a98a5c55c77ef33b"
+        },
+        {
+            "m_Id": "f6741b93a332486c9f92e85c9cb96f08"
         }
     ]
 }
@@ -2399,6 +2411,34 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "f6741b93a332486c9f92e85c9cb96f08",
+    "m_Guid": {
+        "m_GuidSerialized": "8c1a6a1f-69d8-4b7d-a99a-93d44d6361a9"
+    },
+    "m_Name": "DitherThreshold",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "DitherThreshold",
+    "m_DefaultReferenceName": "_DitherThreshold",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
+}
+
+{
     "m_SGVersion": 3,
     "m_Type": "UnityEditor.ShaderGraph.Internal.ColorShaderProperty",
     "m_ObjectId": "f791da805720484b85d47bf48dcfa8de",
@@ -2504,6 +2544,34 @@
         "e31": 0.0,
         "e32": 0.0,
         "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "ff5c37825d894593a98a5c55c77ef33b",
+    "m_Guid": {
+        "m_GuidSerialized": "1478e1e7-c5a5-4bd8-a061-15fb314f2cf3"
+    },
+    "m_Name": "DitherScale",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "DitherScale",
+    "m_DefaultReferenceName": "_DitherScale",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 1.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 
