@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,15 +7,16 @@ public class PlayerMovement : MonoBehaviour
 
     //Components
     [Header("Components")]
-    [SerializeField] PlayerHUD hud;
-    [SerializeField] Camera camera;
-    [SerializeField] CharacterController controller;
+    public PlayerHUD hud;
+    public Camera camera;
+    public CharacterController controller;
+    public PlayerCombatControls combatControls;
 
 
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
-    Vector3 velocity = Vector3.zero;
+    [HideInInspector] public Vector3 velocity = Vector3.zero;
     [SerializeField] bool jumpingEnabled;
     [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
@@ -22,17 +24,16 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [SerializeField] LayerMask groundLayer;
-    bool grounded;
+    [HideInInspector] public bool grounded;
     RaycastHit slopeHit;
     bool jumping = false;
-    bool crouching = false;
+
     [HideInInspector] public float lookSpeed;
 
     Vector3 moveDirection;
     Vector3 dashDirection;
     float xRot = 0;
     float yRot = 0;
-
     bool dashing = false;
 
     [SerializeField][Min(1)] float walkSpeed = 25;
@@ -81,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
         Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
         Game.controls.Player.Crouch.performed += Crouch_performed;
+        Game.controls.Player.Crouch.canceled += Crouch_canceled;
     }
     
     void Update()
@@ -91,18 +93,25 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            LookAround();
+           LookAround();
         }
 
-
-        if (isWallRunning)
+        if (combatControls.stunned)
         {
-            WallRun();
+            StunKnockBack();
         }
         else
         {
-            NormalMovement();
+            if (isWallRunning)
+            {
+                WallRun();
+            }
+            else
+            {
+                NormalMovement();
+            }
         }
+
 
     }
 
@@ -147,6 +156,7 @@ public class PlayerMovement : MonoBehaviour
                 wallRunTimer = maxWallRunTime;
                 wallRunCamTiltTime = 0;
                 isWallRunning = true;
+                numberOfJumps--;
                 return;
             }
             // Normal Jump
@@ -208,21 +218,39 @@ public class PlayerMovement : MonoBehaviour
     {
         if (grounded)
         {
-            if (crouching)
-            {
-                camera.transform.localPosition = new Vector3(0, 2, 0);
-                controller.center = new Vector3(0, 1, 0);
-                controller.height = 2;
-                crouching = false;
-            }
-            else
-            {
-                camera.transform.localPosition = new Vector3(0, 1, 0);
-                controller.center = new Vector3(0, 0.5f, 0);
-                controller.height = 1;
-                crouching = true;
-            }
+            camera.transform.localPosition = new Vector3(0, 1, 0);
+            controller.center = new Vector3(0, 0.5f, 0);
+            controller.height = 1;
         }
+    }
+
+    private void Crouch_canceled(InputAction.CallbackContext obj)
+    {
+        if (grounded)
+        {
+            camera.transform.localPosition = new Vector3(0, 2, 0);
+            controller.center = new Vector3(0, 1, 0);
+            controller.height = 2;
+        }
+    }
+
+    void StunKnockBack()
+    {
+        TiltCamera(0);
+        if (grounded && velocity.y < 0)
+        {
+            numberOfJumps = 0;
+            velocity = Vector3.zero;
+            jumping = false;
+        }
+
+        controller.Move(-transform.forward * combatControls.knockBackForce * Time.deltaTime);
+        
+        //Gravity
+        velocity += new Vector3(0, -10, 0) * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+
+        combatControls.StunCountDown();
     }
 
     void NormalMovement()
@@ -261,9 +289,9 @@ public class PlayerMovement : MonoBehaviour
         //Camera Bob
         if (Game.cameraBob)
         {
-            if (moveDirection.magnitude > 0 && grounded && !crouching)
+            if (moveDirection.magnitude > 0 && grounded)
             {
-                camera.transform.localPosition = new Vector3(0, 2 + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
+                camera.transform.localPosition = new Vector3(0, controller.height + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
             }
         }
 

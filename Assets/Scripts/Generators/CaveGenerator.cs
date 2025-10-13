@@ -10,7 +10,7 @@ public class CaveGenerator : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
 
-    [Tooltip("Determines max size of the level")][Min(10)] public Vector3Int gridSize = Vector3Int.one * 100;
+    [Tooltip("Determines max size of the level")] public Vector3Int gridSize = Vector3Int.one * 100;
     [Tooltip("Controls how far apart everything is")][Min(0)] public float tileSize = 5;
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
