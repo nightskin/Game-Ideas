@@ -5,7 +5,7 @@ public class Game : MonoBehaviour
     public static Controls controls;
     public static bool slowCameraMovementWhenAttacking = true;
     public static bool slowCameraMovementWhenDefending = true;
-    public static bool cameraBob = false;
+    public static bool cameraBob = true;
     public static float mouseSensitivity = 100;
     void Awake()
     {

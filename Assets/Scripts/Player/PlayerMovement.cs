@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-
     //Components
     [Header("Components")]
     public PlayerHUD hud;
@@ -16,32 +15,34 @@ public class PlayerMovement : MonoBehaviour
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
+    [SerializeField][Min(1)] float walkSpeed = 25;
+    [SerializeField][Min(2)] float runSpeed = 50;
+    [HideInInspector] public bool isCrouching = false;
+    [SerializeField] float crouchSpeed = 5;
+    [HideInInspector] public float lookSpeed;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
+    [SerializeField][Min(0)] float cameraBobSpeed = 1f;
+    RaycastHit slopeHit;
+    float xRot = 0;
+    float yRot = 0;
+    Vector3 moveDirection;
+    
+    // For Jumping Around
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField][Min(0)] float groundDistance = 0.5f;
+    [HideInInspector] public bool grounded;
+    bool jumping = false;
     [SerializeField] bool jumpingEnabled;
     [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
-    [SerializeField][Min(0)] float cameraBobSpeed = 1f;
 
-    [SerializeField][Min(0)] float groundDistance = 0.5f;
-    [SerializeField] LayerMask groundLayer;
-    [HideInInspector] public bool grounded;
-    RaycastHit slopeHit;
-    bool jumping = false;
 
-    [HideInInspector] public float lookSpeed;
-
-    Vector3 moveDirection;
-    Vector3 dashDirection;
-    float xRot = 0;
-    float yRot = 0;
+    [Header("Dashing")]
     bool dashing = false;
-
-    [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField] float dashSpeed = 150;
-    [SerializeField][Min(2)] float runSpeed = 50;
-
     float dashTime = 0.1f;
     float dashTimer = 0;
+    Vector3 dashDirection;
 
     //LockOn System
     [Header("LockOnSystem")]
@@ -50,7 +51,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask lockOnLayer;
     [HideInInspector] public Transform lockOnTarget = null;
     float lockOnLerp = 0;
-
 
 
     [Header("Wall Movement")]
@@ -82,7 +82,6 @@ public class PlayerMovement : MonoBehaviour
         Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
         Game.controls.Player.Crouch.performed += Crouch_performed;
-        Game.controls.Player.Crouch.canceled += Crouch_canceled;
     }
     
     void Update()
@@ -218,19 +217,34 @@ public class PlayerMovement : MonoBehaviour
     {
         if (grounded)
         {
-            camera.transform.localPosition = new Vector3(0, 1, 0);
-            controller.center = new Vector3(0, 0.5f, 0);
-            controller.height = 1;
+            if (isCrouching)
+            {
+                Crouch(true);
+            }
+            else
+            {
+                Crouch(false);
+            }
         }
     }
 
-    private void Crouch_canceled(InputAction.CallbackContext obj)
+    public void Crouch(bool activated)
     {
-        if (grounded)
+        if (activated)
+        {
+            camera.transform.localPosition = new Vector3(0, 1, 0);
+            controller.center = new Vector3(0, 0.5f, 0);
+            controller.height = 1;
+            isCrouching = false;
+            moveSpeed = walkSpeed;
+        }
+        else
         {
             camera.transform.localPosition = new Vector3(0, 2, 0);
             controller.center = new Vector3(0, 1, 0);
             controller.height = 2;
+            isCrouching = true;
+            moveSpeed = crouchSpeed;
         }
     }
 
@@ -244,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
             jumping = false;
         }
 
-        controller.Move(-transform.forward * combatControls.knockBackForce * Time.deltaTime);
+        controller.Move(combatControls.knockBackForce * Time.deltaTime);
         
         //Gravity
         velocity += new Vector3(0, -10, 0) * Time.deltaTime;
@@ -294,6 +308,7 @@ public class PlayerMovement : MonoBehaviour
                 camera.transform.localPosition = new Vector3(0, controller.height + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
             }
         }
+
 
         //Gravity
         velocity += new Vector3(0, -10, 0) * Time.deltaTime;

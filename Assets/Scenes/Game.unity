@@ -544,9 +544,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1959647887}
-  gridSize: {x: 100, y: 10, z: 100}
+  gridSize: {x: 100, y: 4, z: 100}
   tileSize: 5
-  seed: poop
+  seed: 
   levelGeneration: 2
   isoLevel: 0.1
   incrementLevel: 0.01
@@ -608,6 +608,10 @@ PrefabInstance:
     - target: {fileID: 867675338283698135, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5154610564559027603, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
+      propertyPath: hitLayer.m_Bits
+      value: 129
       objectReference: {fileID: 0}
     - target: {fileID: 6434693209060557747, guid: 9e95045a293a0554a9d069bc492ef27f, type: 3}
       propertyPath: m_Name

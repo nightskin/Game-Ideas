@@ -2,25 +2,19 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float intensity = 8;
-    public Color color;
-
+    [SerializeField] LayerMask collisionMask;
     public GameObject owner = null;
     public Vector3 direction = Vector3.zero;
     public float speed = 20;
-    public float lifeTime = 10;
-    public int maxNumberOfBounces;
+    public float range = 10;
     public float damage = 1;
-    public bool released;
 
-    int bounces = 0;
     BoxCollider box;
     SphereCollider sphere;
     RaycastHit hit;
 
     void Start()
     {
-        GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", color * intensity);
         sphere = GetComponent<SphereCollider>();
         box = GetComponent<BoxCollider>();
     }
@@ -34,53 +28,42 @@ public class Projectile : MonoBehaviour
 
         if (box)
         {
-            if (Physics.BoxCast(prevPosition, box.size, direction, out hit, transform.rotation, distance))
+            if (Physics.BoxCast(prevPosition, box.size, direction, out hit, transform.rotation, distance, collisionMask))
             {
                 CheckCollisions();
             }
         }
         else if (sphere)
         {
-            if (Physics.SphereCast(prevPosition, sphere.radius, direction, out hit, distance))
+            if (Physics.SphereCast(prevPosition, sphere.radius, direction, out hit, distance, collisionMask))
             {
                 CheckCollisions();
             }
         }
         else
         {
-            if (Physics.Linecast(prevPosition, transform.position, out hit))
+            if (Physics.Linecast(prevPosition, transform.position, out hit, collisionMask))
             {
                 CheckCollisions();
             }
         }
 
-        if(released)
+        range -= Time.deltaTime;
+        if (range <= 0)
         {
-            lifeTime -= Time.deltaTime;
-            if (lifeTime < 0)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
 
     }
 
     void CheckCollisions()
     {
-        if(released)
+        if (hit.transform.gameObject != owner && !hit.collider.isTrigger)
         {
-            if (hit.transform.gameObject != owner && !hit.collider.isTrigger)
-            {
-                bounces++;
-                if (bounces > maxNumberOfBounces)
-                {
-                    Destroy(gameObject);
-                }
-                else
-                {
-                    direction = Vector3.Reflect(direction, hit.normal);
-                }
-            }
+            // Apply damage to whatever here
+            
+            //
+            Destroy(gameObject);
         }
 
     }

@@ -7,23 +7,68 @@ public class PlayerSword : MonoBehaviour
     [SerializeField] Transform bladeTip;
     [SerializeField] Transform bladeBase;
     [SerializeField] LayerMask hitLayer;
+    [SerializeField] Material bladeMaterialForCharging;
     public LineRenderer trail;
 
-    [Min(1)] public int damage = 1;
+    [SerializeField] bool isMagic;
+    Color normalColor;
+    Color chargeColor = new Color(0, 2, 2);
+    float charge;
+    [SerializeField] float maxCharge = 1;
+    [Min(0)] public int power = 1;
+
+    public void ChargeWeapon()
+    {
+        if (charge < maxCharge)
+        {
+            charge += Time.deltaTime;
+            float v = charge;
+            bladeMaterialForCharging.SetColor("_Tint2", Color.Lerp(normalColor, chargeColor, v));
+        }
+        else
+        {
+            charge = maxCharge;
+        }
+    }
+
+    public bool IsSwordMagical()
+    {
+        return isMagic;
+    }
+
+    public bool IsFullyCharged()
+    {
+        return charge >= maxCharge;
+    }
+
+    public void ResetCharge()
+    {
+        if (isMagic)
+        {
+            charge = 0;
+            bladeMaterialForCharging.SetColor("_Tint2", normalColor);
+        }
+    }
 
     void RenderTrail()
     {
-        if (trail.gameObject.activeSelf)
+        if(trail)
         {
-            for (int t = 0; t < trail.positionCount; t++)
+            if (trail.gameObject.activeSelf)
             {
-                trail.SetPosition(t, new Vector3(t, 0, 0));
+                for (int t = 0; t < trail.positionCount; t++)
+                {
+                    trail.SetPosition(t, new Vector3(t, 0, 0));
+                }
             }
         }
     }
 
     void Start()
     {
+        charge = 0;
+        normalColor = bladeMaterialForCharging.GetColor("_Tint2");
+        if (!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
         if (trail)
         {
             trail.startWidth = Vector3.Distance(bladeBase.position, bladeTip.position);
@@ -32,7 +77,8 @@ public class PlayerSword : MonoBehaviour
             trail.useWorldSpace = false;
             trail.gameObject.SetActive(false);
         }
-
+        if (!bladeTip) bladeTip = transform.Find("Tip");
+        if (!bladeBase) bladeBase = transform.Find("Base");
     }
 
     void Update()
@@ -54,16 +100,5 @@ public class PlayerSword : MonoBehaviour
                 }
             }
         }
-        else if (combatControls.state == PlayerCombatControls.PlayerCombatState.DEF)
-        {
-            if (Physics.Linecast(bladeBase.position, bladeTip.position, out RaycastHit rayHit, hitLayer))
-            {
-                if (rayHit.transform.tag == "EnemyWeapon")
-                {
-
-                }
-            }
-        }
-
     }
 }
