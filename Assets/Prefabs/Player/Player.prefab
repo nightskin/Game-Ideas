@@ -743,28 +743,23 @@ MonoBehaviour:
   lookSpeed: 0
   velocity: {x: 0, y: 0, z: 0}
   cameraBobSpeed: 1
+  xRot: 0
+  yRot: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
   groundDistance: 0.5
   grounded: 0
   jumpingEnabled: 1
-  maxJumps: 2
+  maxJumps: 1
   jumpHeight: 7
   dashSpeed: 150
-  lockOnSystemEnabled: 0
+  lockOnSystemEnabled: 1
   lockOnDistance: 500
   lockOnLayer:
     serializedVersion: 2
     m_Bits: 128
   lockOnTarget: {fileID: 0}
-  wallRunningEnabled: 1
-  maxWallRunTime: 10
-  wallRunSpeed: 35
-  wallJumpForce: 10
-  maxCameraTiltAngle: 35
-  cameraTiltSpeed: 5
-  wallDistance: 1
 --- !u!114 &8145000895852676848
 MonoBehaviour:
   m_ObjectHideFlags: 0

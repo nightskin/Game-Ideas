@@ -10,8 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public Camera camera;
     public CharacterController controller;
     public PlayerCombatControls combatControls;
-
-
+    
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
@@ -26,15 +25,17 @@ public class PlayerMovement : MonoBehaviour
     float xRot = 0;
     float yRot = 0;
     Vector3 moveDirection;
-    
+
     // For Jumping Around
+    [Header("Jumping Variables")]
     [SerializeField] LayerMask groundLayer;
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [HideInInspector] public bool grounded;
-    bool jumping = false;
     [SerializeField] bool jumpingEnabled;
     [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
+    int numberOfJumps = 0;
+    bool jumping = false;
 
 
     [Header("Dashing")]
@@ -51,23 +52,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask lockOnLayer;
     [HideInInspector] public Transform lockOnTarget = null;
     float lockOnLerp = 0;
+    
 
-
-    [Header("Wall Movement")]
-    [SerializeField] bool wallRunningEnabled = false;
-    [SerializeField] float maxWallRunTime = 5;
-    [SerializeField] float wallRunSpeed = 30;
-    [SerializeField] float wallJumpForce = 5;
-    [SerializeField] float maxCameraTiltAngle = 35;
-    [SerializeField] float cameraTiltSpeed = 5;
-    [SerializeField][Min(0)] float wallDistance = 0.7f;
-
-    float wallRunCamTiltTime;
-    float wallRunTimer = 0;
-    int numberOfJumps = 0;
-    bool isWallRunning = false;
-    bool isAgainstWall = false;
-    RaycastHit wallHit;
 
     void Start()
     {
@@ -92,24 +78,10 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-           LookAround();
+           MouseLook();
         }
 
-        if (combatControls.stunned)
-        {
-            StunKnockBack();
-        }
-        else
-        {
-            if (isWallRunning)
-            {
-                WallRun();
-            }
-            else
-            {
-                NormalMovement();
-            }
-        }
+        NormalMovement();
 
 
     }
@@ -118,14 +90,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
-        
-        if (wallRunningEnabled)
-        {
-            Ray wallRayLeft = new Ray(transform.position, -transform.right);
-            Ray wallRayRight = new Ray(transform.position, transform.right);
-            isAgainstWall = Physics.Raycast(wallRayLeft, out wallHit, wallDistance) || Physics.Raycast(wallRayRight, out wallHit, wallDistance);
-        }
-        
     }
 
     void OnDestroy()
@@ -140,34 +104,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        if (isWallRunning)
+        // Normal Jump
+        if (jumpingEnabled)
         {
-            //Wall jump
-            velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(wallJumpForce * -2 * Physics.gravity.y);
-            isWallRunning = false;
-            return;
-        }
-        else
-        {
-            // Start Wall Run
-            if (isAgainstWall && !grounded)
+            if (numberOfJumps < maxJumps)
             {
-                wallRunTimer = maxWallRunTime;
-                wallRunCamTiltTime = 0;
-                isWallRunning = true;
-                numberOfJumps--;
+                velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+                numberOfJumps++;
+                jumping = true;
                 return;
-            }
-            // Normal Jump
-            if (jumpingEnabled)
-            {
-                if (numberOfJumps < maxJumps)
-                {
-                    velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-                    jumping = true;
-                    numberOfJumps++;
-                    return;
-                }
             }
         }
     }
@@ -248,33 +193,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void StunKnockBack()
-    {
-        TiltCamera(0);
-        if (grounded && velocity.y < 0)
-        {
-            numberOfJumps = 0;
-            velocity = Vector3.zero;
-            jumping = false;
-        }
-
-        controller.Move(combatControls.knockBackForce * Time.deltaTime);
-        
-        //Gravity
-        velocity += new Vector3(0, -10, 0) * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        combatControls.StunCountDown();
-    }
-
     void NormalMovement()
     {
-        TiltCamera(0);
         if (grounded && velocity.y < 0)
         {
             numberOfJumps = 0;
             velocity = Vector3.zero;
-            jumping = false;
+            if(jumping) jumping = false;
         }
 
         float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
@@ -320,50 +245,8 @@ public class PlayerMovement : MonoBehaviour
             controller.Move(new Vector3(0, -slopeHit.distance, 0));
         }
     }
-
-    void WallRun()
-    {
-        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
-        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
-
-        moveDirection = transform.right * x + transform.forward * z;
-
-        Vector3 wallNormal = wallHit.normal;
-        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
-
-        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
-        {
-            wallForward = -wallForward;
-        }
-
-        controller.Move((wallForward + new Vector3(0, camera.transform.forward.y, 0)).normalized * wallRunSpeed * Time.deltaTime);
-        wallRunTimer -= Time.deltaTime;
-
-        if (grounded || !isAgainstWall || Vector3.Dot(moveDirection, -wallNormal) < 0 || wallRunTimer <= 0)
-        {
-            isWallRunning = false;
-        }
-
-        TiltCamera(Vector3.Dot(wallNormal, transform.right) * maxCameraTiltAngle * -1);
-
-    }
-
-    void TiltCamera(float amount)
-    {
-        if (wallRunCamTiltTime < 1)
-        {
-            float z = Mathf.LerpAngle(camera.transform.localEulerAngles.z, amount, wallRunCamTiltTime);
-            wallRunCamTiltTime += cameraTiltSpeed * Time.deltaTime;
-            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, z);
-        }
-        else
-        {
-            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, amount);
-        }
-
-    }
-
-    void LookAround()
+    
+    void MouseLook()
     {
         float x = Game.controls.Player.Look.ReadValue<Vector2>().x;
         float y = Game.controls.Player.Look.ReadValue<Vector2>().y;
@@ -371,11 +254,11 @@ public class PlayerMovement : MonoBehaviour
         //Looking up/down with camera
         xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
-        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
+        camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
 
         //Looking left right with player body
         yRot += x * lookSpeed * Time.deltaTime;
-        transform.localEulerAngles = new Vector3(0, yRot, 0);
+        transform.rotation = Quaternion.Euler(0, yRot, 0);
 
     }
 
@@ -394,11 +277,12 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             xRot = rotToTarget.x;
+            if (xRot > 359) xRot = 0;
             yRot = rotToTarget.y;
         }
-        
-        camera.transform.localEulerAngles = new Vector3(xRot, 0, 0);
-        transform.localEulerAngles = new Vector3(0, yRot, 0);
+
+        camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
+        transform.rotation = Quaternion.Euler(0, yRot, 0);
     }
 
 }

@@ -92,11 +92,11 @@ public class PlayerCombatControls : MonoBehaviour
                     }
                 }
             }
-            //else if (Game.controls.Player.Defend.IsPressed())
-            //{
-            //    animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
-            //    animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
-            //}
+            else if (Game.controls.Player.Defend.IsPressed() || movement.lockOnTarget != null)
+            {
+                animator.SetInteger("x", Mathf.RoundToInt(actionVector.x));
+                animator.SetInteger("y", Mathf.RoundToInt(actionVector.y));
+            }
         }
     }
 
