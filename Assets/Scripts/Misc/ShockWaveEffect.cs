@@ -22,7 +22,7 @@ public class ShockWaveEffect : MonoBehaviour
         meshRenderer.material.SetFloat("_Alpha", alpha);
         if(alpha <= 0)
         {
-            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
        
     }

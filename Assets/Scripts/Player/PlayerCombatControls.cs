@@ -32,6 +32,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     //Ground Slam Variables
     [SerializeField] GameObject shockWave;
+    bool shockWaveAlreadySpawned = false;
     bool slaming = false;
     float slamTimer = 0;
     [SerializeField] float slamCoolDown = 0.5f; 
@@ -53,9 +54,10 @@ public class PlayerCombatControls : MonoBehaviour
         {
             if (movement.grounded)
             {
-                if (shockWave)
+                if (shockWave && !shockWaveAlreadySpawned)
                 {
-                    shockWave.gameObject.SetActive(true);
+                    Instantiate(shockWave, transform.position, Quaternion.identity);
+                    shockWaveAlreadySpawned = true;
                 }
                 if(slamTimer < slamCoolDown)
                 {
@@ -63,6 +65,7 @@ public class PlayerCombatControls : MonoBehaviour
                 }
                 else
                 {
+                    shockWaveAlreadySpawned = false;
                     movement.isCrouching = false;
                     slaming = false;
                 }
