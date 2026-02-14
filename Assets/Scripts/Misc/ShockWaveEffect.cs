@@ -10,19 +10,18 @@ public class ShockWaveEffect : MonoBehaviour
     {
         alpha = 1;
         size = 0;
-        transform.localScale = Vector3.one * size;
+        transform.localScale = Vector3.zero;
     }
 
     void Update()
     {
-        size += maxSize * Time.deltaTime;
-        transform.localScale = Vector3.one * size;
+        transform.localScale += new Vector3(maxSize, maxSize * 0.1f, maxSize) * Time.deltaTime;
 
         alpha -= Time.deltaTime;
         meshRenderer.material.SetFloat("_Alpha", alpha);
         if(alpha <= 0)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
        
     }

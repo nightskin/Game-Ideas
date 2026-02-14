@@ -777,9 +777,9 @@ MonoBehaviour:
   sword: {fileID: 5154610564559027603}
   lookDamp: 0.1
   chargeDelay: 0.25
-  stunned: 0
+  wasHit: 0
   knockBackForce: {x: 0, y: 0, z: 0}
-  shockWave: {fileID: 2384847585890237617, guid: c04f5799d7178834b933e0e1c76bfedb, type: 3}
+  shockWavePrefab: {fileID: 2384847585890237617, guid: c04f5799d7178834b933e0e1c76bfedb, type: 3}
   slamCoolDown: 0.5
   slamForce: 100
 --- !u!1 &6773704001723993537

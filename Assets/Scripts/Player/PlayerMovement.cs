@@ -207,6 +207,15 @@ public class PlayerMovement : MonoBehaviour
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
         moveDirection = (transform.right * x + transform.forward * z).normalized * m;
 
+        if(m > 0)
+        {
+            combatControls.animator.SetBool("moving", true);
+        }
+        else
+        {
+            combatControls.animator.SetBool("moving", false);
+        }
+
         //Move Input
         if (dashing)
         {
@@ -224,16 +233,6 @@ public class PlayerMovement : MonoBehaviour
         {
             controller.Move(moveDirection * moveSpeed * Time.deltaTime);
         }
-
-        //Camera Bob
-        if (Game.cameraBob)
-        {
-            if (moveDirection.magnitude > 0 && grounded)
-            {
-                camera.transform.localPosition = new Vector3(0, controller.height + Mathf.PingPong(Time.time * cameraBobSpeed, 0.5f), 0);
-            }
-        }
-
 
         //Gravity
         velocity += new Vector3(0, -10, 0) * Time.deltaTime;

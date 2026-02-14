@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2160783373613672878}
   - component: {fileID: 4186186349788847460}
   - component: {fileID: 5343369946199962182}
-  - component: {fileID: 9172527927782616180}
+  - component: {fileID: 26796820679958086}
   m_Layer: 0
   m_Name: ShockWave
   m_TagString: Projectile
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2384847585890237617}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 335.9407, y: 14.49535, z: 239.07256}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -105,8 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShockWaveEffect
   meshRenderer: {fileID: 4186186349788847460}
   maxSize: 30
---- !u!64 &9172527927782616180
-MeshCollider:
+--- !u!135 &26796820679958086
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -123,7 +123,6 @@ MeshCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8538350184377145146, guid: 72a0ad96ff9f73d429ad719b0cb17f0e, type: 3}
+  serializedVersion: 3
+  m_Radius: 1.1
+  m_Center: {x: 0, y: 0, z: 0}
