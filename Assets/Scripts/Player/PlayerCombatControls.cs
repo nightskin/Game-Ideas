@@ -1,17 +1,15 @@
-using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerCombatControls : MonoBehaviour
 {
-    public enum PlayerCombatState
+    public enum CombatState
     {
         IDLE,
         ATK,
         DEF,
     }
-    [HideInInspector] public PlayerCombatState state = PlayerCombatState.IDLE;
+    [HideInInspector] public CombatState state = CombatState.IDLE;
     [SerializeField] GameObject slashProjectile;
     public Animator animator;
     public Transform armPivot;
@@ -33,11 +31,6 @@ public class PlayerCombatControls : MonoBehaviour
     [Range(0, 1)] float stunTime = 0.05f;
     float stunTimer = 0;
 
-    //Ground Slam Variables
-    [SerializeField] GameObject shockWavePrefab;
-    GameObject shockWave = null;
-    [SerializeField] float slamCoolDown = 0.5f; 
-    [SerializeField] float slamForce = 100;
 
     void Start()
     {
@@ -46,7 +39,6 @@ public class PlayerCombatControls : MonoBehaviour
         Game.controls.Player.Attack.canceled += Attack_canceled;
         Game.controls.Player.Defend.performed += Defend_performed;
         Game.controls.Player.Defend.canceled += Defend_canceled;
-        Game.controls.Player.Crouch.performed += Crouch_performed;
     }
 
     void Update()
@@ -66,6 +58,7 @@ public class PlayerCombatControls : MonoBehaviour
                     chargeDelayTimer -= Time.deltaTime;
                     if (chargeDelayTimer <= 0)
                     {
+                        animator.SetBool("charging", true);
                         sword.ChargeWeapon();
                     }
                 }
@@ -90,13 +83,11 @@ public class PlayerCombatControls : MonoBehaviour
         Game.controls.Player.Attack.canceled -= Attack_canceled;
         Game.controls.Player.Defend.performed -= Defend_performed;
         Game.controls.Player.Defend.canceled -= Defend_canceled;
-        Game.controls.Player.Crouch.performed -= Crouch_performed;
     }
 
     private void Attack_performed(InputAction.CallbackContext obj)
     {
         if (Game.slowCameraMovementWhenAttacking) movement.lookSpeed *= lookDamp;
-        //ResetBlockAngle();
         animator.SetTrigger("slash");
         if (sword.IsSwordMagical()) chargeDelayTimer = chargeDelay;
     }
@@ -128,60 +119,21 @@ public class PlayerCombatControls : MonoBehaviour
         if (Game.slowCameraMovementWhenDefending) movement.lookSpeed = Game.mouseSensitivity;
         animator.SetBool("blocking", false);
     }
-
-    private void Crouch_performed(InputAction.CallbackContext context)
-    {
-        if (!movement.grounded)
-        {
-            movement.velocity = Vector3.zero;
-            movement.Crouch(true);
-            animator.SetTrigger("slash");
-            atkAngle = 0;
-            StartCoroutine(GroundSlam());
-        }
-    }
-
-    IEnumerator GroundSlam()
-    {
-        while(!movement.grounded)
-        {
-            movement.controller.Move(Vector3.down * slamForce * Time.deltaTime);
-            yield return null;
-        }
-
-        if (!shockWave)
-        {
-            shockWave = Instantiate(shockWavePrefab, transform.position, Quaternion.identity);
-        }
-        else
-        {
-            shockWave.transform.position = transform.position;
-            shockWave.SetActive(true);
-        }
-
-        yield return new WaitForSeconds(slamCoolDown);
-        movement.Crouch(false);
-    }
-
+    
     //Animation Events
     [SerializeField] void StartSlash()
     {
-        if (!sword.trail.gameObject.activeSelf) sword.trail.gameObject.SetActive(true);
-        state = PlayerCombatState.ATK;
+        state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        StartCoroutine(sword.AnimateTrail());
     }
 
     [SerializeField] void EndSlash()
     {
-        if (sword.trail.gameObject.activeSelf) sword.trail.gameObject.SetActive(false);
-        for (int t = 0; t < sword.trail.positionCount; t++)
-        {
-            sword.trail.SetPosition(t, Vector3.zero);
-        }
-        state = PlayerCombatState.IDLE;
+        state = CombatState.IDLE;
         defVector = Vector2.zero;
-        armPivot.localEulerAngles = Vector3.zero;
         movement.lookSpeed = Game.mouseSensitivity;
+        armPivot.localEulerAngles = Vector3.zero;
     }
 
     [SerializeField] void ReleaseCharge()
@@ -204,12 +156,12 @@ public class PlayerCombatControls : MonoBehaviour
     
     [SerializeField] void StartBlock()
     {
-        state = PlayerCombatState.DEF;
+        state = CombatState.DEF;
         armPivot.localEulerAngles = Vector3.zero;
     }
     
     [SerializeField] void EndBlock()
     {
-        if(state != PlayerCombatState.IDLE) state = PlayerCombatState.IDLE;
+        if(state != CombatState.IDLE) state = CombatState.IDLE;
     }
 }

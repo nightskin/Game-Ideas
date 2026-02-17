@@ -1,39 +1,48 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
+
 public class PlayerSword : MonoBehaviour
 {
-    [SerializeField] PlayerCombatControls combatControls;
+    [SerializeField] PlayerCombatControls player;
     [SerializeField] GameObject hitEffectPrefab;
-    [SerializeField] Transform bladeTip;
-    [SerializeField] Transform bladeBase;
     [SerializeField] LayerMask hitLayer;
-    [SerializeField] Material bladeMaterialForCharging;
-    public LineRenderer trail;
+    [SerializeField] GameObject chargeEffectObj;
+    [SerializeField] Material chargeEffectMat;
+    [SerializeField] BoxCollider collider;
+    public GameObject trail;
 
-    [SerializeField] bool isMagic;
-    Color normalColor;
-    Color chargeColor = new Color(0, 2, 2);
-    float charge;
+    [SerializeField] bool magical;
+
+    [SerializeField] Color startChargeColor = Color.white * 2;
+    [SerializeField] Color endChargeColor = Color.cyan * 2;
+    Color chargeColor = Color.white * 2;
+    float charge = 0;
+    float t = -1;
     [SerializeField] float maxCharge = 1;
     [Min(0)] public int power = 1;
 
     public void ChargeWeapon()
     {
+        player.animator.SetTrigger("charging");
+        if (!chargeEffectObj.activeSelf) chargeEffectObj.SetActive(true);
+
         if (charge < maxCharge)
         {
             charge += Time.deltaTime;
-            float v = charge;
-            bladeMaterialForCharging.SetColor("_Tint2", Color.Lerp(normalColor, chargeColor, v));
         }
         else
         {
             charge = maxCharge;
         }
+
+        chargeColor = Color.Lerp(startChargeColor, endChargeColor, charge);
+        chargeEffectMat.SetColor("_Color", chargeColor);
+
     }
 
     public bool IsSwordMagical()
     {
-        return isMagic;
+        return magical;
     }
 
     public bool IsFullyCharged()
@@ -43,62 +52,41 @@ public class PlayerSword : MonoBehaviour
 
     public void ResetCharge()
     {
-        if (isMagic)
+        if (magical)
         {
             charge = 0;
-            bladeMaterialForCharging.SetColor("_Tint2", normalColor);
+            chargeColor = startChargeColor;
+            chargeEffectMat.SetColor("_Color", startChargeColor);
+            chargeEffectObj.SetActive(false);
+            player.animator.SetBool("charging", false);
         }
     }
-
-    void RenderTrail()
+    
+    public IEnumerator AnimateTrail()
     {
-        if(trail)
+        t = -1;
+        trail.GetComponent<MeshRenderer>().material.SetFloat("_Scroll", t);
+        trail.SetActive(true);
+
+        while(trail.GetComponent<MeshRenderer>().material.GetFloat("_Scroll") < 1)
         {
-            if (trail.gameObject.activeSelf)
-            {
-                for (int t = 0; t < trail.positionCount; t++)
-                {
-                    trail.SetPosition(t, new Vector3(t, 0, 0));
-                }
-            }
+            t += (2 / 0.15f) * Time.deltaTime;
+            trail.GetComponent<MeshRenderer>().material.SetFloat("_Scroll", t);
+            yield return null;
         }
+
+        trail.SetActive(false);
     }
 
     void Start()
     {
         charge = 0;
-        normalColor = bladeMaterialForCharging.GetColor("_Tint2");
-        if (!combatControls) combatControls = transform.root.GetComponent<PlayerCombatControls>();
-        if (trail)
-        {
-            trail.startWidth = Vector3.Distance(bladeBase.position, bladeTip.position);
-            trail.endWidth = 0;
-            trail.positionCount = 5;
-            trail.useWorldSpace = false;
-            trail.gameObject.SetActive(false);
-        }
-        if (!bladeTip) bladeTip = transform.Find("Tip");
-        if (!bladeBase) bladeBase = transform.Find("Base");
+        if (!trail) trail = transform.GetChild(0).gameObject;
+        if (!player) player = transform.root.GetComponent<PlayerCombatControls>();
+        if (!collider) collider = GetComponent<BoxCollider>();
+
     }
 
-    void Update()
-    {
-        if (combatControls.state == PlayerCombatControls.PlayerCombatState.ATK)
-        {
-            RenderTrail();
-            if (Physics.Linecast(bladeBase.position, bladeTip.position, out RaycastHit rayHit, hitLayer))
-            {
-                if (rayHit.transform.tag == "Enemy")
-                {
-                    var fx = Instantiate(hitEffectPrefab, rayHit.point, Quaternion.identity);
-                }
-                else if (rayHit.transform.tag == "EnemyWeapon" || rayHit.transform.tag == "Solid")
-                {
-                    var fx = Instantiate(hitEffectPrefab, rayHit.point, Quaternion.identity);
-                    fx.GetComponent<VisualEffect>().SetVector4("Color", new Vector4(4, 4, 4, 1));
-                    combatControls.state = PlayerCombatControls.PlayerCombatState.IDLE;
-                }
-            }
-        }
-    }
+
+
 }
