@@ -59,7 +59,6 @@ public class PlayerCombatControls : MonoBehaviour
                     if (chargeDelayTimer <= 0)
                     {
                         animator.SetBool("charging", true);
-                        sword.ChargeWeapon();
                     }
                 }
             }
@@ -96,15 +95,7 @@ public class PlayerCombatControls : MonoBehaviour
     {
         if(sword.IsSwordMagical())
         {
-            if (sword.IsFullyCharged())
-            {
-                if (Game.slowCameraMovementWhenAttacking) movement.lookSpeed *= lookDamp;
-                animator.SetTrigger("slash");
-            }
-            else
-            {
-                sword.ResetCharge();
-            }
+            animator.SetTrigger("slash");
         }
     }
 
@@ -126,8 +117,8 @@ public class PlayerCombatControls : MonoBehaviour
         state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(sword.AnimateTrail());
+        sword.chargeEffect.SetActive(false);
     }
-
     [SerializeField] void EndSlash()
     {
         state = CombatState.IDLE;
@@ -135,11 +126,21 @@ public class PlayerCombatControls : MonoBehaviour
         movement.lookSpeed = Game.mouseSensitivity;
         armPivot.localEulerAngles = Vector3.zero;
     }
-
+    [SerializeField] void StartSwordCharge()
+    {
+        sword.chargeEffect.SetActive(true);
+    }
+    [SerializeField] void FinishSwordCharge()
+    {
+        sword.fullyCharged = true;
+    }
     [SerializeField] void ReleaseCharge()
     {
-        if(sword.IsFullyCharged())
+        if(sword.fullyCharged)
         {
+            sword.fullyCharged = false;
+            animator.SetBool("charging", false);
+
             var slash = Instantiate(slashProjectile);
             Projectile p = slash.GetComponent<Projectile>();
             slash.transform.position = movement.camera.transform.position + movement.camera.transform.forward;
@@ -149,19 +150,18 @@ public class PlayerCombatControls : MonoBehaviour
             p.owner = gameObject;
             p.damage = sword.power * 2;
             p.direction = movement.camera.transform.forward;
-
-            sword.ResetCharge();
         }
     }
-    
     [SerializeField] void StartBlock()
     {
         state = CombatState.DEF;
         armPivot.localEulerAngles = Vector3.zero;
     }
-    
-    [SerializeField] void EndBlock()
+    [SerializeField] void BackToIdle()
     {
-        if(state != CombatState.IDLE) state = CombatState.IDLE;
+        state = CombatState.IDLE;
+        sword.fullyCharged = false;
+        sword.chargeEffect.SetActive(false);
+        animator.SetBool("charging", false);
     }
 }
