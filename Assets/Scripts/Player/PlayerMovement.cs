@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     //For Basic Controls
     [Header("General")]
     float moveSpeed;
+    float runTimer;
+    [SerializeField] float maxTimeBeforeRun = 3; //time before player starts running automatically in seconds
     [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField][Min(2)] float runSpeed = 50;
     [HideInInspector] public bool isCrouching = false;
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     RaycastHit slopeHit;
     float xRot = 0;
     float yRot = 0;
+
     Vector3 moveDirection;
 
     // For Jumping Around
@@ -52,8 +54,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask lockOnLayer;
     [HideInInspector] public Transform lockOnTarget = null;
     float lockOnLerp = 0;
-    
-
 
     void Start()
     {
@@ -63,8 +63,6 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         Game.controls.Player.Jump.performed += Jump_performed;
-        Game.controls.Player.Sprint.performed += Sprint_performed;
-        Game.controls.Player.Sprint.canceled += Sprint_canceled;
         Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
         Game.controls.Player.Crouch.performed += Crouch_performed;
@@ -95,8 +93,6 @@ public class PlayerMovement : MonoBehaviour
     void OnDestroy()
     {
         Game.controls.Player.Jump.performed -= Jump_performed;
-        Game.controls.Player.Sprint.performed -= Sprint_performed;
-        Game.controls.Player.Sprint.canceled -= Sprint_canceled;
         Game.controls.Player.Dash.performed -= Dash_performed;
         Game.controls.Player.LockOn.performed -= LockOn_performed;
         Game.controls.Player.Crouch.performed -= Crouch_performed;
@@ -127,16 +123,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Sprint_performed(InputAction.CallbackContext obj)
-    {
-        moveSpeed = runSpeed;
-    }
-
-    private void Sprint_canceled(InputAction.CallbackContext obj)
-    {
-        moveSpeed = walkSpeed;
-    }
-
     private void LockOn_performed(InputAction.CallbackContext obj)
     {
         if (lockOnSystemEnabled)
@@ -164,34 +150,23 @@ public class PlayerMovement : MonoBehaviour
         {
             if (isCrouching)
             {
-                Crouch(true);
+                camera.transform.localPosition = new Vector3(0, 1, 0);
+                controller.center = new Vector3(0, 0.5f, 0);
+                controller.height = 1;
+                isCrouching = false;
+                moveSpeed = walkSpeed;
             }
             else
             {
-                Crouch(false);
+                camera.transform.localPosition = new Vector3(0, 2, 0);
+                controller.center = new Vector3(0, 1, 0);
+                controller.height = 2;
+                isCrouching = true;
+                moveSpeed = crouchSpeed;
             }
         }
     }
 
-    public void Crouch(bool activated)
-    {
-        if (activated)
-        {
-            camera.transform.localPosition = new Vector3(0, 1, 0);
-            controller.center = new Vector3(0, 0.5f, 0);
-            controller.height = 1;
-            isCrouching = false;
-            moveSpeed = walkSpeed;
-        }
-        else
-        {
-            camera.transform.localPosition = new Vector3(0, 2, 0);
-            controller.center = new Vector3(0, 1, 0);
-            controller.height = 2;
-            isCrouching = true;
-            moveSpeed = crouchSpeed;
-        }
-    }
 
     void NormalMovement()
     {
@@ -232,6 +207,22 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+            //If Player is moving forward for a certain amount of time player will start running automatically.
+            if(z > 0.75f)
+            {
+                runTimer += Time.deltaTime;
+                if(runTimer >= maxTimeBeforeRun)
+                {
+                    moveSpeed = runSpeed;
+                }
+            }
+            else
+            {
+                moveSpeed = walkSpeed;
+                runTimer = 0;
+            }
+
         }
 
         //Gravity

@@ -265,7 +265,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -5
+      scalar: -7
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -383,7 +383,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1083,21 +1083,30 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 1
-          inSlope: -1
-          outSlope: -1
-          tangentMode: 34
+          value: 0
+          inSlope: 7.6331377
+          outSlope: 7.6331377
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0
+          outWeight: 0.17275745
+        - serializedVersion: 3
+          time: 0.25
+          value: 0.9395605
+          inSlope: -1.2565546
+          outSlope: -1.2565546
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.22180903
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -1
-          outSlope: -1
+          inSlope: -1.2527473
+          outSlope: -1.2527473
           tangentMode: 34
           weightedMode: 0
-          inWeight: 0
+          inWeight: 0.33333334
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -3321,7 +3330,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   SizeBySpeedModule:
-    enabled: 0
+    enabled: 1
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -5045,9 +5054,10 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 640
-  chargeEffect: {fileID: 1059836314325039362}
   collider: {fileID: 2502524539753426550}
   trail: {fileID: 8166029810634563806}
+  chargeEffect: {fileID: 1059836314325039362}
+  fullyCharged: 0
   magical: 1
   power: 1
 --- !u!65 &2502524539753426550
