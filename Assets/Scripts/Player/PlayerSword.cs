@@ -10,16 +10,12 @@ public class PlayerSword : MonoBehaviour
     public GameObject trail;
     public GameObject chargeEffect;
     public bool fullyCharged = false;
-    [SerializeField] bool magical;
+    public bool magical;
 
     float t = -1;
 
     public int power = 1;
 
-    public bool IsSwordMagical()
-    {
-        return magical;
-    }
     public IEnumerator AnimateTrail()
     {
         t = -1;

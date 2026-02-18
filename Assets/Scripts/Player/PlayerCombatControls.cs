@@ -22,7 +22,7 @@ public class PlayerCombatControls : MonoBehaviour
 
 
     // charging Variables
-    float chargeDelayTimer = 0;
+    float chargeDelayTimer;
     [SerializeField] float chargeDelay = 0.25f; 
 
     //Stun Variables For When The Player is Hit
@@ -34,6 +34,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     void Start()
     {
+        chargeDelayTimer = 0;
         stunTimer = stunTime;
         Game.controls.Player.Attack.performed += Attack_performed;
         Game.controls.Player.Attack.canceled += Attack_canceled;
@@ -53,7 +54,7 @@ public class PlayerCombatControls : MonoBehaviour
             if (Game.controls.Player.Attack.IsPressed())
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
-                if (sword.IsSwordMagical())
+                if (sword.magical)
                 {
                     chargeDelayTimer -= Time.deltaTime;
                     if (chargeDelayTimer <= 0)
@@ -88,12 +89,12 @@ public class PlayerCombatControls : MonoBehaviour
     {
         if (Game.slowCameraMovementWhenAttacking) movement.lookSpeed *= lookDamp;
         animator.SetTrigger("slash");
-        if (sword.IsSwordMagical()) chargeDelayTimer = chargeDelay;
+        if (sword.magical) chargeDelayTimer = chargeDelay;
     }
 
     private void Attack_canceled(InputAction.CallbackContext context)
     {
-        if(sword.IsSwordMagical())
+        if(sword.magical && sword.fullyCharged)
         {
             animator.SetTrigger("slash");
         }
@@ -112,31 +113,29 @@ public class PlayerCombatControls : MonoBehaviour
     }
     
     //Animation Events
-    [SerializeField] void StartSlash()
+    public void StartSlash()
     {
         state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(sword.AnimateTrail());
         sword.chargeEffect.SetActive(false);
+
     }
-    [SerializeField] void EndSlash()
+    public void EndSlash()
     {
         state = CombatState.IDLE;
         defVector = Vector2.zero;
         movement.lookSpeed = Game.mouseSensitivity;
         armPivot.localEulerAngles = Vector3.zero;
     }
-    [SerializeField] void StartSwordCharge()
+    public void ChargeSword()
     {
         sword.chargeEffect.SetActive(true);
-    }
-    [SerializeField] void FinishSwordCharge()
-    {
         sword.fullyCharged = true;
     }
-    [SerializeField] void ReleaseCharge()
+    public void ReleaseCharge()
     {
-        if(sword.fullyCharged)
+        if(sword.fullyCharged && sword.magical)
         {
             sword.fullyCharged = false;
             animator.SetBool("charging", false);
@@ -152,12 +151,12 @@ public class PlayerCombatControls : MonoBehaviour
             p.direction = movement.camera.transform.forward;
         }
     }
-    [SerializeField] void StartBlock()
+    public void StartBlock()
     {
         state = CombatState.DEF;
         armPivot.localEulerAngles = Vector3.zero;
     }
-    [SerializeField] void BackToIdle()
+    public void BackToIdle()
     {
         state = CombatState.IDLE;
         sword.fullyCharged = false;

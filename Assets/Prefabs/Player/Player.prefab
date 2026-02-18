@@ -81,6 +81,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 1
@@ -4863,7 +4864,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &3777720714825678306
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4909,6 +4910,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 1
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -4940,7 +4942,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &1171199764001063517
 GameObject:
   m_ObjectHideFlags: 0
@@ -5036,6 +5037,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &5154610564559027603
 MonoBehaviour:
@@ -5597,6 +5599,7 @@ MonoBehaviour:
   camera: {fileID: 975310663941252238}
   controller: {fileID: 4885958065297890024}
   combatControls: {fileID: 8145000895852676848}
+  maxTimeBeforeRun: 3
   walkSpeed: 20
   runSpeed: 30
   isCrouching: 0
@@ -5638,7 +5641,7 @@ MonoBehaviour:
   movement: {fileID: 963150078609031530}
   sword: {fileID: 5154610564559027603}
   lookDamp: 0.1
-  chargeDelay: 0.25
+  chargeDelay: 1
   wasHit: 0
   knockBackForce: {x: 0, y: 0, z: 0}
 --- !u!1 &6773704001723993537
@@ -5922,6 +5925,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8631329685310664758
 GameObject:
