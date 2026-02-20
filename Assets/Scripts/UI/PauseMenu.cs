@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
+    [SerializeField] Slider AimSenseSlider;
+    [SerializeField] Toggle slowCamAtk;
+    [SerializeField] Toggle slowCamDef;
     [SerializeField] List<Transform> stateNodes = new List<Transform>();
     int currentIndex = 0;
 
@@ -16,6 +20,8 @@ public class PauseMenu : MonoBehaviour
 
         Game.controls.UI.ToggleMenuUp.performed += ToggleMenuUp_performed;
         Game.controls.UI.ToggleMenuDown.performed += ToggleMenuDown_performed;
+        Game.controls.UI.SwitchToGamepad.performed += SwitchToGamepad_performed;
+        Game.controls.UI.SwitchToMouse.performed += SwitchToMouse_performed;
     }
     
     void OnDisable()
@@ -34,22 +40,33 @@ public class PauseMenu : MonoBehaviour
         ToggleMenuUp();
     }
 
+    private void SwitchToMouse_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        Game.navigateUiWithMouse = true;
+    }
+
+    private void SwitchToGamepad_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        Game.navigateUiWithMouse = false;
+    }
 
     public void Open()
     {
         Time.timeScale = 0;
         gameObject.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void Close()
     {
         Time.timeScale = 1;
         gameObject.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void ToggleMenuUp()
     {
-        if(currentIndex > stateNodes.Count - 1)
+        if(currentIndex >= stateNodes.Count - 1)
         {
             currentIndex = 0;
         }
@@ -82,15 +99,20 @@ public class PauseMenu : MonoBehaviour
             else stateNodes[i].gameObject.SetActive(false);
         }
     }
-    
-    public void QuitToMenu()
-    {
 
+    public void ChangeAimSense()
+    {
+        Game.aimSense = AimSenseSlider.value;
     }
 
-    public void QuitToDesktop()
+    public void ChangeSlowCamAtk()
     {
-        Application.Quit();
+        Game.slowCameraMovementWhenAttacking = slowCamAtk.isOn;
+    }
+
+    public void ChangeSlowCamDef()
+    {
+        Game.slowCameraMovementWhenDefending = slowCamDef.isOn;
     }
 
 }

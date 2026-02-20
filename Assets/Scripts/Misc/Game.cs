@@ -6,9 +6,14 @@ public class Game : MonoBehaviour
     public GameObject player;
     public static Controls controls;
     public static PauseMenu pauseMenu;
+    public static bool navigateUiWithMouse = false;
+
+    //Game Settings
     public static bool slowCameraMovementWhenAttacking = true;
     public static bool slowCameraMovementWhenDefending = true;
-    public static float mouseSensitivity = 100;
+    public static float aimSense = 100;
+
+
     
     void Awake()
     {
@@ -37,6 +42,16 @@ public class Game : MonoBehaviour
         {
             pauseMenu.Open();
         }
+    }
+    
+    public void QuitToMenu()
+    {
+
+    }
+
+    public void QuitToDesktop()
+    {
+        Application.Quit();
     }
 
 }

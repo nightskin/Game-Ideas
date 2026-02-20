@@ -108,7 +108,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) movement.lookSpeed = Game.mouseSensitivity;
+        if (Game.slowCameraMovementWhenDefending) movement.lookSpeed = Game.aimSense;
         animator.SetBool("blocking", false);
     }
     
@@ -125,7 +125,7 @@ public class PlayerCombatControls : MonoBehaviour
     {
         state = CombatState.IDLE;
         defVector = Vector2.zero;
-        movement.lookSpeed = Game.mouseSensitivity;
+        movement.lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
     public void ChargeSword()

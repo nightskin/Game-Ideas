@@ -541,7 +541,25 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Confirm",
+                    "name": "SwitchToMouse",
+                    "type": "Value",
+                    "id": "69bc57ce-c3bc-46b2-99ad-f0d0ce028062",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SwitchToGamepad",
+                    "type": "Value",
+                    "id": "9a4fa357-51b5-4f49-8085-3ee73e1ea100",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Submit",
                     "type": "Button",
                     "id": "7a16154b-1d17-472f-8abf-3425f4d3f0aa",
                     "expectedControlType": "",
@@ -550,7 +568,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Back",
+                    "name": "Cancel",
                     "type": "Button",
                     "id": "d5d9474e-2f66-4f99-bb6e-3ab52e0afe16",
                     "expectedControlType": "",
@@ -575,6 +593,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Point",
+                    "type": "Value",
+                    "id": "a9b7f0a5-b5a7-4b87-8766-be0c7be36b09",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "d308109a-5501-4dfe-8b17-c6cb973bfc29",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightClick",
+                    "type": "Button",
+                    "id": "da188b10-13d9-4c25-8361-6e2e5d39d911",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ScrollWheel",
+                    "type": "Value",
+                    "id": "4681f64c-736b-400c-8ded-b173293aa894",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -849,7 +903,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
-                    "action": "Confirm",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -860,14 +914,25 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
-                    "action": "Back",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "77ce7b8b-d41b-4d25-afb0-5628e7d4ef72",
-                    "path": "<Gamepad>/leftStick/left",
+                    "id": "3cf1a876-abbd-49ea-94bf-01c179f36dd8",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ToggleMenuUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "924e7823-56f5-4197-999c-10cb43b018ea",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -877,12 +942,89 @@
                 },
                 {
                     "name": "",
-                    "id": "3cf1a876-abbd-49ea-94bf-01c179f36dd8",
-                    "path": "<Gamepad>/leftStick/right",
+                    "id": "61fa72d5-88e2-4e77-8cdf-ec2cc7bb3ed8",
+                    "path": "*/{Point}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d5b52ffa-3461-4982-a84b-e0ea94aa3996",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5d1b1614-c2f3-4aa2-ace9-beec295b54f3",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bb895492-e29d-47a8-af23-6f3ef131f4c0",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "RightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bfd02db4-fefe-4747-8cfa-6ad12c3f8da9",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SwitchToMouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5e97ecf5-1dd6-45a0-8e03-0ffd81a99f12",
+                    "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ToggleMenuUp",
+                    "action": "SwitchToGamepad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a7558a4c-794f-4294-ad7f-980beead41dc",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SwitchToGamepad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ec4be75-41b2-42b4-9701-a1d216ad67b6",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SwitchToGamepad",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

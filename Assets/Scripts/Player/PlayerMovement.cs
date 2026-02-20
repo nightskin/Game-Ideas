@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     
     //For Basic Controls
     [Header("General")]
-    [SerializeField] float moveSpeed;
+    float moveSpeed;
     float runTimer = 0;
     [SerializeField] float maxTimeBeforeRun = 3; //time before player starts running automatically in seconds
     [SerializeField][Min(1)] float walkSpeed = 25;
@@ -58,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         moveSpeed = walkSpeed;
-        lookSpeed = Game.mouseSensitivity;
+        lookSpeed = Game.aimSense;
 
         Game.controls.Player.Jump.performed += Jump_performed;
         Game.controls.Player.Dash.performed += Dash_performed;
