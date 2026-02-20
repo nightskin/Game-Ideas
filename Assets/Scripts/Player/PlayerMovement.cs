@@ -12,8 +12,8 @@ public class PlayerMovement : MonoBehaviour
     
     //For Basic Controls
     [Header("General")]
-    float moveSpeed;
-    float runTimer;
+    [SerializeField] float moveSpeed;
+    float runTimer = 0;
     [SerializeField] float maxTimeBeforeRun = 3; //time before player starts running automatically in seconds
     [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField][Min(2)] float runSpeed = 50;
@@ -60,12 +60,14 @@ public class PlayerMovement : MonoBehaviour
         moveSpeed = walkSpeed;
         lookSpeed = Game.mouseSensitivity;
 
-        Cursor.lockState = CursorLockMode.Locked;
-
         Game.controls.Player.Jump.performed += Jump_performed;
         Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
         Game.controls.Player.Crouch.performed += Crouch_performed;
+        Game.controls.Player.Sprint.performed += Sprint_performed;
+        Game.controls.Player.Sprint.canceled += Sprint_canceled;
+        Cursor.lockState = CursorLockMode.Locked;
+
     }
     
     void Update()
@@ -96,8 +98,11 @@ public class PlayerMovement : MonoBehaviour
         Game.controls.Player.Dash.performed -= Dash_performed;
         Game.controls.Player.LockOn.performed -= LockOn_performed;
         Game.controls.Player.Crouch.performed -= Crouch_performed;
+        Game.controls.Player.Sprint.performed -= Sprint_performed;
+        Game.controls.Player.Sprint.canceled -= Sprint_canceled;
+        Cursor.lockState = CursorLockMode.None;
     }
-
+    
     private void Jump_performed(InputAction.CallbackContext obj)
     {
         // Normal Jump
@@ -167,7 +172,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void Sprint_performed(InputAction.CallbackContext obj)
+    {
+        moveSpeed = runSpeed;
+    }
 
+    private void Sprint_canceled(InputAction.CallbackContext obj)
+    {
+        moveSpeed = walkSpeed;
+    }
+
+    
     void NormalMovement()
     {
         if (grounded && velocity.y < 0)
@@ -207,22 +222,6 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-
-            //If Player is moving forward for a certain amount of time player will start running automatically.
-            if(z > 0.75f)
-            {
-                runTimer += Time.deltaTime;
-                if(runTimer >= maxTimeBeforeRun)
-                {
-                    moveSpeed = runSpeed;
-                }
-            }
-            else
-            {
-                moveSpeed = walkSpeed;
-                runTimer = 0;
-            }
-
         }
 
         //Gravity

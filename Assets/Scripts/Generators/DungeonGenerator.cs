@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
-public class CaveGenerator : MonoBehaviour
+public class DungeonGenerator : MonoBehaviour
 {
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
@@ -76,7 +75,7 @@ public class CaveGenerator : MonoBehaviour
     void Init()
     {
         if (!player) player = GameObject.FindWithTag("Player").transform;
-        if (seed == string.Empty) seed = DateTime.Now.ToString();
+        if (seed == string.Empty) seed = System.DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
         noise = new Noise(seed.GetHashCode());
 

@@ -5201,7 +5201,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -5599,9 +5599,11 @@ MonoBehaviour:
   camera: {fileID: 975310663941252238}
   controller: {fileID: 4885958065297890024}
   combatControls: {fileID: 8145000895852676848}
-  maxTimeBeforeRun: 3
+  pauseMenu: {fileID: 0}
+  moveSpeed: 0
+  maxTimeBeforeRun: 5
   walkSpeed: 20
-  runSpeed: 30
+  runSpeed: 40
   isCrouching: 0
   crouchSpeed: 10
   lookSpeed: 0
