@@ -34,6 +34,7 @@ Material:
     RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -63,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientTexture:
-        m_Texture: {fileID: 2800000, guid: f6ba04a2f5a025a4f944bb786ef3c27d, type: 3}
+        m_Texture: {fileID: 2800000, guid: ca41d5fc47236184ebb32cdadb7e322f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -112,7 +113,7 @@ Material:
     - _Brightness: 1
     - _Brishtness: 1
     - _BumpScale: 1
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -160,7 +161,7 @@ Material:
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 0.6698113, g: 0.33432811, b: 0.2748754, a: 1}
-    - _Tint2: {r: 0.3679245, g: 0.1721653, b: 0.13710395, a: 1}
+    - _Tint1: {r: 0.2735849, g: 0.06074329, b: 0.019357419, a: 1}
+    - _Tint2: {r: 0.18867922, g: 0.04449982, b: 0.020469919, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

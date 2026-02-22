@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class Game : MonoBehaviour
 {
-    public GameObject player;
+    public static GameObject player;
     public static Controls controls;
     public static PauseMenu pauseMenu;
     public static bool navigateUiWithMouse = false;
@@ -17,7 +17,7 @@ public class Game : MonoBehaviour
     
     void Awake()
     {
-        if (!player) player = GameObject.Find("Player");
+        player = GameObject.Find("Player");
 
         controls = new Controls();
         controls.Enable();

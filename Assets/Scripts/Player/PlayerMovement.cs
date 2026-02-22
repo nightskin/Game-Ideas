@@ -12,14 +12,14 @@ public class PlayerMovement : MonoBehaviour
     
     //For Basic Controls
     [Header("General")]
-    float moveSpeed;
+    float moveSpd;
+    public float lookSpd;
     float runTimer = 0;
     [SerializeField] float maxTimeBeforeRun = 3; //time before player starts running automatically in seconds
     [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField][Min(2)] float runSpeed = 50;
     [HideInInspector] public bool isCrouching = false;
     [SerializeField] float crouchSpeed = 5;
-    [HideInInspector] public float lookSpeed;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
     [SerializeField][Min(0)] float cameraBobSpeed = 1f;
     RaycastHit slopeHit;
@@ -57,8 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        moveSpeed = walkSpeed;
-        lookSpeed = Game.aimSense;
+        moveSpd = walkSpeed;
 
         Game.controls.Player.Jump.performed += Jump_performed;
         Game.controls.Player.Dash.performed += Dash_performed;
@@ -159,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
                 controller.center = new Vector3(0, 0.5f, 0);
                 controller.height = 1;
                 isCrouching = false;
-                moveSpeed = walkSpeed;
+                moveSpd = walkSpeed;
             }
             else
             {
@@ -167,19 +166,19 @@ public class PlayerMovement : MonoBehaviour
                 controller.center = new Vector3(0, 1, 0);
                 controller.height = 2;
                 isCrouching = true;
-                moveSpeed = crouchSpeed;
+                moveSpd = crouchSpeed;
             }
         }
     }
 
     private void Sprint_performed(InputAction.CallbackContext obj)
     {
-        moveSpeed = runSpeed;
+        moveSpd = runSpeed;
     }
 
     private void Sprint_canceled(InputAction.CallbackContext obj)
     {
-        moveSpeed = walkSpeed;
+        moveSpd = walkSpeed;
     }
 
     
@@ -221,7 +220,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+            controller.Move(moveDirection * moveSpd * Time.deltaTime);
         }
 
         //Gravity
@@ -241,12 +240,12 @@ public class PlayerMovement : MonoBehaviour
         float y = Game.controls.Player.Look.ReadValue<Vector2>().y;
 
         //Looking up/down with camera
-        xRot -= y * lookSpeed * Time.deltaTime;
+        xRot -= y * Game.aimSense * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
         camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
 
         //Looking left right with player body
-        yRot += x * lookSpeed * Time.deltaTime;
+        yRot += x * Game.aimSense * Time.deltaTime;
         transform.rotation = Quaternion.Euler(0, yRot, 0);
 
     }

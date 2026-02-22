@@ -8,7 +8,6 @@ public class PlayerSword : MonoBehaviour
     [SerializeField] LayerMask hitLayer;
     [SerializeField] BoxCollider collider;
     public GameObject trail;
-    public GameObject chargeEffect;
     public bool fullyCharged = false;
     public bool magical;
 

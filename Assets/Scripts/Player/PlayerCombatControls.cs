@@ -20,7 +20,6 @@ public class PlayerCombatControls : MonoBehaviour
     Vector2 defVector = Vector2.zero;
     float atkAngle;
 
-
     // charging Variables
     float chargeDelayTimer;
     [SerializeField] float chargeDelay = 0.25f; 
@@ -87,7 +86,7 @@ public class PlayerCombatControls : MonoBehaviour
 
     private void Attack_performed(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenAttacking) movement.lookSpeed *= lookDamp;
+        if (Game.slowCameraMovementWhenAttacking) movement.lookSpd *= lookDamp;
         animator.SetTrigger("slash");
         if (sword.magical) chargeDelayTimer = chargeDelay;
     }
@@ -98,17 +97,18 @@ public class PlayerCombatControls : MonoBehaviour
         {
             animator.SetTrigger("slash");
         }
+        animator.SetBool("charging", false);
     }
 
     private void Defend_performed(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) movement.lookSpeed *= lookDamp;
+        if (Game.slowCameraMovementWhenDefending) movement.lookSpd *= lookDamp;
         animator.SetBool("blocking", true);
     }
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) movement.lookSpeed = Game.aimSense;
+        if (Game.slowCameraMovementWhenDefending) movement.lookSpd = Game.aimSense;
         animator.SetBool("blocking", false);
     }
     
@@ -118,19 +118,16 @@ public class PlayerCombatControls : MonoBehaviour
         state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(sword.AnimateTrail());
-        sword.chargeEffect.SetActive(false);
-
     }
     public void EndSlash()
     {
         state = CombatState.IDLE;
         defVector = Vector2.zero;
-        movement.lookSpeed = Game.aimSense;
+        movement.lookSpd = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
     public void ChargeSword()
     {
-        sword.chargeEffect.SetActive(true);
         sword.fullyCharged = true;
     }
     public void ReleaseCharge()
@@ -160,7 +157,5 @@ public class PlayerCombatControls : MonoBehaviour
     {
         state = CombatState.IDLE;
         sword.fullyCharged = false;
-        sword.chargeEffect.SetActive(false);
-        animator.SetBool("charging", false);
     }
 }
