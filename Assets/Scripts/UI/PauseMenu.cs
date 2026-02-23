@@ -103,7 +103,7 @@ public class PauseMenu : MonoBehaviour
     public void ChangeAimSense()
     {
         Game.aimSense = AimSenseSlider.value * 10;
-        Game.player.GetComponent<PlayerMovement>().lookSpd = Game.aimSense;
+        Game.player.GetComponent<Player>().lookSpd = Game.aimSense;
     }
 
     public void ChangeSlowCamAtk()

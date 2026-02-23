@@ -106,11 +106,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   collisionMask:
     serializedVersion: 2
-    m_Bits: 129
+    m_Bits: 897
   owner: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
   speed: 100
-  range: 10
+  range: 500
   damage: 1
 --- !u!65 &9210721006732471672
 BoxCollider:

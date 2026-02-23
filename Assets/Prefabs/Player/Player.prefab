@@ -108,11 +108,11 @@ GameObject:
   - component: {fileID: 1948720904464652519}
   - component: {fileID: 3216947561008027458}
   - component: {fileID: 810669419857552264}
-  - component: {fileID: 5154610564559027603}
   - component: {fileID: 2502524539753426550}
   - component: {fileID: 2671728474392447815}
+  - component: {fileID: 9100236977725484930}
   m_Layer: 3
-  m_Name: Sword
+  m_Name: Weapon
   m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193,28 +193,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5154610564559027603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171199764001063517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28b52402b083cc540b0be7c4c6c85d81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 8145000895852676848}
-  hitEffectPrefab: {fileID: 196593810517767761, guid: 67d1e8caf4d7d9441a231feed3ce1558, type: 3}
-  hitLayer:
-    serializedVersion: 2
-    m_Bits: 640
-  collider: {fileID: 2502524539753426550}
-  trail: {fileID: 8166029810634563806}
-  fullyCharged: 0
-  magical: 1
-  power: 1
 --- !u!65 &2502524539753426550
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -263,6 +241,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &9100236977725484930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171199764001063517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adaebc61a61fb4549b0a12e70f28d4c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Weapon
+  owner: {fileID: 6434693209060557747}
+  hitEffectPrefab: {fileID: 0}
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 896
+  collider: {fileID: 2502524539753426550}
+  trail: {fileID: 8166029810634563806}
+  fullyCharged: 0
+  magical: 1
+  power: 1
 --- !u!1 &3369742966452738838
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,8 +650,7 @@ GameObject:
   - component: {fileID: 4885958065297890024}
   - component: {fileID: 7893583249395268797}
   - component: {fileID: 77831960608081745}
-  - component: {fileID: 963150078609031530}
-  - component: {fileID: 8145000895852676848}
+  - component: {fileID: 7988411829222577785}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -736,7 +735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &963150078609031530
+--- !u!114 &7988411829222577785
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -745,58 +744,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 6434693209060557747}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 359962c246eae27409fe02a651ec2cad, type: 3}
+  m_Script: {fileID: 11500000, guid: 958f258b540b47a4a98109e3e5024be2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
   hud: {fileID: 4824956135002869498}
   camera: {fileID: 975310663941252238}
   controller: {fileID: 4885958065297890024}
-  combatControls: {fileID: 8145000895852676848}
+  animator: {fileID: 7893583249395268797}
+  armPivot: {fileID: 1580257571142137265}
+  weapon: {fileID: 9100236977725484930}
+  slashProjectile: {fileID: 3668471543820423305, guid: 715901300f4bed747bc82f5dd7e4f287, type: 3}
   lookSpd: 0
-  maxTimeBeforeRun: 5
   walkSpeed: 20
   runSpeed: 40
   isCrouching: 0
-  crouchSpeed: 10
+  crouchSpeed: 5
   velocity: {x: 0, y: 0, z: 0}
   cameraBobSpeed: 1
+  state: 0
+  lookDamp: 0.1
+  chargeDelay: 0.25
+  wasHit: 0
+  knockBackForce: {x: 0, y: 0, z: 0}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 513
   groundDistance: 0.5
   grounded: 0
   jumpingEnabled: 1
   maxJumps: 1
-  jumpHeight: 7
-  dashSpeed: 150
+  jumpHeight: 2
   lockOnSystemEnabled: 1
   lockOnDistance: 500
   lockOnLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   lockOnTarget: {fileID: 0}
---- !u!114 &8145000895852676848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6434693209060557747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47350730e3ae53341b4380f5ba859903, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  slashProjectile: {fileID: 3668471543820423305, guid: 715901300f4bed747bc82f5dd7e4f287, type: 3}
-  animator: {fileID: 7893583249395268797}
-  armPivot: {fileID: 1580257571142137265}
-  movement: {fileID: 963150078609031530}
-  sword: {fileID: 5154610564559027603}
-  lookDamp: 0.1
-  chargeDelay: 1
-  wasHit: 0
-  knockBackForce: {x: 0, y: 0, z: 0}
 --- !u!1 &6773704001723993537
 GameObject:
   m_ObjectHideFlags: 0

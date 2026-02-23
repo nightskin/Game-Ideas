@@ -1,13 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerSword : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
-    [SerializeField] PlayerCombatControls player;
+    public GameObject owner;
+    Player player;
     [SerializeField] GameObject hitEffectPrefab;
     [SerializeField] LayerMask hitLayer;
     [SerializeField] BoxCollider collider;
-    public GameObject trail;
+    [SerializeField] GameObject trail;
     public bool fullyCharged = false;
     public bool magical;
 
@@ -31,14 +32,23 @@ public class PlayerSword : MonoBehaviour
         trail.SetActive(false);
     }
 
+    public bool HasTrail()
+    {
+        if(trail != null)
+        {
+            return true;
+        }
+        return false;
+    }
+
     void Start()
     {
         if (!trail) trail = transform.GetChild(0).gameObject;
-        if (!player) player = transform.root.GetComponent<PlayerCombatControls>();
+        if (owner.tag == "Player")
+        {
+            player = transform.root.GetComponent<Player>();
+        }
         if (!collider) collider = GetComponent<BoxCollider>();
 
     }
-
-
-
 }
