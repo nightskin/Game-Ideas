@@ -16,13 +16,12 @@ public class Player : MonoBehaviour
     //For Basic Controls
     [Header("General")]
     float moveSpd;
-    [HideInInspector] public float lookSpd;
+    [HideInInspector] public float lookSpeed;
     [SerializeField][Min(1)] float walkSpeed = 25;
     [SerializeField][Min(2)] float runSpeed = 50;
     [HideInInspector] public bool isCrouching = false;
     [SerializeField] float crouchSpeed = 5;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
-    [SerializeField][Min(0)] float cameraBobSpeed = 1f;
 
     RaycastHit slopeHit;
     float xRot = 0;
@@ -38,8 +37,6 @@ public class Player : MonoBehaviour
         DEF,
     }
     [HideInInspector] public CombatState state = CombatState.IDLE;
-
-    [SerializeField][Range(0, 1)] float lookDamp = 0.1f;
     Vector2 actionVector = Vector2.zero;
     Vector2 defVector = Vector2.zero;
     float atkAngle;
@@ -84,6 +81,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        lookSpeed = Game.aimSense;
         moveSpd = walkSpeed;
         Cursor.lockState = CursorLockMode.Locked;
         chargeDelayTimer = 0;
@@ -219,7 +217,7 @@ public class Player : MonoBehaviour
 
     private void Attack_performed(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenAttacking) lookSpd *= lookDamp;
+        lookSpeed *= Game.slowCameraAtkAmount;
         animator.SetTrigger("slash");
         if (weapon.magical) chargeDelayTimer = chargeDelay;
     }
@@ -235,13 +233,13 @@ public class Player : MonoBehaviour
 
     private void Defend_performed(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) lookSpd *= lookDamp;
+        lookSpeed *= Game.slowCameraDefAmont;
         animator.SetBool("blocking", true);
     }
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
-        if (Game.slowCameraMovementWhenDefending) lookSpd = Game.aimSense;
+        lookSpeed = Game.aimSense;
         animator.SetBool("blocking", false);
     }
 
@@ -261,7 +259,7 @@ public class Player : MonoBehaviour
                 if (weapon.magical)
                 {
                     chargeDelayTimer -= Time.deltaTime;
-                    if (chargeDelayTimer <= 0)
+                    if (chargeDelayTimer < 0)
                     {
                         animator.SetBool("charging", true);
                     }
@@ -280,7 +278,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
     void Movement()
     {
         if (grounded && velocity.y < 0)
@@ -339,12 +336,12 @@ public class Player : MonoBehaviour
         float y = Game.controls.Player.Look.ReadValue<Vector2>().y;
 
         //Looking up/down with camera
-        xRot -= y * Game.aimSense * Time.deltaTime;
+        xRot -= y * lookSpeed * Time.deltaTime;
         xRot = Mathf.Clamp(xRot, -45, 45);
         camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
 
         //Looking left right with player body
-        yRot += x * Game.aimSense * Time.deltaTime;
+        yRot += x * lookSpeed * Time.deltaTime;
         transform.rotation = Quaternion.Euler(0, yRot, 0);
 
     }
@@ -383,7 +380,7 @@ public class Player : MonoBehaviour
     {
         state = CombatState.IDLE;
         defVector = Vector2.zero;
-        lookSpd = Game.aimSense;
+        lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
     public void ChargeSword()

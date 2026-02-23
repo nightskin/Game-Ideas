@@ -5,8 +5,8 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] Slider AimSenseSlider;
-    [SerializeField] Toggle slowCamAtk;
-    [SerializeField] Toggle slowCamDef;
+    [SerializeField] Slider slowCamAtk;
+    [SerializeField] Slider slowCamDef;
     [SerializeField] List<Transform> stateNodes = new List<Transform>();
     int currentIndex = 0;
 
@@ -103,17 +103,17 @@ public class PauseMenu : MonoBehaviour
     public void ChangeAimSense()
     {
         Game.aimSense = AimSenseSlider.value * 10;
-        Game.player.GetComponent<Player>().lookSpd = Game.aimSense;
+        Game.player.GetComponent<Player>().lookSpeed = Game.aimSense;
     }
 
     public void ChangeSlowCamAtk()
     {
-        Game.slowCameraMovementWhenAttacking = slowCamAtk.isOn;
+        Game.slowCameraAtkAmount = slowCamAtk.value;
     }
 
     public void ChangeSlowCamDef()
     {
-        Game.slowCameraMovementWhenDefending = slowCamDef.isOn;
+        Game.slowCameraDefAmont = slowCamDef.value;
     }
 
 }
