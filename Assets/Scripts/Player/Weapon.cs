@@ -3,18 +3,24 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public GameObject owner;
-    Player player;
     [SerializeField] GameObject hitEffectPrefab;
     [SerializeField] LayerMask hitLayer;
     [SerializeField] BoxCollider collider;
     [SerializeField] GameObject trail;
-    public bool fullyCharged = false;
-    public bool magical;
 
-    float t = -1;
+    float t;
+    
+    public enum WeaponSize
+    {
+        SMALL,
+        MEDIUM,
+        LARGE,
+    }
+    public WeaponSize size;
+    public bool isMagical;
+    public GameObject owner;
+    public int damage = 1;
 
-    public int power = 1;
 
     public IEnumerator AnimateTrail()
     {
@@ -44,9 +50,9 @@ public class Weapon : MonoBehaviour
     void Start()
     {
         if (!trail) trail = transform.GetChild(0).gameObject;
-        if (owner.tag == "Player")
+        if (!owner)
         {
-            player = transform.root.GetComponent<Player>();
+            owner = transform.root.gameObject;
         }
         if (!collider) collider = GetComponent<BoxCollider>();
 

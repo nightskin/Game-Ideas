@@ -1,5 +1,7 @@
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.PlayerSettings;
 
 public class Player : MonoBehaviour
 {
@@ -41,9 +43,6 @@ public class Player : MonoBehaviour
     Vector2 defVector = Vector2.zero;
     float atkAngle;
 
-    // charging Variables
-    float chargeDelayTimer;
-    [SerializeField] float chargeDelay = 0.25f;
 
     //Stun Variables For When The Player is Hit
     [HideInInspector] public bool wasHit = false;
@@ -63,13 +62,12 @@ public class Player : MonoBehaviour
     bool jumping = false;
 
     //For Dashing
-
-    //[Header("Dashing")]
-    //bool dashing = false;
-    //[SerializeField] float dashSpeed = 150;
-    //float dashTime = 0.1f;
-    //float dashTimer = 0;
-    //Vector3 dashDirection;
+    [Header("Dashing")]
+    bool dashing = false;
+    [SerializeField] float dashSpeed = 150;
+    float dashTime = 0.1f;
+    float dashTimer = 0;
+    Vector3 dashDirection;
 
     //LockOn System
     [Header("LockOnSystem")]
@@ -84,18 +82,15 @@ public class Player : MonoBehaviour
         lookSpeed = Game.aimSense;
         moveSpd = walkSpeed;
         Cursor.lockState = CursorLockMode.Locked;
-        chargeDelayTimer = 0;
         stunTimer = stunTime;
 
 
         Game.controls.Player.Jump.performed += Jump_performed;
-        //Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
         Game.controls.Player.Crouch.performed += Crouch_performed;
         Game.controls.Player.Sprint.performed += Sprint_performed;
         Game.controls.Player.Sprint.canceled += Sprint_canceled;
         Game.controls.Player.Attack.performed += Attack_performed;
-        Game.controls.Player.Attack.canceled += Attack_canceled;
         Game.controls.Player.Defend.performed += Defend_performed;
         Game.controls.Player.Defend.canceled += Defend_canceled;
 
@@ -105,14 +100,14 @@ public class Player : MonoBehaviour
     {
         if (lockOnTarget != null)
         {
-            LookAtTarget();
+            LockOnMovement();
         }
         else
         {
-           MouseLook();
+            FPSMovement();
         }
 
-        Movement();
+
         Combat();
     }
 
@@ -125,13 +120,11 @@ public class Player : MonoBehaviour
     void OnDestroy()
     {
         Game.controls.Player.Jump.performed -= Jump_performed;
-        //Game.controls.Player.Dash.performed += Dash_performed;
         Game.controls.Player.LockOn.performed -= LockOn_performed;
         Game.controls.Player.Crouch.performed -= Crouch_performed;
         Game.controls.Player.Sprint.performed -= Sprint_performed;
         Game.controls.Player.Sprint.canceled -= Sprint_canceled;
         Game.controls.Player.Attack.performed -= Attack_performed;
-        Game.controls.Player.Attack.canceled -= Attack_canceled;
         Game.controls.Player.Defend.performed -= Defend_performed;
         Game.controls.Player.Defend.canceled -= Defend_canceled;
     }
@@ -150,16 +143,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-    //private void Dash_performed(InputAction.CallbackContext obj)
-    //{
-    //    if (!dashing)
-    //    {
-    //        dashDirection = moveDirection.normalized;
-    //        dashing = true;
-    //        dashTimer = dashTime;
-    //    }
-    //}
 
     private void LockOn_performed(InputAction.CallbackContext obj)
     {
@@ -219,28 +202,36 @@ public class Player : MonoBehaviour
     {
         lookSpeed *= Game.slowCameraAtkAmount;
         animator.SetTrigger("slash");
-        if (weapon.magical) chargeDelayTimer = chargeDelay;
-    }
-
-    private void Attack_canceled(InputAction.CallbackContext context)
-    {
-        if (weapon.magical && weapon.fullyCharged)
-        {
-            animator.SetTrigger("slash");
-        }
-        animator.SetBool("charging", false);
     }
 
     private void Defend_performed(InputAction.CallbackContext obj)
     {
-        lookSpeed *= Game.slowCameraDefAmont;
-        animator.SetBool("blocking", true);
+        if(weapon.size == Weapon.WeaponSize.SMALL)
+        {
+            if (!dashing)
+            {
+                dashDirection = moveDirection.normalized;
+                dashing = true;
+                dashTimer = dashTime;
+            }
+        }
+        else
+        {
+            lookSpeed *= Game.slowCameraDefAmont;
+            animator.SetBool("blocking", true);
+        }
     }
 
     private void Defend_canceled(InputAction.CallbackContext obj)
     {
         lookSpeed = Game.aimSense;
-        animator.SetBool("blocking", false);
+        if(weapon.size != Weapon.WeaponSize.SMALL)
+        {
+            animator.SetBool("blocking", false);
+            defVector = Vector2.zero;
+            animator.SetFloat("x", defVector.x);
+            animator.SetFloat("y", defVector.y);
+        }
     }
 
 
@@ -252,34 +243,44 @@ public class Player : MonoBehaviour
         }
         else
         {
-            actionVector = Game.controls.Player.Look.ReadValue<Vector2>();
+            actionVector = Game.controls.Player.Look.ReadValue<Vector2>().normalized;
             if (Game.controls.Player.Attack.IsPressed())
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
-                if (weapon.magical)
-                {
-                    chargeDelayTimer -= Time.deltaTime;
-                    if (chargeDelayTimer < 0)
-                    {
-                        animator.SetBool("charging", true);
-                    }
-                }
             }
             else if (Game.controls.Player.Defend.IsPressed())
             {
-                defVector.x += actionVector.x * 20 * Time.deltaTime;
-                defVector.y += actionVector.y * 20 * Time.deltaTime;
-
-                defVector.x = Mathf.Clamp(defVector.x, -1, 1);
-                defVector.y = Mathf.Clamp01(defVector.y);
-
-                animator.SetFloat("x", defVector.x);
-                animator.SetFloat("y", defVector.y);
+                if(actionVector.x > 0.5f || actionVector.x < -0.5f)
+                {
+                    defVector.x += actionVector.x * 20 * Time.deltaTime;
+                    defVector.x = Mathf.Clamp(defVector.x, -1, 1);
+                    animator.SetFloat("x", defVector.x);
+                }
+                if(actionVector.y > 0.5f || actionVector.y < -0.5f)
+                {
+                    defVector.y += actionVector.y * 10 * Time.deltaTime;
+                    defVector.y = Mathf.Clamp(defVector.y, -1, 1);
+                    animator.SetFloat("y", defVector.y);
+                }
             }
         }
     }
-    void Movement()
+    void FPSMovement()
     {
+        // Mouse Look
+        float lx = Game.controls.Player.Look.ReadValue<Vector2>().x;
+        float ly = Game.controls.Player.Look.ReadValue<Vector2>().y;
+
+        //Looking up/down with camera
+        xRot -= ly * lookSpeed * Time.deltaTime;
+        xRot = Mathf.Clamp(xRot, -45, 45);
+        camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
+
+        //Looking left right with player body
+        yRot += lx * lookSpeed * Time.deltaTime;
+        transform.rotation = Quaternion.Euler(0, yRot, 0);
+
+        // Moving Around
         if (grounded && velocity.y < 0)
         {
             numberOfJumps = 0;
@@ -301,24 +302,22 @@ public class Player : MonoBehaviour
             animator.SetBool("moving", false);
         }
 
-        //Move Input
-        controller.Move(moveDirection * moveSpd * Time.deltaTime); // remove this line if you decide to add dashing in again
-        //if (dashing)
-        //{
-        //    dashTimer -= Time.deltaTime;
-        //    if (dashTimer > 0)
-        //    {
-        //        controller.Move(dashDirection * dashSpeed * Time.deltaTime);
-        //    }
-        //    else
-        //    {
-        //        dashing = false;
-        //    }
-        //}
-        //else
-        //{
-        //    controller.Move(moveDirection * moveSpd * Time.deltaTime);
-        //}
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer > 0)
+            {
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            }
+            else
+            {
+                dashing = false;
+            }
+        }
+        else
+        {
+            controller.Move(moveDirection * moveSpd * Time.deltaTime);
+        }
 
         //Gravity
         velocity += new Vector3(0, -10, 0) * Time.deltaTime;
@@ -330,23 +329,9 @@ public class Player : MonoBehaviour
             controller.Move(new Vector3(0, -slopeHit.distance, 0));
         }
     }
-    void MouseLook()
+    void LockOnMovement()
     {
-        float x = Game.controls.Player.Look.ReadValue<Vector2>().x;
-        float y = Game.controls.Player.Look.ReadValue<Vector2>().y;
-
-        //Looking up/down with camera
-        xRot -= y * lookSpeed * Time.deltaTime;
-        xRot = Mathf.Clamp(xRot, -45, 45);
-        camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
-
-        //Looking left right with player body
-        yRot += x * lookSpeed * Time.deltaTime;
-        transform.rotation = Quaternion.Euler(0, yRot, 0);
-
-    }
-    void LookAtTarget()
-    {
+        //Look At Target
         Vector3 dirToTarget = lockOnTarget.position - camera.transform.position;
         Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
 
@@ -366,8 +351,63 @@ public class Player : MonoBehaviour
 
         camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
         transform.rotation = Quaternion.Euler(0, yRot, 0);
+
+        //Moving Around
+        if (grounded && velocity.y < 0)
+        {
+            numberOfJumps = 0;
+            velocity = Vector3.zero;
+            if (jumping) jumping = false;
+        }
+
+        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
+        float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
+        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+
+        //Animation for moving
+        if (m > 0)
+        {
+            animator.SetBool("moving", true);
+        }
+        else
+        {
+            animator.SetBool("moving", false);
+        }
+
+        if (dashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer > 0)
+            {
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            }
+            else
+            {
+                dashing = false;
+            }
+        }
+        else
+        {
+            controller.Move(moveDirection * moveSpd * Time.deltaTime);
+        }
+
+        //Gravity
+        velocity += new Vector3(0, -10, 0) * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+
+        //Handle Moving Down slopes
+        if (grounded && !jumping)
+        {
+            controller.Move(new Vector3(0, -slopeHit.distance, 0));
+        }
     }
-    
+    float ReMap(float OldValue, float oldMin, float oldMax, float newMin, float newMax)
+    {
+        float OldRange = (oldMax - oldMin);
+        float NewRange = (newMax - newMin);
+        return (((OldValue - oldMin) * NewRange) / OldRange) + newMin;
+    }
 
     //Animation Events
     public void StartSlash()
@@ -375,25 +415,20 @@ public class Player : MonoBehaviour
         state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(weapon.AnimateTrail());
+        defVector = Vector2.zero;
+        animator.SetFloat("x", defVector.x);
+        animator.SetFloat("y", defVector.y);
     }
     public void EndSlash()
     {
         state = CombatState.IDLE;
-        defVector = Vector2.zero;
         lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
-    public void ChargeSword()
+    public void MagicSwipe()
     {
-        weapon.fullyCharged = true;
-    }
-    public void ReleaseCharge()
-    {
-        if (weapon.fullyCharged && weapon.magical)
+        if (weapon.isMagical)
         {
-            weapon.fullyCharged = false;
-            animator.SetBool("charging", false);
-
             var slash = Instantiate(slashProjectile);
             Projectile p = slash.GetComponent<Projectile>();
             slash.transform.position = camera.transform.position + camera.transform.forward;
@@ -401,7 +436,7 @@ public class Player : MonoBehaviour
             slash.transform.localEulerAngles = baseRot + new Vector3(0, 0, atkAngle - 90);
 
             p.owner = gameObject;
-            p.damage = weapon.power * 2;
+            p.damage = weapon.damage * 2;
             p.direction = camera.transform.forward;
         }
     }
@@ -413,7 +448,9 @@ public class Player : MonoBehaviour
     public void BackToIdle()
     {
         state = CombatState.IDLE;
-        weapon.fullyCharged = false;
+        defVector = Vector2.zero;
+        animator.SetFloat("x", defVector.x);
+        animator.SetFloat("y", defVector.y);
     }
 
 }
