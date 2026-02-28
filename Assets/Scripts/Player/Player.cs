@@ -32,13 +32,7 @@ public class Player : MonoBehaviour
 
 
     //For Combat
-    public enum CombatState
-    {
-        IDLE,
-        ATK,
-        DEF,
-    }
-    [HideInInspector] public CombatState state = CombatState.IDLE;
+    [HideInInspector] public bool isAttacking = false;
     Vector2 actionVector = Vector2.zero;
     Vector2 defVector = Vector2.zero;
     float atkAngle;
@@ -250,18 +244,13 @@ public class Player : MonoBehaviour
             }
             else if (Game.controls.Player.Defend.IsPressed())
             {
-                if(actionVector.x > 0.5f || actionVector.x < -0.5f)
-                {
-                    defVector.x += actionVector.x * 20 * Time.deltaTime;
-                    defVector.x = Mathf.Clamp(defVector.x, -1, 1);
-                    animator.SetFloat("x", defVector.x);
-                }
-                if(actionVector.y > 0.5f || actionVector.y < -0.5f)
-                {
-                    defVector.y += actionVector.y * 10 * Time.deltaTime;
-                    defVector.y = Mathf.Clamp(defVector.y, -1, 1);
-                    animator.SetFloat("y", defVector.y);
-                }
+                defVector.y += actionVector.y * 20 * Time.deltaTime;
+                defVector.y = Mathf.Clamp(defVector.y, 0, 1);
+                animator.SetFloat("y", defVector.y);
+                
+                defVector.x += actionVector.x * 20 * Time.deltaTime;
+                defVector.x = Mathf.Clamp(defVector.x, -1, 1);
+                animator.SetFloat("x", defVector.x);
             }
         }
     }
@@ -402,17 +391,11 @@ public class Player : MonoBehaviour
             controller.Move(new Vector3(0, -slopeHit.distance, 0));
         }
     }
-    float ReMap(float OldValue, float oldMin, float oldMax, float newMin, float newMax)
-    {
-        float OldRange = (oldMax - oldMin);
-        float NewRange = (newMax - newMin);
-        return (((OldValue - oldMin) * NewRange) / OldRange) + newMin;
-    }
 
     //Animation Events
     public void StartSlash()
     {
-        state = CombatState.ATK;
+        isAttacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(weapon.AnimateTrail());
         defVector = Vector2.zero;
@@ -421,7 +404,7 @@ public class Player : MonoBehaviour
     }
     public void EndSlash()
     {
-        state = CombatState.IDLE;
+        isAttacking = false;
         lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
@@ -442,12 +425,12 @@ public class Player : MonoBehaviour
     }
     public void StartBlock()
     {
-        state = CombatState.DEF;
+        isAttacking = false;
         armPivot.localEulerAngles = Vector3.zero;
     }
     public void BackToIdle()
     {
-        state = CombatState.IDLE;
+        isAttacking = false;
         defVector = Vector2.zero;
         animator.SetFloat("x", defVector.x);
         animator.SetFloat("y", defVector.y);

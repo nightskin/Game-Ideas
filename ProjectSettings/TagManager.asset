@@ -7,9 +7,8 @@ TagManager:
   - Enemy
   - Projectile
   - Solid
-  - EnemyWeapon
-  - PlayerWeapon
-  - PlayerShield
+  - Weapon
+  - DefenceZone
   layers:
   - Default
   - TransparentFX
