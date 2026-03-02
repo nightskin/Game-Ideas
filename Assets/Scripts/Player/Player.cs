@@ -1,7 +1,5 @@
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.PlayerSettings;
 
 public class Player : MonoBehaviour
 {
@@ -14,6 +12,7 @@ public class Player : MonoBehaviour
     public Transform armPivot;
     public Weapon weapon;
     [SerializeField] GameObject slashProjectile;
+    [SerializeField] GameObject blastProjectile;
 
     //For Basic Controls
     [Header("General")]
@@ -84,9 +83,8 @@ public class Player : MonoBehaviour
         Game.controls.Player.Crouch.performed += Crouch_performed;
         Game.controls.Player.Sprint.performed += Sprint_performed;
         Game.controls.Player.Sprint.canceled += Sprint_canceled;
-        Game.controls.Player.Attack.performed += Attack_performed;
-        Game.controls.Player.Defend.performed += Defend_performed;
-        Game.controls.Player.Defend.canceled += Defend_canceled;
+        Game.controls.Player.Slash.performed += Slash_performed;
+        Game.controls.Player.Thrust.performed += Thrust_performed;
 
     }
 
@@ -118,9 +116,8 @@ public class Player : MonoBehaviour
         Game.controls.Player.Crouch.performed -= Crouch_performed;
         Game.controls.Player.Sprint.performed -= Sprint_performed;
         Game.controls.Player.Sprint.canceled -= Sprint_canceled;
-        Game.controls.Player.Attack.performed -= Attack_performed;
-        Game.controls.Player.Defend.performed -= Defend_performed;
-        Game.controls.Player.Defend.canceled -= Defend_canceled;
+        Game.controls.Player.Slash.performed -= Slash_performed;
+        Game.controls.Player.Thrust.performed -= Thrust_performed;
     }
     
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -189,18 +186,7 @@ public class Player : MonoBehaviour
 
     private void Sprint_canceled(InputAction.CallbackContext obj)
     {
-        moveSpd = walkSpeed;
-    }
-
-    private void Attack_performed(InputAction.CallbackContext obj)
-    {
-        lookSpeed *= Game.slowCameraAtkAmount;
-        animator.SetTrigger("slash");
-    }
-
-    private void Defend_performed(InputAction.CallbackContext obj)
-    {
-        if(weapon.size == Weapon.WeaponSize.SMALL)
+        if(lockOnTarget)
         {
             if (!dashing)
             {
@@ -211,23 +197,21 @@ public class Player : MonoBehaviour
         }
         else
         {
-            lookSpeed *= Game.slowCameraDefAmont;
-            animator.SetBool("blocking", true);
+            moveSpd = walkSpeed;
         }
     }
 
-    private void Defend_canceled(InputAction.CallbackContext obj)
+    private void Slash_performed(InputAction.CallbackContext obj)
     {
-        lookSpeed = Game.aimSense;
-        if(weapon.size != Weapon.WeaponSize.SMALL)
-        {
-            animator.SetBool("blocking", false);
-            defVector = Vector2.zero;
-            animator.SetFloat("x", defVector.x);
-            animator.SetFloat("y", defVector.y);
-        }
+        lookSpeed *= Game.slowCameraAtkAmount;
+        animator.SetTrigger("slash");
     }
 
+    private void Thrust_performed(InputAction.CallbackContext obj)
+    {
+        lookSpeed *= Game.slowCameraAtkAmount;
+        animator.SetTrigger("thrust");
+    }
 
     void Combat()
     {
@@ -238,12 +222,14 @@ public class Player : MonoBehaviour
         else
         {
             actionVector = Game.controls.Player.Look.ReadValue<Vector2>().normalized;
-            if (Game.controls.Player.Attack.IsPressed())
+            if (Game.controls.Player.Slash.IsPressed() || Game.controls.Player.Thrust.IsPressed())
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
-            else if (Game.controls.Player.Defend.IsPressed())
+
+            if (lockOnTarget)
             {
+                animator.SetBool("blocking", true);
                 defVector.y += actionVector.y * 20 * Time.deltaTime;
                 defVector.y = Mathf.Clamp(defVector.y, 0, 1);
                 animator.SetFloat("y", defVector.y);
@@ -251,6 +237,13 @@ public class Player : MonoBehaviour
                 defVector.x += actionVector.x * 20 * Time.deltaTime;
                 defVector.x = Mathf.Clamp(defVector.x, -1, 1);
                 animator.SetFloat("x", defVector.x);
+            }
+            else
+            {
+                animator.SetBool("blocking", false);
+                defVector = Vector2.zero;
+                animator.SetFloat("x", 0);
+                animator.SetFloat("y", 0);
             }
         }
     }
@@ -393,7 +386,7 @@ public class Player : MonoBehaviour
     }
 
     //Animation Events
-    public void StartSlash()
+    public void StartAtk()
     {
         isAttacking = true;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
@@ -402,12 +395,25 @@ public class Player : MonoBehaviour
         animator.SetFloat("x", defVector.x);
         animator.SetFloat("y", defVector.y);
     }
-    public void EndSlash()
+    public void EndAtk()
     {
         isAttacking = false;
         lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
+    public void MagicBlast()
+    {
+        if(weapon.isMagical)
+        {
+            var blast = Instantiate(blastProjectile);
+            Projectile p = blast.GetComponent<Projectile>();
+
+            p.owner = gameObject;
+            p.damage = weapon.damage;
+            p.direction = camera.transform.forward;
+        }
+    }
+
     public void MagicSwipe()
     {
         if (weapon.isMagical)

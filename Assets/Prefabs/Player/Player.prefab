@@ -807,13 +807,14 @@ MonoBehaviour:
   armPivot: {fileID: 1580257571142137265}
   weapon: {fileID: 9100236977725484930}
   slashProjectile: {fileID: 3668471543820423305, guid: 715901300f4bed747bc82f5dd7e4f287, type: 3}
+  blastProjectile: {fileID: 2217476259904976160, guid: d46884b84039d030abd13ed52f8210f9, type: 3}
   lookSpeed: 0
   walkSpeed: 20
   runSpeed: 40
   isCrouching: 0
   crouchSpeed: 5
   velocity: {x: 0, y: 0, z: 0}
-  state: 0
+  isAttacking: 0
   wasHit: 0
   knockBackForce: {x: 0, y: 0, z: 0}
   groundLayer:
