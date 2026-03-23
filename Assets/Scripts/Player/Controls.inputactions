@@ -34,15 +34,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Thrust",
-                    "type": "Button",
-                    "id": "d556359c-4afc-4326-9ef1-29e01ffcc8d8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "21fa0f8e-3b89-44a0-9a71-9d3ffa45710e",
@@ -73,15 +64,6 @@
                     "name": "LockOn",
                     "type": "Button",
                     "id": "ebfc13b9-5b8c-4114-9499-91ef480c9463",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Crouch",
-                    "type": "Button",
-                    "id": "fcdd6166-36fe-4a70-8f37-ea2890189ce4",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -408,28 +390,6 @@
                 },
                 {
                     "name": "",
-                    "id": "8c208dfc-c725-489c-8408-7c0507116985",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Thrust",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e30acc58-7345-4a6f-afcb-b5fd447dbef2",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Thrust",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "31c3ccdd-1f27-47a7-ac3e-7e55c9244bd4",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -447,28 +407,6 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f3bb991c-a640-4681-837a-181ba24daa58",
-                    "path": "<Keyboard>/ctrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Crouch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3a6f2987-5927-40fd-b401-685f0b6b36b3",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

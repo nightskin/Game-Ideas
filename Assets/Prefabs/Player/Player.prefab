@@ -810,9 +810,9 @@ MonoBehaviour:
   blastProjectile: {fileID: 2217476259904976160, guid: d46884b84039d030abd13ed52f8210f9, type: 3}
   lookSpeed: 0
   walkSpeed: 20
-  runSpeed: 40
+  runSpeed: 30
   isCrouching: 0
-  crouchSpeed: 5
+  crouchSpeed: 10
   velocity: {x: 0, y: 0, z: 0}
   isAttacking: 0
   wasHit: 0
@@ -823,9 +823,8 @@ MonoBehaviour:
   groundDistance: 0.5
   grounded: 0
   jumpingEnabled: 1
-  maxJumps: 1
-  jumpHeight: 2
-  dashSpeed: 150
+  jumpHeight: 5.5
+  dashSpeed: 100
   lockOnSystemEnabled: 1
   lockOnDistance: 500
   lockOnLayer:

@@ -49,7 +49,6 @@ public class Player : MonoBehaviour
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [HideInInspector] public bool grounded;
     [SerializeField] bool jumpingEnabled;
-    [SerializeField][Min(0)] int maxJumps = 1;
     [SerializeField][Min(1)] float jumpHeight = 3;
     int numberOfJumps = 0;
     bool jumping = false;
@@ -80,11 +79,9 @@ public class Player : MonoBehaviour
 
         Game.controls.Player.Jump.performed += Jump_performed;
         Game.controls.Player.LockOn.performed += LockOn_performed;
-        Game.controls.Player.Crouch.performed += Crouch_performed;
         Game.controls.Player.Sprint.performed += Sprint_performed;
         Game.controls.Player.Sprint.canceled += Sprint_canceled;
         Game.controls.Player.Slash.performed += Slash_performed;
-        Game.controls.Player.Thrust.performed += Thrust_performed;
 
     }
 
@@ -113,11 +110,9 @@ public class Player : MonoBehaviour
     {
         Game.controls.Player.Jump.performed -= Jump_performed;
         Game.controls.Player.LockOn.performed -= LockOn_performed;
-        Game.controls.Player.Crouch.performed -= Crouch_performed;
         Game.controls.Player.Sprint.performed -= Sprint_performed;
         Game.controls.Player.Sprint.canceled -= Sprint_canceled;
         Game.controls.Player.Slash.performed -= Slash_performed;
-        Game.controls.Player.Thrust.performed -= Thrust_performed;
     }
     
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -125,12 +120,10 @@ public class Player : MonoBehaviour
         // Normal Jump
         if (jumpingEnabled)
         {
-            if (numberOfJumps < maxJumps)
+            if (grounded)
             {
                 velocity = Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-                numberOfJumps++;
                 jumping = true;
-                return;
             }
         }
     }
@@ -152,29 +145,6 @@ public class Player : MonoBehaviour
                 lockOnTarget = null;
                 hud.animator.SetBool("lock", false);
                 lockOnLerp = 0;
-            }
-        }
-    }
-
-    private void Crouch_performed(InputAction.CallbackContext obj)
-    {
-        if (grounded)
-        {
-            if (isCrouching)
-            {
-                camera.transform.localPosition = new Vector3(0, 1, 0);
-                controller.center = new Vector3(0, 0.5f, 0);
-                controller.height = 1;
-                isCrouching = false;
-                moveSpd = walkSpeed;
-            }
-            else
-            {
-                camera.transform.localPosition = new Vector3(0, 2, 0);
-                controller.center = new Vector3(0, 1, 0);
-                controller.height = 2;
-                isCrouching = true;
-                moveSpd = crouchSpeed;
             }
         }
     }
@@ -207,11 +177,6 @@ public class Player : MonoBehaviour
         animator.SetTrigger("slash");
     }
 
-    private void Thrust_performed(InputAction.CallbackContext obj)
-    {
-        lookSpeed *= Game.slowCameraAtkAmount;
-        animator.SetTrigger("thrust");
-    }
 
     void Combat()
     {
@@ -222,12 +187,12 @@ public class Player : MonoBehaviour
         else
         {
             actionVector = Game.controls.Player.Look.ReadValue<Vector2>().normalized;
-            if (Game.controls.Player.Slash.IsPressed() || Game.controls.Player.Thrust.IsPressed())
+            if (Game.controls.Player.Slash.IsPressed())
             {
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             }
 
-            if (lockOnTarget)
+            if (lockOnTarget && !Game.controls.Player.Slash.IsPressed())
             {
                 animator.SetBool("blocking", true);
                 defVector.y += actionVector.y * 20 * Time.deltaTime;
@@ -237,13 +202,6 @@ public class Player : MonoBehaviour
                 defVector.x += actionVector.x * 20 * Time.deltaTime;
                 defVector.x = Mathf.Clamp(defVector.x, -1, 1);
                 animator.SetFloat("x", defVector.x);
-            }
-            else
-            {
-                animator.SetBool("blocking", false);
-                defVector = Vector2.zero;
-                animator.SetFloat("x", 0);
-                animator.SetFloat("y", 0);
             }
         }
     }
