@@ -16,12 +16,8 @@ public class Player : MonoBehaviour
 
     //For Basic Controls
     [Header("General")]
-    float moveSpd;
     [HideInInspector] public float lookSpeed;
-    [SerializeField][Min(1)] float walkSpeed = 25;
-    [SerializeField][Min(2)] float runSpeed = 50;
-    [HideInInspector] public bool isCrouching = false;
-    [SerializeField] float crouchSpeed = 5;
+    [SerializeField][Min(1)] float moveSpeed = 25;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
 
     RaycastHit slopeHit;
@@ -31,7 +27,13 @@ public class Player : MonoBehaviour
 
 
     //For Combat
-    [HideInInspector] public bool isAttacking = false;
+    public enum PlayerState
+    {
+        IDLE,
+        ATK,
+        DEF,
+    }
+    [HideInInspector] public PlayerState state = PlayerState.IDLE;
     Vector2 actionVector = Vector2.zero;
     Vector2 defVector = Vector2.zero;
     float atkAngle;
@@ -61,42 +63,24 @@ public class Player : MonoBehaviour
     float dashTimer = 0;
     Vector3 dashDirection;
 
-    //LockOn System
-    [Header("LockOnSystem")]
-    [SerializeField] bool lockOnSystemEnabled = true;
-    [SerializeField] float lockOnDistance = 500;
-    [SerializeField] LayerMask lockOnLayer;
-    [HideInInspector] public Transform lockOnTarget = null;
-    float lockOnLerp = 0;
 
     void Start()
     {
         lookSpeed = Game.aimSense;
-        moveSpd = walkSpeed;
         Cursor.lockState = CursorLockMode.Locked;
         stunTimer = stunTime;
 
 
         Game.controls.Player.Jump.performed += Jump_performed;
-        Game.controls.Player.LockOn.performed += LockOn_performed;
-        Game.controls.Player.Sprint.performed += Sprint_performed;
-        Game.controls.Player.Sprint.canceled += Sprint_canceled;
+        Game.controls.Player.Dash.performed += Dash_performed;
+        Game.controls.Player.Slash.canceled += Slash_canceled;
         Game.controls.Player.Slash.performed += Slash_performed;
 
     }
 
     void Update()
     {
-        if (lockOnTarget != null)
-        {
-            LockOnMovement();
-        }
-        else
-        {
-            FPSMovement();
-        }
-
-
+        Movement();
         Combat();
     }
 
@@ -107,12 +91,10 @@ public class Player : MonoBehaviour
     }
 
     void OnDestroy()
-    {
+    {   
         Game.controls.Player.Jump.performed -= Jump_performed;
-        Game.controls.Player.LockOn.performed -= LockOn_performed;
-        Game.controls.Player.Sprint.performed -= Sprint_performed;
-        Game.controls.Player.Sprint.canceled -= Sprint_canceled;
-        Game.controls.Player.Slash.performed -= Slash_performed;
+        Game.controls.Player.Dash.performed -= Dash_performed;
+        Game.controls.Player.Slash.canceled -= Slash_canceled;
     }
     
     private void Jump_performed(InputAction.CallbackContext obj)
@@ -128,53 +110,21 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void LockOn_performed(InputAction.CallbackContext obj)
+    private void Dash_performed(InputAction.CallbackContext obj)
     {
-        if (lockOnSystemEnabled)
-        {
-            if (lockOnTarget == null)
-            {
-                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit, lockOnDistance, lockOnLayer))
-                {
-                    hud.animator.SetBool("lock", true);
-                    lockOnTarget = hit.transform;
-                }
-            }
-            else
-            {
-                lockOnTarget = null;
-                hud.animator.SetBool("lock", false);
-                lockOnLerp = 0;
-            }
-        }
-    }
-
-    private void Sprint_performed(InputAction.CallbackContext obj)
-    {
-        moveSpd = runSpeed;
-    }
-
-    private void Sprint_canceled(InputAction.CallbackContext obj)
-    {
-        if(lockOnTarget)
-        {
-            if (!dashing)
-            {
-                dashDirection = moveDirection.normalized;
-                dashing = true;
-                dashTimer = dashTime;
-            }
-        }
-        else
-        {
-            moveSpd = walkSpeed;
-        }
+        dashing = true;
     }
 
     private void Slash_performed(InputAction.CallbackContext obj)
     {
+        hud.reticle.SetActive(true);
+    }
+
+    private void Slash_canceled(InputAction.CallbackContext obj)
+    {
         lookSpeed *= Game.slowCameraAtkAmount;
         animator.SetTrigger("slash");
+        hud.reticle.SetActive(false);
     }
 
 
@@ -186,26 +136,15 @@ public class Player : MonoBehaviour
         }
         else
         {
-            actionVector = Game.controls.Player.Look.ReadValue<Vector2>().normalized;
             if (Game.controls.Player.Slash.IsPressed())
             {
+                actionVector = Game.controls.Player.Look.ReadValue<Vector2>();
                 atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
-            }
-
-            if (lockOnTarget && !Game.controls.Player.Slash.IsPressed())
-            {
-                animator.SetBool("blocking", true);
-                defVector.y += actionVector.y * 20 * Time.deltaTime;
-                defVector.y = Mathf.Clamp(defVector.y, 0, 1);
-                animator.SetFloat("y", defVector.y);
-                
-                defVector.x += actionVector.x * 20 * Time.deltaTime;
-                defVector.x = Mathf.Clamp(defVector.x, -1, 1);
-                animator.SetFloat("x", defVector.x);
+                hud.reticle.transform.rotation = Quaternion.Euler(0,0,atkAngle);
             }
         }
     }
-    void FPSMovement()
+    void Movement()
     {
         // Mouse Look
         float lx = Game.controls.Player.Look.ReadValue<Vector2>().x;
@@ -256,80 +195,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            controller.Move(moveDirection * moveSpd * Time.deltaTime);
-        }
-
-        //Gravity
-        velocity += new Vector3(0, -10, 0) * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        //Handle Moving Down slopes
-        if (grounded && !jumping)
-        {
-            controller.Move(new Vector3(0, -slopeHit.distance, 0));
-        }
-    }
-    void LockOnMovement()
-    {
-        //Look At Target
-        Vector3 dirToTarget = lockOnTarget.position - camera.transform.position;
-        Vector3 rotToTarget = Quaternion.LookRotation(dirToTarget).eulerAngles;
-
-
-        if (lockOnLerp < 1)
-        {
-            lockOnLerp += Time.deltaTime;
-            xRot = Mathf.LerpAngle(xRot, rotToTarget.x, lockOnLerp);
-            yRot = Mathf.LerpAngle(yRot, rotToTarget.y, lockOnLerp);
-        }
-        else
-        {
-            xRot = rotToTarget.x;
-            if (xRot > 359) xRot = 0;
-            yRot = rotToTarget.y;
-        }
-
-        camera.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
-        transform.rotation = Quaternion.Euler(0, yRot, 0);
-
-        //Moving Around
-        if (grounded && velocity.y < 0)
-        {
-            numberOfJumps = 0;
-            velocity = Vector3.zero;
-            if (jumping) jumping = false;
-        }
-
-        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
-        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
-        float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
-        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
-
-        //Animation for moving
-        if (m > 0)
-        {
-            animator.SetBool("moving", true);
-        }
-        else
-        {
-            animator.SetBool("moving", false);
-        }
-
-        if (dashing)
-        {
-            dashTimer -= Time.deltaTime;
-            if (dashTimer > 0)
-            {
-                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
-            }
-            else
-            {
-                dashing = false;
-            }
-        }
-        else
-        {
-            controller.Move(moveDirection * moveSpd * Time.deltaTime);
+            controller.Move(moveDirection * moveSpeed * Time.deltaTime);
         }
 
         //Gravity
@@ -346,7 +212,7 @@ public class Player : MonoBehaviour
     //Animation Events
     public void StartAtk()
     {
-        isAttacking = true;
+        state = PlayerState.ATK;
         armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
         StartCoroutine(weapon.AnimateTrail());
         defVector = Vector2.zero;
@@ -355,7 +221,7 @@ public class Player : MonoBehaviour
     }
     public void EndAtk()
     {
-        isAttacking = false;
+        state = PlayerState.IDLE;
         lookSpeed = Game.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
     }
@@ -389,12 +255,12 @@ public class Player : MonoBehaviour
     }
     public void StartBlock()
     {
-        isAttacking = false;
+        state = PlayerState.DEF;
         armPivot.localEulerAngles = Vector3.zero;
     }
     public void BackToIdle()
     {
-        isAttacking = false;
+        state = PlayerState.IDLE;
         defVector = Vector2.zero;
         animator.SetFloat("x", defVector.x);
         animator.SetFloat("y", defVector.y);

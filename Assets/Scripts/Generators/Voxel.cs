@@ -3,19 +3,19 @@ using UnityEngine;
 public static class Voxel
 {
     public static float size = 5;
-    public static float isoLevel = 0.5f;
+    public static float isoLevel = 0.1f;
     
     public static int GetState(float[] values)
     {
         int state = 0;
-        if (values[0] >= isoLevel) state |= 1;
-        if (values[1] >= isoLevel) state |= 2;
-        if (values[2] >= isoLevel) state |= 4;
-        if (values[3] >= isoLevel) state |= 8;
-        if (values[4] >= isoLevel) state |= 16;
-        if (values[5] >= isoLevel) state |= 32;
-        if (values[6] >= isoLevel) state |= 64;
-        if (values[7] >= isoLevel) state |= 128;
+        if (values[0] > isoLevel) state |= 1;
+        if (values[1] > isoLevel) state |= 2;
+        if (values[2] > isoLevel) state |= 4;
+        if (values[3] > isoLevel) state |= 8;
+        if (values[4] > isoLevel) state |= 16;
+        if (values[5] > isoLevel) state |= 32;
+        if (values[6] > isoLevel) state |= 64;
+        if (values[7] > isoLevel) state |= 128;
         return state;
     }
 

@@ -6,48 +6,45 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshCollider))]
 public class Chunk : MonoBehaviour
 {
-    public static int resolution = 8;
     List<Vector3> verts = new List<Vector3>();
     List<Vector2> uvs = new List<Vector2>();
     List<int> tris = new List<int>();
     int buffer = 0;
     Mesh mesh;
 
-    public void CreateMesh()
+    public void Generate()
     {
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
-        Vector3 center = new Vector3(resolution - 1, resolution - 1, resolution - 1) / 2 * Voxel.size;
-
-        for(int x = 0; x < resolution - 1; x++)
+        for(int x = 0; x < World.get.chunkSize.x; x++)
         {
-            for(int y = 0; y < resolution - 1; y++)
+            for(int z = 0; z < World.get.chunkSize.z; z++)
             {
-                for(int z = 0; z < resolution - 1; z++)
+                for(int y = 0; y < World.get.chunkSize.y; y++)
                 {
-                    Vector3[] points = new Vector3[]
+                    Vector3[] corners = new Vector3[]
                     {
-                        transform.position + (new Vector3(x,y,z+1) * Voxel.size) - center,
-                        transform.position + (new Vector3(x+1,y,z+1) * Voxel.size) - center,
-                        transform.position + (new Vector3(x+1,y,z) * Voxel.size) - center,
-                        transform.position + (new Vector3(x,y,z) * Voxel.size) - center,
-                        transform.position + (new Vector3(x,y+1,z+1) * Voxel.size) - center,
-                        transform.position + (new Vector3(x+1,y+1,z+1) * Voxel.size) - center,
-                        transform.position + (new Vector3(x+1,y+1,z) * Voxel.size) - center,
-                        transform.position + (new Vector3(x,y+1,z) * Voxel.size) - center,
+                        new Vector3(x,y,z+1),
+                        new Vector3(x+1,y,z+1),
+                        new Vector3(x+1,y,z),
+                        new Vector3(x,y,z),
+                        new Vector3(x,y+1,z+1),
+                        new Vector3(x+1,y+1,z+1),
+                        new Vector3(x+1,y+1,z),
+                        new Vector3(x,y+1,z),
                     };
                     float[] values = new float[]
                     {
-                        World.Evaluate(points[0]),
-                        World.Evaluate(points[1]),
-                        World.Evaluate(points[2]),
-                        World.Evaluate(points[3]),
-                        World.Evaluate(points[4]),
-                        World.Evaluate(points[5]),
-                        World.Evaluate(points[6]),
-                        World.Evaluate(points[7]),
+                        World.get.Evaluate(corners[0] + transform.position),
+                        World.get.Evaluate(corners[1] + transform.position),
+                        World.get.Evaluate(corners[2] + transform.position),
+                        World.get.Evaluate(corners[3] + transform.position),
+                        World.get.Evaluate(corners[4] + transform.position),
+                        World.get.Evaluate(corners[5] + transform.position),
+                        World.get.Evaluate(corners[6] + transform.position),
+                        World.get.Evaluate(corners[7] + transform.position),
                     };
 
                     int cubeIndex = Voxel.GetState(values);
@@ -63,7 +60,7 @@ public class Chunk : MonoBehaviour
                                 int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
-                                Vector3 vertexPos = Voxel.LerpPoint(values[a], values[b], points[a], points[b]);
+                                Vector3 vertexPos = Voxel.LerpPoint(values[a], values[b], corners[a], corners[b]);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
@@ -97,13 +94,12 @@ public class Chunk : MonoBehaviour
         }
 
         mesh.Clear();
-        mesh.vertices = verts.ToArray();
-        mesh.triangles = tris.ToArray();
-        mesh.uv = uvs.ToArray();
+        mesh.SetVertices(verts.ToArray());
+        mesh.SetTriangles(tris.ToArray(),0);
+        mesh.SetUVs(0,uvs.ToArray());
 
-        mesh.RecalculateBounds();
+        mesh.Optimize();
         mesh.RecalculateNormals();
-        mesh.RecalculateTangents();
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 }

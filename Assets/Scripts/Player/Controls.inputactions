@@ -34,6 +34,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Defend",
+                    "type": "Button",
+                    "id": "8c425cad-34fc-448c-90f8-8a315c7da2ce",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "92925c89-fd4d-40ce-9069-d5c08c8680cc",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "21fa0f8e-3b89-44a0-9a71-9d3ffa45710e",
@@ -64,15 +82,6 @@
                     "name": "LockOn",
                     "type": "Button",
                     "id": "ebfc13b9-5b8c-4114-9499-91ef480c9463",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Sprint",
-                    "type": "Button",
-                    "id": "acfb0300-60ae-4169-940a-3364c9f9a5c0",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -412,23 +421,45 @@
                 },
                 {
                     "name": "",
-                    "id": "1b931436-f25f-472e-a942-54b093a29c15",
-                    "path": "<Keyboard>/w",
-                    "interactions": "MultiTap",
+                    "id": "c1b35040-f193-4924-a62d-1da764682c92",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Sprint",
+                    "action": "Defend",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "1af87f0e-daf1-4ecf-933e-f43447c1cd3d",
-                    "path": "<Gamepad>/leftStickPress",
+                    "id": "c930359e-0985-4a1b-aa86-d7a9a4373018",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Sprint",
+                    "action": "Defend",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "099e50ec-ccd9-4ae8-be89-0ad95d8c40a3",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81047d49-a365-4670-9ea1-60c7672b912b",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
