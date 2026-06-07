@@ -8,15 +8,6 @@ public class Weapon : MonoBehaviour
     [SerializeField] BoxCollider collider;
     [SerializeField] GameObject trail;
 
-    float t;
-    
-    public enum WeaponSize
-    {
-        SMALL,
-        MEDIUM,
-        LARGE,
-    }
-    public WeaponSize size;
     public bool isMagical;
     public GameObject owner;
     public int damage = 1;
@@ -24,7 +15,7 @@ public class Weapon : MonoBehaviour
 
     public IEnumerator AnimateTrail()
     {
-        t = -1;
+        float t = -1;
         trail.GetComponent<MeshRenderer>().material.SetFloat("_Scroll", t);
         trail.SetActive(true);
 
@@ -57,4 +48,10 @@ public class Weapon : MonoBehaviour
         if (!collider) collider = GetComponent<BoxCollider>();
 
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        
+    }
+
 }

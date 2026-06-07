@@ -9,7 +9,7 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
 
-    [Tooltip("Determines max size of the level")] public Vector3Int size = Vector3Int.one * 100;
+    [Tooltip("Determines max size of the level")] public Vector3Int bounds = Vector3Int.one * 100;
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
     {
@@ -27,6 +27,8 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] float incrementLevel = 0.01f;
     [SerializeField] MeshGenerationAlgorithm meshGeneration = MeshGenerationAlgorithm.MARCHING_CUBES;
     [SerializeField][Min(1)] int hallwaySize = 1;
+    [SerializeField][Range(-1,1)] float isoLevel = 0;
+    [SerializeField][Min(1)] float voxelSize = 5;
     float[,,] grid = null;
     List<Vector3> verts;
     List<Vector2> uvs;
@@ -56,7 +58,7 @@ public class DungeonGenerator : MonoBehaviour
         if (showBounds)
         {
             Gizmos.color = boundColor;
-            Gizmos.DrawWireCube(transform.position + ((Vector3)size / 2 * Voxel.size), (Vector3)size * Voxel.size);
+            Gizmos.DrawWireCube(transform.position + ((Vector3)bounds / 2 * voxelSize), (Vector3)bounds * voxelSize);
         }
     }
 
@@ -74,7 +76,7 @@ public class DungeonGenerator : MonoBehaviour
         if (seed == string.Empty) seed = System.DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
 
-        grid = new float[size.x, size.y, size.z];
+        grid = new float[bounds.x, bounds.y, bounds.z];
         verts = new List<Vector3>();
         uvs = new List<Vector2>();
         tris = new List<int>();
@@ -108,24 +110,24 @@ public class DungeonGenerator : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= size.x - 1 || cell.x + x <= 0)
+                    if (cell.x + x >= bounds.x - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
-                    if (cell.y + y >= size.y - 1 || cell.y + y <= 0)
+                    if (cell.y + y >= bounds.y - 1 || cell.y + y <= 0)
                     {
                         continue;
                     }
-                    if (cell.z + z >= size.z - 1 || cell.z + z <= 0)
+                    if (cell.z + z >= bounds.z - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
 
                     
 
-                    if (grid[cell.x + x, cell.y + y, cell.z + z] < Voxel.isoLevel)
+                    if (grid[cell.x + x, cell.y + y, cell.z + z] < isoLevel)
                     {
-                        grid[cell.x + x, cell.y + y, cell.z + z] = Voxel.isoLevel;
+                        grid[cell.x + x, cell.y + y, cell.z + z] = isoLevel;
                     }
                     else
                     {
@@ -145,54 +147,54 @@ public class DungeonGenerator : MonoBehaviour
 
         if (meshGeneration == MeshGenerationAlgorithm.VOXEL_MESH)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < bounds.x; x++)
             {
-                for (int y = 0; y < size.y; y++)
+                for (int y = 0; y < bounds.y; y++)
                 {
-                    for (int z = 0; z < size.z; z++)
+                    for (int z = 0; z < bounds.z; z++)
                     {
-                        if (grid[x, y, z] > Voxel.isoLevel)
+                        if (grid[x, y, z] > isoLevel)
                         {
                             if (y > 0)
                             {
-                                if (grid[x, y - 1, z] <= Voxel.isoLevel)
+                                if (grid[x, y - 1, z] <= isoLevel)
                                 {
-                                    DrawQuadBottom(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadBottom(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
-                            if (y < size.y - 1)
+                            if (y < bounds.y - 1)
                             {
-                                if (grid[x, y + 1, z] <= Voxel.isoLevel)
+                                if (grid[x, y + 1, z] <= isoLevel)
                                 {
-                                    DrawQuadTop(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadTop(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
                             if (x > 0)
                             {
-                                if (grid[x - 1, y, z] <= Voxel.isoLevel)
+                                if (grid[x - 1, y, z] <= isoLevel)
                                 {
-                                    DrawQuadLeft(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadLeft(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
-                            if (x < size.x - 1)
+                            if (x < bounds.x - 1)
                             {
-                                if (grid[x + 1, y, z] <= Voxel.isoLevel)
+                                if (grid[x + 1, y, z] <= isoLevel)
                                 {
-                                    DrawQuadRight(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadRight(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
                             if (z > 0)
                             {
-                                if (grid[x, y, z - 1] <= Voxel.isoLevel)
+                                if (grid[x, y, z - 1] <= isoLevel)
                                 {
-                                    DrawQuadBack(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadBack(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
-                            if (z < size.z - 1)
+                            if (z < bounds.z - 1)
                             {
-                                if (grid[x, y, z + 1] <= Voxel.isoLevel)
+                                if (grid[x, y, z + 1] <= isoLevel)
                                 {
-                                    DrawQuadFront(new Vector3(x, y, z) * Voxel.size);
+                                    DrawQuadFront(new Vector3(x, y, z) * voxelSize);
                                 }
                             }
                         }
@@ -202,11 +204,11 @@ public class DungeonGenerator : MonoBehaviour
         }
         else
         {
-            for (int x = 0; x < size.x - 1; x++)
+            for (int x = 0; x < bounds.x - 1; x++)
             {
-                for (int y = 0; y < size.y - 1; y++)
+                for (int y = 0; y < bounds.y - 1; y++)
                 {
-                    for (int z = 0; z < size.z - 1; z++)
+                    for (int z = 0; z < bounds.z - 1; z++)
                     {
 
                         float[] values = new float[]
@@ -223,17 +225,17 @@ public class DungeonGenerator : MonoBehaviour
 
                         Vector3[] points = new Vector3[]
                         {
-                            new Vector3(x,y,z+1) * Voxel.size,
-                            new Vector3(x+1,y,z+1) * Voxel.size,
-                            new Vector3(x+1,y,z) * Voxel.size,
-                            new Vector3(x,y,z) * Voxel.size,
-                            new Vector3(x,y+1,z+1) * Voxel.size,
-                            new Vector3(x+1,y+1,z+1) * Voxel.size,
-                            new Vector3(x+1,y+1,z) * Voxel.size,
-                            new Vector3(x,y+1,z) * Voxel.size,
+                            new Vector3(x,y,z+1) * voxelSize,
+                            new Vector3(x+1,y,z+1) * voxelSize,
+                            new Vector3(x+1,y,z) * voxelSize,
+                            new Vector3(x,y,z) * voxelSize,
+                            new Vector3(x,y+1,z+1) * voxelSize,
+                            new Vector3(x+1,y+1,z+1) * voxelSize,
+                            new Vector3(x+1,y+1,z) * voxelSize,
+                            new Vector3(x,y+1,z) * voxelSize,
                         };
 
-                        int cubeIndex = Voxel.GetState(values);
+                        int cubeIndex = VoxelHelper.GetState(values, isoLevel);
 
                         Vector3[] triVerts = new Vector3[3];
                         int triIndex = 0;
@@ -247,7 +249,7 @@ public class DungeonGenerator : MonoBehaviour
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
                                 Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
-                                if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = Voxel.LerpPoint(values[a], values[b], points[a], points[b]);
+                                if(meshGeneration == MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], isoLevel);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
@@ -265,7 +267,7 @@ public class DungeonGenerator : MonoBehaviour
                                 else if (triIndex == 2)
                                 {
                                     triVerts[2] = vertexPos;
-                                    uvs.AddRange(Voxel.GetUVs(triVerts[0], triVerts[1], triVerts[2]));
+                                    uvs.AddRange(VoxelHelper.GetUVs(triVerts[0], triVerts[1], triVerts[2], voxelSize));
                                     triIndex = 0;
                                 }
 
@@ -294,7 +296,7 @@ public class DungeonGenerator : MonoBehaviour
 
     void RandomWalker()
     {
-        Vector3Int currentIndex = size / 2;
+        Vector3Int currentIndex = bounds / 2;
 
         for (int step = 0; step < numberOfSteps; step++)
         {
@@ -315,9 +317,9 @@ public class DungeonGenerator : MonoBehaviour
         List<Vector3Int> exits = new List<Vector3Int>();
         for (int r = 0; r < numberOfRooms; r++)
         {
-            int xi = UnityEngine.Random.Range(0, size.x);
-            int yi = UnityEngine.Random.Range(0, size.y);
-            int zi = UnityEngine.Random.Range(0, size.z);
+            int xi = UnityEngine.Random.Range(0, bounds.x);
+            int yi = UnityEngine.Random.Range(0, bounds.y);
+            int zi = UnityEngine.Random.Range(0, bounds.z);
 
             Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
             entrances.Add(currentIndex);
@@ -329,13 +331,13 @@ public class DungeonGenerator : MonoBehaviour
                 int z = UnityEngine.Random.Range(-1, 2);
 
                 if (x == -1 && currentIndex.x <= 0) x = 1;
-                if (x == 1 && currentIndex.x >= size.x - 1) x = -1;
+                if (x == 1 && currentIndex.x >= bounds.x - 1) x = -1;
 
                 if (z == -1 && currentIndex.z <= 0) z = 1;
-                if (z == 1 && currentIndex.z >= size.z - 1) z = -1;
+                if (z == 1 && currentIndex.z >= bounds.z - 1) z = -1;
 
                 if (y == -1 && currentIndex.y <= 0) y = 1;
-                if (y == 1 && currentIndex.y >= size.y - 1) y = -1;
+                if (y == 1 && currentIndex.y >= bounds.y - 1) y = -1;
 
 
                 currentIndex += new Vector3Int(x, y, z);
@@ -370,9 +372,9 @@ public class DungeonGenerator : MonoBehaviour
             int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
             int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
 
-            int rx = UnityEngine.Random.Range(roomSizeX, size.x - roomSizeX);
-            int ry = UnityEngine.Random.Range(ceilngHeight, size.y - ceilngHeight);
-            int rz = UnityEngine.Random.Range(roomSizeZ, size.z - roomSizeZ);
+            int rx = UnityEngine.Random.Range(roomSizeX, bounds.x - roomSizeX);
+            int ry = UnityEngine.Random.Range(ceilngHeight, bounds.y - ceilngHeight);
+            int rz = UnityEngine.Random.Range(roomSizeZ, bounds.z - roomSizeZ);
             Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
             ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
             pointsOfInterest.Add(roomPosition);
@@ -469,10 +471,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadBottom(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -491,10 +493,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadTop(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -514,10 +516,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadFront(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -537,10 +539,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadBack(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -560,10 +562,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadLeft(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -583,10 +585,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawQuadRight(Vector3 position)
     {
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  Voxel.size + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * Voxel.size + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -609,16 +611,16 @@ public class DungeonGenerator : MonoBehaviour
         if (player)
         {
 
-            for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < bounds.x; x++)
             {
-                for (int y = 0; y < size.y; y++)
+                for (int y = 0; y < bounds.y; y++)
                 {
-                    for (int z = 0; z < size.z; z++)
+                    for (int z = 0; z < bounds.z; z++)
                     {
-                        if (grid[x, y, z] > Voxel.isoLevel)
+                        if (grid[x, y, z] > isoLevel)
                         {
-                            player.transform.position = new Vector3(x, y, z) * Voxel.size;
-                            player.transform.position += Vector3.up * size.y * Voxel.size;
+                            player.transform.position = new Vector3(x, y, z) * voxelSize;
+                            player.transform.position += Vector3.up * bounds.y * voxelSize;
                             if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
                             {
                                 player.position = hit.point;

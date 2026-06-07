@@ -43,15 +43,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Dash",
-                    "type": "Button",
-                    "id": "92925c89-fd4d-40ce-9069-d5c08c8680cc",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "21fa0f8e-3b89-44a0-9a71-9d3ffa45710e",
@@ -70,18 +61,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ToggleTarget",
-                    "type": "Value",
-                    "id": "dbd7d1b0-18dc-4d29-9fa9-003d16fb4349",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "LockOn",
+                    "name": "Evade",
                     "type": "Button",
-                    "id": "ebfc13b9-5b8c-4114-9499-91ef480c9463",
+                    "id": "17874dd9-500f-4061-88dc-e4ce18d1010b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -266,138 +248,6 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "ScrollWheel",
-                    "id": "ef46d327-e270-4464-b6fc-9afa03f8a93b",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ToggleTarget",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "1926a002-57b4-4490-b81a-a4d3d934ad9d",
-                    "path": "<Mouse>/scroll/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "003de7ca-be55-4381-b126-09d45d212678",
-                    "path": "<Mouse>/scroll/up",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Keyboard",
-                    "id": "c66e2776-fd00-41a8-9498-4f76e865e906",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ToggleTarget",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "d5ec56d9-c56f-4bcb-abbe-db2d5423b2c9",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "cdc99e13-9751-4238-a688-58b87f5ad84e",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "ShoulderBtns",
-                    "id": "65b7847f-d8dd-4e29-be00-bea45e36c528",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ToggleTarget",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "62a079e5-31bd-4c6e-addf-e0213ad3d5c6",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "d55958d0-0185-4863-aabf-6b34ff5fa8c6",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "ToggleTarget",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "66831afb-2c58-4ed0-a7c0-859e91cf85b3",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d692d1c9-d14b-4575-93b2-b3037ec1144f",
-                    "path": "<Gamepad>/rightStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "94de06df-5465-4790-82c9-4950f13c32a1",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
                     "name": "",
                     "id": "31c3ccdd-1f27-47a7-ac3e-7e55c9244bd4",
                     "path": "<Keyboard>/space",
@@ -443,23 +293,23 @@
                 },
                 {
                     "name": "",
-                    "id": "099e50ec-ccd9-4ae8-be89-0ad95d8c40a3",
+                    "id": "cc5c56f2-1426-4258-b176-3cb518e5c5a6",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Dash",
+                    "action": "Evade",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "81047d49-a365-4670-9ea1-60c7672b912b",
+                    "id": "d0afbf92-97f7-44bc-8402-3f64b865384d",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Dash",
+                    "action": "Evade",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

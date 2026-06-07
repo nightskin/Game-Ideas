@@ -109,6 +109,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _1Bit: 0
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -176,7 +177,7 @@ Material:
     - _ShadowColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 0.7924528, g: 0.41052824, b: 0.26539695, a: 1}
-    - _Tint2: {r: 0.4056604, g: 0.18544474, b: 0.1014151, a: 1}
+    - _Tint1: {r: 0.8867924, g: 0.46486637, b: 0.30535775, a: 1}
+    - _Tint2: {r: 0.254717, g: 0.09211463, b: 0.010813452, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

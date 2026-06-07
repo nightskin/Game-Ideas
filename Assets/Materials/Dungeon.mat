@@ -136,6 +136,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _1Bit: 0
     - _Alpha: 1
     - _AlphaClip: 1
     - _Blend: 1
@@ -163,6 +164,6 @@ Material:
     - _Tile: {r: 1, g: 1, b: 0, a: 0}
     - _TileWall: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _WallTint: {r: 1, g: 1, b: 1, a: 1}
+    - _WallTint: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
