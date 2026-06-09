@@ -3,9 +3,10 @@ using UnityEngine.InputSystem;
 
 public class Game : MonoBehaviour
 {
-    public static GameObject player;
+    public PauseMenu pauseMenu;
+    public GameObject player;
+
     public static Controls controls;
-    public static PauseMenu pauseMenu;
     public static bool navigateUiWithMouse = false;
 
     //Game Settings
@@ -17,17 +18,16 @@ public class Game : MonoBehaviour
     
     void Awake()
     {
-        player = GameObject.Find("Player");
-
         controls = new Controls();
         controls.Enable();
-        pauseMenu = transform.Find("Canvas").GetChild(0).GetComponent<PauseMenu>();
-
+    }
+    
+    void OnEnable()
+    {
         controls.Player.Pause.performed += Pause_performed;
-
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
         controls.Player.Pause.performed -= Pause_performed;
     }

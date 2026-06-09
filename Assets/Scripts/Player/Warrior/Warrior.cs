@@ -13,12 +13,12 @@ public class Player : MonoBehaviour
     public GameObject magicSlashProjectile;
     
     //States
-    PlayerState currentState;
-    public PlayerIDLE idle = new PlayerIDLE();
-    public PlayerAtk atk = new PlayerAtk();
-    public PlayerDEF def = new PlayerDEF();
-    public PlayerHIT hit = new PlayerHIT();
-    public PlayerDEAD dead = new PlayerDEAD();
+    WarriorState currentState;
+    public WarriorIDLE idle = new WarriorIDLE();
+    public WarriorAtk atk = new WarriorAtk();
+    public WarriorDEF def = new WarriorDEF();
+    public WarriorHIT hit = new WarriorHIT();
+    public WarriorDEAD dead = new WarriorDEAD();
 
     //For Basic Controls
     [Header("General")]
@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, yRot, 0);
     }
 
-    public void SwitchState(PlayerState state)
+    public void SwitchState(WarriorState state)
     {
         currentState = state;
         currentState.Enter(this);

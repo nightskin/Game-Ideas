@@ -1,6 +1,6 @@
 using System;
 
-public class Noise
+public class SimplexNoise
 {
     #region Values
     /// Initial permutation table
@@ -53,12 +53,12 @@ public class Noise
     };
     #endregion
 
-    public Noise()
+    public SimplexNoise()
     {
         Randomize(0);
     }
 
-    public Noise(int seed)
+    public SimplexNoise(int seed)
     {
         Randomize(seed);
     }

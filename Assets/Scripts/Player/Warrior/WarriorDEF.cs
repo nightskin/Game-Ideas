@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerDEF : PlayerState
+public class WarriorDEF : WarriorState
 {
     Vector2 blockValue;
     public override void Enter(Player player)

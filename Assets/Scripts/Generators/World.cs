@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
-    Noise noise;    
+    SimplexNoise noise;    
     public static World get;
     [SerializeField] GameObject chunkPrefab;
     public Vector2Int worldSize = Vector2Int.one; 
@@ -11,10 +11,11 @@ public class World : MonoBehaviour
     public Gradient underGroundColors;
     public Gradient terrainColors;
     public string seed;
-    public float noiseScale = 0.1f;
+    [Range(0,2)]public float terrainScale = 0.1f;
+    [Range(0,2)]public float caveScale = 0.15f;
     public int baseHeight = 32;
     [Range(0,1)] public float squashFactor = 0.25f;
-    [Range(-1,1)] public float isoLevel = 0;
+    [Range(0,1)] public float isoLevel = 0;
     public int octaves = 3;
 
 
@@ -30,41 +31,25 @@ public class World : MonoBehaviour
         if(position.y == 0) return 0;
         else if(position.y == voxelSize) return 1;
 
-        float noise2d = 0;
+        if(position.y < baseHeight)
+        {
+            return Mathf.Abs(noise.Evaluate(position * caveScale));
+        }
+
+        float value = 0;
         float finalFrequency = 1;
         float finalAmplitude = 1;
 
         for(int i = 0; i < octaves; i++)
         {
-            noise2d += finalAmplitude * noise.Evaluate(new Vector3(position.x, 0, position.z) * noiseScale * finalFrequency);
+            value += finalAmplitude * noise.Evaluate(new Vector3(position.x, 0, position.z) * terrainScale * finalFrequency);
             finalAmplitude *= 0.5f;
             finalFrequency *= 2;
         }
 
-        float noise3d = 0;
-        finalFrequency = 1;
-        finalAmplitude = 1;
-        for(int i = 0; i < octaves; i++)
-        {
-            noise3d += finalAmplitude * noise.Evaluate(position * noiseScale * finalFrequency);
-            finalAmplitude *= 0.5f;
-            finalFrequency *= 2;
-        }
-
-        noise2d = noise2d - (Remap(position.y,0,worldSize.y,0,1) * squashFactor) + (Remap(baseHeight,0,worldSize.y,0,1) * squashFactor);
-
-        if(position.y < baseHeight)
-        {
-            return noise3d;
-        }
-        else if(position.y > baseHeight)
-        {
-            return noise2d;
-        }
-        else
-        {
-            return noise2d - noise3d;
-        }
+        value = value - (Remap(position.y,0,worldSize.y,0,1) * squashFactor) + (Remap(baseHeight,0,worldSize.y,0,1) * squashFactor);
+        value = Remap(value,0,octaves,0,1);
+        return value;
     }
 
     public Color GetColor(Vector3 position)
@@ -83,7 +68,7 @@ public class World : MonoBehaviour
         {
             seed = Random.value.ToString();
         }
-        noise = new Noise(seed.GetHashCode());
+        noise = new SimplexNoise(seed.GetHashCode());
 
         for(int x = 0; x < worldSize.x; x++)
         {

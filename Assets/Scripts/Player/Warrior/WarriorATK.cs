@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAtk : PlayerState
+public class WarriorAtk : WarriorState
 {
     public override void Enter(Player player)
     {

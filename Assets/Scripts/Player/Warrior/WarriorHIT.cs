@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHIT : PlayerState
+public class WarriorHIT : WarriorState
 {
     //Stun Variables For When The Player is Hit
     public Vector3 knockBack;
