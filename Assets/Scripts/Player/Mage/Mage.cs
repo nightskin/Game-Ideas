@@ -86,7 +86,7 @@ public class Mage : MonoBehaviour
         }
 
         //Dash when Pressed
-        if(Game.controls.Player.Evade.IsPressed())
+        if(Game.controls.Player.Sprint.IsPressed())
         {
             speed = maxSpeed;
         }

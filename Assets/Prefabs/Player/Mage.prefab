@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5256888035069910570
 Transform:
   m_ObjectHideFlags: 0
@@ -50,11 +50,14 @@ MonoBehaviour:
   controller: {fileID: 2351473730890772566}
   animator: {fileID: 0}
   maxHeadTurn: 65
+  velocity: {x: 0, y: 0, z: 0}
+  grounded: 0
   minSpeed: 20
   maxSpeed: 50
+  drag: 25
   groundLayer:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 1
   jumpHeight: 3
 --- !u!143 &2351473730890772566
 CharacterController:

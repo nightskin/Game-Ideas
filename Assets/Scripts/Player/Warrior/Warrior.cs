@@ -1,7 +1,7 @@
 using UnityEngine;
 //using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Warrior : MonoBehaviour
 {
     //Components
     [Header("Components")]
@@ -25,7 +25,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public float lookSpeed;
     [HideInInspector] public float moveSpeed = 20;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
-    [HideInInspector] public float atkAngle = 0;
 
     [HideInInspector] public RaycastHit slopeHit;
     float xRot = 0;
@@ -38,13 +37,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool grounded;
     [Min(1)] public float jumpHeight = 3;
     [HideInInspector] public bool jumping = false;
-
-    //For Evasion
-    public float evasionSpeed = 200;
-    Vector3 evadeDirection;
-    float evadeTimer;
-    bool evading;
-
+    
 
     //Events
     void Start()
@@ -77,36 +70,12 @@ public class Player : MonoBehaviour
             if(jumping) jumping = false;
         }
 
-        if(Game.controls.Player.Evade.WasPressedThisFrame() && grounded)
-        {
-            evadeTimer = 0.1f;
-            float x = Game.controls.Player.Move.ReadValue<Vector2>().normalized.x;
-            float z = Game.controls.Player.Move.ReadValue<Vector2>().normalized.y;
-            evadeDirection = (transform.right * x + transform.forward * z).normalized;
-            evading = true;
-        }
-
-        if(evading)
-        {
-            if(evadeTimer > 0)
-            {
-                controller.Move(evadeDirection * evasionSpeed * Time.deltaTime);
-                evadeTimer -= Time.deltaTime;
-            }
-            else
-            {
-                evading = false;
-            }
-        }
-        else
-        {
-            // Moving Around 
-            float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
-            float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
-            float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
-            Vector3 moveDirection = (transform.right * x + transform.forward * z).normalized * m;
-            controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-        }
+        // Moving Around 
+        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
+        float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
+        Vector3 moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
         //Jumping
         if(Game.controls.Player.Jump.IsPressed() && grounded)
@@ -167,7 +136,7 @@ public class Player : MonoBehaviour
     //Animation Events
     public void StartAtk()
     {
-        armPivot.localEulerAngles = new Vector3(0, 0, atkAngle);
+        armPivot.localEulerAngles = new Vector3(0, 0, atk.angle);
         StartCoroutine(weapon.AnimateTrail());
     }
     public void EndAtk()
@@ -178,7 +147,7 @@ public class Player : MonoBehaviour
             Projectile p = slash.GetComponent<Projectile>();
             slash.transform.position = camera.transform.position + camera.transform.forward;
             Vector3 baseRot = Quaternion.LookRotation(camera.transform.forward).eulerAngles;
-            slash.transform.localEulerAngles = baseRot + new Vector3(0, 0, atkAngle - 90);
+            slash.transform.localEulerAngles = baseRot + new Vector3(0, 0, atk.angle - 90);
 
             p.owner = gameObject;
             p.damage = weapon.damage * 2;

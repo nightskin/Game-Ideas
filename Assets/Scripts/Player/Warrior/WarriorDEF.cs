@@ -3,42 +3,35 @@ using UnityEngine;
 public class WarriorDEF : WarriorState
 {
     Vector2 blockValue;
-    public override void Enter(Player player)
+    public override void Enter(Warrior player)
     {
         player.lookSpeed *= Game.slowCameraDefAmont;
         blockValue = Vector2.zero;
+        player.animator.SetBool("def", true);
     }
 
-    public override void Update(Player player)
+    public override void Update(Warrior player)
     {
         player.Look();
         player.Move();
 
-        blockValue += Game.controls.Player.Look.ReadValue<Vector2>();
+        blockValue += Game.controls.Player.Look.ReadValue<Vector2>() *  10 * Time.deltaTime;
         blockValue.x = Mathf.Clamp(blockValue.x, -1,1);
         blockValue.y = Mathf.Clamp01(blockValue.y);
+        player.animator.SetFloat("defx", blockValue.x);
+        player.animator.SetFloat("defy", blockValue.y);
         
-        if(Game.controls.Player.Jump.WasPressedThisFrame() && player.grounded)
-        {
-            player.velocity = Vector3.up * Mathf.Sqrt(player.jumpHeight * -2 * Physics.gravity.y);
-            player.jumping = true;
-        }
-        if(Game.controls.Player.Defend.WasReleasedThisFrame())
+        if(Game.controls.Player.SecondaryAction.WasReleasedThisFrame())
         {
             player.SwitchState(player.idle);
         }
-        if(Game.controls.Player.Slash.IsPressed())
+        if(Game.controls.Player.PimaryAction.WasPerformedThisFrame())
         {
-            Vector2 atkVector = Game.controls.Player.Look.ReadValue<Vector2>();
-            if(atkVector.magnitude > 0)
-            {
-                player.atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-                player.SwitchState(player.atk);
-            }
+            player.SwitchState(player.atk);
         }
     }
 
-    public override void Collision(Player player)
+    public override void Collision(Warrior player)
     {
 
     }

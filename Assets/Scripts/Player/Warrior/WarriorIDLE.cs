@@ -2,32 +2,29 @@ using UnityEngine;
 
 public class WarriorIDLE : WarriorState
 {
-    public override void Enter(Player player)
+    public override void Enter(Warrior player)
     {
+        player.animator.SetFloat("defx", 0);
+        player.animator.SetFloat("defy", 0);
         player.lookSpeed = Game.aimSense;
     }
 
-    public override void Update(Player player)
+    public override void Update(Warrior player)
     {
         player.Look();
         player.Move();
 
-        if (Game.controls.Player.Slash.IsPressed())
+        if (Game.controls.Player.PimaryAction.IsPressed())
         {
-            Vector2 atkVector = Game.controls.Player.Look.ReadValue<Vector2>();
-            if(atkVector.magnitude > 0)
-            {
-                player.atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-                player.SwitchState(player.atk);
-            }
+            player.SwitchState(player.atk);
         }
-        else if(Game.controls.Player.Defend.IsPressed())
+        else if(Game.controls.Player.SecondaryAction.IsPressed())
         {
             player.SwitchState(player.def);
         }
     }
 
-    public override void Collision(Player p)
+    public override void Collision(Warrior p)
     {
         
     }

@@ -7,12 +7,12 @@ public class WarriorHIT : WarriorState
     public float stunTime = 0.2f;
     float stunTimer;
 
-    public override void Enter(Player player)
+    public override void Enter(Warrior player)
     {
         stunTimer = stunTime;
     }
 
-    public override void Update(Player player)
+    public override void Update(Warrior player)
     {
         if(stunTimer > 0)
         {
@@ -24,7 +24,7 @@ public class WarriorHIT : WarriorState
         }
     }
 
-    public override void Collision(Player player)
+    public override void Collision(Warrior player)
     {
         
     }

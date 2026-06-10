@@ -9,7 +9,7 @@ public class MageOK : MageState
     public override void Update(Mage mage)
     {
         //For Debug only hurts player when pressed
-        if(Game.controls.Player.Defend.IsPressed())
+        if(Game.controls.Player.SecondaryAction.IsPressed())
         {
             mage.hit.knockBack = -mage.camera.transform.forward * 100;
             mage.SwtichState(mage.hit);

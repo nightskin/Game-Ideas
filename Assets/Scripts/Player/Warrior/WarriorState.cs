@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class WarriorState
 {
-    public abstract void Enter(Player p);
-    public abstract void Update(Player p);
-    public abstract void Collision(Player p);
+    public abstract void Enter(Warrior p);
+    public abstract void Update(Warrior p);
+    public abstract void Collision(Warrior p);
 }

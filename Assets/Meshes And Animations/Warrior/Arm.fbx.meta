@@ -1,24 +1,24 @@
 fileFormatVersion: 2
 guid: 205939eb57f9b8e4999aae3f7e2ec09e
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Cuffs
-    second: {fileID: 2100000, guid: be1d00bb4256d6243a267378e0978b2f, type: 2}
+    second: {fileID: 2100000, guid: c17dfbe3a9abd2ee0aaf482d74564c23, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Skin
-    second: {fileID: 2100000, guid: 459b3b7cbf0cf944899f915ddd6875fa, type: 2}
+    second: {fileID: 2100000, guid: c71ebbce182251864a7f5a9a0283fe76, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Sleeve
-    second: {fileID: 2100000, guid: 762fa515fe2984f4a86a42bb10347147, type: 2}
+    second: {fileID: 2100000, guid: 415e0190f50e18f9b95161e2e5e7efab, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -71,6 +71,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
