@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Handle
+  m_Name: PlaceHolder
   m_Shader: {fileID: -6465566751694194690, guid: 55a2864a9d1a77e45b7df2182f4af488, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -162,7 +162,7 @@ Material:
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint1: {r: 0.3584906, g: 0.076923616, b: 0.032128863, a: 1}
-    - _Tint2: {r: 0.3207547, g: 0.04236383, b: 0, a: 1}
+    - _Tint1: {r: 0.60784316, g: 0, b: 0, a: 1}
+    - _Tint2: {r: 0.21568628, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

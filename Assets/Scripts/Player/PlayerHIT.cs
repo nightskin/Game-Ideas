@@ -1,18 +1,18 @@
 using UnityEngine;
 
-public class WarriorHIT : WarriorState
+public class PlayerHIT : PlayerState
 {
     //Stun Variables For When The Player is Hit
     public Vector3 knockBack;
     public float stunTime = 0.2f;
     float stunTimer;
 
-    public override void Enter(Warrior player)
+    public override void Enter(Player p)
     {
         stunTimer = stunTime;
     }
 
-    public override void Update(Warrior player)
+    public override void Update(Player p)
     {
         if(stunTimer > 0)
         {
@@ -20,11 +20,11 @@ public class WarriorHIT : WarriorState
         }
         else
         {
-            player.SwitchState(player.idle);
+            p.SwitchState(p.alive);
         }
     }
 
-    public override void Collision(Warrior player)
+    public override void Collision(Player p)
     {
         
     }
