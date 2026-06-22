@@ -10,6 +10,7 @@ public class Game : MonoBehaviour
     public static bool navigateUiWithMouse = false;
 
     //Game Settings
+    public static float cameraBob = 1;
     public static float slowCameraAtkAmount = 0.1f;
     public static float slowCameraDefAmont = 0.1f;
     public static float aimSense = 100;

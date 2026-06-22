@@ -9,7 +9,7 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
 
-    [Tooltip("Determines max size of the level")] public Vector3Int bounds = Vector3Int.one * 100;
+    [Tooltip("Determines max size of the level")] public Vector3Int bounds = new Vector3Int(100,6,100);
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
     {
@@ -62,7 +62,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    void Start()
+    void Awake()
     {
         Init();
         GenerateDungeon(levelGeneration);
@@ -610,7 +610,6 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (player)
         {
-
             for (int x = 0; x < bounds.x; x++)
             {
                 for (int y = 0; y < bounds.y; y++)
@@ -619,19 +618,22 @@ public class DungeonGenerator : MonoBehaviour
                     {
                         if (grid[x, y, z] > isoLevel)
                         {
-                            player.transform.position = new Vector3(x, y, z) * voxelSize;
-                            player.transform.position += Vector3.up * bounds.y * voxelSize;
-                            if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
+                            player.transform.gameObject.SetActive(false);
+                            player.transform.position = new Vector3(x, y + (bounds.y * voxelSize), z) * voxelSize;
+                            if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
                             {
-                                player.position = hit.point;
+                                player.transform.position = hit.point;
+                                player.gameObject.SetActive(true);
                             }
                             return;
                         }
                     }
                 }
             }
-
-
+        }
+        else
+        {
+            Debug.Log("Player Not Set");
         }
     }
     

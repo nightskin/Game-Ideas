@@ -8,9 +8,13 @@ public class World : MonoBehaviour
     public Vector2Int worldSize = Vector2Int.one; 
     public Vector3Int chunkSize = new Vector3Int(16,64,16);
     [Min(1)] public int voxelSize = 1;
+
+
     public Gradient underGroundColors;
     public Gradient terrainColors;
     public string seed;
+    [Range(1,10)]public float persistance = 1;
+    [Range(0,1)]public float lacunarity = 1;
     [Range(0,2)]public float terrainScale = 0.1f;
     [Range(0,2)]public float caveScale = 0.15f;
     public int baseHeight = 32;
@@ -26,29 +30,19 @@ public class World : MonoBehaviour
         return (((value - oldMin) * newRange) / oldRange) + newMin;
     }
 
-    public float GetValue(Vector3 position)
+    public float GetValue(Vector3 position, Vector3Int index)
     {
-        if(position.y == 0) return 0;
-        else if(position.y == voxelSize) return 1;
-
-        if(position.y < baseHeight)
-        {
-            return Mathf.Abs(noise.Evaluate(position * caveScale));
-        }
-
         float value = 0;
-        float finalFrequency = 1;
-        float finalAmplitude = 1;
-
+        float amplitude = 1;
+        float frequency = 1;
         for(int i = 0; i < octaves; i++)
         {
-            value += finalAmplitude * noise.Evaluate(new Vector3(position.x, 0, position.z) * terrainScale * finalFrequency);
-            finalAmplitude *= 0.5f;
-            finalFrequency *= 2;
+            float x = position.x / terrainScale * frequency;
+            float z = position.z / terrainScale * frequency;
+            value += noise.Evaluate(new Vector3(x,0,z));
+            amplitude *= persistance;
+            frequency *= lacunarity;
         }
-
-        value = value - (Remap(position.y,0,worldSize.y,0,1) * squashFactor) + (Remap(baseHeight,0,worldSize.y,0,1) * squashFactor);
-        value = Remap(value,0,octaves,0,1);
         return value;
     }
 

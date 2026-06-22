@@ -4,7 +4,7 @@ public class Player : MonoBehaviour
 {
     //Components
     [Header("Components")]
-    public PlayerCamera camera;
+    public Transform camera;
     public CharacterController controller;
     public Animator animator;
     
@@ -14,18 +14,23 @@ public class Player : MonoBehaviour
     public PlayerHIT hit = new PlayerHIT();
     public PlayerDEAD dead = new PlayerDEAD();
 
-    //For Basic Controls
-    [Header("General")]
+    //For Movement
+    [Header("Movement")]
     [HideInInspector] public float lookSpeed;
     [HideInInspector] public float moveSpeed = 20;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
-
-    [HideInInspector] public RaycastHit slopeHit;
-    float xRot = 0;
-    float yRot = 0;
+    [HideInInspector] RaycastHit slopeHit;
+    
+    [Header("Looking")]
+    [Range(0,90)] public float maxRotX = 45;
+    [Range(-90,0)] public float minRotX = -45;
+    public float cameraBobSpeed = 5;
+    public float cameraBobHeight = 0.25f;
+    float rx = 0;
+    float ry = 0;
 
     // For Jumping Around
-    [Header("Jumping Variables")]
+    [Header("Jumping")]
     [SerializeField] LayerMask groundLayer;
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [HideInInspector] public bool grounded;
@@ -52,12 +57,20 @@ public class Player : MonoBehaviour
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance, groundLayer);
 
-        //Gravity
-        velocity.y += -10 * Time.fixedDeltaTime;
-        controller.Move(velocity * Time.fixedDeltaTime);
+
     }
 
     //Functions
+    public void Look()
+    {
+        Vector2 lookInput = Game.controls.Player.Look.ReadValue<Vector2>();
+        rx -= lookInput.y * Game.aimSense * Time.deltaTime;
+        rx = Mathf.Clamp(rx,minRotX,maxRotX);
+        ry += lookInput.x * Game.aimSense * Time.deltaTime;
+        camera.transform.localEulerAngles = new Vector3(rx,0,0);
+        transform.localEulerAngles = new Vector3(0,ry,0);
+    }
+
     public void Move()
     {
         // When player hits the ground
@@ -73,6 +86,10 @@ public class Player : MonoBehaviour
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
         Vector3 moveDirection = (transform.right * x + transform.forward * z).normalized * m;
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        
+        //Gravity
+        velocity.y += -10 * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
 
         //Jumping
         if(Game.controls.Player.Jump.IsPressed() && grounded)

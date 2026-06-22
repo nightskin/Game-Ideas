@@ -39,14 +39,14 @@ public class Chunk : MonoBehaviour
                     };
                     float[] values = new float[]
                     {
-                        World.get.GetValue(corners[0] + transform.position),
-                        World.get.GetValue(corners[1] + transform.position),
-                        World.get.GetValue(corners[2] + transform.position),
-                        World.get.GetValue(corners[3] + transform.position),
-                        World.get.GetValue(corners[4] + transform.position),
-                        World.get.GetValue(corners[5] + transform.position),
-                        World.get.GetValue(corners[6] + transform.position),
-                        World.get.GetValue(corners[7] + transform.position),
+                        World.get.GetValue(corners[0] + transform.position, new Vector3Int(x,y,z-1)),
+                        World.get.GetValue(corners[1] + transform.position, new Vector3Int(x-1,y,z-1)),
+                        World.get.GetValue(corners[2] + transform.position, new Vector3Int(x-1,y,z)),
+                        World.get.GetValue(corners[3] + transform.position, new Vector3Int(x,y,z)),
+                        World.get.GetValue(corners[4] + transform.position, new Vector3Int(x,y-1,z-1)),
+                        World.get.GetValue(corners[5] + transform.position, new Vector3Int(x-1,y-1,z-1)),
+                        World.get.GetValue(corners[6] + transform.position, new Vector3Int(x-1,y-1,z)),
+                        World.get.GetValue(corners[7] + transform.position, new Vector3Int(x,y-1,z)),
                     };
 
                     int cubeIndex = VoxelHelper.GetState(values, World.get.isoLevel);
