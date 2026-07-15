@@ -618,12 +618,12 @@ public class DungeonGenerator : MonoBehaviour
                     {
                         if (grid[x, y, z] > isoLevel)
                         {
-                            player.transform.gameObject.SetActive(false);
+                            //player.transform.gameObject.SetActive(false);
                             player.transform.position = new Vector3(x, y + (bounds.y * voxelSize), z) * voxelSize;
                             if(Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit))
                             {
                                 player.transform.position = hit.point;
-                                player.gameObject.SetActive(true);
+                                //player.gameObject.SetActive(true);
                             }
                             return;
                         }

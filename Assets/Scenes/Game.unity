@@ -370,6 +370,7 @@ GameObject:
   - component: {fileID: 33213989}
   - component: {fileID: 33213988}
   - component: {fileID: 33213987}
+  - component: {fileID: 33213990}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -408,19 +409,22 @@ MonoBehaviour:
   camera: {fileID: 856946634}
   controller: {fileID: 33213988}
   animator: {fileID: 33213989}
+  wallRunning: {fileID: 0}
+  moveEnabled: 1
   lookSpeed: 0
   moveSpeed: 20
   velocity: {x: 0, y: 0, z: 0}
-  maxRotX: 60
-  minRotX: -60
-  cameraBobSpeed: 5
-  cameraBobHeight: 0.2
+  lookEnabled: 1
+  maxLookY: 45
+  minLookY: -45
+  cameraBobSpeed: 2
+  cameraBobHeight: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
   groundDistance: 0.5
   grounded: 0
-  jumpHeight: 3
+  jumpHeight: 5
   jumping: 0
 --- !u!143 &33213988
 CharacterController:
@@ -469,6 +473,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &33213990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33213982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a808fd1fc3ae3bb1bb3031e1c0025c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallRunning
+  movement: {fileID: 0}
+  wallRunSpeed: 50
+  jumpForce: 5
+  wallDistance: 1
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  canWallRun: 0
 --- !u!1 &60413305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,14 +2250,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DungeonGenerator
   player: {fileID: 33213986}
-  bounds: {x: 100, y: 6, z: 100}
+  bounds: {x: 100, y: 10, z: 100}
   seed: 
   levelGeneration: 2
   incrementLevel: 0.01
   meshGeneration: 1
   hallwaySize: 2
   isoLevel: 0
-  voxelSize: 3
+  voxelSize: 5
   numberOfSteps: 200
   walk3D: 0
   numberOfRooms: 10
