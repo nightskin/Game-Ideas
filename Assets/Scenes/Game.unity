@@ -409,10 +409,8 @@ MonoBehaviour:
   camera: {fileID: 856946634}
   controller: {fileID: 33213988}
   animator: {fileID: 33213989}
-  wallRunning: {fileID: 0}
+  wallRunning: {fileID: 33213990}
   moveEnabled: 1
-  lookSpeed: 0
-  moveSpeed: 20
   velocity: {x: 0, y: 0, z: 0}
   lookEnabled: 1
   maxLookY: 45
@@ -425,7 +423,6 @@ MonoBehaviour:
   groundDistance: 0.5
   grounded: 0
   jumpHeight: 5
-  jumping: 0
 --- !u!143 &33213988
 CharacterController:
   m_ObjectHideFlags: 0
@@ -485,14 +482,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a808fd1fc3ae3bb1bb3031e1c0025c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallRunning
-  movement: {fileID: 0}
+  controls: {fileID: 33213987}
   wallRunSpeed: 50
   jumpForce: 5
-  wallDistance: 1
+  wallDistance: 2
   wallLayer:
     serializedVersion: 2
     m_Bits: 1
-  canWallRun: 0
 --- !u!1 &60413305
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,7 +808,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 87762355}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -864,7 +860,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -5026,6 +5022,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
