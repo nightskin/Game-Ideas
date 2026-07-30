@@ -418,7 +418,7 @@ MonoBehaviour:
   cameraBobHeight: 0.1
   gravityOn: 1
   gravityStrength: 10
-  groundDistance: 0.75
+  groundDistance: 0.5
   grounded: 0
   maxJumps: 2
   jumpHeight: 7
@@ -2261,20 +2261,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonGenerator
   player: {fileID: 33213986}
   bounds: {x: 100, y: 100, z: 100}
-  seed: poop
+  seed: 
   levelGeneration: 2
   incrementLevel: 0.01
   meshGeneration: 1
   hallwaySize: 2
   isoLevel: 0
-  voxelSize: 5
-  numberOfSteps: 1000
-  walk3D: 1
+  voxelSize: 3
+  numberOfSteps: 500
+  walk3D: 0
   numberOfRooms: 10
   ceilngHeight: 2
   minRoomSize: 2
   maxRoomSize: 10
-  useIndirectHallways: 0
   showBounds: 1
   boundColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
 --- !u!64 &779323981

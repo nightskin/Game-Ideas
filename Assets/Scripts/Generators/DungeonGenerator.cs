@@ -47,7 +47,6 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField][Min(1)] int ceilngHeight = 2;
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
-    [SerializeField] bool useIndirectHallways = false;
     
     [Header("Debug")]
     [SerializeField] bool showBounds = false;
@@ -352,14 +351,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             Vector3Int start = entrances[r];
             Vector3Int end = exits[r + 1];
-            if (useIndirectHallways)
-            {
-                GenerateHallway2(start, end);
-            }
-            else
-            {
-                GenerateHallway(start, end);
-            }
+            GenerateHallway(start, end);
         }
     }
 
@@ -385,15 +377,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             Vector3Int start = pointsOfInterest[r];
             Vector3Int end = pointsOfInterest[r + 1];
-            
-            if (useIndirectHallways)
-            {
-                GenerateHallway2(start, end);
-            }
-            else
-            {
-                GenerateHallway(start, end);
-            }
+            GenerateHallway(start, end);
         }
     }
 
@@ -406,10 +390,17 @@ public class DungeonGenerator : MonoBehaviour
             {
                 Vector3Int.left,
                 Vector3Int.right,
-                Vector3Int.up,
-                Vector3Int.down,
                 Vector3Int.forward,
                 Vector3Int.back,
+                new Vector3Int(-1,-1,0),
+                new Vector3Int(1,-1,0),
+                new Vector3Int(0,-1,1),
+                new Vector3Int(0,-1,-1),
+                new Vector3Int(1,1,0),
+                new Vector3Int(-1,1,0),
+                new Vector3Int(0,1,1),
+                new Vector3Int(0,1,-1),
+                
             };
             Vector3Int chosenDirection = possibleDirections[0];
             foreach (Vector3Int possibleDirection in possibleDirections)
@@ -421,50 +412,6 @@ public class DungeonGenerator : MonoBehaviour
             }
 
             currentPos += chosenDirection;
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
-        }
-    }
-
-    void GenerateHallway2(Vector3Int start, Vector3Int end)
-    {
-        Vector3Int currentPos = start;
-
-        while (currentPos.x != end.x)
-        {
-            if (currentPos.x < end.x)
-            {
-                currentPos.x++;
-            }
-            else if (currentPos.x > end.x)
-            {
-                currentPos.x--;
-            }
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
-        }
-
-        while (currentPos.z != end.z)
-        {
-            if (currentPos.z < end.z)
-            {
-                currentPos.z++;
-            }
-            else if (currentPos.z > end.z)
-            {
-                currentPos.z--;
-            }
-            ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
-        }
-
-        while (currentPos.y != end.y)
-        {
-            if (currentPos.y < end.y)
-            {
-                currentPos.y++;
-            }
-            else if (currentPos.y > end.y)
-            {
-                currentPos.y--;
-            }
             ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
         }
     }

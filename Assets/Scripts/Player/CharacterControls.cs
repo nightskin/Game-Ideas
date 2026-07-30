@@ -36,6 +36,7 @@ public class CharacterControls : MonoBehaviour
     [SerializeField] int maxJumps = 2;
     [SerializeField] float jumpHeight = 3;
     bool decelerating = false;
+    bool jumping = false;
     [HideInInspector] public int numJumps = 0;
 
 
@@ -87,7 +88,7 @@ public class CharacterControls : MonoBehaviour
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
         
         //Fixes Moving Down Slopes
-        if(grounded && moveDirection.magnitude > 0)
+        if(grounded && moveDirection.magnitude > 0 && !jumping)
         {
             Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
             controller.Move(Vector3.down * hit.distance);
@@ -106,8 +107,7 @@ public class CharacterControls : MonoBehaviour
         //Jumping
         if(Game.controls.Player.Jump.WasPressedThisFrame() && numJumps < maxJumps)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
-            numJumps++;
+            StartCoroutine(Jump(0.1f));
         }
 
     }
@@ -126,7 +126,14 @@ public class CharacterControls : MonoBehaviour
         decelerating = false;
     }
 
-    
+    IEnumerator Jump(float delay)
+    {
+        jumping = true;
+        velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
+        numJumps++;
+        yield return new WaitForSeconds(delay);
+        jumping = false;
+    }
 
     //Animation Events
     
