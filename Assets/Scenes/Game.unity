@@ -371,6 +371,7 @@ GameObject:
   - component: {fileID: 33213988}
   - component: {fileID: 33213987}
   - component: {fileID: 33213990}
+  - component: {fileID: 33213991}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -409,20 +410,19 @@ MonoBehaviour:
   camera: {fileID: 856946634}
   controller: {fileID: 33213988}
   animator: {fileID: 33213989}
-  wallRunning: {fileID: 33213990}
-  moveEnabled: 1
+  WallRunAbility: {fileID: 33213990}
   velocity: {x: 0, y: 0, z: 0}
-  lookEnabled: 1
-  maxLookY: 45
-  minLookY: -45
+  moveSpeed: 20
+  maxLookY: 60
   cameraBobSpeed: 2
   cameraBobHeight: 0.1
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  groundDistance: 0.5
+  gravityOn: 1
+  gravityStrength: 10
+  groundDistance: 0.75
   grounded: 0
-  jumpHeight: 5
+  maxJumps: 2
+  jumpHeight: 7
+  numJumps: 0
 --- !u!143 &33213988
 CharacterController:
   m_ObjectHideFlags: 0
@@ -482,13 +482,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a808fd1fc3ae3bb1bb3031e1c0025c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallRunning
-  controls: {fileID: 33213987}
-  wallRunSpeed: 50
-  jumpForce: 5
-  wallDistance: 2
+  controller: {fileID: 33213987}
+  wallRunSpeed: 30
+  jumpForce: 10
+  wallDistance: 1
+  maxCameraTilt: 35
+  cameraTiltSpeed: 10
   wallLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 513
+--- !u!114 &33213991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33213982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1793b2b62d9fc1e4792e3260bbbe2d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ability_GrapplingHook
 --- !u!1 &60413305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2227,7 +2241,7 @@ GameObject:
   - component: {fileID: 779323981}
   - component: {fileID: 779323980}
   m_Layer: 0
-  m_Name: DungeonV1
+  m_Name: Dungeon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2246,16 +2260,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DungeonGenerator
   player: {fileID: 33213986}
-  bounds: {x: 100, y: 10, z: 100}
-  seed: 
+  bounds: {x: 100, y: 100, z: 100}
+  seed: poop
   levelGeneration: 2
   incrementLevel: 0.01
   meshGeneration: 1
   hallwaySize: 2
   isoLevel: 0
   voxelSize: 5
-  numberOfSteps: 200
-  walk3D: 0
+  numberOfSteps: 1000
+  walk3D: 1
   numberOfRooms: 10
   ceilngHeight: 2
   minRoomSize: 2
