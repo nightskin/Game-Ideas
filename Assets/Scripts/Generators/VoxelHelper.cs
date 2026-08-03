@@ -2,6 +2,25 @@ using UnityEngine;
 
 public static class VoxelHelper
 {
+    public static int PositionToIndex(Vector3Int position, int chunkSize)
+    {
+        return (position.x) + (position.y * chunkSize) + (position.z * (chunkSize * chunkSize));
+    }
+    
+    public static Vector3Int IndexToPosition(int index, int chunkSize)
+    {
+        int x = index % chunkSize;
+        int y = (index / chunkSize) % chunkSize;
+        int z = ((index /chunkSize)/ chunkSize) % chunkSize;
+        return new Vector3Int(x,y,z); 
+    }
+
+    public static float Remap(float value, float oldMin, float OldMax, float newMin, float newMax)
+    {
+        float oldRange = OldMax - oldMin;
+        float newRange = newMax - newMin;
+        return (((value - oldMin) * newRange) / oldRange) + newMin;
+    }
    
     public static int GetState(float[] values, float isoLevel)
     {
@@ -21,6 +40,11 @@ public static class VoxelHelper
     {
         float amount = (isoLevel - v1) / (v2 - v1);
         return Vector3.Lerp(pos1, pos2, amount);
+    }
+
+    public static Vector3 MidPoint(Vector3 pos1, Vector3 pos2)
+    {
+        return pos1 + pos2 / 2;
     }
 
     public static Vector2[] GetUVs(Vector3 a, Vector3 b, Vector3 c, float size)

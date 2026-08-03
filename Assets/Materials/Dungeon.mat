@@ -141,11 +141,11 @@ Material:
     - _AlphaClip: 1
     - _Blend: 1
     - _CeilingThreshold: -0.75
-    - _DarkValue: 1
+    - _DarkValue: 0.25
     - _DitherScale: 1
     - _DitherThreshold: 0
     - _FloorThreshold: 0.75
-    - _LitValue: 0.25
+    - _LitValue: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TYPE: 0
@@ -164,6 +164,6 @@ Material:
     - _Tile: {r: 1, g: 1, b: 0, a: 0}
     - _TileWall: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _WallTint: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
+    - _WallTint: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

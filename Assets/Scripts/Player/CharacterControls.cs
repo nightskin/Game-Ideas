@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Data;
 using UnityEngine;
 
 public class CharacterControls : MonoBehaviour
@@ -9,15 +8,18 @@ public class CharacterControls : MonoBehaviour
     public Transform camera;
     public CharacterController controller;
     public Animator animator;
-    public Ability_WallRun WallRunAbility;
     
 
     //For Movement
     [Header("Movement")]
     public Vector3 velocity = Vector3.zero;
-    [SerializeField] float moveSpeed = 20;
+    public float speed;
+    [SerializeField] float normalSpeed = 20;
+    [SerializeField] float crouchSpeed = 5;
+
     Vector3 moveDirection;
-    [HideInInspector] RaycastHit slopeHit;
+    RaycastHit slopeHit;
+
     
     [Header("Looking")]
     [Range(0,90)] public float maxLookY = 45;
@@ -43,8 +45,8 @@ public class CharacterControls : MonoBehaviour
     //Events
     void Start()
     {
+        speed = normalSpeed;
         Cursor.lockState = CursorLockMode.Locked;
-        if(!WallRunAbility) WallRunAbility = GetComponent<Ability_WallRun>();
     }
 
     void Update()
@@ -55,9 +57,18 @@ public class CharacterControls : MonoBehaviour
 
     void FixedUpdate()
     {
+        
+
         // Checks If player is grounded
         Ray groundRay = new Ray(transform.position, Vector3.down);
         grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance);
+
+        //Fixes Moving Down Slopes
+        if(grounded && moveDirection.magnitude > 0 && !jumping)
+        {
+            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
+            controller.Move(Vector3.down * hit.distance);
+        }
     }
 
     //Functions
@@ -85,15 +96,22 @@ public class CharacterControls : MonoBehaviour
         float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
         moveDirection = (transform.right * x + transform.forward * z).normalized * m;
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-        
-        //Fixes Moving Down Slopes
-        if(grounded && moveDirection.magnitude > 0 && !jumping)
+
+        controller.Move(moveDirection * speed * Time.deltaTime);
+
+        if(Game.controls.Player.Crouch.WasPressedThisFrame() && grounded)
         {
-            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
-            controller.Move(Vector3.down * hit.distance);
+            if(camera.transform.localPosition.y == 2)
+            {
+                SetCrouch(true);
+            }
+            else
+            {
+                SetCrouch(false);
+            }
         }
         
+
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
 
@@ -128,11 +146,31 @@ public class CharacterControls : MonoBehaviour
 
     IEnumerator Jump(float delay)
     {
+        SetCrouch(false);
         jumping = true;
         velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
         numJumps++;
         yield return new WaitForSeconds(delay);
         jumping = false;
+    }
+
+    void SetCrouch(bool c)
+    {
+        speed = c ? crouchSpeed : normalSpeed;
+        
+        if(c)
+        {
+            controller.height = 1;
+            controller.center = Vector3.up * 0.5f;
+            camera.transform.localPosition = Vector3.up;
+        }
+        else
+        {
+            controller.height = 2;
+            controller.center = Vector3.up;
+            camera.transform.localPosition = Vector3.up * 2;
+        }
+
     }
 
     //Animation Events

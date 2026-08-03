@@ -61,9 +61,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Sprint",
+                    "name": "Crouch",
                     "type": "Button",
-                    "id": "17874dd9-500f-4061-88dc-e4ce18d1010b",
+                    "id": "ab0e3412-fe7f-4099-b6e7-dd5de17de705",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -293,23 +293,23 @@
                 },
                 {
                     "name": "",
-                    "id": "cc5c56f2-1426-4258-b176-3cb518e5c5a6",
-                    "path": "<Keyboard>/shift",
+                    "id": "cafb184b-d7e9-49fb-85d1-cc3089151730",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Sprint",
+                    "groups": ";Gamepad",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "d0afbf92-97f7-44bc-8402-3f64b865384d",
-                    "path": "<Gamepad>/leftShoulder",
+                    "id": "0b693cf4-b8e8-48c6-aa63-adaac50fbded",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Sprint",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -2,9 +2,7 @@ using UnityEngine;
 
 public class Ability_WallRun : MonoBehaviour
 {
-    public CharacterControls controller;
-
-    [SerializeField] float wallRunSpeed = 50;
+    public CharacterControls character;
     [SerializeField] float jumpForce = 5;
     [SerializeField] float wallDistance = 2;
     [SerializeField][Range(0,45)] float maxCameraTilt = 35; 
@@ -19,7 +17,7 @@ public class Ability_WallRun : MonoBehaviour
 
     void Start()
     {
-        if(!controller) controller = GetComponent<CharacterControls>();
+        if(!character) character = GetComponent<CharacterControls>();
     }
     void FixedUpdate()
     {
@@ -30,10 +28,10 @@ public class Ability_WallRun : MonoBehaviour
     void Update()
     {
         //Conditions for Wall Run
-        if(canWallRun && !isWallRunning && !controller.grounded && Game.controls.Player.Jump.WasPerformedThisFrame())
+        if(canWallRun && !isWallRunning && !character.grounded && Game.controls.Player.Jump.WasPerformedThisFrame())
         {
             StartWallRun();
-            controller.numJumps--;
+            character.numJumps--;
         }
 
         //Wall Running Behaviour
@@ -46,7 +44,7 @@ public class Ability_WallRun : MonoBehaviour
             {
                 wallForward = -wallForward;
             }
-            controller.controller.Move((wallForward + new Vector3(0,controller.camera.forward.y,0)).normalized * wallRunSpeed * Time.deltaTime);
+            character.controller.Move((wallForward + new Vector3(0,character.camera.forward.y,0)).normalized * character.speed * Time.deltaTime);
 
             //Tilt Camera
             if(Vector3.Dot(wallNormal,transform.right) > Vector3.Dot(wallNormal,-transform.right))
@@ -62,10 +60,10 @@ public class Ability_WallRun : MonoBehaviour
             if(Game.controls.Player.Jump.WasPerformedThisFrame() && canWallJump)
             {
                 EndWallRun();
-                controller.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpForce * 2 * 10);
+                character.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpForce * 2 * 10);
             }
             //Cancel Wall Run
-            if(!canWallRun || controller.grounded)
+            if(!canWallRun || character.grounded)
             {
                 EndWallRun();
             }
@@ -84,13 +82,13 @@ public class Ability_WallRun : MonoBehaviour
     void StartWallRun()
     {
         canWallJump = false;
-        controller.gravityOn = false;
+        character.gravityOn = false;
         isWallRunning = true;
     }
 
     void EndWallRun()
     {
-        controller.gravityOn = true;
+        character.gravityOn = true;
         isWallRunning = false;
     }
 }

@@ -14,8 +14,6 @@ public class Game : MonoBehaviour
     public static float slowCameraAtkAmount = 0.1f;
     public static float slowCameraDefAmont = 0.1f;
     public static float aimSense = 100;
-
-
     
     void Awake()
     {
