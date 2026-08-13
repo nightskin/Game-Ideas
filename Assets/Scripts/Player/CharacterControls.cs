@@ -3,83 +3,126 @@ using UnityEngine;
 
 public class CharacterControls : MonoBehaviour
 {
-    //Components
     [Header("Components")]
     public Transform camera;
     public CharacterController controller;
     public Animator animator;
     
 
-    //For Movement
     [Header("Movement")]
     public Vector3 velocity = Vector3.zero;
-    public float speed;
-    [SerializeField] float normalSpeed = 20;
-    [SerializeField] float crouchSpeed = 5;
-
+    public float speed = 20;
     Vector3 moveDirection;
-    RaycastHit slopeHit;
+    float currentMoveSpeed;
 
-    
     [Header("Looking")]
     [Range(0,90)] public float maxLookY = 45;
     [SerializeField] float cameraBobSpeed = 5;
     [SerializeField] float cameraBobHeight = 0.25f;
-    float rx = 0;
-    float ry = 0;
-    Vector2 lookDirection;
+    float rotx = 0;
+    float roty = 0;
 
-    // For Jumping Around
-    [Header("Jumping")]
+    [Header("Lock On System")]
+    [SerializeField] float lockOnDistance = 50;
+    [SerializeField] LayerMask lockOnLayerMask;
+    [SerializeField] Transform lockOnTarget = null;
+
+    [Header("Physics")]
     public bool gravityOn = true; 
     public float gravityStrength = 10;
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [HideInInspector] public bool grounded;
-    [SerializeField] int maxJumps = 2;
-    [SerializeField] float jumpHeight = 3;
-    bool decelerating = false;
-    bool jumping = false;
-    [HideInInspector] public int numJumps = 0;
 
+    [Header("Dashing")]
+    bool dashing = false;
+
+    [Header("Combat")]
+    [SerializeField] Transform armPivot;
+    float cutAngle = 0;
+    Vector2 actionVector = Vector2.zero;
+    public enum State
+    {
+        IDLE,
+        ATTACKING,
+        DEFENDING,
+    }
+    State state;
 
     //Events
     void Start()
     {
-        speed = normalSpeed;
+        currentMoveSpeed = speed;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        LookAround();
+        if(Game.controls.Player.LockOn.WasPerformedThisFrame())
+        {
+            if(lockOnTarget)
+            {
+                lockOnTarget = null;
+            }
+            else
+            {
+                if(Physics.Raycast(camera.transform.position,camera.transform.forward,out RaycastHit hit,lockOnDistance,lockOnLayerMask))
+                {
+                    lockOnTarget = hit.transform;
+                }
+            }
+
+        }
+
+
+        if(lockOnTarget)
+        {
+            LockOn();
+        }
+        else
+        {
+            FreeLook();
+        }
+
         Movement();
+        Combat();
     }
 
     void FixedUpdate()
     {
-        
-
         // Checks If player is grounded
         Ray groundRay = new Ray(transform.position, Vector3.down);
-        grounded = Physics.Raycast(groundRay, out slopeHit, groundDistance);
-
-        //Fixes Moving Down Slopes
-        if(grounded && moveDirection.magnitude > 0 && !jumping)
-        {
-            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
-            controller.Move(Vector3.down * hit.distance);
-        }
+        grounded = Physics.Raycast(groundRay, out RaycastHit hit, groundDistance);
     }
 
     //Functions
-    void LookAround()
+    void LockOn()
     {
-        lookDirection = Game.controls.Player.Look.ReadValue<Vector2>();
-        rx -= lookDirection.y * Game.aimSense * Time.deltaTime;
-        rx = Mathf.Clamp(rx,-maxLookY,maxLookY);
-        ry += lookDirection.x * Game.aimSense * Time.deltaTime;
-        camera.transform.localEulerAngles = new Vector3(rx,0,0);
-        transform.localEulerAngles = new Vector3(0,ry,0);
+        Vector2 lookInput = Game.controls.Player.Look.ReadValue<Vector2>();
+        Vector3 lockOnOffset = ((lockOnTarget.transform.up * lookInput.y) + (camera.transform.right * lookInput.x)).normalized;
+
+        //Looking
+        Vector3 lookDirection = lockOnTarget.transform.position - camera.transform.position;
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+
+        rotx = Mathf.LerpAngle(rotx, lookRotation.eulerAngles.x, 10 * Time.deltaTime);
+        roty = Mathf.LerpAngle(roty, lookRotation.eulerAngles.y, 10 * Time.deltaTime);
+
+        camera.transform.localEulerAngles = new Vector3(rotx,roty,0);
+
+        if(Vector3.Distance(transform.position, lockOnTarget.position) > lockOnDistance)
+        {
+            lockOnTarget = null;
+        }
+    }
+    
+    void FreeLook()
+    {
+        //Looking Around
+        Vector2 lookInput = Game.controls.Player.Look.ReadValue<Vector2>();
+        rotx -= lookInput.y * Game.aimSense * Time.deltaTime;
+        rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
+        roty += lookInput.x * Game.aimSense * Time.deltaTime;
+        camera.transform.localEulerAngles = new Vector3(rotx,roty,0);
     }
 
     void Movement()
@@ -87,93 +130,93 @@ public class CharacterControls : MonoBehaviour
         // When player hits the ground
         if (grounded && velocity.y < 0)
         {
-            velocity.y = 0;
-            numJumps = 0;
+            velocity = Vector3.zero;
         }
 
         // Moving Around 
         float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        if(lockOnTarget)
+        {
+            float normalizeDistance = Game.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
+            float invertedDistance = Game.InvertRange(normalizeDistance,0,1);
+            x *= invertedDistance;
+        }
         float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
-        moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+        moveDirection = (camera.transform.right * x + new Vector3(camera.transform.forward.x, 0, camera.transform.forward.z) * z).normalized * m;
 
-        controller.Move(moveDirection * speed * Time.deltaTime);
 
-        if(Game.controls.Player.Crouch.WasPressedThisFrame() && grounded)
-        {
-            if(camera.transform.localPosition.y == 2)
-            {
-                SetCrouch(true);
-            }
-            else
-            {
-                SetCrouch(false);
-            }
-        }
+
+        if(!dashing) controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
         
+        //Fixes Moving Down Slopes
+        if(grounded && moveDirection.magnitude > 0)
+        {
+            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
+            controller.Move(Vector3.down * hit.distance);
+        }
 
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
-
-        if((velocity.x != 0 || velocity.z != 0) && !decelerating)
-        {
-            StartCoroutine(ApplyDrag(0.1f));
-        }
-
         controller.Move(velocity * Time.deltaTime);
 
-        //Jumping
-        if(Game.controls.Player.Jump.WasPressedThisFrame() && numJumps < maxJumps)
+        //Dashing
+        if(Game.controls.Player.Dash.WasPerformedThisFrame() && !dashing)
         {
-            StartCoroutine(Jump(0.1f));
+            StartCoroutine(Dash(0.1f, 200));
+        }
+    }
+
+    void Combat()
+    {
+        actionVector = Game.controls.Player.Look.ReadValue<Vector2>();
+
+        if(state != State.IDLE)
+        {
+
         }
 
+        if(Game.controls.Player.Attack.WasPerformedThisFrame())
+        {
+            cutAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
+            animator.SetTrigger("cut");
+        }
+        else if(Game.controls.Player.Defend.IsPressed())
+        {
+            
+        }
     }
-    
-    IEnumerator ApplyDrag(float amount)
+
+    IEnumerator Dash(float time, float speed)
     {
         float t = 0;
-        decelerating = true;
-        while(t < 1)
+        dashing = true;
+        while(t < time)
         {
-            t += amount * Time.deltaTime;
-            velocity.x = Mathf.Lerp(velocity.x, 0, t);
-            velocity.z = Mathf.Lerp(velocity.z, 0, t);
+            controller.Move(moveDirection * speed * Time.deltaTime);
+            t += Time.deltaTime;
             yield return null;
         }
-        decelerating = false;
-    }
-
-    IEnumerator Jump(float delay)
-    {
-        SetCrouch(false);
-        jumping = true;
-        velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
-        numJumps++;
-        yield return new WaitForSeconds(delay);
-        jumping = false;
-    }
-
-    void SetCrouch(bool c)
-    {
-        speed = c ? crouchSpeed : normalSpeed;
-        
-        if(c)
-        {
-            controller.height = 1;
-            controller.center = Vector3.up * 0.5f;
-            camera.transform.localPosition = Vector3.up;
-        }
-        else
-        {
-            controller.height = 2;
-            controller.center = Vector3.up;
-            camera.transform.localPosition = Vector3.up * 2;
-        }
-
+        dashing = false;
     }
 
     //Animation Events
+    public void AttackState()
+    {
+        armPivot.localEulerAngles = new Vector3(0,0,cutAngle);
+        state = State.ATTACKING;
+    }
     
+    public void DefendState()
+    {
+        armPivot.localEulerAngles = Vector3.zero;
+        state = State.DEFENDING;
+    }
+    
+    public void IdleState()
+    {
+        armPivot.localEulerAngles = Vector3.zero;
+        state = State.IDLE;
+    }
 
 }

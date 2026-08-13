@@ -53,4 +53,13 @@ public class Game : MonoBehaviour
         Application.Quit();
     }
 
+    public static float Remap(float value, float oldMin, float oldMax, float newMin, float newMax)
+    {
+        return (((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+    }
+
+    public static float InvertRange(float value, float min, float max)
+    {
+        return max - value + min;
+    }
 }

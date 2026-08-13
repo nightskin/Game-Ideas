@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Ability_WallRun : MonoBehaviour
 {
     public CharacterControls character;
+    [SerializeField] float speed = 25;
     [SerializeField] float jumpForce = 5;
     [SerializeField] float wallDistance = 2;
     [SerializeField][Range(0,45)] float maxCameraTilt = 35; 
@@ -28,10 +30,9 @@ public class Ability_WallRun : MonoBehaviour
     void Update()
     {
         //Conditions for Wall Run
-        if(canWallRun && !isWallRunning && !character.grounded && Game.controls.Player.Jump.WasPerformedThisFrame())
+        if(canWallRun && !isWallRunning && !character.grounded && (Keyboard.current.spaceKey.wasPressedThisFrame || Gamepad.current.aButton.wasPressedThisFrame))
         {
             StartWallRun();
-            character.numJumps--;
         }
 
         //Wall Running Behaviour
@@ -44,7 +45,7 @@ public class Ability_WallRun : MonoBehaviour
             {
                 wallForward = -wallForward;
             }
-            character.controller.Move((wallForward + new Vector3(0,character.camera.forward.y,0)).normalized * character.speed * Time.deltaTime);
+            character.controller.Move((wallForward + new Vector3(0,character.camera.forward.y,0)).normalized * speed * Time.deltaTime);
 
             //Tilt Camera
             if(Vector3.Dot(wallNormal,transform.right) > Vector3.Dot(wallNormal,-transform.right))
@@ -57,7 +58,7 @@ public class Ability_WallRun : MonoBehaviour
             }
 
             //Wall Jumping
-            if(Game.controls.Player.Jump.WasPerformedThisFrame() && canWallJump)
+            if((Gamepad.current.aButton.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame) && canWallJump)
             {
                 EndWallRun();
                 character.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpForce * 2 * 10);
