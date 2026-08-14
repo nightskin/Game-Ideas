@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CharacterControls : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class CharacterControls : MonoBehaviour
     [Header("Movement")]
     public Vector3 velocity = Vector3.zero;
     public float speed = 20;
+    Vector3 prevMoveDirection;
     Vector3 moveDirection;
     float currentMoveSpeed;
 
@@ -34,6 +36,12 @@ public class CharacterControls : MonoBehaviour
     [HideInInspector] public bool grounded;
 
     [Header("Dashing")]
+    [SerializeField] float maxDashTime = 0.1f;
+    [SerializeField] float dashSpeed = 250;
+    Vector3 dashDirection;
+    float dashTime = 0;
+    float maxKeybaordPressTime = 0.25f; 
+    float keyboardPressTime = 0;
     bool dashing = false;
 
     [Header("Combat")]
@@ -115,6 +123,37 @@ public class CharacterControls : MonoBehaviour
         }
     }
     
+    bool DashKeyboardInput()
+    {
+        if(Keyboard.current.aKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.sKey.wasPressedThisFrame)
+        {
+            return false;
+        }
+        else if(Keyboard.current.aKey.isPressed || Keyboard.current.dKey.isPressed || Keyboard.current.wKey.isPressed || Keyboard.current.sKey.isPressed)
+        {
+            keyboardPressTime += Time.deltaTime;
+            return false;
+        }
+        else if(Keyboard.current.aKey.wasReleasedThisFrame || Keyboard.current.dKey.wasReleasedThisFrame || Keyboard.current.wKey.wasReleasedThisFrame || Keyboard.current.sKey.wasReleasedThisFrame)
+        {
+            if(keyboardPressTime < maxKeybaordPressTime)
+            {
+                keyboardPressTime = 0;
+                return true;
+            }
+            else
+            {
+                keyboardPressTime = 0;
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
     void FreeLook()
     {
         //Looking Around
@@ -145,9 +184,36 @@ public class CharacterControls : MonoBehaviour
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
         moveDirection = (camera.transform.right * x + new Vector3(camera.transform.forward.x, 0, camera.transform.forward.z) * z).normalized * m;
 
+        //dashing input for some reason interactions in input asset does not work 
+        if(DashKeyboardInput())
+        {
+            if(!dashing) dashDirection = prevMoveDirection;
+            dashing = true;
+        }
+        else if(Gamepad.current.leftShoulder.isPressed)
+        {
+            if(!dashing) dashDirection = moveDirection;
+            dashing = true;
+        }
 
+        if(!dashing)
+        {
+            controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            if(dashTime < maxDashTime)
+            {
+                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+                dashTime += Time.deltaTime;
+            }
+            else
+            {
+                dashTime = 0;
+                dashing = false;
+            }
 
-        if(!dashing) controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
+        }
         
         //Fixes Moving Down Slopes
         if(grounded && moveDirection.magnitude > 0)
@@ -156,15 +222,11 @@ public class CharacterControls : MonoBehaviour
             controller.Move(Vector3.down * hit.distance);
         }
 
+        prevMoveDirection = moveDirection;
+
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-
-        //Dashing
-        if(Game.controls.Player.Dash.WasPerformedThisFrame() && !dashing)
-        {
-            StartCoroutine(Dash(0.1f, 200));
-        }
     }
 
     void Combat()
@@ -185,19 +247,6 @@ public class CharacterControls : MonoBehaviour
         {
             
         }
-    }
-
-    IEnumerator Dash(float time, float speed)
-    {
-        float t = 0;
-        dashing = true;
-        while(t < time)
-        {
-            controller.Move(moveDirection * speed * Time.deltaTime);
-            t += Time.deltaTime;
-            yield return null;
-        }
-        dashing = false;
     }
 
     //Animation Events
