@@ -13,8 +13,6 @@ public class CharacterControls : MonoBehaviour
     [Header("Movement")]
     public Vector3 velocity = Vector3.zero;
     public float speed = 20;
-    Vector3 prevMoveDirection;
-    Vector3 moveDirection;
     float currentMoveSpeed;
 
     [Header("Looking")]
@@ -36,10 +34,9 @@ public class CharacterControls : MonoBehaviour
     [HideInInspector] public bool grounded;
 
     [Header("Dashing")]
-    [SerializeField] float maxDashTime = 0.1f;
+    [SerializeField] float dashTime = 0.1f;
     [SerializeField] float dashSpeed = 250;
-    Vector3 dashDirection;
-    float dashTime = 0;
+    Vector2 prevDashInput;
     float maxKeybaordPressTime = 0.25f; 
     float keyboardPressTime = 0;
     bool dashing = false;
@@ -105,17 +102,14 @@ public class CharacterControls : MonoBehaviour
     //Functions
     void LockOn()
     {
-        Vector2 lookInput = Game.controls.Player.Look.ReadValue<Vector2>();
-        Vector3 lockOnOffset = ((lockOnTarget.transform.up * lookInput.y) + (camera.transform.right * lookInput.x)).normalized;
-
-        //Looking
         Vector3 lookDirection = lockOnTarget.transform.position - camera.transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
 
         rotx = Mathf.LerpAngle(rotx, lookRotation.eulerAngles.x, 10 * Time.deltaTime);
         roty = Mathf.LerpAngle(roty, lookRotation.eulerAngles.y, 10 * Time.deltaTime);
 
-        camera.transform.localEulerAngles = new Vector3(rotx,roty,0);
+        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
+        transform.localEulerAngles = new Vector3(0,roty,0);
 
         if(Vector3.Distance(transform.position, lockOnTarget.position) > lockOnDistance)
         {
@@ -161,7 +155,8 @@ public class CharacterControls : MonoBehaviour
         rotx -= lookInput.y * Game.aimSense * Time.deltaTime;
         rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
         roty += lookInput.x * Game.aimSense * Time.deltaTime;
-        camera.transform.localEulerAngles = new Vector3(rotx,roty,0);
+        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
+        transform.localEulerAngles = new Vector3(0,roty,0);
     }
 
     void Movement()
@@ -182,37 +177,35 @@ public class CharacterControls : MonoBehaviour
         }
         float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
         float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
-        moveDirection = (camera.transform.right * x + new Vector3(camera.transform.forward.x, 0, camera.transform.forward.z) * z).normalized * m;
+        Vector3 moveDirection = (transform.right * x + transform.forward * z).normalized * m;
 
         //dashing input for some reason interactions in input asset does not work 
-        if(DashKeyboardInput())
+        if(DashKeyboardInput() && !dashing)
         {
-            if(!dashing) dashDirection = prevMoveDirection;
-            dashing = true;
+            if(lockOnTarget)
+            {
+                StartCoroutine(Dash(prevDashInput, true));
+            }
+            else
+            {
+                StartCoroutine(Dash(prevDashInput, false));
+            }
         }
-        else if(Gamepad.current.leftShoulder.isPressed)
+        else if(Gamepad.current.leftShoulder.isPressed && !dashing)
         {
-            if(!dashing) dashDirection = moveDirection;
-            dashing = true;
+            if(lockOnTarget)
+            {
+                StartCoroutine(Dash(new Vector2(x,z), true));
+            }
+            else
+            {
+                StartCoroutine(Dash(prevDashInput, false));
+            }
         }
 
         if(!dashing)
         {
             controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
-        }
-        else
-        {
-            if(dashTime < maxDashTime)
-            {
-                controller.Move(dashDirection * dashSpeed * Time.deltaTime);
-                dashTime += Time.deltaTime;
-            }
-            else
-            {
-                dashTime = 0;
-                dashing = false;
-            }
-
         }
         
         //Fixes Moving Down Slopes
@@ -222,7 +215,7 @@ public class CharacterControls : MonoBehaviour
             controller.Move(Vector3.down * hit.distance);
         }
 
-        prevMoveDirection = moveDirection;
+        prevDashInput = new Vector2(x,z);
 
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
@@ -249,6 +242,20 @@ public class CharacterControls : MonoBehaviour
         }
     }
 
+    IEnumerator Dash(Vector2 dashInput,bool continuous)
+    {
+        dashing = true;
+        float t = 0;
+        Vector3 dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
+        while(t < dashTime)
+        {
+            if(continuous) dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
+            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        dashing = false;
+    }
     //Animation Events
     public void AttackState()
     {
