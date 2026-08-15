@@ -363,6 +363,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1064017395656332106, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
   m_PrefabInstance: {fileID: 2142934743352193624}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &33213983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33213982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a808fd1fc3ae3bb1bb3031e1c0025c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ability_WallRun
+  character: {fileID: 0}
+  speed: 25
+  jumpForce: 5
+  wallDistance: 2
+  maxCameraTilt: 35
+  cameraTiltSpeed: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &60413305
 GameObject:
   m_ObjectHideFlags: 0
@@ -5471,6 +5492,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3186816913230260898, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
+      propertyPath: jumpHeight
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5514,7 +5539,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1064017395656332106, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 33213983}
   m_SourcePrefab: {fileID: 100100000, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
 --- !u!23 &5739353670719078923
 MeshRenderer:

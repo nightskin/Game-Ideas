@@ -11,9 +11,11 @@ public class CharacterControls : MonoBehaviour
     
 
     [Header("Movement")]
+    public float jumpHeight = 1;
     public Vector3 velocity = Vector3.zero;
     public float speed = 20;
     float currentMoveSpeed;
+    bool jumping = false;
 
     [Header("Looking")]
     [Range(0,90)] public float maxLookY = 45;
@@ -26,6 +28,7 @@ public class CharacterControls : MonoBehaviour
     [SerializeField] float lockOnDistance = 50;
     [SerializeField] LayerMask lockOnLayerMask;
     [SerializeField] Transform lockOnTarget = null;
+    float lockOnLerp = 0;
 
     [Header("Physics")]
     public bool gravityOn = true; 
@@ -105,14 +108,20 @@ public class CharacterControls : MonoBehaviour
         Vector3 lookDirection = lockOnTarget.transform.position - camera.transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
 
-        rotx = Mathf.LerpAngle(rotx, lookRotation.eulerAngles.x, 10 * Time.deltaTime);
-        roty = Mathf.LerpAngle(roty, lookRotation.eulerAngles.y, 10 * Time.deltaTime);
+        
+        if(lockOnLerp < 1) lockOnLerp += Time.deltaTime;
+        lockOnLerp = Mathf.Clamp01(lockOnLerp);
+
+        rotx = Mathf.LerpAngle(rotx, lookRotation.eulerAngles.x, lockOnLerp);
+        roty = Mathf.LerpAngle(roty, lookRotation.eulerAngles.y, lockOnLerp);
 
         camera.transform.localEulerAngles = new Vector3(rotx,0,0);
         transform.localEulerAngles = new Vector3(0,roty,0);
 
+
         if(Vector3.Distance(transform.position, lockOnTarget.position) > lockOnDistance)
         {
+            lockOnLerp = 0;
             lockOnTarget = null;
         }
     }
@@ -164,7 +173,7 @@ public class CharacterControls : MonoBehaviour
         // When player hits the ground
         if (grounded && velocity.y < 0)
         {
-            velocity = Vector3.zero;
+            velocity.y = 0;
         }
 
         // Moving Around 
@@ -209,7 +218,7 @@ public class CharacterControls : MonoBehaviour
         }
         
         //Fixes Moving Down Slopes
-        if(grounded && moveDirection.magnitude > 0)
+        if(grounded && moveDirection.magnitude > 0 && !jumping)
         {
             Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
             controller.Move(Vector3.down * hit.distance);
@@ -220,6 +229,12 @@ public class CharacterControls : MonoBehaviour
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        //Jumping
+        if(Game.controls.Player.Jump.WasPerformedThisFrame() && grounded)
+        {
+            StartCoroutine(Jump());
+        }
     }
 
     void Combat()
@@ -242,14 +257,32 @@ public class CharacterControls : MonoBehaviour
         }
     }
 
-    IEnumerator Dash(Vector2 dashInput,bool continuous)
+    IEnumerator Jump()
+    {
+        jumping = true;
+        velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
+        yield return new WaitForSeconds(0.2f);
+        jumping = false;
+    }
+
+    IEnumerator Dash(Vector2 dashInput,bool lockedOn)
     {
         dashing = true;
         float t = 0;
         Vector3 dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
+        if(lockedOn)
+        {
+            float normalizeDistance = Game.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
+            float invertedDistance = Game.InvertRange(normalizeDistance,0,1);
+            dashInput.x = dashInput.x * invertedDistance;
+        }
+
         while(t < dashTime)
         {
-            if(continuous) dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
+            if(lockedOn)
+            {
+                dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
+            }
             controller.Move(dashDirection * dashSpeed * Time.deltaTime);
             t += Time.deltaTime;
             yield return null;
