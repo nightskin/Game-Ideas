@@ -1,34 +1,37 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Game : MonoBehaviour
 {
+    public static Game get;
+    public static Controls input;
+    
     public PauseMenu pauseMenu;
     public GameObject player;
-
-    public static Controls controls;
-    public static bool navigateUiWithMouse = false;
+    public List<Transform> targets = new List<Transform>();
+    
 
     //Game Settings
-    public static float cameraBob = 1;
-    public static float slowCameraAtkAmount = 0.1f;
-    public static float slowCameraDefAmont = 0.1f;
-    public static float aimSense = 100;
+    public bool cameraBob = false;
+    public float aimSense = 100;
+    public bool autoLockOn = true;
     
     void Awake()
     {
-        controls = new Controls();
-        controls.Enable();
+        get = this;
+        input = new Controls();
+        input.Enable();
     }
     
     void OnEnable()
     {
-        controls.Player.Pause.performed += Pause_performed;
+        input.Player.Pause.performed += Pause_performed;
     }
 
     void OnDisable()
     {
-        controls.Player.Pause.performed -= Pause_performed;
+        input.Player.Pause.performed -= Pause_performed;
     }
 
     private void Pause_performed(InputAction.CallbackContext obj)
@@ -53,21 +56,5 @@ public class Game : MonoBehaviour
         Application.Quit();
     }
 
-    public static Vector3 RandomPositionInBox(float minx, float maxx, float miny, float maxy, float minz, float maxz)
-    {
-        float x = Random.Range(minx,maxx);
-        float y = Random.Range(miny,maxy);
-        float z = Random.Range(minz,maxz);
-        return new Vector3(x,y,z);
-    }
 
-    public static float Remap(float value, float oldMin, float oldMax, float newMin, float newMax)
-    {
-        return (((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
-    }
-
-    public static float InvertRange(float value, float min, float max)
-    {
-        return max - value + min;
-    }
 }

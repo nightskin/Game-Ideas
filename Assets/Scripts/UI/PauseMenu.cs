@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
+    bool navigateUiWithMouse = false;
     [SerializeField] Slider AimSenseSlider;
     [SerializeField] Slider slowCamAtk;
     [SerializeField] Slider slowCamDef;
@@ -18,16 +19,16 @@ public class PauseMenu : MonoBehaviour
             else stateNodes[i].gameObject.SetActive(false);
         }
 
-        Game.controls.UI.ToggleMenuUp.performed += ToggleMenuUp_performed;
-        Game.controls.UI.ToggleMenuDown.performed += ToggleMenuDown_performed;
-        Game.controls.UI.SwitchToGamepad.performed += SwitchToGamepad_performed;
-        Game.controls.UI.SwitchToMouse.performed += SwitchToMouse_performed;
+        Game.input.UI.ToggleMenuUp.performed += ToggleMenuUp_performed;
+        Game.input.UI.ToggleMenuDown.performed += ToggleMenuDown_performed;
+        Game.input.UI.SwitchToGamepad.performed += SwitchToGamepad_performed;
+        Game.input.UI.SwitchToMouse.performed += SwitchToMouse_performed;
     }
     
     void OnDisable()
     {
-        Game.controls.UI.ToggleMenuUp.performed -= ToggleMenuUp_performed;
-        Game.controls.UI.ToggleMenuDown.performed -= ToggleMenuDown_performed;
+        Game.input.UI.ToggleMenuUp.performed -= ToggleMenuUp_performed;
+        Game.input.UI.ToggleMenuDown.performed -= ToggleMenuDown_performed;
     }
 
     private void ToggleMenuDown_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -42,12 +43,12 @@ public class PauseMenu : MonoBehaviour
 
     private void SwitchToMouse_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        Game.navigateUiWithMouse = true;
+        navigateUiWithMouse = true;
     }
 
     private void SwitchToGamepad_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        Game.navigateUiWithMouse = false;
+        navigateUiWithMouse = false;
     }
 
     public void Open()
@@ -102,17 +103,7 @@ public class PauseMenu : MonoBehaviour
 
     public void ChangeAimSense()
     {
-        Game.aimSense = AimSenseSlider.value * 10;
+        Game.get.aimSense = AimSenseSlider.value * 10;
     }
-
-    public void ChangeSlowCamAtk()
-    {
-        Game.slowCameraAtkAmount = slowCamAtk.value;
-    }
-
-    public void ChangeSlowCamDef()
-    {
-        Game.slowCameraDefAmont = slowCamDef.value;
-    }
-
+    
 }

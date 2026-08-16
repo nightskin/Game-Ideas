@@ -30,7 +30,7 @@ public class Ability_WallRun : MonoBehaviour
     void Update()
     {
         //Conditions for Wall Run
-        if(canWallRun && !isWallRunning && !character.grounded && (Keyboard.current.spaceKey.wasPressedThisFrame || Gamepad.current.aButton.wasPressedThisFrame))
+        if(canWallRun && !isWallRunning && !character.onGround && (Keyboard.current.spaceKey.wasPressedThisFrame || Gamepad.current.aButton.wasPressedThisFrame))
         {
             StartWallRun();
         }
@@ -64,7 +64,7 @@ public class Ability_WallRun : MonoBehaviour
                 character.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpForce * 2 * 10);
             }
             //Cancel Wall Run
-            if(!canWallRun || character.grounded)
+            if(!canWallRun || character.onGround)
             {
                 EndWallRun();
             }

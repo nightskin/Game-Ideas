@@ -34,7 +34,7 @@ public class CharacterControls : MonoBehaviour
     public bool gravityOn = true; 
     public float gravityStrength = 10;
     [SerializeField][Min(0)] float groundDistance = 0.5f;
-    [HideInInspector] public bool grounded;
+    [HideInInspector] public bool onGround;
 
     [Header("Dashing")]
     [SerializeField] float dashTime = 0.1f;
@@ -46,7 +46,8 @@ public class CharacterControls : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] Transform armPivot;
-    float cutAngle = 0;
+    float atkAngle = 0;
+    Vector2 defAngle = Vector2.zero;
     Vector2 actionVector = Vector2.zero;
     public enum State
     {
@@ -56,6 +57,7 @@ public class CharacterControls : MonoBehaviour
     }
     State state;
 
+    
     //Events
     void Start()
     {
@@ -65,45 +67,42 @@ public class CharacterControls : MonoBehaviour
 
     void Update()
     {
-        if(Game.controls.Player.LockOn.WasPerformedThisFrame())
+        if(Game.input.Player.LockOn.WasPerformedThisFrame())
         {
             if(lockOnTarget)
             {
-                lockOnTarget = null;
+                LockOff();
             }
             else
             {
-                if(Physics.Raycast(camera.transform.position,camera.transform.forward,out RaycastHit hit,lockOnDistance,lockOnLayerMask))
-                {
-                    lockOnTarget = hit.transform;
-                }
+                LockOn();
             }
-
         }
 
 
         if(lockOnTarget)
         {
-            LockOn();
+            ToTowardsTarget();
         }
         else
         {
             FreeLook();
         }
 
-        Movement();
-        Combat();
+        ApplyPhysics();
+        MovementControls();
+        CombatControls();
     }
 
     void FixedUpdate()
     {
         // Checks If player is grounded
         Ray groundRay = new Ray(transform.position, Vector3.down);
-        grounded = Physics.Raycast(groundRay, out RaycastHit hit, groundDistance);
+        onGround = Physics.Raycast(groundRay, out RaycastHit hit, groundDistance);
     }
 
-    //Functions
-    void LockOn()
+    //Helper Functions
+    void ToTowardsTarget()
     {
         Vector3 lookDirection = lockOnTarget.transform.position - camera.transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
@@ -124,6 +123,17 @@ public class CharacterControls : MonoBehaviour
             lockOnLerp = 0;
             lockOnTarget = null;
         }
+    }
+    
+    void FreeLook()
+    {
+        //Looking Around
+        Vector2 lookInput = Game.input.Player.Look.ReadValue<Vector2>();
+        rotx -= lookInput.y * Game.get.aimSense * Time.deltaTime;
+        rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
+        roty += lookInput.x * Game.get.aimSense * Time.deltaTime;
+        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
+        transform.localEulerAngles = new Vector3(0,roty,0);
     }
     
     bool DashKeyboardInput()
@@ -156,39 +166,33 @@ public class CharacterControls : MonoBehaviour
         }
     }
 
-
-    void FreeLook()
-    {
-        //Looking Around
-        Vector2 lookInput = Game.controls.Player.Look.ReadValue<Vector2>();
-        rotx -= lookInput.y * Game.aimSense * Time.deltaTime;
-        rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
-        roty += lookInput.x * Game.aimSense * Time.deltaTime;
-        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
-        transform.localEulerAngles = new Vector3(0,roty,0);
-    }
-
-    void Movement()
+    void ApplyPhysics()
     {
         // When player hits the ground
-        if (grounded && velocity.y < 0)
+        if (onGround && velocity.y < 0)
         {
             velocity.y = 0;
         }
 
-        // Moving Around 
-        float x = Game.controls.Player.Move.ReadValue<Vector2>().x;
+        //Gravity
+        if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    void MovementControls()
+    {
+        float xMoveInput = Game.input.Player.Move.ReadValue<Vector2>().x;
         if(lockOnTarget)
         {
-            float normalizeDistance = Game.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
-            float invertedDistance = Game.InvertRange(normalizeDistance,0,1);
-            x *= invertedDistance;
+            float normalizeDistance = Util.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
+            float invertedDistance = Util.InvertRange(normalizeDistance,0,1);
+            xMoveInput *= invertedDistance;
         }
-        float z = Game.controls.Player.Move.ReadValue<Vector2>().y;
-        float m = Game.controls.Player.Move.ReadValue<Vector2>().magnitude;
-        Vector3 moveDirection = (transform.right * x + transform.forward * z).normalized * m;
+        float zMoveInput = Game.input.Player.Move.ReadValue<Vector2>().y;
+        float magnitude = Game.input.Player.Move.ReadValue<Vector2>().magnitude;
+        Vector3 moveDirection = (transform.right * xMoveInput + transform.forward * zMoveInput).normalized * magnitude;
 
-        //dashing input for some reason interactions in input asset does not work 
+        //built-in tapping checks for some reason does not work so I had to implement my own
         if(DashKeyboardInput() && !dashing)
         {
             if(lockOnTarget)
@@ -204,7 +208,7 @@ public class CharacterControls : MonoBehaviour
         {
             if(lockOnTarget)
             {
-                StartCoroutine(Dash(new Vector2(x,z), true));
+                StartCoroutine(Dash(new Vector2(xMoveInput,zMoveInput), true));
             }
             else
             {
@@ -217,41 +221,36 @@ public class CharacterControls : MonoBehaviour
             controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
         }
         
-        //Fixes Moving Down Slopes
-        if(grounded && moveDirection.magnitude > 0 && !jumping)
+        //fixes falling down slopes issue
+        if(onGround && moveDirection.magnitude > 0 && !jumping)
         {
             Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
             controller.Move(Vector3.down * hit.distance);
         }
 
-        prevDashInput = new Vector2(x,z);
+        prevDashInput = new Vector2(xMoveInput,zMoveInput);
 
-        //Gravity
-        if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        //Jumping
-        if(Game.controls.Player.Jump.WasPerformedThisFrame() && grounded)
+        if(Game.input.Player.Jump.WasPerformedThisFrame() && onGround)
         {
             StartCoroutine(Jump());
         }
     }
 
-    void Combat()
+    void CombatControls()
     {
-        actionVector = Game.controls.Player.Look.ReadValue<Vector2>();
+        actionVector = Game.input.Player.Look.ReadValue<Vector2>();
 
-        if(state != State.IDLE)
+        if(Game.input.Player.Attack.WasPerformedThisFrame())
         {
-
-        }
-
-        if(Game.controls.Player.Attack.WasPerformedThisFrame())
-        {
-            cutAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
+            atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             animator.SetTrigger("cut");
         }
-        else if(Game.controls.Player.Defend.IsPressed())
+        
+        if(Game.input.Player.Defend.IsPressed())
+        {
+            
+        }
+        else
         {
             
         }
@@ -272,8 +271,8 @@ public class CharacterControls : MonoBehaviour
         Vector3 dashDirection = (transform.right * dashInput.x + transform.forward * dashInput.y).normalized;
         if(lockedOn)
         {
-            float normalizeDistance = Game.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
-            float invertedDistance = Game.InvertRange(normalizeDistance,0,1);
+            float normalizeDistance = Util.Remap(Vector3.Distance(transform.position, lockOnTarget.position),0,lockOnDistance, 0,1);
+            float invertedDistance = Util.InvertRange(normalizeDistance,0,1);
             dashInput.x = dashInput.x * invertedDistance;
         }
 
@@ -289,19 +288,46 @@ public class CharacterControls : MonoBehaviour
         }
         dashing = false;
     }
-    //Animation Events
+    
+    public void LockOn()
+    {
+        Ray ray = new Ray(camera.position, camera.forward);
+        RaycastHit[] hits =  Physics.RaycastAll(ray, lockOnDistance, lockOnLayerMask);
+        if(hits.Length == 0) return;
+        Transform closest = hits[0].transform;
+        
+        foreach(RaycastHit hit in hits)
+        {
+            //If current iteration > closest
+            float currentDot  = Vector3.Dot((hit.transform.position - camera.position).normalized, camera.forward);
+            float closestDot = Vector3.Dot((closest.position - camera.position).normalized,camera.forward);
+            if(currentDot > 0)
+            {
+                Debug.Log(currentDot);
+            }
+            if (currentDot > closestDot)
+            {
+                closest = hit.transform;
+            }
+        }
+        
+        lockOnTarget = closest;
+    }
+    public void LockOff()
+    {
+        lockOnTarget = null;
+        lockOnLerp = 0;
+    }
     public void AttackState()
     {
-        armPivot.localEulerAngles = new Vector3(0,0,cutAngle);
+        armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
         state = State.ATTACKING;
     }
-    
     public void DefendState()
     {
         armPivot.localEulerAngles = Vector3.zero;
         state = State.DEFENDING;
     }
-    
     public void IdleState()
     {
         armPivot.localEulerAngles = Vector3.zero;
