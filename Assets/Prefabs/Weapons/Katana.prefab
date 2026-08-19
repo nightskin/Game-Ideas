@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3545149996129786705}
   - component: {fileID: 8792092708377612868}
   - component: {fileID: 9010486778790944927}
-  - component: {fileID: 596357973478672128}
+  - component: {fileID: 7120991713721800324}
   m_Layer: 0
   m_Name: Katana
   m_TagString: Weapon
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 150, y: 150, z: 150}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -91,7 +91,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &596357973478672128
+--- !u!65 &7120991713721800324
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,9 +106,9 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0015032655, y: 0.0015032655, z: 0.02}
-  m_Center: {x: -2.910383e-10, y: 2.910383e-10, z: -0.0064313593}
+  m_Size: {x: 0.0015032653, y: 0.0015032653, z: 0.019999998}
+  m_Center: {x: -2.9103828e-10, y: 2.9103828e-10, z: -0.006431359}

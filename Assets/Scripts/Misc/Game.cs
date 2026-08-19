@@ -10,16 +10,14 @@ public class Game : MonoBehaviour
     public PauseMenu pauseMenu;
     public GameObject player;
     public List<Transform> targets = new List<Transform>();
-    
+    public GameSettings settings;
 
-    //Game Settings
-    public bool cameraBob = false;
-    public float aimSense = 100;
-    public bool autoLockOn = true;
+
     
     void Awake()
     {
         get = this;
+        settings = new GameSettings();
         input = new Controls();
         input.Enable();
     }

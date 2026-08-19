@@ -129,13 +129,14 @@ public class CharacterControls : MonoBehaviour
     {
         //Looking Around
         Vector2 lookInput = Game.input.Player.Look.ReadValue<Vector2>();
-        rotx -= lookInput.y * Game.get.aimSense * Time.deltaTime;
+        rotx -= lookInput.y * Game.get.settings.aimSense * Time.deltaTime;
         rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
-        roty += lookInput.x * Game.get.aimSense * Time.deltaTime;
+        roty += lookInput.x * Game.get.settings.aimSense * Time.deltaTime;
         camera.transform.localEulerAngles = new Vector3(rotx,0,0);
         transform.localEulerAngles = new Vector3(0,roty,0);
     }
     
+    //built-in tapping checks for some reason does not work so I had to implement my own
     bool DashKeyboardInput()
     {
         if(Keyboard.current.aKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.sKey.wasPressedThisFrame)
@@ -171,7 +172,7 @@ public class CharacterControls : MonoBehaviour
         // When player hits the ground
         if (onGround && velocity.y < 0)
         {
-            velocity.y = 0;
+            velocity = Vector3.zero;
         }
 
         //Gravity
@@ -192,27 +193,27 @@ public class CharacterControls : MonoBehaviour
         float magnitude = Game.input.Player.Move.ReadValue<Vector2>().magnitude;
         Vector3 moveDirection = (transform.right * xMoveInput + transform.forward * zMoveInput).normalized * magnitude;
 
-        //built-in tapping checks for some reason does not work so I had to implement my own
+        
         if(DashKeyboardInput() && !dashing)
         {
             if(lockOnTarget)
             {
-                StartCoroutine(Dash(prevDashInput, true));
+                StartCoroutine(DirectionalDash(prevDashInput, true));
             }
             else
             {
-                StartCoroutine(Dash(prevDashInput, false));
+                StartCoroutine(DirectionalDash(prevDashInput, false));
             }
         }
         else if(Gamepad.current.leftShoulder.isPressed && !dashing)
         {
             if(lockOnTarget)
             {
-                StartCoroutine(Dash(new Vector2(xMoveInput,zMoveInput), true));
+                StartCoroutine(DirectionalDash(new Vector2(xMoveInput,zMoveInput), true));
             }
             else
             {
-                StartCoroutine(Dash(prevDashInput, false));
+                StartCoroutine(DirectionalDash(prevDashInput, false));
             }
         }
 
@@ -242,6 +243,7 @@ public class CharacterControls : MonoBehaviour
 
         if(Game.input.Player.Attack.WasPerformedThisFrame())
         {
+            if(Game.get.settings.autoLockOn) LockOn();
             atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             animator.SetTrigger("cut");
         }
@@ -264,7 +266,7 @@ public class CharacterControls : MonoBehaviour
         jumping = false;
     }
 
-    IEnumerator Dash(Vector2 dashInput,bool lockedOn)
+    IEnumerator DirectionalDash(Vector2 dashInput,bool lockedOn)
     {
         dashing = true;
         float t = 0;
@@ -301,10 +303,6 @@ public class CharacterControls : MonoBehaviour
             //If current iteration > closest
             float currentDot  = Vector3.Dot((hit.transform.position - camera.position).normalized, camera.forward);
             float closestDot = Vector3.Dot((closest.position - camera.position).normalized,camera.forward);
-            if(currentDot > 0)
-            {
-                Debug.Log(currentDot);
-            }
             if (currentDot > closestDot)
             {
                 closest = hit.transform;
@@ -330,6 +328,7 @@ public class CharacterControls : MonoBehaviour
     }
     public void IdleState()
     {
+        if(Game.get.settings.autoLockOn) LockOff();
         armPivot.localEulerAngles = Vector3.zero;
         state = State.IDLE;
     }

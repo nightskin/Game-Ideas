@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class Ability_WallRun : MonoBehaviour
 {
@@ -35,10 +37,10 @@ public class Ability_WallRun : MonoBehaviour
             StartWallRun();
         }
 
-        //Wall Running Behaviour
+
         if(isWallRunning)
         {
-            //Movement
+            //Wall Running Movement
             Vector3 wallNormal = wallHit.normal;
             Vector3 wallForward = Vector3.Cross(wallNormal,transform.up);
             if(Vector3.Dot(transform.forward,wallForward) < 0)
@@ -58,7 +60,7 @@ public class Ability_WallRun : MonoBehaviour
             }
 
             //Wall Jumping
-            if((Gamepad.current.aButton.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame) && canWallJump)
+            if(Game.input.Player.Jump.WasPerformedThisFrame() && canWallJump)
             {
                 EndWallRun();
                 character.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpForce * 2 * 10);
@@ -73,12 +75,27 @@ public class Ability_WallRun : MonoBehaviour
         }
         else
         {
+            if(Game.input.Player.Move.WasPerformedThisFrame())
+            {
+                StartCoroutine(ApplyDrag(1,0));
+            }
             cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0, cameraTiltSpeed * Time.deltaTime);
         }
 
         Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, cameraTilt);
     }
 
+    IEnumerator ApplyDrag(float amount = 1 , float delay = 0)
+    {
+        yield return new WaitForSeconds(delay);
+        float t = 1;
+        while(t > 0)
+        {
+            character.velocity = Vector3.Lerp(character.velocity, new Vector3(0, character.velocity.y, 0),t);
+            t -= amount * Time.deltaTime;
+            yield return null;
+        }
+    }
 
     void StartWallRun()
     {
