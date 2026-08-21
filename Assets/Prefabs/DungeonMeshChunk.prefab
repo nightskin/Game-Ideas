@@ -9,16 +9,16 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6664557517655366599}
-  - component: {fileID: 5031627411658715005}
-  - component: {fileID: 6114784108805367040}
-  - component: {fileID: 141494122714170787}
-  - component: {fileID: 2223294642492029004}
+  - component: {fileID: 6445137297510237364}
+  - component: {fileID: 6847952081643974709}
+  - component: {fileID: 3836502109873422816}
+  - component: {fileID: 439835315809209229}
   m_Layer: 0
-  m_Name: DungeonChunk
+  m_Name: DungeonMeshChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6664557517655366599
 Transform:
@@ -35,7 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5031627411658715005
+--- !u!33 &6445137297510237364
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2200944842310020107}
   m_Mesh: {fileID: 0}
---- !u!23 &6114784108805367040
+--- !u!23 &6847952081643974709
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,7 +92,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &141494122714170787
+--- !u!64 &3836502109873422816
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,7 +114,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &2223294642492029004
+--- !u!114 &439835315809209229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,9 +125,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f54cc4a59ce54dcda5dcaeefc1a8876, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DungeonChunk
-  chunkMask:
-    serializedVersion: 2
-    m_Bits: 1
+  m_EditorClassIdentifier: Assembly-CSharp::DungeonMeshChunk
   dungeon: {fileID: 0}
   chunkSize: {x: 0, y: 0, z: 0}

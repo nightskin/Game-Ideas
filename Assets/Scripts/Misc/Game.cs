@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class Game : MonoBehaviour
 {
     public static Game get;
-    public static Controls input;
+    public static Input input;
     
     public PauseMenu pauseMenu;
     public GameObject player;
@@ -18,7 +18,7 @@ public class Game : MonoBehaviour
     {
         get = this;
         settings = new GameSettings();
-        input = new Controls();
+        input = new Input();
         input.Enable();
     }
     

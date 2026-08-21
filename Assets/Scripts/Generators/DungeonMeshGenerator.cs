@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
+using System.Linq;
 using UnityEngine;
 
 public class DungeonMeshGenerator : MonoBehaviour
@@ -7,8 +9,8 @@ public class DungeonMeshGenerator : MonoBehaviour
     [Header("Default Parameters")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
     public GameObject chunkPrefab;
-    [Tooltip("Determines max size of the level")] public Vector3Int dungeonSize = new Vector3Int(100,6,100);
-    [Tooltip("Determines the size of a chunk in the level")] public Vector3Int chunkSize = new Vector3Int(10,6,10);
+    [Tooltip("Determines max size of the level")] public Vector3Int dungeonSize = new Vector3Int(100,20,100);
+    [Tooltip("Determines the size of a chunk in the level")] public Vector3Int chunkSize = new Vector3Int(20,20,20);
     public string seed = string.Empty;
     public enum LevelGenerationAlgorithm
     {
@@ -28,7 +30,7 @@ public class DungeonMeshGenerator : MonoBehaviour
     [SerializeField] float incrementLevel = 0.01f;
     [Min(1)] public int hallwaySize = 1;
     [Range(0,1)] public float isoLevel = 0;
-    [Min(1)] public float voxelSize = 5;
+    [Min(1)] public int voxelSize = 5;
     float[,,] grid = null;
 
     [Space]
@@ -60,47 +62,43 @@ public class DungeonMeshGenerator : MonoBehaviour
     {
         if (seed == string.Empty) seed = System.DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
-        grid = new float[dungeonSize.x, dungeonSize.y, dungeonSize.z];
+        grid = new float[dungeonSize.x+1, dungeonSize.y+1, dungeonSize.z+1];
 
         GenerateDungeonData(levelGeneration);
         
         Vector3Int numberOfChunks = new Vector3Int(dungeonSize.x/chunkSize.x, dungeonSize.y/chunkSize.y, dungeonSize.z/chunkSize.z);
-        Vector3Int chunkIndex = Vector3Int.zero; 
 
-        for(int x = 0; x < numberOfChunks.x+1; x++)
+        for(int chunkX = 0; chunkX < numberOfChunks.x; chunkX++)
         {
-            for(int y = 0; y < numberOfChunks.y; y++)
+            for(int chunkY = 0; chunkY < numberOfChunks.y; chunkY++)
             {
-                for(int z = 0; z < numberOfChunks.z+1; z++)
+                for(int chunkZ = 0; chunkZ < numberOfChunks.z; chunkZ++)
                 {
-                    GameObject chunkObj = Instantiate(chunkPrefab,new Vector3(x * chunkSize.x, y * chunkSize.y, z * chunkSize.z) * (voxelSize - (1/voxelSize)), Quaternion.identity, transform);
-                    chunkObj.name = new Vector3Int(x,y,z).ToString();
-
-                    DungeonMeshChunk chunk = chunkObj.GetComponent<DungeonMeshChunk>();
+                    Vector3 chunkPosition = new Vector3(chunkX * chunkSize.x, chunkY * chunkSize.y, chunkZ * chunkSize.z) * voxelSize;
+                    GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
+                    chunkObject.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
+                    DungeonMeshChunk chunk = chunkObject.transform.GetComponent<DungeonMeshChunk>();
+                    chunk.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString() + " Mesh";
                     chunk.dungeon = this;
                     chunk.chunkSize = chunkSize;
-                    chunk.grid = new float[chunkSize.x, chunkSize.y, chunkSize.z];
+                    chunk.grid = new float[chunkSize.x+1, chunkSize.y+1, chunkSize.z+1];
+                    
 
-                    for(int i = 0; i < chunkSize.x; i++)
+                    for(int x = 0; x < chunkSize.x+1; x++)
                     {
-                        for(int j = 0; j < chunkSize.y; j++)
+                        for(int y = 0; y < chunkSize.y+1; y++)
                         {
-                            for(int k = 0; k < chunkSize.z; k++)
+                            for(int z = 0; z < chunkSize.z+1; z++)
                             {
-                                chunk.grid[i,j,k] = grid[i + chunkIndex.x, j + chunkIndex.y, k + chunkIndex.z];
+                                Vector3Int gridOffset = new Vector3Int(chunkX * chunkSize.x, chunkY * chunkSize.y , chunkZ * chunkSize.z);
+                                chunk.grid[x,y,z] = grid[x + gridOffset.x, y + gridOffset.y, z + gridOffset.z];
                             }
                         }
                     }
-                    chunk.Generate();
                     
-                    chunkIndex.z += numberOfChunks.z - 1;
+                    chunk.Generate();
                 }
-
             }
-            chunkIndex.x += numberOfChunks.x - 1;
-            chunkIndex.y = 0;
-            chunkIndex.z = 0;
-
         }
         
         PlacePlayer();
@@ -280,21 +278,18 @@ public class DungeonMeshGenerator : MonoBehaviour
             ActivateBox(currentPos, hallwaySize, hallwaySize, hallwaySize);
         }
     } 
-
-
+    
     void PlacePlayer()
     {
-        for (int x = 0; x < dungeonSize.x; x++)
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            //Place player
+            Vector3 abovePos =  transform.GetChild(i).position + (Vector3.up * dungeonSize.y * voxelSize);
+            if(Physics.Raycast(abovePos, Vector3.down, out RaycastHit hit))
             {
-                for (int z = 0; z < dungeonSize.z; z++)
-                {
-                    Vector3 abovePos = transform.position + (new Vector3(x, dungeonSize.y, z) * voxelSize);
-                    if(Physics.Raycast(abovePos, Vector3.down, out RaycastHit hit))
-                    {
-                        player.transform.position = hit.point;
-                        return;
-                    }
-                }
+                player.transform.position = hit.point;
+                return;
             }
+        }
     }   
 }

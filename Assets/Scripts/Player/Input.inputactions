@@ -61,18 +61,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "LockOn",
+                    "name": "Jump",
                     "type": "Button",
-                    "id": "0f117390-06cd-4a41-a3fd-f6e011f41e6e",
+                    "id": "239fea15-7e25-439b-a9d6-fa17f511a498",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
+                    "name": "LockOn",
                     "type": "Button",
-                    "id": "239fea15-7e25-439b-a9d6-fa17f511a498",
+                    "id": "c740aafb-95fc-47ac-9924-aca88fea9085",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -302,50 +302,6 @@
                 },
                 {
                     "name": "",
-                    "id": "b8bb3e22-316f-490c-8df5-588b3695e1a2",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b9c461fe-aad4-432e-af3d-43c0301989f8",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5e8fd5a8-bcb4-43d3-b18c-7ca860b73bda",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1c14bbcf-4a5c-4849-813c-466454143e50",
-                    "path": "<Gamepad>/rightStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e9bdd7c7-f6fc-4bd5-b329-5b9916821c7e",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -363,6 +319,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54c77461-5037-4d51-adc6-4d0918efdc8d",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "40ddb45a-9d23-46a0-b923-ea63d6cf1873",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "LockOn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

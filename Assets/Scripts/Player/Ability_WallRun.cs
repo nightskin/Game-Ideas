@@ -47,7 +47,7 @@ public class Ability_WallRun : MonoBehaviour
             {
                 wallForward = -wallForward;
             }
-            character.controller.Move((wallForward + new Vector3(0,character.camera.forward.y,0)).normalized * speed * Time.deltaTime);
+            character.controller.Move((wallForward + new Vector3(0,character.cameraHolder.forward.y,0)).normalized * speed * Time.deltaTime);
 
             //Tilt Camera
             if(Vector3.Dot(wallNormal,transform.right) > Vector3.Dot(wallNormal,-transform.right))

@@ -16,6 +16,22 @@ public class DungeonMeshChunk : MonoBehaviour
     List<Vector2> uvs = new List<Vector2>();
     Mesh mesh;
     
+    public bool GridEmpty()
+    {
+        for(int x = 0; x < chunkSize.x; x++)
+        {
+            for(int y = 0; y < chunkSize.y; y++)
+            {
+                for(int z = 0; z < chunkSize.z; z++)
+                {
+                    if(grid[x,y,z] != 0) return false;
+                }
+            }
+        }
+
+        return true;
+
+    }
 
     public void Generate()
     {
@@ -83,11 +99,11 @@ public class DungeonMeshChunk : MonoBehaviour
         }
         else
         {
-            for (int x = 0; x < chunkSize.x - 1; x++)
+            for (int x = 0; x < chunkSize.x; x++)
             {
-                for (int y = 0; y < chunkSize.y - 1; y++)
+                for (int y = 0; y < chunkSize.y; y++)
                 {
-                    for (int z = 0; z < chunkSize.z - 1; z++)
+                    for (int z = 0; z < chunkSize.z; z++)
                     {
 
                         float[] values = new float[]

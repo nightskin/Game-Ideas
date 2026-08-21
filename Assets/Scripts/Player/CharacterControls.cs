@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class CharacterControls : MonoBehaviour
 {
     [Header("Components")]
-    public Transform camera;
+    public Transform cameraHolder;
     public CharacterController controller;
     public Animator animator;
     
@@ -21,6 +21,7 @@ public class CharacterControls : MonoBehaviour
     [Range(0,90)] public float maxLookY = 45;
     [SerializeField] float cameraBobSpeed = 5;
     [SerializeField] float cameraBobHeight = 0.25f;
+    float lookSpeed;
     float rotx = 0;
     float roty = 0;
 
@@ -61,23 +62,24 @@ public class CharacterControls : MonoBehaviour
     //Events
     void Start()
     {
+        lookSpeed = Game.get.settings.aimSense;
         currentMoveSpeed = speed;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        if(Game.input.Player.LockOn.WasPerformedThisFrame())
-        {
-            if(lockOnTarget)
-            {
-                LockOff();
-            }
-            else
-            {
-                LockOn();
-            }
-        }
+        //if(Game.input.Player.LockOn.WasPerformedThisFrame())
+        //{
+        //    if(lockOnTarget)
+        //    {
+        //        LockOff();
+        //    }
+        //    else
+        //    {
+        //        LockOn();
+        //    }
+        //}
 
 
         if(lockOnTarget)
@@ -104,7 +106,7 @@ public class CharacterControls : MonoBehaviour
     //Helper Functions
     void ToTowardsTarget()
     {
-        Vector3 lookDirection = lockOnTarget.transform.position - camera.transform.position;
+        Vector3 lookDirection = lockOnTarget.transform.position - cameraHolder.transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
 
         
@@ -114,7 +116,7 @@ public class CharacterControls : MonoBehaviour
         rotx = Mathf.LerpAngle(rotx, lookRotation.eulerAngles.x, lockOnLerp);
         roty = Mathf.LerpAngle(roty, lookRotation.eulerAngles.y, lockOnLerp);
 
-        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
+        cameraHolder.transform.localEulerAngles = new Vector3(rotx,0,0);
         transform.localEulerAngles = new Vector3(0,roty,0);
 
 
@@ -129,10 +131,10 @@ public class CharacterControls : MonoBehaviour
     {
         //Looking Around
         Vector2 lookInput = Game.input.Player.Look.ReadValue<Vector2>();
-        rotx -= lookInput.y * Game.get.settings.aimSense * Time.deltaTime;
+        rotx -= lookInput.y * lookSpeed * Time.deltaTime;
         rotx = Mathf.Clamp(rotx,-maxLookY,maxLookY);
-        roty += lookInput.x * Game.get.settings.aimSense * Time.deltaTime;
-        camera.transform.localEulerAngles = new Vector3(rotx,0,0);
+        roty += lookInput.x * lookSpeed * Time.deltaTime;
+        cameraHolder.transform.localEulerAngles = new Vector3(rotx,0,0);
         transform.localEulerAngles = new Vector3(0,roty,0);
     }
     
@@ -219,6 +221,10 @@ public class CharacterControls : MonoBehaviour
 
         if(!dashing)
         {
+            if(Game.input.Player.Move.ReadValue<Vector2>().magnitude > 0)
+            {
+                
+            }
             controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
         }
         
@@ -243,7 +249,6 @@ public class CharacterControls : MonoBehaviour
 
         if(Game.input.Player.Attack.WasPerformedThisFrame())
         {
-            if(Game.get.settings.autoLockOn) LockOn();
             atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
             animator.SetTrigger("cut");
         }
@@ -293,7 +298,7 @@ public class CharacterControls : MonoBehaviour
     
     public void LockOn()
     {
-        Ray ray = new Ray(camera.position, camera.forward);
+        Ray ray = new Ray(cameraHolder.position, cameraHolder.forward);
         RaycastHit[] hits =  Physics.RaycastAll(ray, lockOnDistance, lockOnLayerMask);
         if(hits.Length == 0) return;
         Transform closest = hits[0].transform;
@@ -301,8 +306,8 @@ public class CharacterControls : MonoBehaviour
         foreach(RaycastHit hit in hits)
         {
             //If current iteration > closest
-            float currentDot  = Vector3.Dot((hit.transform.position - camera.position).normalized, camera.forward);
-            float closestDot = Vector3.Dot((closest.position - camera.position).normalized,camera.forward);
+            float currentDot  = Vector3.Dot((hit.transform.position - cameraHolder.position).normalized, cameraHolder.forward);
+            float closestDot = Vector3.Dot((closest.position - cameraHolder.position).normalized,cameraHolder.forward);
             if (currentDot > closestDot)
             {
                 closest = hit.transform;
@@ -313,11 +318,13 @@ public class CharacterControls : MonoBehaviour
     }
     public void LockOff()
     {
+
         lockOnTarget = null;
         lockOnLerp = 0;
     }
     public void AttackState()
     {
+        lookSpeed *= 0.1f;
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
         state = State.ATTACKING;
     }
@@ -328,7 +335,7 @@ public class CharacterControls : MonoBehaviour
     }
     public void IdleState()
     {
-        if(Game.get.settings.autoLockOn) LockOff();
+        lookSpeed = Game.get.settings.aimSense;
         armPivot.localEulerAngles = Vector3.zero;
         state = State.IDLE;
     }
