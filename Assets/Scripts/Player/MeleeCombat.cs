@@ -27,10 +27,10 @@ public class MeleeCombat : MonoBehaviour
     void Update()
     {
         atkVector = Game.input.Player.Look.ReadValue<Vector2>();
-        atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
-
+        
         if(Game.input.Player.Attack.WasPerformedThisFrame())
         {
+            atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * 180 / Mathf.PI;
             animator.SetTrigger("cut");
         }
         
