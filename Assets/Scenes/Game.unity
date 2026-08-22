@@ -673,26 +673,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonMeshGenerator
   player: {fileID: 2142934743352193625}
   chunkPrefab: {fileID: 2200944842310020107, guid: 3a10429160f7e5a449bd8c8e7c107844, type: 3}
-  dungeonSize: {x: 100, y: 20, z: 100}
+  totalSize: {x: 100, y: 20, z: 100}
   chunkSize: {x: 10, y: 10, z: 10}
   seed: 
-  levelGeneration: 3
+  levelGeneration: 4
   meshGeneration: 2
   incrementLevel: 0.01
-  hallwaySize: 1
-  isoLevel: 0
-  voxelSize: 3
+  isoLevel: 0.5
+  tileScale: 5
   numberOfSteps: 250
   walk3D: 0
   numberOfRooms: 10
   ceilngHeight: 2
   minRoomSize: 5
   maxRoomSize: 10
-  octaves: 1
-  persistance: 1
-  lacunarity: 1
-  baseNoiseScale: 0.05
-  showBounds: 1
+  hallwaySize: 1
+  octaves: 3
+  persistance: 0.5
+  lacunarity: 2
+  baseNoiseScale: 0.1
+  showBounds: 0
   boundColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
 --- !u!1 &137251590
 GameObject:
@@ -4060,22 +4060,6 @@ PrefabInstance:
     - target: {fileID: 1064017395656332106, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_Name
       value: Warrior
-      objectReference: {fileID: 0}
-    - target: {fileID: 1870199287897647950, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2032062324097979678, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
-      propertyPath: jumpHeight
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2032062324097979678, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
-      propertyPath: groundDistance
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5519108838918269802, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.x

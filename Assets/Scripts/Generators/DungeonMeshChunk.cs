@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
@@ -18,7 +17,7 @@ public class DungeonMeshChunk : MonoBehaviour
 
     [HideInInspector] public bool generated = false;
     
-    public void Generate()
+    public void GenerateChunk()
     {
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -39,42 +38,42 @@ public class DungeonMeshChunk : MonoBehaviour
                             {
                                 if (grid[x, y - 1, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadBottom(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadBottom(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                             if (y < chunkSize.y - 1)
                             {
                                 if (grid[x, y + 1, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadTop(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadTop(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                             if (x > 0)
                             {
                                 if (grid[x - 1, y, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadLeft(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadLeft(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                             if (x < chunkSize.x - 1)
                             {
                                 if (grid[x + 1, y, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadRight(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadRight(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                             if (z > 0)
                             {
                                 if (grid[x, y, z - 1] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadBack(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadBack(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                             if (z < chunkSize.z - 1)
                             {
                                 if (grid[x, y, z + 1] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadFront(new Vector3(x, y, z) * dungeon.voxelSize);
+                                    DrawQuadFront(new Vector3(x, y, z) * dungeon.tileScale);
                                 }
                             }
                         }
@@ -105,14 +104,14 @@ public class DungeonMeshChunk : MonoBehaviour
 
                         Vector3[] points = new Vector3[]
                         {
-                            new Vector3(x,y,z+1) * dungeon.voxelSize,
-                            new Vector3(x+1,y,z+1) * dungeon.voxelSize,
-                            new Vector3(x+1,y,z) * dungeon.voxelSize,
-                            new Vector3(x,y,z) * dungeon.voxelSize,
-                            new Vector3(x,y+1,z+1) * dungeon.voxelSize,
-                            new Vector3(x+1,y+1,z+1) * dungeon.voxelSize,
-                            new Vector3(x+1,y+1,z) * dungeon.voxelSize,
-                            new Vector3(x,y+1,z) * dungeon.voxelSize,
+                            new Vector3(x,y,z+1) * dungeon.tileScale,
+                            new Vector3(x+1,y,z+1) * dungeon.tileScale,
+                            new Vector3(x+1,y,z) * dungeon.tileScale,
+                            new Vector3(x,y,z) * dungeon.tileScale,
+                            new Vector3(x,y+1,z+1) * dungeon.tileScale,
+                            new Vector3(x+1,y+1,z+1) * dungeon.tileScale,
+                            new Vector3(x+1,y+1,z) * dungeon.tileScale,
+                            new Vector3(x,y+1,z) * dungeon.tileScale,
                         };
 
                         int cubeIndex = VoxelHelper.GetState(values, dungeon.isoLevel);
@@ -147,7 +146,7 @@ public class DungeonMeshChunk : MonoBehaviour
                                 else if (triIndex == 2)
                                 {
                                     triVerts[2] = vertexPos;
-                                    uvs.AddRange(VoxelHelper.GetUVs(triVerts[0], triVerts[1], triVerts[2], dungeon.voxelSize));
+                                    uvs.AddRange(VoxelHelper.GetUVs(triVerts[0], triVerts[1], triVerts[2], dungeon.tileScale));
                                     triIndex = 0;
                                 }
 
@@ -189,9 +188,10 @@ public class DungeonMeshChunk : MonoBehaviour
             {
                 for(int z = 0; z < chunkSize.z; z++)
                 {
-                    if(grid[x,y,z] > dungeon.isoLevel)
+                    dungeon.player.position = transform.position + new Vector3(x,dungeon.totalSize.y,z) * dungeon.tileScale;
+                    if(Physics.Raycast(dungeon.player.position, Vector3.down, out RaycastHit hit))
                     {
-                        dungeon.player.position = transform.position + new Vector3(x,y,z) * dungeon.voxelSize;
+                        dungeon.player.position = hit.point;
                         return;
                     }
                 }
@@ -201,10 +201,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadTop(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -224,10 +224,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadFront(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -247,10 +247,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadBack(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -270,10 +270,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadLeft(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -293,10 +293,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadRight(Vector3 position)
     {
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -316,10 +316,10 @@ public class DungeonMeshChunk : MonoBehaviour
 
     void DrawQuadBottom(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   dungeon.voxelSize + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.voxelSize + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);

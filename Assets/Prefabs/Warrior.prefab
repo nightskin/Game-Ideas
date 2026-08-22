@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 6230495934831919866}
   - component: {fileID: 2032062324097979678}
   - component: {fileID: 1870199287897647950}
+  - component: {fileID: 6305635268579873780}
   m_Layer: 0
   m_Name: Warrior
   m_TagString: Player
@@ -224,13 +225,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterControls
   cameraHolder: {fileID: 4218079583768232449}
   controller: {fileID: 6230495934831919866}
-  animator: {fileID: 1927410449195285833}
-  jumpHeight: 2
+  jumpHeight: 5
   velocity: {x: 0, y: 0, z: 0}
   speed: 20
   maxLookY: 60
   cameraBobSpeed: 5
   cameraBobHeight: 0.25
+  lookSpeed: 0
   lockOnDistance: 50
   lockOnLayerMask:
     serializedVersion: 2
@@ -238,11 +239,10 @@ MonoBehaviour:
   lockOnTarget: {fileID: 0}
   gravityOn: 1
   gravityStrength: 10
-  groundDistance: 0.5
+  groundDistance: 1
   onGround: 0
   dashTime: 0.1
   dashSpeed: 250
-  armPivot: {fileID: 5519108838918269802}
 --- !u!114 &1870199287897647950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,12 +250,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1064017395656332106}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a808fd1fc3ae3bb1bb3031e1c0025c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ability_WallRun
-  character: {fileID: 2032062324097979678}
+  basicMovement: {fileID: 2032062324097979678}
   speed: 25
   jumpForce: 5
   wallDistance: 2
@@ -264,6 +264,22 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 1
+  allowPlayerToJumpAgainAfterWallRun: 1
+--- !u!114 &6305635268579873780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064017395656332106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7805eca4a23594343ac9112c3a2e125e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeCombat
+  animator: {fileID: 1927410449195285833}
+  basicMovement: {fileID: 2032062324097979678}
+  armPivot: {fileID: 5519108838918269802}
 --- !u!1 &1294942915251131748
 GameObject:
   m_ObjectHideFlags: 0
@@ -1448,7 +1464,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1847658160657752427}

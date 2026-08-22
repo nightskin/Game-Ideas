@@ -2,33 +2,35 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CharacterControls : MonoBehaviour
+public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
     public Transform cameraHolder;
     public CharacterController controller;
-    public Animator animator;
+
     
 
     [Header("Movement")]
+    [Min(0)] public int maxNumberOfJumps = 1;
     public float jumpHeight = 1;
     public Vector3 velocity = Vector3.zero;
     public float speed = 20;
     float currentMoveSpeed;
     bool jumping = false;
+    int jumpsTaken = 0;
 
     [Header("Looking")]
     [Range(0,90)] public float maxLookY = 45;
     [SerializeField] float cameraBobSpeed = 5;
     [SerializeField] float cameraBobHeight = 0.25f;
-    float lookSpeed;
+    [HideInInspector] public float lookSpeed;
     float rotx = 0;
     float roty = 0;
 
     [Header("Lock On System")]
-    [SerializeField] float lockOnDistance = 50;
-    [SerializeField] LayerMask lockOnLayerMask;
-    [SerializeField] Transform lockOnTarget = null;
+    public float lockOnDistance = 50;
+    public LayerMask lockOnLayerMask;
+    public Transform lockOnTarget = null;
     float lockOnLerp = 0;
 
     [Header("Physics")]
@@ -45,20 +47,6 @@ public class CharacterControls : MonoBehaviour
     float keyboardPressTime = 0;
     bool dashing = false;
 
-    [Header("Combat")]
-    [SerializeField] Transform armPivot;
-    float atkAngle = 0;
-    Vector2 defAngle = Vector2.zero;
-    Vector2 actionVector = Vector2.zero;
-    public enum State
-    {
-        IDLE,
-        ATTACKING,
-        DEFENDING,
-    }
-    State state;
-
-    
     //Events
     void Start()
     {
@@ -69,19 +57,6 @@ public class CharacterControls : MonoBehaviour
 
     void Update()
     {
-        //if(Game.input.Player.LockOn.WasPerformedThisFrame())
-        //{
-        //    if(lockOnTarget)
-        //    {
-        //        LockOff();
-        //    }
-        //    else
-        //    {
-        //        LockOn();
-        //    }
-        //}
-
-
         if(lockOnTarget)
         {
             ToTowardsTarget();
@@ -93,7 +68,6 @@ public class CharacterControls : MonoBehaviour
 
         ApplyPhysics();
         MovementControls();
-        CombatControls();
     }
 
     void FixedUpdate()
@@ -175,11 +149,19 @@ public class CharacterControls : MonoBehaviour
         if (onGround && velocity.y < 0)
         {
             velocity = Vector3.zero;
+            jumpsTaken = 0;
         }
 
         //Gravity
         if(gravityOn) velocity.y -= gravityStrength * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        //fixes falling down slopes issue
+        if(onGround && Game.input.Player.Move.IsPressed() && !jumping)
+        {
+            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
+            controller.Move(Vector3.down * hit.distance);
+        }
     }
 
     void MovementControls()
@@ -228,46 +210,21 @@ public class CharacterControls : MonoBehaviour
             controller.Move(moveDirection * currentMoveSpeed * Time.deltaTime);
         }
         
-        //fixes falling down slopes issue
-        if(onGround && moveDirection.magnitude > 0 && onGround &&!jumping)
-        {
-            Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
-            controller.Move(Vector3.down * hit.distance);
-        }
-
         prevDashInput = new Vector2(xMoveInput,zMoveInput);
 
-        if(Game.input.Player.Jump.WasPerformedThisFrame() && onGround)
+        if(Game.input.Player.Jump.WasPerformedThisFrame() && jumpsTaken < maxNumberOfJumps)
         {
             StartCoroutine(Jump());
         }
     }
 
-    void CombatControls()
-    {
-        actionVector = Game.input.Player.Look.ReadValue<Vector2>();
-
-        if(Game.input.Player.Attack.WasPerformedThisFrame())
-        {
-            atkAngle = Mathf.Atan2(actionVector.x, -actionVector.y) * 180 / Mathf.PI;
-            animator.SetTrigger("cut");
-        }
-        
-        if(Game.input.Player.Defend.IsPressed())
-        {
-            
-        }
-        else
-        {
-            
-        }
-    }
 
     IEnumerator Jump()
     {
         jumping = true;
         velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
-        yield return new WaitForSeconds(0.2f);
+        jumpsTaken++;
+        yield return new WaitForSeconds(0.25f);
         jumping = false;
     }
 
@@ -322,22 +279,6 @@ public class CharacterControls : MonoBehaviour
         lockOnTarget = null;
         lockOnLerp = 0;
     }
-    public void AttackState()
-    {
-        lookSpeed *= 0.1f;
-        armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
-        state = State.ATTACKING;
-    }
-    public void DefendState()
-    {
-        armPivot.localEulerAngles = Vector3.zero;
-        state = State.DEFENDING;
-    }
-    public void IdleState()
-    {
-        lookSpeed = Game.get.settings.aimSense;
-        armPivot.localEulerAngles = Vector3.zero;
-        state = State.IDLE;
-    }
+
 
 }

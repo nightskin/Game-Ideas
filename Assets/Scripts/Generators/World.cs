@@ -30,7 +30,7 @@ public class World : MonoBehaviour
             {
                 var chunk = Instantiate(chunkPrefab, new Vector3(x,0,z) * chunkSize, Quaternion.identity, transform);
                 chunk.name = new Vector2Int(x,z).ToString();
-                chunk.GetComponent<DungeonMeshChunk>().Generate();
+                chunk.GetComponent<DungeonMeshChunk>().GenerateChunk();
             }
         }
     }
