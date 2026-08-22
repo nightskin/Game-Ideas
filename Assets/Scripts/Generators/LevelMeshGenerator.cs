@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DungeonMeshGenerator : MonoBehaviour
+public class LevelMeshGenerator : MonoBehaviour
 {
     [Header("General Settings")]
     [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
@@ -14,13 +14,14 @@ public class DungeonMeshGenerator : MonoBehaviour
 
     public enum LevelGenerationAlgorithm
     {
-        RANDOM_WALKER,
-        TINY_KEEP,
-        RANDOM_KEEP,
-        NOISE,
-        LAYERED_NOISE,
+        ORGANIC,
+        DUNGEON,
+        ORGANIC_DUNGEON,
+        CAVES,
+        LAYERED_CAVES,
+        TERRAIN,
     }
-    [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.RANDOM_KEEP;
+    [SerializeField] LevelGenerationAlgorithm levelGeneration = LevelGenerationAlgorithm.ORGANIC_DUNGEON;
     public enum MeshGenerationAlgorithm
     {
         VOXEL_MESH,
@@ -59,6 +60,7 @@ public class DungeonMeshGenerator : MonoBehaviour
     [Header("DEBUG")]
     [SerializeField] bool showBounds = false;
     [SerializeField] Color boundColor = Color.rebeccaPurple;
+    
     void OnDrawGizmos()
     {
         if (showBounds)
@@ -87,7 +89,7 @@ public class DungeonMeshGenerator : MonoBehaviour
                     Vector3 chunkPosition = new Vector3(chunkX * chunkSize.x, chunkY * chunkSize.y, chunkZ * chunkSize.z) * tileScale;
                     GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
                     chunkObject.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
-                    DungeonMeshChunk chunk = chunkObject.transform.GetComponent<DungeonMeshChunk>();
+                    LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunk>();
                     chunk.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
                     chunk.dungeon = this;
                     chunk.chunkSize = chunkSize;
@@ -125,12 +127,12 @@ public class DungeonMeshGenerator : MonoBehaviour
     void Start()
     {
         int i = UnityEngine.Random.Range(0,transform.childCount);
-        DungeonMeshChunk chunk = transform.GetChild(i).GetComponent<DungeonMeshChunk>();
+        LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
 
         while(!chunk.generated)
         {
             i = UnityEngine.Random.Range(0,transform.childCount);
-            chunk = transform.GetChild(i).GetComponent<DungeonMeshChunk>();
+            chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
         }
 
         chunk.PlacePlayer();
@@ -138,25 +140,59 @@ public class DungeonMeshGenerator : MonoBehaviour
 
     void GenerateDungeonData(LevelGenerationAlgorithm algorithm)
     {
-        if (algorithm == LevelGenerationAlgorithm.RANDOM_WALKER)
+        if (algorithm == LevelGenerationAlgorithm.ORGANIC)
         {
-            RandomWalker();
+            Organic();
         }
-        else if (algorithm == LevelGenerationAlgorithm.TINY_KEEP)
+        else if (algorithm == LevelGenerationAlgorithm.DUNGEON)
         {
-            TinyKeep();
+            Dungeon();
         }
-        else if (algorithm == LevelGenerationAlgorithm.RANDOM_KEEP)
+        else if (algorithm == LevelGenerationAlgorithm.ORGANIC_DUNGEON)
         {
-            RandomKeep();
+            OrganicDungeon();
         }
-        else if(algorithm == LevelGenerationAlgorithm.NOISE)
+        else if(algorithm == LevelGenerationAlgorithm.CAVES)
         {
-            NoiseMethod(false);
+            Caves(false);
         }
-        else if(algorithm == LevelGenerationAlgorithm.LAYERED_NOISE)
+        else if(algorithm == LevelGenerationAlgorithm.LAYERED_CAVES)
         {
-            NoiseMethod(true);
+            Caves(true);
+        }
+        else if(algorithm == LevelGenerationAlgorithm.TERRAIN)
+        {
+            Terrain();
+        }
+    }
+
+    void Terrain()
+    {
+        Noise noise = new Noise(seed.GetHashCode());
+        for(int x = 0; x < totalSize.x; x++)
+        {
+            for(int z = 0; z < totalSize.z; z++)
+            {
+                float amp = 1;
+                float freq = 1;
+                float value2d = 0;
+                for(int layer = 0; layer < octaves; layer++)
+                {
+                    value2d += Util.Remap(noise.Evaluate(new Vector3(x, 0, z) * (baseNoiseScale * freq)), -1,1,0,1) * amp;
+                    amp *= persistance;
+                    freq *= lacunarity;
+                }
+
+                for(int y = 0; y < totalSize.y; y++)
+                {
+                    if(x == 0 || y == 0 || z == 0 || x == totalSize.x-1 || y == totalSize.y-1 || z == totalSize.z-1)
+                    {
+                        continue;
+                    }
+
+                    grid[x,y,z] = value2d;
+                }
+            }
         }
     }
 
@@ -192,7 +228,7 @@ public class DungeonMeshGenerator : MonoBehaviour
         }
     }
     
-    void NoiseMethod(bool layered = false)
+    void Caves(bool layered = false)
     {
         Noise noise = new Noise(seed.GetHashCode());
         for(int x = 0; x < totalSize.x; x++)
@@ -228,7 +264,7 @@ public class DungeonMeshGenerator : MonoBehaviour
         }
     }
 
-    void RandomWalker()
+    void Organic()
     {
         Vector3Int currentIndex = totalSize / 2;
 
@@ -244,7 +280,7 @@ public class DungeonMeshGenerator : MonoBehaviour
         }
     }
 
-    void RandomKeep()
+    void OrganicDungeon()
     {
         //Create Rooms
         List<Vector3Int> entrances = new List<Vector3Int>();
@@ -290,7 +326,7 @@ public class DungeonMeshGenerator : MonoBehaviour
         }
     }
 
-    void TinyKeep()
+    void Dungeon()
     {
         //Create Rooms
         List<Vector3Int> pointsOfInterest = new List<Vector3Int>();

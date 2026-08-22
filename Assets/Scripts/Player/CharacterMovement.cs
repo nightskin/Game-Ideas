@@ -1,14 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
     public Transform cameraHolder;
     public CharacterController controller;
-
-    
 
     [Header("Movement")]
     [Min(0)] public int maxNumberOfJumps = 1;
@@ -189,7 +188,7 @@ public class CharacterMovement : MonoBehaviour
                 StartCoroutine(DirectionalDash(prevDashInput, false));
             }
         }
-        else if(Gamepad.current.leftShoulder.isPressed && !dashing)
+        else if(Gamepad.current.leftShoulder.wasPressedThisFrame && !dashing)
         {
             if(lockOnTarget)
             {
@@ -197,7 +196,7 @@ public class CharacterMovement : MonoBehaviour
             }
             else
             {
-                StartCoroutine(DirectionalDash(prevDashInput, false));
+                StartCoroutine(DirectionalDash(new Vector2(xMoveInput, zMoveInput), false));
             }
         }
 
@@ -217,8 +216,7 @@ public class CharacterMovement : MonoBehaviour
             StartCoroutine(Jump());
         }
     }
-
-
+    
     IEnumerator Jump()
     {
         jumping = true;

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
-public class DungeonMeshChunk : MonoBehaviour
+public class LevelMeshChunk : MonoBehaviour
 {
-    public DungeonMeshGenerator dungeon;
+    public LevelMeshGenerator dungeon;
     public Vector3Int chunkSize = new Vector3Int();
     int buffer = 0;
     public float[,,] grid;
@@ -24,7 +24,7 @@ public class DungeonMeshChunk : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
 
 
-        if (dungeon.meshGeneration == DungeonMeshGenerator.MeshGenerationAlgorithm.VOXEL_MESH)
+        if (dungeon.meshGeneration == LevelMeshGenerator.MeshGenerationAlgorithm.VOXEL_MESH)
         {
             for (int x = 0; x < chunkSize.x; x++)
             {
@@ -128,7 +128,7 @@ public class DungeonMeshChunk : MonoBehaviour
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
                                 Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
-                                if(dungeon.meshGeneration == DungeonMeshGenerator.MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], dungeon.isoLevel);
+                                if(dungeon.meshGeneration == LevelMeshGenerator.MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], dungeon.isoLevel);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
