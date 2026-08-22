@@ -229,7 +229,7 @@ public class CharacterControls : MonoBehaviour
         }
         
         //fixes falling down slopes issue
-        if(onGround && moveDirection.magnitude > 0 && !jumping)
+        if(onGround && moveDirection.magnitude > 0 && onGround &&!jumping)
         {
             Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,groundDistance);
             controller.Move(Vector3.down * hit.distance);

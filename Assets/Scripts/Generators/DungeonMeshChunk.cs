@@ -15,24 +15,9 @@ public class DungeonMeshChunk : MonoBehaviour
     List<int> tris = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
     Mesh mesh;
+
+    [HideInInspector] public bool generated = false;
     
-    public bool GridEmpty()
-    {
-        for(int x = 0; x < chunkSize.x; x++)
-        {
-            for(int y = 0; y < chunkSize.y; y++)
-            {
-                for(int z = 0; z < chunkSize.z; z++)
-                {
-                    if(grid[x,y,z] != 0) return false;
-                }
-            }
-        }
-
-        return true;
-
-    }
-
     public void Generate()
     {
         mesh = new Mesh();
@@ -178,12 +163,40 @@ public class DungeonMeshChunk : MonoBehaviour
             }
         }
 
-        mesh.Clear();
-        mesh.vertices = verts.ToArray();
-        mesh.triangles = tris.ToArray();
-        mesh.uv = uvs.ToArray();
-        mesh.RecalculateNormals();
-        GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        if(verts.Count > 0)
+        {
+            mesh.Clear();
+            mesh.vertices = verts.ToArray();
+            mesh.triangles = tris.ToArray();
+            mesh.uv = uvs.ToArray();
+            mesh.RecalculateNormals();
+            GetComponent<MeshCollider>().sharedMesh = mesh;
+            generated = true;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void PlacePlayer()
+    {
+        if(!dungeon.player) return;
+        for(int x = 0; x < chunkSize.x; x++)
+        {
+            for(int y = 0; y < chunkSize.y; y++)
+            {
+                for(int z = 0; z < chunkSize.z; z++)
+                {
+                    if(grid[x,y,z] > dungeon.isoLevel)
+                    {
+                        dungeon.player.position = transform.position + new Vector3(x,y,z) * dungeon.voxelSize;
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     void DrawQuadTop(Vector3 position)
