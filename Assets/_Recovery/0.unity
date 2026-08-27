@@ -19,14 +19,14 @@ RenderSettings:
   m_FogMode: 1
   m_FogDensity: 0.1
   m_LinearFogStart: 0
-  m_LinearFogEnd: 250
+  m_LinearFogEnd: 1000
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.25490198, g: 0.3803922, b: 0.6117647, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 1
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -673,32 +673,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonMeshGenerator
   player: {fileID: 2142934743352193625}
   chunkPrefab: {fileID: 2200944842310020107, guid: 3a10429160f7e5a449bd8c8e7c107844, type: 3}
-  totalSize: {x: 100, y: 50, z: 100}
-  numberOfChunks: {x: 10, y: 10, z: 10}
+  totalSize: {x: 100, y: 20, z: 100}
+  chunkSize: {x: 10, y: 10, z: 10}
   seed: poop
-  levelType: 0
-  style: 1
+  levelGeneration: 3
+  meshGeneration: 2
   isoLevel: 0.5
-  voxelSize: 4
-  useBoxShapedRooms: 0
-  useRoundedHallways: 0
-  numberOfSteps: 500
+  gobalScale: 5
+  numberOfSteps: 250
   walk3D: 0
   numberOfRooms: 10
   ceilngHeight: 2
   minRoomSize: 5
   maxRoomSize: 10
-  hallwaySize: 2
-  caveLayers: 1
+  hallwaySize: 1
+  octaves: 3
+  persistance: 0.5
+  lacunarity: 2
   caveNoiseScale: 0.1
-  baseHeight: 10
-  terrainLayers: 3
-  terrainPersistance: 2
-  terrainLacunarity: 0.5
-  terrainNoiseScale: 0.01
-  showBounds: 1
+  showBounds: 0
   boundColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
-  largeChunks: 0
 --- !u!1 &137251590
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,6 +2058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 20448403}
   player: {fileID: 33213982}
+  targets: []
 --- !u!1 &1169367595
 GameObject:
   m_ObjectHideFlags: 0
@@ -4063,19 +4058,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1064017395656332106, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: Warrior
+      objectReference: {fileID: 0}
+    - target: {fileID: 4212246241410817610, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 250
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 250
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalRotation.w

@@ -103,7 +103,7 @@ public class PauseMenu : MonoBehaviour
 
     public void ChangeAimSense()
     {
-        Game.get.settings.aimSense = AimSenseSlider.value * 10;
+        Game.settings.aimSense = AimSenseSlider.value * 10;
     }
     
 }

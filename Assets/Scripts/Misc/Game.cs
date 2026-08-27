@@ -6,11 +6,12 @@ public class Game : MonoBehaviour
 {
     public static Game get;
     public static Input input;
+    public static GameSettings settings;
+
     
     public PauseMenu pauseMenu;
     public GameObject player;
-    public List<Transform> targets = new List<Transform>();
-    public GameSettings settings;
+    
 
 
     

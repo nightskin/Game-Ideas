@@ -9,7 +9,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] GameObject trail;
 
     public bool isMagical;
-    public GameObject owner;
+    //public GameObject owner;
     public int damage = 1;
 
 
@@ -37,18 +37,7 @@ public class Weapon : MonoBehaviour
         }
         return false;
     }
-
-    void Start()
-    {
-        if (!trail) trail = transform.GetChild(0).gameObject;
-        if (!owner)
-        {
-            owner = transform.root.gameObject;
-        }
-        if (!collider) collider = GetComponent<BoxCollider>();
-
-    }
-
+    
     void OnTriggerEnter(Collider other)
     {
         

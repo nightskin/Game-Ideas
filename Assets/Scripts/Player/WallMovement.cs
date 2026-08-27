@@ -1,14 +1,13 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class WallMovement : MonoBehaviour
 {
-    public CharacterMovement basicMovement;
+    public Player player;
     [SerializeField] float speed = 25;
     [SerializeField] float wallJumpForce = 5;
     [SerializeField] float wallDistance = 2;
-    [SerializeField][Range(0,90)] float cameraTiltWhileWallRunning = 35; 
+    [SerializeField][Range(0,90)] float cameraTiltAngleWhileWallRunning = 35; 
     [SerializeField] float cameraTiltSpeed = 10;
     [SerializeField] LayerMask wallLayer;
     [SerializeField] bool allowPlayerToJumpAgainAfterWallRun = true;
@@ -16,13 +15,13 @@ public class WallMovement : MonoBehaviour
     RaycastHit wallHit;
     float cameraTilt = 0;
     bool canTakenExtraJump;
-    bool canWallRun = false;
     bool isWallRunning = false;
+    bool canWallRun = false;
     bool canWallJump = false;
 
     void Start()
     {
-        if(!basicMovement) basicMovement = GetComponent<CharacterMovement>();
+        if(!player) player = GetComponent<Player>();
     }
     void FixedUpdate()
     {
@@ -33,11 +32,10 @@ public class WallMovement : MonoBehaviour
     void Update()
     {
         //Conditions for Wall Run
-        if(canWallRun && !isWallRunning && !basicMovement.onGround && Game.input.Player.Jump.WasPerformedThisFrame())
+        if(canWallRun && !isWallRunning && !player.onGround && Game.input.Player.Jump.WasPerformedThisFrame())
         {
             StartWallRun();
         }
-
 
         if(isWallRunning)
         {
@@ -48,26 +46,26 @@ public class WallMovement : MonoBehaviour
             {
                 wallForward = -wallForward;
             }
-            basicMovement.controller.Move((wallForward + new Vector3(0,basicMovement.cameraHolder.forward.y,0)).normalized * speed * Time.deltaTime);
+            player.controller.Move((wallForward + new Vector3(0,player.cameraHolder.forward.y,0)).normalized * speed * Time.deltaTime);
 
             //Tilt Camera
             if(Vector3.Dot(wallNormal,transform.right) > Vector3.Dot(wallNormal,-transform.right))
             {
-                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, -cameraTiltWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
+                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, -cameraTiltAngleWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
             }
             else
             {
-                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, cameraTiltWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
+                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, cameraTiltAngleWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
             }
 
             //Wall Jumping
             if(Game.input.Player.Jump.WasPerformedThisFrame() && canWallJump)
             {
                 EndWallRun();
-                basicMovement.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(wallJumpForce * 2 * 10);
+                player.velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(wallJumpForce * 2 * 10);
             }
             //Cancel Wall Run
-            if(!canWallRun || basicMovement.onGround)
+            if(!canWallRun || player.onGround)
             {
                 EndWallRun();
             }
@@ -82,7 +80,7 @@ public class WallMovement : MonoBehaviour
             }
             if(canTakenExtraJump && Game.input.Player.Jump.WasPerformedThisFrame() && allowPlayerToJumpAgainAfterWallRun)
             {
-                basicMovement.velocity.y = Mathf.Sqrt(basicMovement.jumpHeight * 2 * basicMovement.gravityStrength);
+                player.velocity.y = Mathf.Sqrt(player.jumpHeight * 2 * player.gravityStrength);
                 canTakenExtraJump = false;
             }
             cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0, cameraTiltSpeed * Time.deltaTime);
@@ -97,7 +95,7 @@ public class WallMovement : MonoBehaviour
         float t = 1;
         while(t > 0)
         {
-            basicMovement.velocity = Vector3.Lerp(basicMovement.velocity, new Vector3(0, basicMovement.velocity.y, 0),t);
+            player.velocity = Vector3.Lerp(player.velocity, new Vector3(0, player.velocity.y, 0),t);
             t -= amount * Time.deltaTime;
             yield return null;
         }
@@ -107,13 +105,13 @@ public class WallMovement : MonoBehaviour
     {
         canTakenExtraJump = true;
         canWallJump = false;
-        basicMovement.gravityOn = false;
+        player.gravityOn = false;
         isWallRunning = true;
     }
 
     void EndWallRun()
     {
-        basicMovement.gravityOn = true;
+        player.gravityOn = true;
         isWallRunning = false;
     }
 }

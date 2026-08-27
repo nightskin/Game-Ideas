@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshCollider))]
 public class LevelMeshChunk : MonoBehaviour
 {
+    public Vector3Int index;
     public LevelMeshGenerator dungeon;
     public Vector3Int chunkSize = new Vector3Int();
     int buffer = 0;
@@ -20,11 +21,11 @@ public class LevelMeshChunk : MonoBehaviour
     public void GenerateChunk()
     {
         mesh = new Mesh();
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        if(dungeon.largeChunks) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
 
-        if (dungeon.meshGeneration == LevelMeshGenerator.MeshGenerationAlgorithm.VOXEL_MESH)
+        if (dungeon.style == LevelMeshGenerator.ArtStyle.BLOCKY)
         {
             for (int x = 0; x < chunkSize.x; x++)
             {
@@ -38,42 +39,42 @@ public class LevelMeshChunk : MonoBehaviour
                             {
                                 if (grid[x, y - 1, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadBottom(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadBottom(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (y < chunkSize.y - 1)
                             {
                                 if (grid[x, y + 1, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadTop(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadTop(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (x > 0)
                             {
                                 if (grid[x - 1, y, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadLeft(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadLeft(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (x < chunkSize.x - 1)
                             {
                                 if (grid[x + 1, y, z] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadRight(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadRight(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (z > 0)
                             {
                                 if (grid[x, y, z - 1] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadBack(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadBack(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (z < chunkSize.z - 1)
                             {
                                 if (grid[x, y, z + 1] <= dungeon.isoLevel)
                                 {
-                                    DrawQuadFront(new Vector3(x, y, z) * dungeon.tileScale);
+                                    DrawQuadFront(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                         }
@@ -89,6 +90,10 @@ public class LevelMeshChunk : MonoBehaviour
                 {
                     for (int z = 0; z < chunkSize.z; z++)
                     {
+                        if(index.x == dungeon.numberOfChunks.x - 1 && x == chunkSize.x - 1 || index.y == dungeon.numberOfChunks.y - 1 && y == chunkSize.y-1|| index.z == dungeon.numberOfChunks.z - 1 && z == chunkSize.z-1)
+                        {
+                            continue;
+                        }
 
                         float[] values = new float[]
                         {
@@ -104,14 +109,14 @@ public class LevelMeshChunk : MonoBehaviour
 
                         Vector3[] points = new Vector3[]
                         {
-                            new Vector3(x,y,z+1) * dungeon.tileScale,
-                            new Vector3(x+1,y,z+1) * dungeon.tileScale,
-                            new Vector3(x+1,y,z) * dungeon.tileScale,
-                            new Vector3(x,y,z) * dungeon.tileScale,
-                            new Vector3(x,y+1,z+1) * dungeon.tileScale,
-                            new Vector3(x+1,y+1,z+1) * dungeon.tileScale,
-                            new Vector3(x+1,y+1,z) * dungeon.tileScale,
-                            new Vector3(x,y+1,z) * dungeon.tileScale,
+                            new Vector3(x,y,z+1) * dungeon.voxelSize,
+                            new Vector3(x+1,y,z+1) * dungeon.voxelSize,
+                            new Vector3(x+1,y,z) * dungeon.voxelSize,
+                            new Vector3(x,y,z) * dungeon.voxelSize,
+                            new Vector3(x,y+1,z+1) * dungeon.voxelSize,
+                            new Vector3(x+1,y+1,z+1) * dungeon.voxelSize,
+                            new Vector3(x+1,y+1,z) * dungeon.voxelSize,
+                            new Vector3(x,y+1,z) * dungeon.voxelSize,
                         };
 
                         int cubeIndex = VoxelHelper.GetState(values, dungeon.isoLevel);
@@ -128,7 +133,7 @@ public class LevelMeshChunk : MonoBehaviour
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
                                 Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
-                                if(dungeon.meshGeneration == LevelMeshGenerator.MeshGenerationAlgorithm.MARCHING_CUBES_SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], dungeon.isoLevel);
+                                if(dungeon.style == LevelMeshGenerator.ArtStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], dungeon.isoLevel);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);
@@ -146,7 +151,7 @@ public class LevelMeshChunk : MonoBehaviour
                                 else if (triIndex == 2)
                                 {
                                     triVerts[2] = vertexPos;
-                                    uvs.AddRange(VoxelHelper.GetUVs(triVerts[0], triVerts[1], triVerts[2], dungeon.tileScale));
+                                    uvs.AddRange(VoxelHelper.GetUVs(triVerts[0], triVerts[1], triVerts[2], dungeon.voxelSize));
                                     triIndex = 0;
                                 }
 
@@ -163,14 +168,15 @@ public class LevelMeshChunk : MonoBehaviour
         }
 
 
-        if(verts.Count > 0)
+        mesh.Clear();
+        mesh.vertices = verts.ToArray();
+        mesh.triangles = tris.ToArray();
+        mesh.uv = uvs.ToArray();
+        mesh.RecalculateNormals();
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+        
+        if(MeshDataExists())
         {
-            mesh.Clear();
-            mesh.vertices = verts.ToArray();
-            mesh.triangles = tris.ToArray();
-            mesh.uv = uvs.ToArray();
-            mesh.RecalculateNormals();
-            GetComponent<MeshCollider>().sharedMesh = mesh;
             generated = true;
         }
         else
@@ -179,6 +185,15 @@ public class LevelMeshChunk : MonoBehaviour
         }
     }
 
+    public bool MeshDataExists()
+    {
+        if(mesh)
+        {
+            if(mesh.vertices.Length > 0) return true;
+        }
+        return false;
+    }
+    
     public void PlacePlayer()
     {
         if(!dungeon.player) return;
@@ -188,7 +203,7 @@ public class LevelMeshChunk : MonoBehaviour
             {
                 for(int z = 0; z < chunkSize.z; z++)
                 {
-                    dungeon.player.position = transform.position + new Vector3(x,dungeon.totalSize.y,z) * dungeon.tileScale;
+                    dungeon.player.position = transform.position + (new Vector3(x,chunkSize.y,z) * dungeon.voxelSize);
                     if(Physics.Raycast(dungeon.player.position, Vector3.down, out RaycastHit hit))
                     {
                         dungeon.player.position = hit.point;
@@ -201,10 +216,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadTop(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -224,10 +239,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadFront(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -247,10 +262,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadBack(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -270,10 +285,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadLeft(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -293,10 +308,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadRight(Vector3 position)
     {
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(0.5f, 0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, 0.5f, 0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -316,10 +331,10 @@ public class LevelMeshChunk : MonoBehaviour
 
     void DrawQuadBottom(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   dungeon.tileScale + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.tileScale + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.tileScale + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, 0.5f) *   dungeon.voxelSize + position);
+        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) *  dungeon.voxelSize + position);
+        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f) * dungeon.voxelSize + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);

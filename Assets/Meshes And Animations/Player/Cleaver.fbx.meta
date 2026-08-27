@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a23b5057e2356da48ac5e1d51cdf2f20
+guid: 8a5243f1e530b2042a6c07a77b982c2b
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -7,18 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: 7d511adf1f66315449ec4394179b8bc7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Skin
-    second: {fileID: 2100000, guid: 355f4ff52e0592543b6ba3a77e5b538c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sleeve
-    second: {fileID: 2100000, guid: 18083004cfc022c43abe83ba2f17edbb, type: 2}
+      name: Cleaver
+    second: {fileID: 2100000, guid: 45ae92ccd9e11084b81c2f8b21fd8931, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

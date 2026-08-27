@@ -34,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Defend",
+                    "name": "Dash",
                     "type": "Button",
                     "id": "8c425cad-34fc-448c-90f8-8a315c7da2ce",
                     "expectedControlType": "",
@@ -52,15 +52,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "1be1224b-2e1a-4ffc-a6e9-467e58bda036",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "239fea15-7e25-439b-a9d6-fa17f511a498",
@@ -70,9 +61,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "LockOn",
+                    "name": "EvadeK",
                     "type": "Button",
-                    "id": "c740aafb-95fc-47ac-9924-aca88fea9085",
+                    "id": "c8677fea-4253-45eb-9693-a55344dae3ff",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EvadeG",
+                    "type": "Button",
+                    "id": "8de10dd9-546f-4b47-bfa7-ce67adbd8b63",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -263,7 +263,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Defend",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -274,29 +274,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Defend",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ce08b9dc-95c4-4906-a777-e2b85c7ac532",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "31b23941-c344-4199-b3fb-8a586ca17e30",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Interact",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -324,23 +302,56 @@
                 },
                 {
                     "name": "",
-                    "id": "54c77461-5037-4d51-adc6-4d0918efdc8d",
-                    "path": "<Mouse>/middleButton",
+                    "id": "172710c7-d1b5-41fb-b1e7-232994f397a1",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "LockOn",
+                    "action": "EvadeK",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "40ddb45a-9d23-46a0-b923-ea63d6cf1873",
-                    "path": "<Gamepad>/rightShoulder",
+                    "id": "fae5e6c1-48d4-43e8-9a5e-1d9fc4395ebb",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "EvadeK",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "346e1076-e44a-4104-ab6c-de6a29264e13",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "EvadeK",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5c76c1c0-0343-44de-99d6-19ac68256f09",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "EvadeK",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "279b46e4-9a4b-4dc3-95ef-6d4c4a5607f4",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "LockOn",
+                    "action": "EvadeG",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
