@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public float currentSpeed = 0;
     bool jumping = false;
     bool isEvading = false;
-    bool isDashing = false;
     int jumpsTaken = 0;
     [SerializeField] float dashTime = 0.1f;
 
@@ -45,6 +44,29 @@ public class Player : MonoBehaviour
     float atkAngle = 0;
     [HideInInspector] public bool isAttacking = false;
 
+    [Header("Wall Movement")]
+    [SerializeField] bool enableWallRun = true;
+    [SerializeField][Range(0,90)] float cameraTiltAngleWhileWallRunning = 35; 
+    [SerializeField] float cameraTiltSpeed = 10;
+    [SerializeField] LayerMask wallLayer;
+    [SerializeField] bool allowPlayerToJumpAgainAfterWallRun = true;
+    [SerializeField] float wallDistance = 1;
+    RaycastHit wallHit;
+    float cameraTilt = 0;
+    bool canTakenExtraJump;
+    bool isWallRunning = false;
+    bool canWallRun = false;
+    bool canWallJump = false;
+
+    [Header("GroundSlam")]
+    [SerializeField] bool groundSlamEnabled = true;
+
+    [Header("Homing Dash")]
+    [SerializeField] bool homingDashEnabled = true;
+    [SerializeField][Min(10)] float maxHomingDistance = 100;
+    [SerializeField][Min(0)] float atkDistance = 2;
+    bool isDashing = false;
+
     //Extra variables
     Vector2 prevMoveInput;
     float maxKeyboardPressTime = 0.25f; 
@@ -63,13 +85,31 @@ public class Player : MonoBehaviour
         Combat();
         FreeLook();
         ApplyPhysics();
-        if(!isEvading) MoveNormally();
+        if(homingDashEnabled)
+        {
+            if(Game.input.Player.Dash.WasPerformedThisFrame())
+            {
+                if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, maxHomingDistance))
+                {
+                    StartCoroutine(HomingDash(hit.point));
+                }
+            }
+        }
+        if(enableWallRun) WallMovement();
+        if(!isEvading && !isDashing) MoveNormally();
         Evasion();
     }
 
     void FixedUpdate()
     {
         currentSpeed = Mathf.Lerp(currentSpeed,targetSpeed, 10 * Time.deltaTime);
+
+        if(enableWallRun)
+        {
+            Ray rayleft = new Ray(transform.position, -transform.right);
+            Ray rayRight = new Ray(transform.position, transform.right);
+            canWallRun = Physics.Raycast(rayleft, out wallHit, wallDistance,wallLayer) || Physics.Raycast(rayRight, out wallHit, wallDistance, wallLayer);
+        }
 
         // Checks If player is grounded
         Ray groundRay = new Ray(transform.position, Vector3.down);
@@ -183,26 +223,93 @@ public class Player : MonoBehaviour
     
     void Evasion()
     {
-        Vector2 moveInput = Game.input.Player.Move.ReadValue<Vector2>();
-        if(EvadeKeyboardInput() && !isEvading)
+        if(onGround)
         {
-            StartCoroutine(Evade(prevMoveInput));
-        }
-        else if(Game.input.Player.EvadeG.WasPerformedThisFrame() && !isEvading)
-        {
-            StartCoroutine(Evade(moveInput));
+            Vector2 moveInput = Game.input.Player.Move.ReadValue<Vector2>();
+            if(EvadeKeyboardInput() && !isEvading)
+            {
+                StartCoroutine(Evade(prevMoveInput));
+            }
+            else if(Game.input.Player.EvadeG.WasPerformedThisFrame() && !isEvading)
+            {
+                StartCoroutine(Evade(moveInput));
+            }
+
+            prevMoveInput = moveInput;
         }
 
-        prevMoveInput = moveInput;
     }
 
-    IEnumerator Dash(Vector3 point)
+    void WallMovement()
     {
-        while(Vector3.Distance(transform.position, point) < 2.5f)
+        //Conditions for Wall Run
+        if(canWallRun && !isWallRunning && !onGround && Game.input.Player.Jump.WasPerformedThisFrame())
         {
+            StartWallRun();
+        }
+
+        if(isWallRunning)
+        {
+            //Wall Running Movement
+            Vector3 wallNormal = wallHit.normal;
+            Vector3 wallForward = Vector3.Cross(wallNormal,transform.up);
+            if(Vector3.Dot(transform.forward,wallForward) < 0)
+            {
+                wallForward = -wallForward;
+            }
+            controller.Move((wallForward + new Vector3(0,cameraHolder.forward.y,0)).normalized * currentSpeed * Time.deltaTime);
+
+            //Tilt Camera
+            if(Vector3.Dot(wallNormal,transform.right) > Vector3.Dot(wallNormal,-transform.right))
+            {
+                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, -cameraTiltAngleWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
+            }
+            else
+            {
+                cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, cameraTiltAngleWhileWallRunning, cameraTiltSpeed * Time.deltaTime);
+            }
+
+            //Wall Jumping
+            if(Game.input.Player.Jump.WasPerformedThisFrame() && canWallJump)
+            {
+                EndWallRun();
+                velocity = (wallHit.normal + Vector3.up).normalized * Mathf.Sqrt(jumpHeight * 2 * 10);
+            }
+            //Cancel Wall Run
+            if(!canWallRun || onGround)
+            {
+                EndWallRun();
+            }
             
+            canWallJump = true;
+        }
+        else
+        {
+            if(Game.input.Player.Move.ReadValue<Vector2>().magnitude > 0.5f)
+            {
+                StartCoroutine(ApplyDrag(1,0));
+            }
+            if(canTakenExtraJump && Game.input.Player.Jump.WasPerformedThisFrame() && allowPlayerToJumpAgainAfterWallRun)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * 2 * gravityStrength);
+                canTakenExtraJump = false;
+            }
+            cameraTilt = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0, cameraTiltSpeed * Time.deltaTime);
+        }
+
+        Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, cameraTilt);
+    }
+
+
+    IEnumerator HomingDash(Vector3 point)
+    {
+        isDashing = true;
+        while(Vector3.Distance(transform.position, point) <= atkDistance)
+        {
+            transform.position = Vector3.Lerp(transform.position, point, 10 * Time.deltaTime);
             yield return null;
         }
+        isDashing = false;
     }
     IEnumerator Evade(Vector2 dashInput)
     {
@@ -228,6 +335,30 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
         jumping = false;
     }
+    IEnumerator ApplyDrag(float amount = 1 , float delay = 0)
+    {
+        yield return new WaitForSeconds(delay);
+        float t = 1;
+        while(t > 0)
+        {
+            velocity = Vector3.Lerp(velocity, new Vector3(0, velocity.y, 0),t);
+            t -= amount * Time.deltaTime;
+            yield return null;
+        }
+    }
+    
+    void StartWallRun()
+    {
+        canTakenExtraJump = true;
+        canWallJump = false;
+        gravityOn = false;
+        isWallRunning = true;
+    }
+    void EndWallRun()
+    {
+        gravityOn = true;
+        isWallRunning = false;
+    }
 
     //Animation events
     public void StartAttack()
@@ -235,7 +366,6 @@ public class Player : MonoBehaviour
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
         isAttacking = true;
     }
-
     public void EndAttack()
     {
         armPivot.localEulerAngles = Vector3.zero;

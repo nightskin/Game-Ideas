@@ -679,7 +679,7 @@ MonoBehaviour:
   levelType: 0
   style: 1
   isoLevel: 0.5
-  voxelSize: 4
+  voxelSize: 3.5
   useBoxShapedRooms: 0
   useRoundedHallways: 0
   numberOfSteps: 500
