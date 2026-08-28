@@ -3,44 +3,42 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] Player player;
     [SerializeField] GameObject hitEffectPrefab;
     [SerializeField] LayerMask hitLayer;
     [SerializeField] BoxCollider collider;
     [SerializeField] GameObject trail;
 
     public bool isMagical;
-    //public GameObject owner;
     public int damage = 1;
 
-
-    public IEnumerator AnimateTrail()
+    void Start()
     {
-        float t = -1;
-        trail.GetComponent<MeshRenderer>().material.SetFloat("_Scroll", t);
-        trail.SetActive(true);
-
-        while(trail.GetComponent<MeshRenderer>().material.GetFloat("_Scroll") < 1)
-        {
-            t += (2 / 0.15f) * Time.deltaTime;
-            trail.GetComponent<MeshRenderer>().material.SetFloat("_Scroll", t);
-            yield return null;
-        }
-
-        trail.SetActive(false);
+        if(!player) player = transform.root.GetComponent<Player>();
+        if(!collider) collider = transform.GetComponent<BoxCollider>();
     }
 
-    public bool HasTrail()
+    void Update()
     {
-        if(trail != null)
+        if(trail)
         {
-            return true;
+            if(player.isAttacking)
+            {
+                trail.SetActive(true);
+            }
+            else
+            {
+                trail.SetActive(false);
+            }
         }
-        return false;
     }
-    
+
     void OnTriggerEnter(Collider other)
     {
-        
+        if(player.isAttacking)
+        {
+            
+        }
     }
 
 }

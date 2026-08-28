@@ -127,12 +127,13 @@ public class LevelMeshGenerator : MonoBehaviour
         {
             int i = UnityEngine.Random.Range(0,transform.childCount); 
             LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
-            while(!chunk && !chunk.generated)
+            while(!chunk.PlacePlayer())
             {
                 i = UnityEngine.Random.Range(0,transform.childCount);
                 chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
+                chunk.PlacePlayer();
             }
-            chunk.PlacePlayer();
+
         }
     }
     

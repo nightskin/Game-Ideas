@@ -675,7 +675,7 @@ MonoBehaviour:
   chunkPrefab: {fileID: 2200944842310020107, guid: 3a10429160f7e5a449bd8c8e7c107844, type: 3}
   totalSize: {x: 100, y: 50, z: 100}
   numberOfChunks: {x: 10, y: 10, z: 10}
-  seed: poop
+  seed: 
   levelType: 0
   style: 1
   isoLevel: 0.5
@@ -4067,15 +4067,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 250
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 250
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalRotation.w

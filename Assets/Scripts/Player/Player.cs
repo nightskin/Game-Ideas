@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
     [Header("Combat")]
     Vector2 atkVector;
     float atkAngle = 0;
-    bool attacking = false;
+    [HideInInspector] public bool isAttacking = false;
 
     //Extra variables
     Vector2 prevMoveInput;
@@ -233,12 +233,12 @@ public class Player : MonoBehaviour
     public void StartAttack()
     {
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
-        attacking = true;
+        isAttacking = true;
     }
 
     public void EndAttack()
     {
         armPivot.localEulerAngles = Vector3.zero;
-        attacking = false;
+        isAttacking = false;
     }
 }

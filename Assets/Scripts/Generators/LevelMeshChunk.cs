@@ -194,9 +194,9 @@ public class LevelMeshChunk : MonoBehaviour
         return false;
     }
     
-    public void PlacePlayer()
+    public bool PlacePlayer()
     {
-        if(!dungeon.player) return;
+        if(!dungeon.player || !generated || !MeshDataExists()) return false;
         for(int x = 0; x < chunkSize.x; x++)
         {
             for(int y = 0; y < chunkSize.y; y++)
@@ -207,11 +207,12 @@ public class LevelMeshChunk : MonoBehaviour
                     if(Physics.Raycast(dungeon.player.position, Vector3.down, out RaycastHit hit))
                     {
                         dungeon.player.position = hit.point;
-                        return;
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     void DrawQuadTop(Vector3 position)
