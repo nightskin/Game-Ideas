@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(World))]
-public class WorldEditor : Editor
+[CustomEditor(typeof(LevelMeshGenerator))]
+public class LevelEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        World world = (World)target;
+        LevelMeshGenerator level = (LevelMeshGenerator)target;
         if(GUILayout.Button("Create Random World"))
         {
-            world.CreateRandom();
+            level.Create();
         }
     }
 }

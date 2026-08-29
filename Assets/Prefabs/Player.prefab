@@ -233,6 +233,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   normalSpeed: 20
   dashSpeed: 150
+  crouchSpeed: 10
   targetSpeed: 0
   currentSpeed: 0
   dashTime: 0.1
@@ -351,7 +352,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4218079583768232449}
+  m_Father: {fileID: 3074878262312936290}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &3204125048563378311
 Camera:
@@ -744,7 +745,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 520220931993235607}
-  m_Father: {fileID: 4218079583768232449}
+  m_Father: {fileID: 3074878262312936290}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5841433979110258663
 GameObject:
@@ -962,7 +963,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5327172041935883757}
+  - {fileID: 5519108838918269802}
   m_Father: {fileID: 4218079583768232449}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &8727983611063890033
@@ -974,7 +977,7 @@ Camera:
   m_GameObject: {fileID: 6276540190032544318}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -1546,8 +1549,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3074878262312936290}
-  - {fileID: 5327172041935883757}
-  - {fileID: 5519108838918269802}
   m_Father: {fileID: 7131891185582679114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8871304262563752321

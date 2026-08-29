@@ -19,8 +19,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public Vector3 velocity = Vector3.zero;
     [Min(1)] public float normalSpeed = 20;
     [Min(1)] public float dashSpeed = 150;
+    [Min(1)] public float crouchSpeed = 10;
     [HideInInspector] public float targetSpeed = 0;
     [HideInInspector] public float currentSpeed = 0;
+    bool crouching = false;
     bool jumping = false;
     bool isEvading = false;
     int jumpsTaken = 0;
@@ -76,6 +78,10 @@ public class Player : MonoBehaviour
     //Events
     void Start()
     {
+        if(Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit))
+        {
+            transform.position = hit.point;
+        }
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -96,7 +102,7 @@ public class Player : MonoBehaviour
             }
         }
         if(enableWallRun) WallMovement();
-        if(!isEvading && !isDashing) MoveNormally();
+        if(!isEvading && !isDashing) NormalMovement();
         Evasion();
     }
 
@@ -192,7 +198,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void MoveNormally()
+    void NormalMovement()
     {
         float xMoveInput = Game.input.Player.Move.ReadValue<Vector2>().x;
         float zMoveInput = Game.input.Player.Move.ReadValue<Vector2>().y;
@@ -218,6 +224,15 @@ public class Player : MonoBehaviour
         if(Game.input.Player.Jump.WasPerformedThisFrame() && jumpsTaken < maxNumberOfJumps)
         {
             StartCoroutine(Jump());
+        }
+        
+        if(Game.input.Player.Crouch.WasPerformedThisFrame() && onGround)
+        {
+            Crouch();
+        }
+        else if(Game.input.Player.Crouch.IsPressed() && !onGround)
+        {
+            controller.Move(Vector3.down * currentSpeed * Time.deltaTime);
         }
     }
     
@@ -300,7 +315,23 @@ public class Player : MonoBehaviour
         Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, cameraTilt);
     }
 
-
+    void Crouch()
+    {
+        if(!crouching)
+        {
+            targetSpeed = crouchSpeed;
+            cameraHolder.transform.localPosition = new Vector3(0,1.25f,0);
+            controller.height = 1.25f;
+            crouching = true;
+        }
+        else
+        {
+            targetSpeed = normalSpeed;
+            cameraHolder.transform.localPosition = new Vector3(0,2,0);
+            controller.height = 2f;
+            crouching = false;
+        }
+    }
     IEnumerator HomingDash(Vector3 point)
     {
         isDashing = true;

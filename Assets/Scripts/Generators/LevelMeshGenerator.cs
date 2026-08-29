@@ -5,13 +5,14 @@ using UnityEngine;
 public class LevelMeshGenerator : MonoBehaviour
 {
     [Header("General Settings")]
-    [Tooltip("Player GameObject That will be placed in the level on Runtime")] public Transform player;
-    public GameObject chunkPrefab;
-    [Tooltip("Determines max size of the level")] public Vector3Int totalSize = new Vector3Int(100,50,100);
+    public bool placePlayerAutomatically;
+    public Transform player;
+    [SerializeField] GameObject chunkPrefab;
+    [SerializeField] string seed = string.Empty;
+    [Min(10)] public Vector3Int totalSize = new Vector3Int(100,50,100);
+    public bool splitWorldIntoChunks;
     [Min(1)] public Vector3Int numberOfChunks = new Vector3Int(10,5,10);
     Vector3Int chunkSize;
-    public string seed = string.Empty;
-
     public enum LevelType
     {
         DUNGEON,
@@ -25,7 +26,6 @@ public class LevelMeshGenerator : MonoBehaviour
         CHUNKY,
         SMOOTH,
     }
-    
     public ArtStyle style = ArtStyle.CHUNKY;
     [HideInInspector] public float isoLevel = 0.5f;
     [Min(1)] public float voxelSize = 3;
@@ -50,16 +50,17 @@ public class LevelMeshGenerator : MonoBehaviour
 
     [Space]
     [Header("TERRAIN SETTINGS")]
+    [SerializeField] float waterLevel = 70;
     [SerializeField][Min(0)] int baseHeight = 2; 
     [SerializeField][Min(1)] int terrainLayers = 1;
-    [SerializeField] [Range(1,10)] float terrainPersistance = 0.5f;
-    [SerializeField] [Range(0,1)] float terrainLacunarity = 1;
+    [SerializeField] float terrainPersistance = 0.5f;
+    [SerializeField] float terrainLacunarity = 1;
     [SerializeField][Range(0,1)] float terrainNoiseScale = 0.1f;
 
     [Header("DEBUG")]
     [SerializeField] bool showBounds = false;
     [SerializeField] Color boundColor = Color.rebeccaPurple;
-    [HideInInspector] public bool largeChunks = false;
+
     
     void OnDrawGizmos()
     {
@@ -70,16 +71,24 @@ public class LevelMeshGenerator : MonoBehaviour
         }
     }
 
-    void Generate()
+    public void Create()
     {
         if (seed == string.Empty) seed = System.DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
         grid = new float[totalSize.x+1, totalSize.y+1, totalSize.z+1];
 
         GenerateDungeonData(levelType);
-        
-        chunkSize = new Vector3Int(totalSize.x/numberOfChunks.x, totalSize.y/numberOfChunks.y, totalSize.z/numberOfChunks.z);
+        if(!splitWorldIntoChunks)
+        {
+            numberOfChunks = Vector3Int.one;
+            chunkSize = new Vector3Int(totalSize.x,totalSize.y,totalSize.z);
+        }
+        else
+        {
+            chunkSize = new Vector3Int(totalSize.x/numberOfChunks.x, totalSize.y/numberOfChunks.y, totalSize.z/numberOfChunks.z);
+        }
 
+        
         for(int chunkX = 0; chunkX < numberOfChunks.x; chunkX++)
         {
             for(int chunkY = 0; chunkY < numberOfChunks.y; chunkY++)
@@ -116,24 +125,34 @@ public class LevelMeshGenerator : MonoBehaviour
         }
     }
 
-    void Awake()
+    public void AddWater()
     {
-        Generate();
+        
     }
 
     void Start()
     {
-        if(transform.childCount > 0)
+        if(transform.childCount > 0 && placePlayerAutomatically)
         {
-            int i = UnityEngine.Random.Range(0,transform.childCount); 
-            LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
-            while(!chunk.PlacePlayer())
+            if(levelType == LevelType.DUNGEON || levelType == LevelType.CAVES)
             {
-                i = UnityEngine.Random.Range(0,transform.childCount);
-                chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
-                chunk.PlacePlayer();
+                int i = UnityEngine.Random.Range(0,transform.childCount); 
+                LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
+                while(!chunk.PlacePlayer())
+                {
+                    i = UnityEngine.Random.Range(0,transform.childCount);
+                    chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
+                    chunk.PlacePlayer();
+                }
             }
-
+            else if(levelType == LevelType.TERRAIN)
+            {
+                player.transform.position = transform.position + (new Vector3(totalSize.x/2, totalSize.y,totalSize.z/2) * voxelSize);
+                if(Physics.Raycast(player.transform.position, Vector3.down,out RaycastHit hit))
+                {
+                    player.transform.position = hit.point;
+                }
+            }
         }
     }
     
@@ -167,13 +186,13 @@ public class LevelMeshGenerator : MonoBehaviour
                 {
                     value2d += amplitude * Util.Remap(noise.Evaluate(new Vector3(x, 0, z) * terrainNoiseScale * frequency), -1,1,0,1);
                     frequency *= terrainPersistance;
-                    amplitude *= terrainLacunarity;
+                    amplitude /= terrainLacunarity;
                 }
                 value2d = Util.Remap(value2d,0,terrainLayers,0,1);
 
                 for(int y = 0; y < totalSize.y; y++)
                 {
-                    float heightNormalized = Util.Remap(y,0,totalSize.y-1, 0,1);
+                    float heightNormalized = Util.Remap(y+baseHeight,baseHeight,totalSize.y-1+baseHeight, 0,1);
                     grid[x,y,z] = value2d + heightNormalized;
                 }
             }

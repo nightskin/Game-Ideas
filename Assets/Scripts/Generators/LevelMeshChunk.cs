@@ -21,7 +21,7 @@ public class LevelMeshChunk : MonoBehaviour
     public void GenerateChunk()
     {
         mesh = new Mesh();
-        if(dungeon.largeChunks) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        if(!dungeon.splitWorldIntoChunks) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
 

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3836502109873422816}
   - component: {fileID: 439835315809209229}
   m_Layer: 0
-  m_Name: DungeonMeshChunk
+  m_Name: DungeonChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
