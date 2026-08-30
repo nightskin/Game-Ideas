@@ -10,16 +10,16 @@ public class LevelMeshChunk : MonoBehaviour
     public LevelMeshGenerator dungeon;
     public int chunkSize;
     int buffer = 0;
-    public float[] map;
+    [SerializeField] float[] map;
     List<Vector3> verts = new List<Vector3>();
     List<int> tris = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
     Mesh mesh;
 
-    [HideInInspector] public bool generated = false;
     
     public void GenerateChunk()
     {
+        map = new float[(int)Mathf.Pow(chunkSize+1,3)];
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
@@ -212,40 +212,20 @@ public class LevelMeshChunk : MonoBehaviour
         mesh.RecalculateNormals();
         GetComponent<MeshCollider>().sharedMesh = mesh;
         
-        if(MeshDataExists()) generated = true;
-        //else Destroy(gameObject);
     }
 
     public bool MeshDataExists()
     {
-        if(mesh)
+        for(int i = 0; i < map.Length; i++)
         {
-            if(mesh.vertices.Length > 0) return true;
-        }
-        return false;
-    }
-    
-    public bool PlacePlayer()
-    {
-        if(!dungeon.player || !generated || !MeshDataExists()) return false;
-        for(int x = 0; x < chunkSize; x++)
-        {
-            for(int y = 0; y < chunkSize; y++)
+            if(map[i] > dungeon.isoLevel)
             {
-                for(int z = 0; z < chunkSize; z++)
-                {
-                    dungeon.player.position = transform.position + (new Vector3(x,chunkSize,z) * dungeon.voxelSize);
-                    if(Physics.Raycast(dungeon.player.position, Vector3.down, out RaycastHit hit))
-                    {
-                        dungeon.player.position = hit.point;
-                        return true;
-                    }
-                }
+                return true;
             }
         }
         return false;
     }
-
+    
     void DrawQuadTop(Vector3 position)
     {
         verts.Add(new Vector3(-0.5f, 0.5f, 0.5f) *  dungeon.voxelSize + position);
