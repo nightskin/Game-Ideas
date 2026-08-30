@@ -2,12 +2,25 @@ using UnityEngine;
 
 public static class VoxelHelper
 {
-    public static int PositionToIndex(Vector3Int position, int chunkSize)
+    public static int PositionToIndex(Vector3 position, int chunkSize)
     {
-        return (position.x) + (position.y * chunkSize) + (position.z * (chunkSize * chunkSize));
+        return ((int)position.x) + ((int)position.y * chunkSize) + ((int)position.z * (chunkSize * chunkSize));
     }
     
-    public static Vector3Int IndexToPosition(int index, int chunkSize)
+    public static Vector3 IndexToPosition(int index, int chunkSize)
+    {
+        int x = index % chunkSize;
+        int y = (index / chunkSize) % chunkSize;
+        int z = ((index /chunkSize)/ chunkSize) % chunkSize;
+        return new Vector3(x,y,z); 
+    }
+
+    public static int Index3dToIndex(Vector3Int index3d, int chunkSize)
+    {
+        return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
+    }
+
+    public static Vector3Int IndexToIndex3D(int index, int chunkSize)
     {
         int x = index % chunkSize;
         int y = (index / chunkSize) % chunkSize;
@@ -15,13 +28,6 @@ public static class VoxelHelper
         return new Vector3Int(x,y,z); 
     }
 
-    public static float Remap(float value, float oldMin, float OldMax, float newMin, float newMax)
-    {
-        float oldRange = OldMax - oldMin;
-        float newRange = newMax - newMin;
-        return (((value - oldMin) * newRange) / oldRange) + newMin;
-    }
-   
     public static int GetState(float[] values, float isoLevel)
     {
         int state = 0;

@@ -78,10 +78,6 @@ public class Player : MonoBehaviour
     //Events
     void Start()
     {
-        if(Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit))
-        {
-            transform.position = hit.point;
-        }
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -225,14 +221,10 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(Jump());
         }
-        
-        if(Game.input.Player.Crouch.WasPerformedThisFrame() && onGround)
+
+        if(Game.input.Player.Crouch.IsPressed() && !onGround)
         {
-            Crouch();
-        }
-        else if(Game.input.Player.Crouch.IsPressed() && !onGround)
-        {
-            controller.Move(Vector3.down * currentSpeed * Time.deltaTime);
+            controller.Move(Vector3.down * dashSpeed * Time.deltaTime);
         }
     }
     
@@ -315,23 +307,6 @@ public class Player : MonoBehaviour
         Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, cameraTilt);
     }
 
-    void Crouch()
-    {
-        if(!crouching)
-        {
-            targetSpeed = crouchSpeed;
-            cameraHolder.transform.localPosition = new Vector3(0,1.25f,0);
-            controller.height = 1.25f;
-            crouching = true;
-        }
-        else
-        {
-            targetSpeed = normalSpeed;
-            cameraHolder.transform.localPosition = new Vector3(0,2,0);
-            controller.height = 2f;
-            crouching = false;
-        }
-    }
     IEnumerator HomingDash(Vector3 point)
     {
         isDashing = true;

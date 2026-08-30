@@ -12,5 +12,12 @@ public class LevelEditor : Editor
         {
             level.Create();
         }
+        if(GUILayout.Button("Clear Child GameObjects"))
+        {
+            for(int i = 0; i < level.transform.childCount; i++)
+            {
+                DestroyImmediate(level.transform.GetChild(i).gameObject);
+            }
+        }
     }
 }

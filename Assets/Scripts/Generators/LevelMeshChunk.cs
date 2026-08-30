@@ -8,9 +8,9 @@ public class LevelMeshChunk : MonoBehaviour
 {
     public Vector3Int index;
     public LevelMeshGenerator dungeon;
-    public Vector3Int chunkSize = new Vector3Int();
+    public int chunkSize;
     int buffer = 0;
-    public float[,,] grid;
+    public float[] map;
     List<Vector3> verts = new List<Vector3>();
     List<int> tris = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
@@ -21,58 +21,58 @@ public class LevelMeshChunk : MonoBehaviour
     public void GenerateChunk()
     {
         mesh = new Mesh();
-        if(!dungeon.splitWorldIntoChunks) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
 
         if (dungeon.style == LevelMeshGenerator.ArtStyle.BLOCKY)
         {
-            for (int x = 0; x < chunkSize.x; x++)
+            for (int x = 0; x < chunkSize; x++)
             {
-                for (int y = 0; y < chunkSize.y; y++)
+                for (int y = 0; y < chunkSize; y++)
                 {
-                    for (int z = 0; z < chunkSize.z; z++)
+                    for (int z = 0; z < chunkSize; z++)
                     {
-                        if (grid[x, y, z] > dungeon.isoLevel)
+                        if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z),chunkSize))] > dungeon.isoLevel)
                         {
                             if (y > 0)
                             {
-                                if (grid[x, y - 1, z] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y-1,z),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadBottom(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
-                            if (y < chunkSize.y - 1)
+                            if (y < chunkSize - 1)
                             {
-                                if (grid[x, y + 1, z] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y+1,z),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadTop(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (x > 0)
                             {
-                                if (grid[x - 1, y, z] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x-1,y,z),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadLeft(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
-                            if (x < chunkSize.x - 1)
+                            if (x < chunkSize - 1)
                             {
-                                if (grid[x + 1, y, z] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x+1,y,z),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadRight(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
                             if (z > 0)
                             {
-                                if (grid[x, y, z - 1] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z-1),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadBack(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
                             }
-                            if (z < chunkSize.z - 1)
+                            if (z < chunkSize - 1)
                             {
-                                if (grid[x, y, z + 1] <= dungeon.isoLevel)
+                                if (map[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z+1),chunkSize))] <= dungeon.isoLevel)
                                 {
                                     DrawQuadFront(new Vector3(x, y, z) * dungeon.voxelSize);
                                 }
@@ -82,30 +82,67 @@ public class LevelMeshChunk : MonoBehaviour
                 }
             }
         }
-        else
+        else if(dungeon.style == LevelMeshGenerator.ArtStyle.CHUNKY || dungeon.style == LevelMeshGenerator.ArtStyle.SMOOTH)
         {
-            for (int x = 0; x < chunkSize.x; x++)
+            for (int x = 0; x < chunkSize; x++)
             {
-                for (int y = 0; y < chunkSize.y; y++)
+                for (int y = 0; y < chunkSize; y++)
                 {
-                    for (int z = 0; z < chunkSize.z; z++)
+                    for (int z = 0; z < chunkSize; z++)
                     {
-                        if(index.x == dungeon.numberOfChunks.x - 1 && x == chunkSize.x - 1 || index.y == dungeon.numberOfChunks.y - 1 && y == chunkSize.y-1|| index.z == dungeon.numberOfChunks.z - 1 && z == chunkSize.z-1)
+                        if(index.x == dungeon.numberOfChunks - 1 && x == chunkSize - 1)
+                        {
+                            continue;
+                        }
+                        if(index.y == dungeon.numberOfChunks - 1 && y == chunkSize - 1)
+                        {
+                            continue;
+                        }
+                        if(index.z == dungeon.numberOfChunks - 1 && z == chunkSize - 1)
                         {
                             continue;
                         }
 
                         float[] values = new float[]
                         {
-                            grid[x,y,z+1],
-                            grid[x+1,y,z+1],
-                            grid[x+1,y,z],
-                            grid[x,y,z],
-                            grid[x,y+1,z+1],
-                            grid[x+1,y+1,z+1],
-                            grid[x+1,y+1,z],
-                            grid[x,y+1,z],
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x,y,z+1)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x+1,y,z+1)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x+1,y,z)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x,y,z)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x,y+1,z+1)), 
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x+1,y+1,z+1)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x+1,y+1,z)),
+                            dungeon.GetDungeonValue(index * chunkSize + new Vector3Int(x,y+1,z)),  
                         };
+
+                        if(dungeon.levelType == LevelMeshGenerator.LevelType.CAVES)
+                        {
+                            values = new float[]
+                            {
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x,y,z+1)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x+1,y,z+1)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x+1,y,z)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x,y,z)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x,y+1,z+1)), 
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x+1,y+1,z+1)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x+1,y+1,z)),
+                                dungeon.GetCaveValue(index * chunkSize + new Vector3Int(x,y+1,z)),   
+                            };
+                        }
+                        else if(dungeon.levelType == LevelMeshGenerator.LevelType.TERRAIN)
+                        {
+                            values = new float[]
+                            {
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x,y,z+1)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x+1,y,z+1)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x+1,y,z)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x,y,z)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x,y+1,z+1)), 
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x+1,y+1,z+1)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x+1,y+1,z)),
+                                dungeon.GetTerrainValue(index * chunkSize + new Vector3Int(x,y+1,z)),   
+                            };
+                        }
 
                         Vector3[] points = new Vector3[]
                         {
@@ -175,14 +212,8 @@ public class LevelMeshChunk : MonoBehaviour
         mesh.RecalculateNormals();
         GetComponent<MeshCollider>().sharedMesh = mesh;
         
-        if(MeshDataExists())
-        {
-            generated = true;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if(MeshDataExists()) generated = true;
+        //else Destroy(gameObject);
     }
 
     public bool MeshDataExists()
@@ -197,13 +228,13 @@ public class LevelMeshChunk : MonoBehaviour
     public bool PlacePlayer()
     {
         if(!dungeon.player || !generated || !MeshDataExists()) return false;
-        for(int x = 0; x < chunkSize.x; x++)
+        for(int x = 0; x < chunkSize; x++)
         {
-            for(int y = 0; y < chunkSize.y; y++)
+            for(int y = 0; y < chunkSize; y++)
             {
-                for(int z = 0; z < chunkSize.z; z++)
+                for(int z = 0; z < chunkSize; z++)
                 {
-                    dungeon.player.position = transform.position + (new Vector3(x,chunkSize.y,z) * dungeon.voxelSize);
+                    dungeon.player.position = transform.position + (new Vector3(x,chunkSize,z) * dungeon.voxelSize);
                     if(Physics.Raycast(dungeon.player.position, Vector3.down, out RaycastHit hit))
                     {
                         dungeon.player.position = hit.point;

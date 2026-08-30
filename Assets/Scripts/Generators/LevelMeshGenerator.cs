@@ -9,17 +9,19 @@ public class LevelMeshGenerator : MonoBehaviour
     public Transform player;
     [SerializeField] GameObject chunkPrefab;
     [SerializeField] string seed = string.Empty;
-    [Min(10)] public Vector3Int totalSize = new Vector3Int(100,50,100);
+    [Min(10)] public int totalSize = 100;
     public bool splitWorldIntoChunks;
-    [Min(1)] public Vector3Int numberOfChunks = new Vector3Int(10,5,10);
-    Vector3Int chunkSize;
+    [Min(1)] public int numberOfChunks = 1;
+    int chunkSize;
+    Noise noise;
+
     public enum LevelType
     {
         DUNGEON,
         CAVES,
         TERRAIN,
     }
-    [SerializeField] LevelType levelType = LevelType.DUNGEON;
+    public LevelType levelType = LevelType.DUNGEON;
     public enum ArtStyle
     {
         BLOCKY,
@@ -29,7 +31,7 @@ public class LevelMeshGenerator : MonoBehaviour
     public ArtStyle style = ArtStyle.CHUNKY;
     [HideInInspector] public float isoLevel = 0.5f;
     [Min(1)] public float voxelSize = 3;
-    float[,,] grid = null;
+    public float[,,] grid = null;
 
     [Space]
     [Header("DUNGEON SETTINGS")]
@@ -47,6 +49,8 @@ public class LevelMeshGenerator : MonoBehaviour
     [Header("CAVE SETTINGS")]
     [SerializeField][Min(1)] int caveLayers = 1;
     [SerializeField][Range(0,1)] float caveNoiseScale = 0.1f;
+    [SerializeField] float cavePersistance = 0.5f;
+    [SerializeField] float caveLacunarity = 1;
 
     [Space]
     [Header("TERRAIN SETTINGS")]
@@ -67,7 +71,7 @@ public class LevelMeshGenerator : MonoBehaviour
         if (showBounds)
         {
             Gizmos.color = boundColor;
-            Gizmos.DrawWireCube(transform.position + ((Vector3)totalSize / 2 * voxelSize), (Vector3)totalSize * voxelSize);
+            Gizmos.DrawWireCube(transform.position + (Vector3.one * totalSize / 2 * voxelSize), Vector3.one * totalSize * voxelSize);
         }
     }
 
@@ -75,27 +79,28 @@ public class LevelMeshGenerator : MonoBehaviour
     {
         if (seed == string.Empty) seed = System.DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
-        grid = new float[totalSize.x+1, totalSize.y+1, totalSize.z+1];
+        noise = new Noise(seed.GetHashCode());
+        grid = new float[totalSize, totalSize, totalSize];
 
-        GenerateDungeonData(levelType);
+        if(levelType == LevelType.DUNGEON) GenerateDungeonData(levelType);
         if(!splitWorldIntoChunks)
         {
-            numberOfChunks = Vector3Int.one;
-            chunkSize = new Vector3Int(totalSize.x,totalSize.y,totalSize.z);
+            numberOfChunks = 1;
+            chunkSize = totalSize;
         }
         else
         {
-            chunkSize = new Vector3Int(totalSize.x/numberOfChunks.x, totalSize.y/numberOfChunks.y, totalSize.z/numberOfChunks.z);
+            chunkSize = totalSize/numberOfChunks;
         }
 
         
-        for(int chunkX = 0; chunkX < numberOfChunks.x; chunkX++)
+        for(int chunkX = 0; chunkX < numberOfChunks; chunkX++)
         {
-            for(int chunkY = 0; chunkY < numberOfChunks.y; chunkY++)
+            for(int chunkY = 0; chunkY < numberOfChunks; chunkY++)
             {
-                for(int chunkZ = 0; chunkZ < numberOfChunks.z; chunkZ++)
+                for(int chunkZ = 0; chunkZ < numberOfChunks; chunkZ++)
                 {
-                    Vector3 chunkPosition = new Vector3(chunkX * chunkSize.x, chunkY * chunkSize.y, chunkZ * chunkSize.z) * voxelSize;
+                    Vector3 chunkPosition = new Vector3(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize) * voxelSize;
                     GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
                     chunkObject.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
                     LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunk>();
@@ -103,21 +108,24 @@ public class LevelMeshGenerator : MonoBehaviour
                     chunk.name = chunk.index.ToString();
                     chunk.dungeon = this;
                     chunk.chunkSize = chunkSize;
-                    chunk.grid = new float[chunkSize.x+1, chunkSize.y+1, chunkSize.z+1];
+                    chunk.map = new float[(int)Mathf.Pow(chunkSize+1,3)];
 
-                    
+                    //if(levelType == LevelType.DUNGEON)
+                    //{
+                    //    for(int x = 0; x < chunkSize; x++)
+                    //    {
+                    //        for(int y = 0; y < chunkSize; y++)
+                    //        {
+                    //            for(int z = 0; z < chunkSize; z++)
+                    //            {
+                    //                Vector3Int gridOffset = new Vector3Int(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize);
+                    //                int i = VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z), chunk.chunkSize);
+                    //                chunk.map[i] = grid[x + gridOffset.x, y + gridOffset.y, z + gridOffset.z];
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
-                    for(int x = 0; x < chunkSize.x+1; x++)
-                    {
-                        for(int y = 0; y < chunkSize.y+1; y++)
-                        {
-                            for(int z = 0; z < chunkSize.z+1; z++)
-                            {
-                                Vector3Int gridOffset = new Vector3Int(chunkX * chunkSize.x, chunkY * chunkSize.y , chunkZ * chunkSize.z);
-                                chunk.grid[x,y,z] = grid[x + gridOffset.x, y + gridOffset.y, z + gridOffset.z];
-                            }
-                        }
-                    }
                     
                     chunk.GenerateChunk();
                 }
@@ -147,7 +155,7 @@ public class LevelMeshGenerator : MonoBehaviour
             }
             else if(levelType == LevelType.TERRAIN)
             {
-                player.transform.position = transform.position + (new Vector3(totalSize.x/2, totalSize.y,totalSize.z/2) * voxelSize);
+                player.transform.position = transform.position + (new Vector3(totalSize/2, totalSize,totalSize/2) * voxelSize);
                 if(Physics.Raycast(player.transform.position, Vector3.down,out RaycastHit hit))
                 {
                     player.transform.position = hit.point;
@@ -162,41 +170,6 @@ public class LevelMeshGenerator : MonoBehaviour
         {
             Dungeon(useBoxShapedRooms);
         }
-        else if(algorithm == LevelType.CAVES)
-        {
-            Caves();
-        }
-        else if(algorithm == LevelType.TERRAIN)
-        {
-            Terrain();
-        }
-    }
-
-    void Terrain()
-    {
-        Noise noise = new Noise(seed.GetHashCode());
-        for(int x = 0; x < totalSize.x; x++)
-        {
-            for(int z = 0; z < totalSize.z; z++)
-            {                
-                float value2d = 0;
-                float frequency = 1;
-                float amplitude = 1;
-                for(int i = 0; i < terrainLayers; i++)
-                {
-                    value2d += amplitude * Util.Remap(noise.Evaluate(new Vector3(x, 0, z) * terrainNoiseScale * frequency), -1,1,0,1);
-                    frequency *= terrainPersistance;
-                    amplitude /= terrainLacunarity;
-                }
-                value2d = Util.Remap(value2d,0,terrainLayers,0,1);
-
-                for(int y = 0; y < totalSize.y; y++)
-                {
-                    float heightNormalized = Util.Remap(y+baseHeight,baseHeight,totalSize.y-1+baseHeight, 0,1);
-                    grid[x,y,z] = value2d + heightNormalized;
-                }
-            }
-        }
     }
 
     void ActivateSphere(Vector3Int cell, int maxX = 1, int maxY = 1, int maxZ = 1)
@@ -210,15 +183,15 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= totalSize.x - 1 || cell.x + x <= 0)
+                    if (cell.x + x >= totalSize - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
-                    if (cell.y + y >= totalSize.y - 1 || cell.y + y <= 0)
+                    if (cell.y + y >= totalSize - 1 || cell.y + y <= 0)
                     {
                         continue;
                     }
-                    if (cell.z + z >= totalSize.z - 1 || cell.z + z <= 0)
+                    if (cell.z + z >= totalSize - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
@@ -244,15 +217,15 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= totalSize.x - 1 || cell.x + x <= 0)
+                    if (cell.x + x >= totalSize - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
-                    if (cell.y + y >= totalSize.y - 1 || cell.y + y <= 0)
+                    if (cell.y + y >= totalSize - 1 || cell.y + y <= 0)
                     {
                         continue;
                     }
-                    if (cell.z + z >= totalSize.z - 1 || cell.z + z <= 0)
+                    if (cell.z + z >= totalSize - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
@@ -270,33 +243,42 @@ public class LevelMeshGenerator : MonoBehaviour
         }
     }
 
-    void Caves()
+    public float GetDungeonValue(Vector3Int position)
     {
-        Noise noise = new Noise(seed.GetHashCode());
-        for(int x = 0; x < totalSize.x; x++)
-        {
-            for(int y = 0; y < totalSize.y; y++)
-            {
-                for(int z = 0; z < totalSize.z; z++)
-                {
-                    if(x == 0 || y == 0 || z == 0 || x == totalSize.x-1 || y == totalSize.y-1 || z == totalSize.z-1)
-                    {
-                        continue;
-                    }
-
-                    float value = 0;
-                    float frequency = 1;
-                    for(int octave = 0; octave < caveLayers; octave++)
-                    {
-                        value += Util.Remap(noise.Evaluate(new Vector3(x,y,z) * caveNoiseScale * frequency),-1,1,0,1);
-                        frequency = frequency * octave;
-                    }
-                    grid[x,y,z] = Util.Remap(value,0,caveLayers,0,1);
-                }
-            }
-        }
+        return grid[position.x, position.y, position.z];
     }
 
+    public float GetCaveValue(Vector3 position)
+    {
+        float value = 0;
+        float frequency = 1;
+        float amplitude = 1;
+        for(int octave = 0; octave < caveLayers; octave++)
+        {
+            value += Util.Remap(noise.Evaluate(position * caveNoiseScale * frequency),-1,1,0,1);
+            frequency *= cavePersistance;
+            amplitude /= caveLacunarity;
+        }
+        return Util.Remap(value,0,caveLayers,0,1);
+    }
+    
+    public float GetTerrainValue(Vector3 position)
+    {
+        float value2d = 0;
+        float frequency = 1;
+        float amplitude = 1;
+        for(int i = 0; i < terrainLayers; i++)
+        {
+            value2d += amplitude * Util.Remap(noise.Evaluate(new Vector3(position.x, 0, position.z) * terrainNoiseScale * frequency), -1,1,0,1);
+            frequency *= terrainPersistance;
+            amplitude /= terrainLacunarity;
+        }
+        value2d = Util.Remap(value2d,0,terrainLayers,0,1);
+
+        float heightNormalized = Util.Remap(position.y + baseHeight, baseHeight,totalSize - 1 + baseHeight,0,1);
+        return value2d + heightNormalized;
+    }
+    
     void Dungeon(bool boxRooms)
     {
         if(boxRooms)
@@ -308,9 +290,9 @@ public class LevelMeshGenerator : MonoBehaviour
                 int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
                 int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
 
-                int rx = UnityEngine.Random.Range(roomSizeX, totalSize.x - roomSizeX);
-                int ry = UnityEngine.Random.Range(ceilngHeight, totalSize.y - ceilngHeight);
-                int rz = UnityEngine.Random.Range(roomSizeZ, totalSize.z - roomSizeZ);
+                int rx = UnityEngine.Random.Range(roomSizeX, totalSize - roomSizeX);
+                int ry = UnityEngine.Random.Range(ceilngHeight, totalSize - ceilngHeight);
+                int rz = UnityEngine.Random.Range(roomSizeZ, totalSize - roomSizeZ);
                 Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
                 ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
                 pointsOfInterest.Add(roomPosition);
@@ -331,9 +313,9 @@ public class LevelMeshGenerator : MonoBehaviour
             List<Vector3Int> exits = new List<Vector3Int>();
             for (int r = 0; r < numberOfRooms; r++)
             {
-                int xi = UnityEngine.Random.Range(0, totalSize.x);
-                int yi = UnityEngine.Random.Range(0, totalSize.y);
-                int zi = UnityEngine.Random.Range(0, totalSize.z);
+                int xi = UnityEngine.Random.Range(0, totalSize);
+                int yi = UnityEngine.Random.Range(0, totalSize);
+                int zi = UnityEngine.Random.Range(0, totalSize);
 
                 Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
                 entrances.Add(currentIndex);
@@ -345,13 +327,13 @@ public class LevelMeshGenerator : MonoBehaviour
                     int z = UnityEngine.Random.Range(-1, 2);
 
                     if (x == -1 && currentIndex.x <= 0) x = 1;
-                    if (x == 1 && currentIndex.x >= totalSize.x - 1) x = -1;
+                    if (x == 1 && currentIndex.x >= totalSize - 1) x = -1;
 
                     if (z == -1 && currentIndex.z <= 0) z = 1;
-                    if (z == 1 && currentIndex.z >= totalSize.z - 1) z = -1;
+                    if (z == 1 && currentIndex.z >= totalSize - 1) z = -1;
 
                     if (y == -1 && currentIndex.y <= 0) y = 1;
-                    if (y == 1 && currentIndex.y >= totalSize.y - 1) y = -1;
+                    if (y == 1 && currentIndex.y >= totalSize - 1) y = -1;
 
 
                     currentIndex += new Vector3Int(x, y, z);
