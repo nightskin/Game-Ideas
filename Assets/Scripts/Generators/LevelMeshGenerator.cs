@@ -5,16 +5,17 @@ using UnityEngine;
 public class LevelMeshGenerator : MonoBehaviour
 {
     [Header("General Settings")]
-    public bool placePlayerAutomatically;
     public Transform player;
+    public Dictionary<Vector3Int, LevelMeshChunk> map = new Dictionary<Vector3Int, LevelMeshChunk>();
     [SerializeField] GameObject chunkPrefab;
+    [SerializeField] Material chunkMaterial;
     [SerializeField] string seed = string.Empty;
     [Min(10)] public int gridSize = 100;
     [Min(1)] public int numberOfChunks = 1;
-    int chunkSize;
+    int voxelsInChunk;
+    float sizeOfChunk;
     Noise noise;
     
-
     public enum LevelType
     {
         DUNGEON,
@@ -65,7 +66,7 @@ public class LevelMeshGenerator : MonoBehaviour
     [SerializeField] bool showBounds = false;
     [SerializeField] Color boundColor = Color.rebeccaPurple;
 
-    
+
     void OnDrawGizmos()
     {
         if (showBounds)
@@ -73,6 +74,30 @@ public class LevelMeshGenerator : MonoBehaviour
             Gizmos.color = boundColor;
             Gizmos.DrawWireCube(transform.position + (Vector3.one * gridSize / 2 * voxelSize), Vector3.one * gridSize * voxelSize);
         }
+    }
+
+    void Start()
+    {
+        if(!player) player = GameObject.Find("Player").transform;
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
+            map.Add(chunk.index,chunk);
+            Vector3 checkPosition = chunk.transform.position + new Vector3(chunk.chunkSize/2,chunk.chunkSize,chunk.chunkSize/2);
+            if(Physics.Raycast(checkPosition, Vector3.down,out RaycastHit hit))
+            {
+                player.transform.position = hit.point;
+            }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 chunkPosition = new Vector3(Mathf.RoundToInt(Camera.main.transform.position.x / sizeOfChunk), 
+        Mathf.RoundToInt(Camera.main.transform.position.y / sizeOfChunk), 
+        Mathf.RoundToInt(Camera.main.transform.position.z / sizeOfChunk)) * sizeOfChunk;
+
+        
     }
 
     public void Create()
@@ -84,8 +109,8 @@ public class LevelMeshGenerator : MonoBehaviour
 
         if(levelType == LevelType.DUNGEON) GenerateDungeonData(useBoxShapedRooms);
 
-        chunkSize = gridSize/numberOfChunks;
-
+        voxelsInChunk = gridSize/numberOfChunks;
+        sizeOfChunk = voxelsInChunk * voxelSize;
         
         for(int chunkX = 0; chunkX < numberOfChunks; chunkX++)
         {
@@ -93,16 +118,16 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for(int chunkZ = 0; chunkZ < numberOfChunks; chunkZ++)
                 {
-                    Vector3 chunkPosition = new Vector3(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize) * voxelSize;
+                    Vector3 chunkPosition = new Vector3(chunkX * voxelsInChunk, chunkY * voxelsInChunk, chunkZ * voxelsInChunk) * voxelSize;
                     GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
                     chunkObject.name = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
                     LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunk>();
                     chunk.index = new Vector3Int(chunkX,chunkY,chunkZ);
                     chunk.name = chunk.index.ToString();
                     chunk.dungeon = this;
-                    chunk.chunkSize = chunkSize;
-
-                    chunk.GenerateChunk();
+                    chunk.chunkSize = voxelsInChunk;
+                    if(chunkMaterial) chunk.renderer.material = chunkMaterial;
+                    chunk.Generate();
                 }
             }
         }
@@ -110,37 +135,9 @@ public class LevelMeshGenerator : MonoBehaviour
 
     public void AddWater()
     {
-        
+
     }
 
-    void Start()
-    {
-        if(placePlayerAutomatically)
-        {
-            if(levelType == LevelType.DUNGEON)
-            {
-                for(int i = 0; i < transform.childCount; i++)
-                {
-                    LevelMeshChunk chunk = transform.GetChild(i).GetComponent<LevelMeshChunk>();
-                    player.transform.position = chunk.transform.position + new Vector3(chunk.chunkSize/2,chunk.chunkSize,chunk.chunkSize/2);
-                    if(Physics.Raycast(player.transform.position, Vector3.down,out RaycastHit hit))
-                    {
-                        player.transform.position = hit.point;
-                        break;
-                    }
-                }
-            }
-            else if(levelType == LevelType.TERRAIN || levelType == LevelType.CAVES)
-            {
-                player.transform.position = transform.position + (new Vector3(gridSize/2, gridSize,gridSize/2) * voxelSize);
-                if(Physics.Raycast(player.transform.position, Vector3.down,out RaycastHit hit))
-                {
-                    player.transform.position = hit.point;
-                }
-            }
-        }
-    }
-    
     void GenerateDungeonData(bool boxRooms)
     {
         if(boxRooms)

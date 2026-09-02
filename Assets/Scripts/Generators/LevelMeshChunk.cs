@@ -1,14 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(MeshCollider))]
 public class LevelMeshChunk : MonoBehaviour
 {
-    public Vector3Int index;
-    public LevelMeshGenerator dungeon;
-    public int chunkSize;
+    public MeshFilter meshFilter;
+    public MeshRenderer renderer;
+    public MeshCollider collider;
+    public bool useGPU;
+    [HideInInspector] public Vector3Int index;
+    [HideInInspector] public LevelMeshGenerator dungeon;
+    [HideInInspector] public int chunkSize;
     int buffer = 0;
     [SerializeField] float[] map;
     List<Vector3> verts = new List<Vector3>();
@@ -16,18 +17,22 @@ public class LevelMeshChunk : MonoBehaviour
     List<Vector2> uvs = new List<Vector2>();
     Mesh mesh;
 
-    
-    public void GenerateChunk()
+    public void Generate()
     {
         map = new float[(int)Mathf.Pow(chunkSize+1,3)];
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        GetComponent<MeshFilter>().mesh = mesh;
+        meshFilter.mesh = mesh;
 
-
-        if (dungeon.style == LevelMeshGenerator.ArtStyle.BLOCKY)
+        if(useGPU)
         {
-            for (int x = 0; x < chunkSize; x++)
+            
+        }
+        else
+        {
+            if (dungeon.style == LevelMeshGenerator.ArtStyle.BLOCKY)
+            {
+                for (int x = 0; x < chunkSize; x++)
             {
                 for (int y = 0; y < chunkSize; y++)
                 {
@@ -81,8 +86,8 @@ public class LevelMeshChunk : MonoBehaviour
                     }
                 }
             }
-        }
-        else if(dungeon.style == LevelMeshGenerator.ArtStyle.CHUNKY || dungeon.style == LevelMeshGenerator.ArtStyle.SMOOTH)
+            }
+            else if(dungeon.style == LevelMeshGenerator.ArtStyle.CHUNKY || dungeon.style == LevelMeshGenerator.ArtStyle.SMOOTH)
         {
             for (int x = 0; x < chunkSize; x++)
             {
@@ -204,26 +209,17 @@ public class LevelMeshChunk : MonoBehaviour
             }
         }
 
+        }
+
+        
 
         mesh.Clear();
         mesh.vertices = verts.ToArray();
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
-        GetComponent<MeshCollider>().sharedMesh = mesh;
-        
-    }
+        if(mesh.vertexCount >= 3) collider.sharedMesh = mesh;
 
-    public bool MeshDataExists()
-    {
-        for(int i = 0; i < map.Length; i++)
-        {
-            if(map[i] > dungeon.isoLevel)
-            {
-                return true;
-            }
-        }
-        return false;
     }
     
     void DrawQuadTop(Vector3 position)

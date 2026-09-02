@@ -232,11 +232,9 @@ MonoBehaviour:
   jumpHeight: 5
   velocity: {x: 0, y: 0, z: 0}
   normalSpeed: 20
-  dashSpeed: 150
   crouchSpeed: 10
   targetSpeed: 0
   currentSpeed: 0
-  dashTime: 0.1
   maxLookY: 60
   lookSpeed: 0
   rotx: 0
@@ -246,18 +244,6 @@ MonoBehaviour:
   groundDistance: 0.5
   onGround: 0
   isAttacking: 0
-  enableWallRun: 1
-  cameraTiltAngleWhileWallRunning: 35
-  cameraTiltSpeed: 10
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  allowPlayerToJumpAgainAfterWallRun: 1
-  wallDistance: 1
-  groundSlamEnabled: 1
-  homingDashEnabled: 1
-  maxHomingDistance: 250
-  atkDistance: 2
 --- !u!1 &1321405500393634581
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +373,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 1000
-  field of view: 60
+  field of view: 55
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
