@@ -2,6 +2,7 @@ using UnityEngine;
 
 public static class VoxelHelper
 {
+
     public static int PositionToIndex(Vector3 position, int chunkSize)
     {
         return ((int)position.x) + ((int)position.y * chunkSize) + ((int)position.z * (chunkSize * chunkSize));
@@ -53,7 +54,7 @@ public static class VoxelHelper
         return pos1 + pos2 / 2;
     }
 
-    public static Vector2[] GetUVs(Vector3 a, Vector3 b, Vector3 c, float size)
+    public static Vector2[] GetUVs(Vector3 a, Vector3 b, Vector3 c)
     {
         Vector3 s1 = b - a;
         Vector3 s2 = c - a;
@@ -66,21 +67,21 @@ public static class VoxelHelper
         Vector2[] uvs = new Vector2[3];
         if (norm.x >= norm.z && norm.x >= norm.y) // x plane
         {
-            uvs[0] = new Vector2(a.z, a.y) / size;
-            uvs[1] = new Vector2(b.z, b.y) / size;
-            uvs[2] = new Vector2(c.z, c.y) / size;
+            uvs[0] = new Vector2(a.z, a.y);
+            uvs[1] = new Vector2(b.z, b.y);
+            uvs[2] = new Vector2(c.z, c.y);
         }
         else if (norm.z >= norm.x && norm.z >= norm.y) // z plane
         {
-            uvs[0] = new Vector2(a.x, a.y) / size;
-            uvs[1] = new Vector2(b.x, b.y) / size;
-            uvs[2] = new Vector2(c.x, c.y) / size;
+            uvs[0] = new Vector2(a.x, a.y);
+            uvs[1] = new Vector2(b.x, b.y);
+            uvs[2] = new Vector2(c.x, c.y);
         }
         else if (norm.y >= norm.x && norm.y >= norm.z) // y plane
         {
-            uvs[0] = new Vector2(a.x, a.z) / size;
-            uvs[1] = new Vector2(b.x, b.z) / size;
-            uvs[2] = new Vector2(c.x, c.z) / size;
+            uvs[0] = new Vector2(a.x, a.z);
+            uvs[1] = new Vector2(b.x, b.z);
+            uvs[2] = new Vector2(c.x, c.z);
         }
 
         return uvs;

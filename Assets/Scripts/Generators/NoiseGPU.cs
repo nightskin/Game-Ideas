@@ -10,18 +10,9 @@ public class NoiseGPU : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float groundPercent = 0.2f;
     ComputeBuffer weightsBuffer;
 
-    void Awake()
-    {
-        CreateBuffers();
-    }
-    void OnDestroy()
-    {
-        ReleaseBuffers();
-    }
-
     void CreateBuffers()
     {
-        weightsBuffer = new ComputeBuffer(GridMetrics.pointsPerChunk * GridMetrics.pointsPerChunk * GridMetrics.pointsPerChunk, sizeof(float));
+        weightsBuffer = new ComputeBuffer(LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize, sizeof(float));
     }
 
     void ReleaseBuffers()
@@ -31,18 +22,21 @@ public class NoiseGPU : MonoBehaviour
 
     public float[] GetNoise()
     {
-        float[] heights = new float[GridMetrics.pointsPerChunk * GridMetrics.pointsPerChunk * GridMetrics.pointsPerChunk];
+        CreateBuffers();
+
+        float[] weights = new float[LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize];
         noiseShader.SetBuffer(0, "weights", weightsBuffer);
         
-        noiseShader.SetInt("chunkSize",GridMetrics.pointsPerChunk);
+        noiseShader.SetInt("chunkSize",LevelMeshChunk.chunkSize);
         noiseShader.SetFloat("noiseScale",noiseScale);
         noiseShader.SetFloat("amplitude", amplitude);
         noiseShader.SetFloat("frequency", frequency);
         noiseShader.SetInt("octaves", octaves);
         noiseShader.SetFloat("groundPercent", groundPercent);
         
-        noiseShader.Dispatch(0, GridMetrics.pointsPerChunk / GridMetrics.numThreads, GridMetrics.pointsPerChunk / GridMetrics.numThreads, GridMetrics.pointsPerChunk / GridMetrics.numThreads);
-        weightsBuffer.GetData(heights);
-        return heights;
+        noiseShader.Dispatch(0, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads);
+        weightsBuffer.GetData(weights);
+        ReleaseBuffers();
+        return weights;
     }
 }

@@ -11,7 +11,7 @@ public class Game : MonoBehaviour
     
     public PauseMenu pauseMenu;
     public GameObject player;
-    
+    public NoiseGPU noise;
 
 
     

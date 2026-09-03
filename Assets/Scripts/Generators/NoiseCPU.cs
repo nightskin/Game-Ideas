@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Noise
+public class NoiseCPU
 {
     #region Values
     /// Initial permutation table
@@ -54,12 +54,12 @@ public class Noise
     };
     #endregion
 
-    public Noise()
+    public NoiseCPU()
     {
         Randomize(0);
     }
 
-    public Noise(int seed)
+    public NoiseCPU(int seed)
     {
         Randomize(seed);
     }
