@@ -3,16 +3,17 @@ using UnityEngine;
 public class NoiseGPU : MonoBehaviour
 {
     public ComputeShader noiseShader;
-    [SerializeField] float noiseScale = 1f;
-    [SerializeField] float amplitude = 5f;
-    [SerializeField] float frequency = 0.005f;
-    [SerializeField] int octaves = 8;
-    [SerializeField, Range(0f, 1f)] float groundPercent = 0.2f;
+    [HideInInspector ] public int chunkSize;
+    [HideInInspector] public float noiseScale = 1f;
+    [HideInInspector] public float amplitude = 5f;
+    [HideInInspector] public float frequency = 0.005f;
+    [HideInInspector] public int octaves = 8;
+    [HideInInspector] public float groundPercent = 0.2f;
     ComputeBuffer weightsBuffer;
 
     void CreateBuffers()
     {
-        weightsBuffer = new ComputeBuffer(LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize, sizeof(float));
+        weightsBuffer = new ComputeBuffer(chunkSize * chunkSize * chunkSize, sizeof(float));
     }
 
     void ReleaseBuffers()
@@ -20,21 +21,23 @@ public class NoiseGPU : MonoBehaviour
         weightsBuffer.Release();
     }
 
-    public float[] GetNoise()
+    public float[] GetNoise(Vector3Int index)
     {
         CreateBuffers();
 
-        float[] weights = new float[LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize * LevelMeshChunk.chunkSize];
+        float[] weights = new float[chunkSize * chunkSize * chunkSize];
         noiseShader.SetBuffer(0, "weights", weightsBuffer);
         
-        noiseShader.SetInt("chunkSize",LevelMeshChunk.chunkSize);
+        noiseShader.SetInt("chunkSize",chunkSize);
         noiseShader.SetFloat("noiseScale",noiseScale);
         noiseShader.SetFloat("amplitude", amplitude);
         noiseShader.SetFloat("frequency", frequency);
         noiseShader.SetInt("octaves", octaves);
         noiseShader.SetFloat("groundPercent", groundPercent);
-        
-        noiseShader.Dispatch(0, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads, LevelMeshChunk.chunkSize / LevelMeshChunk.numThreads);
+        noiseShader.SetInt("offsetX", index.x);
+        noiseShader.SetInt("offsetY", index.y);
+        noiseShader.SetInt("offsetZ", index.z);
+        noiseShader.Dispatch(0, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads);
         weightsBuffer.GetData(weights);
         ReleaseBuffers();
         return weights;

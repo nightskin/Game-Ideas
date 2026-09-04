@@ -8,7 +8,7 @@ public class LevelEditor : Editor
     {
         base.OnInspectorGUI();
         LevelMeshGenerator level = (LevelMeshGenerator)target;
-        if(GUILayout.Button("Create Random World"))
+        if(GUILayout.Button("Create Random"))
         {
             level.Generate();
         }

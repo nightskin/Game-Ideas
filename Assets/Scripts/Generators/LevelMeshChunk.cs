@@ -2,30 +2,18 @@ using UnityEngine;
 
 public class LevelMeshChunk : MonoBehaviour
 {
-    public enum LevelType
-    {
-        DUNGEON,
-        CAVES,
-        TERRAIN,
-    }
-    public LevelType levelType = LevelType.DUNGEON;
-    public enum ArtStyle
-    {
-        BLOCKY,
-        CHUNKY,
-        SMOOTH,
-    }
-    public ArtStyle style = ArtStyle.CHUNKY;
+    public LevelType type = LevelType.DUNGEON;
+    public LevelStyle style = LevelStyle.CHUNKY;
     public MeshFilter meshFilter;
     public MeshRenderer renderer;
     public MeshCollider collider;
     public Vector3Int index;
     public LevelMeshGenerator generator;
-    public float[] grid = new float[chunkSize * chunkSize * chunkSize];
+    [HideInInspector] public float[] grid;
 
-    public static int chunkSize = 16;
+    public int chunkSize;
     public static int numThreads = 8;
-    public static float chunkScale = 3;
+    public static float chunkScale = 1;
 
     public virtual void Generate(){}
 }

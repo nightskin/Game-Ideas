@@ -126,11 +126,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18559b549382f3740a502e201245a26f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelMeshChunkGPU
-  levelType: 2
+  type: 2
   style: 2
   meshFilter: {fileID: 587901045168537002}
   renderer: {fileID: 7421981115660510084}
   collider: {fileID: 1538141732483602541}
   index: {x: 0, y: 0, z: 0}
   generator: {fileID: 0}
+  grid: []
+  chunkSize: 0
+  scale: 10
   marchingShader: {fileID: 7200000, guid: 9ab3fbb793f659a4588ff48582bd9c74, type: 3}

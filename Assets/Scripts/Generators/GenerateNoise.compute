@@ -13,6 +13,11 @@ float frequency;
 int octaves;
 float groundPercent;
 
+
+int offsetX = 0;
+int offsetY = 0;
+int offsetZ = 0;
+
 int IndexFromCoord(int x, int y, int z)
 {
     return x + chunkSize * (y + chunkSize * z);
@@ -22,14 +27,14 @@ int IndexFromCoord(int x, int y, int z)
 void GenerateNoise (uint3 id : SV_DispatchThreadID)
 {
     fnl_state noise = fnlCreateState(0);
-    noise.noise_type = FNL_NOISE_OPENSIMPLEX2;
-    noise.fractal_type = FNL_FRACTAL_RIDGED;
+    noise.noise_type = FNL_NOISE_PERLIN;
+    noise.fractal_type = FNL_FRACTAL_NONE;
     noise.frequency = frequency;
     noise.octaves = octaves;
 
     float3 pos = id * noiseScale;
     float ground = -pos.y + (groundPercent * chunkSize);
-    float n = ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
+    float n = ground + fnlGetNoise3D(noise, pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ) * amplitude;
     
     weights[IndexFromCoord(id.x, id.y, id.z)] = n;
     

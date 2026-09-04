@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 170429813977758164}
   - component: {fileID: 3533105828348693676}
   - component: {fileID: 7236707900064891567}
-  - component: {fileID: 5115033558612915004}
+  - component: {fileID: -6113562458817700002}
   m_Layer: 0
   m_Name: DungeonChunk
   m_TagString: Untagged
@@ -114,7 +114,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &5115033558612915004
+--- !u!114 &-6113562458817700002
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,14 +123,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8437533224755788887}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f54cc4a59ce54dcda5dcaeefc1a8876, type: 3}
+  m_Script: {fileID: 11500000, guid: 18559b549382f3740a502e201245a26f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DungeonMeshChunk
-  levelType: 0
+  m_EditorClassIdentifier: Assembly-CSharp::LevelMeshChunkGPU
+  type: 0
   style: 1
   meshFilter: {fileID: 170429813977758164}
   renderer: {fileID: 3533105828348693676}
   collider: {fileID: 7236707900064891567}
   index: {x: 0, y: 0, z: 0}
   generator: {fileID: 0}
-  map: []
+  grid: []
+  scale: 8
+  marchingShader: {fileID: 7200000, guid: 9ab3fbb793f659a4588ff48582bd9c74, type: 3}

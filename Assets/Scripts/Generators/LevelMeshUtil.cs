@@ -1,6 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LevelStyle
+{
+    BLOCKY,
+    CHUNKY,
+    SMOOTH,
+}
+
+public enum LevelType
+{
+    DUNGEON,
+    CAVES,
+    TERRAIN,
+}
+
 class Room
 {
     public Vector3Int indexPosition;

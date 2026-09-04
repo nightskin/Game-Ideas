@@ -1443,31 +1443,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelMeshGenerator
   player: {fileID: 2142934743352193625}
-  chunkPrefab: {fileID: 6876644674743865660, guid: cd437eb539c99694c95d065d641506b0, type: 3}
-  seed: 2026-09-03 11:16:37 AM
+  chunkPrefab: {fileID: 8437533224755788887, guid: 3a10429160f7e5a449bd8c8e7c107844, type: 3}
+  seed: 2026-09-04 8:04:04 AM
   worldSize: 160
-  numberOfChunks: 10
+  chunkSize: 160
+  numberOfChunks: 1
   isoLevel: 0.5
   useBoxShapedRooms: 0
   useRoundedHallways: 0
   numberOfSteps: 200
   walk3D: 0
-  numberOfRooms: 2
+  numberOfRooms: 10
   ceilngHeight: 2
   minRoomSize: 2
   maxRoomSize: 10
   hallwaySize: 2
-  caveLayers: 1
-  caveNoiseScale: 0.1
-  cavePersistance: 0.5
-  caveLacunarity: 1
-  waterLevel: 70
-  baseHeight: 2
-  terrainLayers: 1
-  terrainPersistance: 0.5
-  terrainLacunarity: 1
-  terrainNoiseScale: 0.1
-  showBounds: 0
+  groundPercent: 0.25
+  octaves: 3
+  frequency: 3
+  amplitude: 2
+  noiseScale: 1
+  showBounds: 1
   boundColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
 --- !u!1 &797136951
 GameObject:
@@ -2078,11 +2074,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoiseGPU
   noiseShader: {fileID: 7200000, guid: 504e1d5db52f39d4687578b105316e10, type: 3}
+  chunkSize: 160
   noiseScale: 1
-  amplitude: 5
-  frequency: 0.005
-  octaves: 8
-  groundPercent: 0.2
+  amplitude: 2
+  frequency: 3
+  octaves: 3
+  groundPercent: 0.25
 --- !u!1 &1169367595
 GameObject:
   m_ObjectHideFlags: 0
@@ -4090,15 +4087,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.69
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7131891185582679114, guid: 0aad86df5de87e640b98890f58d46d1a, type: 3}
       propertyPath: m_LocalRotation.w

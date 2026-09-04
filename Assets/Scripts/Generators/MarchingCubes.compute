@@ -6,6 +6,7 @@ RWStructuredBuffer<float> weights;
 
 float isoLevel;
 int chunkSize;
+bool insideOut = false;
 
 struct Triangle 
 {

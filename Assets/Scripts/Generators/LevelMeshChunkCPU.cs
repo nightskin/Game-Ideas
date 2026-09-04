@@ -16,7 +16,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         meshFilter.mesh = mesh;
 
-        if (style == ArtStyle.BLOCKY)
+        if (style == LevelStyle.BLOCKY)
             {
                 for (int x = 0; x < chunkSize; x++)
             {
@@ -24,46 +24,46 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                 {
                     for (int z = 0; z < chunkSize; z++)
                     {
-                        if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z),chunkSize))] > generator.isoLevel)
+                        if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x,y,z),chunkSize))] > generator.isoLevel)
                         {
                             if (y > 0)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y-1,z),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x,y-1,z),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadBottom(new Vector3(x, y, z));
                                 }
                             }
                             if (y < chunkSize - 1)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y+1,z),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x,y+1,z),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadTop(new Vector3(x, y, z));
                                 }
                             }
                             if (x > 0)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x-1,y,z),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x-1,y,z),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadLeft(new Vector3(x, y, z));
                                 }
                             }
                             if (x < chunkSize - 1)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x+1,y,z),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x+1,y,z),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadRight(new Vector3(x, y, z));
                                 }
                             }
                             if (z > 0)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z-1),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x,y,z-1),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadBack(new Vector3(x, y, z));
                                 }
                             }
                             if (z < chunkSize - 1)
                             {
-                                if (grid[(VoxelHelper.Index3dToIndex(new Vector3Int(x,y,z+1),chunkSize))] <= generator.isoLevel)
+                                if (grid[(VoxelHelper.Index3DToIndex(new Vector3Int(x,y,z+1),chunkSize))] <= generator.isoLevel)
                                 {
                                     DrawQuadFront(new Vector3(x, y, z));
                                 }
@@ -106,7 +106,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                             generator.GetDungeonValue(index * chunkSize + new Vector3Int(x,y+1,z)),  
                         };
 
-                        if(levelType == LevelType.CAVES)
+                        if(type == LevelType.CAVES)
                         {
                             values = new float[]
                             {
@@ -120,7 +120,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                                 generator.GetCaveValue(index * chunkSize + new Vector3Int(x,y+1,z)),   
                             };
                         }
-                        else if(levelType == LevelType.TERRAIN)
+                        else if(type == LevelType.TERRAIN)
                         {
                             values = new float[]
                             {
@@ -161,7 +161,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
                                 Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
-                                if(style == ArtStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], generator.isoLevel);
+                                if(style == LevelStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], generator.isoLevel);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);

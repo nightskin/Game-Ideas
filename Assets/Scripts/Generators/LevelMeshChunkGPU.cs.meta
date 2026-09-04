@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 18559b549382f3740a502e201245a26f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - meshFilter: {instanceID: 0}
+  - renderer: {instanceID: 0}
+  - collider: {instanceID: 0}
+  - generator: {instanceID: 0}
+  - marchingShader: {fileID: 7200000, guid: 9ab3fbb793f659a4588ff48582bd9c74, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

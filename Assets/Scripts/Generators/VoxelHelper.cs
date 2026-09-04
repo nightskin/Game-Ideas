@@ -1,24 +1,11 @@
 using UnityEngine;
 
 public static class VoxelHelper
-{
-
-    public static int PositionToIndex(Vector3 position, int chunkSize)
+{    
+    public static int Index3DToIndex(Vector3Int index3d, int chunkSize)
     {
-        return ((int)position.x) + ((int)position.y * chunkSize) + ((int)position.z * (chunkSize * chunkSize));
-    }
-    
-    public static Vector3 IndexToPosition(int index, int chunkSize)
-    {
-        int x = index % chunkSize;
-        int y = (index / chunkSize) % chunkSize;
-        int z = ((index /chunkSize)/ chunkSize) % chunkSize;
-        return new Vector3(x,y,z); 
-    }
-
-    public static int Index3dToIndex(Vector3Int index3d, int chunkSize)
-    {
-        return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
+        return index3d.x + chunkSize * (index3d.y + chunkSize * index3d.z);
+        //return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
     }
 
     public static Vector3Int IndexToIndex3D(int index, int chunkSize)

@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class LevelMeshChunkGPU : LevelMeshChunk
 {
+    public int scale = 10;
     public ComputeShader marchingShader;
     struct Triangle 
     {
@@ -21,9 +23,21 @@ public class LevelMeshChunkGPU : LevelMeshChunk
     {
         CreateBuffers();
         Game.get = GameObject.Find("GameManager").GetComponent<Game>();
-        grid = Game.get.noise.GetNoise();
+        Game.get.noise.chunkSize = chunkSize;
+        Game.get.noise.noiseScale = generator.noiseScale;
+        Game.get.noise.amplitude = generator.amplitude;
+        Game.get.noise.frequency = generator.frequency;
+        Game.get.noise.octaves = generator.octaves;
+        Game.get.noise.groundPercent = generator.groundPercent;
+        grid = Game.get.noise.GetNoise(index);
+        if(type == LevelType.DUNGEON)
+        {
+            int chunkIndex = VoxelHelper.Index3DToIndex(index * chunkSize, generator.worldSize);
+            Array.Copy(LevelMeshGenerator.dungeonGrid,chunkIndex,grid,0, chunkSize * chunkSize * chunkSize);
+        }
         meshFilter.mesh = collider.sharedMesh = ConstructMesh();
         ReleaseBuffers();
+        if(collider.sharedMesh.vertexCount == 0) DestroyImmediate(gameObject);
     }
 
     void CreateBuffers()
@@ -48,24 +62,44 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         return triCount[0];
     }
 
-    Mesh CreateMeshFromTriangles(Triangle[] triangles)
+    Mesh CreateMeshFromTriangles(Triangle[] triangles, bool insideOut = false)
     {
         Vector3[] vertices = new Vector3[triangles.Length * 3];
         int[] indices = new int[triangles.Length * 3];
         List<Vector2> uvs = new List<Vector2>();
 
-        for (int i = 0; i < triangles.Length; i++) 
+
+        if(insideOut)
         {
-            int startIndex = i * 3; 
-            vertices[startIndex] = triangles[i].a;
-            vertices[startIndex + 1] = triangles[i].b;
-            vertices[startIndex + 2] = triangles[i].c; 
-            indices[startIndex] = startIndex;
-            indices[startIndex + 1] = startIndex + 1;
-            indices[startIndex + 2] = startIndex + 2;
-            uvs.AddRange(VoxelHelper.GetUVs(triangles[i].a, triangles[i].b, triangles[i].c));
+            for (int i = 0; i < triangles.Length; i++) 
+            {
+                int startIndex = i * 3; 
+                vertices[startIndex] = triangles[i].c;
+                vertices[startIndex + 1] = triangles[i].b;
+                vertices[startIndex + 2] = triangles[i].a; 
+                indices[startIndex] = startIndex;
+                indices[startIndex + 1] = startIndex + 1;
+                indices[startIndex + 2] = startIndex + 2;
+                uvs.AddRange(VoxelHelper.GetUVs(triangles[i].c, triangles[i].b, triangles[i].a));
+            }
         }
+        else
+        {
+            for (int i = 0; i < triangles.Length; i++) 
+            {
+                int startIndex = i * 3; 
+                vertices[startIndex] = triangles[i].a;
+                vertices[startIndex + 1] = triangles[i].b;
+                vertices[startIndex + 2] = triangles[i].c; 
+                indices[startIndex] = startIndex;
+                indices[startIndex + 1] = startIndex + 1;
+                indices[startIndex + 2] = startIndex + 2;
+                uvs.AddRange(VoxelHelper.GetUVs(triangles[i].a, triangles[i].b, triangles[i].c));
+            }
+        }
+
         Mesh mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         mesh.vertices = vertices;
         mesh.triangles = indices;
         mesh.RecalculateNormals();
@@ -86,6 +120,14 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         Triangle[] triangles = new Triangle[ReadTriangleCount()];
         
         trianglesBuffer.GetData(triangles);
-        return CreateMeshFromTriangles(triangles);
+        if(type == LevelType.DUNGEON)
+        {
+            return CreateMeshFromTriangles(triangles, true);
+        }
+        else
+        {
+            return CreateMeshFromTriangles(triangles);
+        }
+
     }
 }
