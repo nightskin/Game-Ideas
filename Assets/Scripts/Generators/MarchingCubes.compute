@@ -6,7 +6,7 @@ RWStructuredBuffer<float> weights;
 
 float isoLevel;
 int chunkSize;
-bool insideOut = false;
+bool chunky = false;
 
 struct Triangle 
 {
@@ -23,6 +23,11 @@ int indexFromCoord(int x, int y, int z)
 float3 interp(float3 edgeVertex1, float valueAtVertex1, float3 edgeVertex2, float valueAtVertex2)
 {
     return (edgeVertex1 + (isoLevel - valueAtVertex1) * (edgeVertex2 - edgeVertex1)  / (valueAtVertex2 - valueAtVertex1));
+}
+
+float3 midPoint(float3 edgeVertex1, float3 edgeVertex2)
+{
+    return (edgeVertex1 + edgeVertex2) / 2;
 }
 
 static const int numThreads = 8;
@@ -73,9 +78,19 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         int e21 = edgeConnections[edges[i + 2]][1];
 
         Triangle tri;
-        tri.a = interp(cornerOffsets[e00], cubeValues[e00], cornerOffsets[e01], cubeValues[e01]) + id;
-        tri.b = interp(cornerOffsets[e10], cubeValues[e10], cornerOffsets[e11], cubeValues[e11]) + id;
-        tri.c = interp(cornerOffsets[e20], cubeValues[e20], cornerOffsets[e21], cubeValues[e21]) + id;
+        if(chunky)
+        {
+            tri.a = midPoint(cornerOffsets[e00], cornerOffsets[e01]) + id;
+            tri.b = midPoint(cornerOffsets[e10], cornerOffsets[e11]) + id;
+            tri.c = midPoint(cornerOffsets[e20], cornerOffsets[e21]) + id;
+        }
+        else
+        {
+            tri.a = interp(cornerOffsets[e00], cubeValues[e00], cornerOffsets[e01], cubeValues[e01]) + id;
+            tri.b = interp(cornerOffsets[e10], cubeValues[e10], cornerOffsets[e11], cubeValues[e11]) + id;
+            tri.c = interp(cornerOffsets[e20], cubeValues[e20], cornerOffsets[e21], cubeValues[e21]) + id;
+        }
+
         triangles.Append(tri);
     }
 

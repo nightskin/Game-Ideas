@@ -1,10 +1,28 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public static class MonoBehaviourExt
+{
+    public static void InvokeNextFrame(this MonoBehaviour self, Action callback)
+    {
+        if (self.gameObject.activeInHierarchy && self.enabled)
+            self.StartCoroutine(DelayedCall(callback));
+    }
+
+    private static IEnumerator DelayedCall(Action callback)
+    {
+        yield return null;
+        callback?.Invoke();
+    }
+}
 
 public class LevelMeshGenerator : MonoBehaviour
 {
     [Header("General Settings")]
+    public LevelType type = LevelType.DUNGEON;
+    public LevelStyle style = LevelStyle.CHUNKY;
     public Transform player;
     public Dictionary<Vector3Int, LevelMeshChunk> map = new Dictionary<Vector3Int, LevelMeshChunk>();
     [SerializeField] GameObject chunkPrefab;
@@ -28,6 +46,7 @@ public class LevelMeshGenerator : MonoBehaviour
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
     [Min(1)] public int hallwaySize = 2;
+    [Min(1)] public int squash = 2;
     
 
     [Space]
@@ -55,21 +74,42 @@ public class LevelMeshGenerator : MonoBehaviour
     void Start()
     {
         if(!player) player = GameObject.Find("Player").transform;
-        for(int i = 0; i < worldSize * worldSize; i++)
+        
+        for(int x = 0; x < chunkSize; x++)
         {
-            
+            for(int y = 0; y < chunkSize; y++)
+            {
+                for(int z = 0; z < chunkSize; z++)
+                {
+                    Ray ray = new Ray(new Vector3(x,y,z) * LevelMeshChunk.chunkScale, Vector3.down);
+                    if(Physics.Raycast(ray, out RaycastHit hit))
+                    {
+                        player.position = hit.point;
+                        break;
+                    }
+                }
+            }
         }
     }
 
-    public void Generate()
+    void OnValidate()
     {
-        if (seed == string.Empty) seed = DateTime.Now.ToString();
+        this.InvokeNextFrame(() => DestroyKids());
+        Generate(false);
+    }
+
+    public void Generate(bool random)
+    {
+        if (random) seed = DateTime.Now.ToString();
         UnityEngine.Random.InitState(seed.GetHashCode());
         noiseCPU = new NoiseCPU(seed.GetHashCode());
-        dungeonGrid = new float[worldSize * worldSize * worldSize];
 
         numberOfChunks = worldSize/chunkSize;
-        GenerateDungeonData(useBoxShapedRooms);
+        if(type == LevelType.DUNGEON)
+        {
+            dungeonGrid = new float[worldSize * worldSize * worldSize];
+            GenerateDungeonData(useBoxShapedRooms);
+        }
         
         for(int chunkX = 0; chunkX < numberOfChunks; chunkX++)
         {
@@ -79,7 +119,6 @@ public class LevelMeshGenerator : MonoBehaviour
                 {
                     Vector3 chunkPosition = new Vector3(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize) * LevelMeshChunk.chunkScale;
                     GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
-                    chunkObject.transform.localScale = Vector3.one * LevelMeshChunk.chunkScale;
                     LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunkCPU>();
                     if(!chunk)
                     {
@@ -93,6 +132,7 @@ public class LevelMeshGenerator : MonoBehaviour
                 }
             }
         }
+        transform.localScale = Vector3.one * LevelMeshChunk.chunkScale;
     }
 
     public void AddWater()
@@ -112,7 +152,7 @@ public class LevelMeshGenerator : MonoBehaviour
                 int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
 
                 int rx = UnityEngine.Random.Range(roomSizeX, worldSize - roomSizeX);
-                int ry = UnityEngine.Random.Range(ceilngHeight, worldSize/2 - ceilngHeight);
+                int ry = UnityEngine.Random.Range(ceilngHeight, worldSize/squash - ceilngHeight);
                 int rz = UnityEngine.Random.Range(roomSizeZ, worldSize - roomSizeZ);
                 Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
                 ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
@@ -135,7 +175,7 @@ public class LevelMeshGenerator : MonoBehaviour
             for (int r = 0; r < numberOfRooms; r++)
             {
                 int xi = UnityEngine.Random.Range(0, worldSize);
-                int yi = UnityEngine.Random.Range(0, worldSize/2);
+                int yi = UnityEngine.Random.Range(0, worldSize/squash);
                 int zi = UnityEngine.Random.Range(0, worldSize);
 
                 Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
@@ -329,4 +369,11 @@ public class LevelMeshGenerator : MonoBehaviour
         }
     } 
     
+    public void DestroyKids()
+    {
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+    }
 }

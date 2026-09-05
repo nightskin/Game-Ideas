@@ -1,12 +1,14 @@
 using UnityEngine;
 
+
+
 public static class Util
 {
     public static Vector3 RandomPositionInBox(float minx, float maxx, float miny, float maxy, float minz, float maxz)
     {
-        float x = Random.Range(minx,maxx);
-        float y = Random.Range(miny,maxy);
-        float z = Random.Range(minz,maxz);
+        float x = UnityEngine.Random.Range(minx,maxx);
+        float y = UnityEngine.Random.Range(miny,maxy);
+        float z = UnityEngine.Random.Range(minz,maxz);
         return new Vector3(x,y,z);
     }
 

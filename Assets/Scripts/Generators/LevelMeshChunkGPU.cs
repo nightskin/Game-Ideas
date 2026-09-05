@@ -30,7 +30,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         Game.get.noise.octaves = generator.octaves;
         Game.get.noise.groundPercent = generator.groundPercent;
         grid = Game.get.noise.GetNoise(index);
-        if(type == LevelType.DUNGEON)
+        if(generator.type == LevelType.DUNGEON)
         {
             int chunkIndex = VoxelHelper.Index3DToIndex(index * chunkSize, generator.worldSize);
             Array.Copy(LevelMeshGenerator.dungeonGrid,chunkIndex,grid,0, chunkSize * chunkSize * chunkSize);
@@ -102,6 +102,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         mesh.vertices = vertices;
         mesh.triangles = indices;
+        mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
         return mesh;
     }
@@ -112,6 +113,15 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         marchingShader.SetBuffer(0, "weights", weightsBuffer);
         marchingShader.SetInt("chunkSize", chunkSize);
         marchingShader.SetFloat("isoLevel", .5f);
+        if(generator.style == LevelStyle.CHUNKY)
+        {
+            marchingShader.SetBool("chunky", true);
+        }
+        else
+        {
+            marchingShader.SetBool("chunky",false);
+        }
+
 
         weightsBuffer.SetData(grid);
         trianglesBuffer.SetCounterValue(0);
@@ -120,7 +130,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         Triangle[] triangles = new Triangle[ReadTriangleCount()];
         
         trianglesBuffer.GetData(triangles);
-        if(type == LevelType.DUNGEON)
+        if(generator.type == LevelType.DUNGEON)
         {
             return CreateMeshFromTriangles(triangles, true);
         }

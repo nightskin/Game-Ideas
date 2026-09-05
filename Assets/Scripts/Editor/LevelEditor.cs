@@ -10,18 +10,8 @@ public class LevelEditor : Editor
         LevelMeshGenerator level = (LevelMeshGenerator)target;
         if(GUILayout.Button("Create Random"))
         {
-            level.Generate();
-        }
-        if(GUILayout.Button("Clear Child GameObjects"))
-        {
-            for(int i = 0; i < level.transform.childCount; i++)
-            {
-                GameObject child = level.transform.GetChild(i).gameObject;
-                while(child)
-                {
-                    DestroyImmediate(child);
-                }
-            }
+            if(level.transform.childCount > 0) level.InvokeNextFrame(() => level.DestroyKids());
+            level.Generate(true);
         }
     }
 }

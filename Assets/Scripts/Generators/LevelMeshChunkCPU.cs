@@ -16,7 +16,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         meshFilter.mesh = mesh;
 
-        if (style == LevelStyle.BLOCKY)
+        if (generator.style == LevelStyle.BLOCKY)
             {
                 for (int x = 0; x < chunkSize; x++)
             {
@@ -106,7 +106,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                             generator.GetDungeonValue(index * chunkSize + new Vector3Int(x,y+1,z)),  
                         };
 
-                        if(type == LevelType.CAVES)
+                        if(generator.type == LevelType.CAVES)
                         {
                             values = new float[]
                             {
@@ -120,7 +120,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                                 generator.GetCaveValue(index * chunkSize + new Vector3Int(x,y+1,z)),   
                             };
                         }
-                        else if(type == LevelType.TERRAIN)
+                        else if(generator.type == LevelType.TERRAIN)
                         {
                             values = new float[]
                             {
@@ -161,7 +161,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
                                 Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
-                                if(style == LevelStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], generator.isoLevel);
+                                if(generator.style == LevelStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], generator.isoLevel);
                                 
                                 verts.Add(vertexPos);
                                 tris.Add(buffer);

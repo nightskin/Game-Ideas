@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class LevelMeshChunk : MonoBehaviour
 {
-    public LevelType type = LevelType.DUNGEON;
-    public LevelStyle style = LevelStyle.CHUNKY;
     public MeshFilter meshFilter;
     public MeshRenderer renderer;
     public MeshCollider collider;
@@ -13,7 +11,7 @@ public class LevelMeshChunk : MonoBehaviour
 
     public int chunkSize;
     public static int numThreads = 8;
-    public static float chunkScale = 1;
+    public static float chunkScale = 2.5f;
 
     public virtual void Generate(){}
 }
