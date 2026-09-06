@@ -83,6 +83,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
             tri.a = midPoint(cornerOffsets[e00], cornerOffsets[e01]) + id;
             tri.b = midPoint(cornerOffsets[e10], cornerOffsets[e11]) + id;
             tri.c = midPoint(cornerOffsets[e20], cornerOffsets[e21]) + id;
+            
         }
         else
         {

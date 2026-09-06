@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,13 +6,10 @@ public class Game : MonoBehaviour
     public static Game get;
     public static Input input;
     public static GameSettings settings;
-
     
     public PauseMenu pauseMenu;
     public GameObject player;
     public NoiseGPU noise;
-
-
     
     void Awake()
     {
@@ -22,7 +18,7 @@ public class Game : MonoBehaviour
         input = new Input();
         input.Enable();
     }
-    
+
     void OnEnable()
     {
         input.Player.Pause.performed += Pause_performed;

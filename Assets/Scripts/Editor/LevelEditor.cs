@@ -13,5 +13,9 @@ public class LevelEditor : Editor
             if(level.transform.childCount > 0) level.InvokeNextFrame(() => level.DestroyKids());
             level.Generate(true);
         }
+        if(GUILayout.Button("Clear"))
+        {
+            if(level.transform.childCount > 0) level.InvokeNextFrame(() => level.DestroyKids());
+        }
     }
 }

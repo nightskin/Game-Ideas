@@ -22,22 +22,34 @@ public class LevelMeshChunkGPU : LevelMeshChunk
     public override void Generate()
     {
         CreateBuffers();
-        Game.get = GameObject.Find("GameManager").GetComponent<Game>();
-        Game.get.noise.chunkSize = chunkSize;
-        Game.get.noise.noiseScale = generator.noiseScale;
-        Game.get.noise.amplitude = generator.amplitude;
-        Game.get.noise.frequency = generator.frequency;
-        Game.get.noise.octaves = generator.octaves;
-        Game.get.noise.groundPercent = generator.groundPercent;
-        grid = Game.get.noise.GetNoise(index);
+
         if(generator.type == LevelType.DUNGEON)
         {
-            int chunkIndex = VoxelHelper.Index3DToIndex(index * chunkSize, generator.worldSize);
-            Array.Copy(LevelMeshGenerator.dungeonGrid,chunkIndex,grid,0, chunkSize * chunkSize * chunkSize);
+            grid = new float[chunkSize * chunkSize * chunkSize];
+            for(int i = 0; i < chunkSize * chunkSize * chunkSize; i++)
+            {
+                grid[i] = LevelMeshGenerator.dungeonGrid[LevelMeshGenerator.voxelIndex];
+                LevelMeshGenerator.voxelIndex++;
+            }
         }
+        else
+        {
+            Game.get = GameObject.Find("GameManager").GetComponent<Game>();
+            Game.get.noise.fractalType = generator.fractalType;
+            Game.get.noise.noiseType = generator.noiseType;
+            Game.get.noise.seed = generator.seed;
+            Game.get.noise.chunkSize = chunkSize;
+            Game.get.noise.noiseScale = generator.noiseScale;
+            Game.get.noise.amplitude = generator.amplitude;
+            Game.get.noise.frequency = generator.frequency;
+            Game.get.noise.octaves = generator.octaves;
+            Game.get.noise.groundPercent = generator.groundPercent;
+            Game.get.noise.is3D = generator.type == LevelType.CAVES;
+            grid = Game.get.noise.GetNoise(transform.position);
+        }
+        
         meshFilter.mesh = collider.sharedMesh = ConstructMesh();
         ReleaseBuffers();
-        if(collider.sharedMesh.vertexCount == 0) DestroyImmediate(gameObject);
     }
 
     void CreateBuffers()

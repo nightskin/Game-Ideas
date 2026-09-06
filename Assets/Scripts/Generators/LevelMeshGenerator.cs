@@ -26,14 +26,16 @@ public class LevelMeshGenerator : MonoBehaviour
     public Transform player;
     public Dictionary<Vector3Int, LevelMeshChunk> map = new Dictionary<Vector3Int, LevelMeshChunk>();
     [SerializeField] GameObject chunkPrefab;
-    [SerializeField] string seed = string.Empty;
+    public string seed = string.Empty;
     [Min(10)] public int worldSize = 160;
     [Min(1)] public int chunkSize = 64;
     [HideInInspector] public int numberOfChunks;
     NoiseCPU noiseCPU;
+
     
     public float isoLevel = 0.5f;
     public static float[] dungeonGrid;
+    public static int voxelIndex;
 
     [Space]
     [Header("DUNGEON SETTINGS")]
@@ -49,8 +51,11 @@ public class LevelMeshGenerator : MonoBehaviour
     [Min(1)] public int squash = 2;
     
 
+
     [Space]
     [Header("NOISE SETTINGS")]
+    public NoiseType noiseType;
+    public FractalType fractalType;
     public float groundPercent = 0.5f;
     public int octaves = 1;
     public float frequency = 0.5f;
@@ -94,7 +99,7 @@ public class LevelMeshGenerator : MonoBehaviour
 
     void OnValidate()
     {
-        this.InvokeNextFrame(() => DestroyKids());
+        if(transform.childCount > 0) this.InvokeNextFrame(() => DestroyKids());
         Generate(false);
     }
 
@@ -105,6 +110,7 @@ public class LevelMeshGenerator : MonoBehaviour
         noiseCPU = new NoiseCPU(seed.GetHashCode());
 
         numberOfChunks = worldSize/chunkSize;
+        voxelIndex = 0;
         if(type == LevelType.DUNGEON)
         {
             dungeonGrid = new float[worldSize * worldSize * worldSize];
@@ -119,10 +125,10 @@ public class LevelMeshGenerator : MonoBehaviour
                 {
                     Vector3 chunkPosition = new Vector3(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize) * LevelMeshChunk.chunkScale;
                     GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
-                    LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunkCPU>();
+                    LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunkGPU>();
                     if(!chunk)
                     {
-                        chunk = chunkObject.transform.GetComponent<LevelMeshChunkGPU>();
+                        chunk = chunkObject.transform.GetComponent<LevelMeshChunkCPU>();
                     }
                     chunk.chunkSize = chunkSize;
                     chunk.index = new Vector3Int(chunkX,chunkY,chunkZ);
@@ -373,7 +379,7 @@ public class LevelMeshGenerator : MonoBehaviour
     {
         for(int i = 0; i < transform.childCount; i++)
         {
-            DestroyImmediate(transform.GetChild(i).gameObject);
+           DestroyImmediate(transform.GetChild(i).gameObject);
         }
     }
 }
