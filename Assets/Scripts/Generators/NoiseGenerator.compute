@@ -18,9 +18,14 @@ int fractalType;
 int noiseType;
 
 
-float offsetX;
-float offsetY;
-float offsetZ;
+int offsetX;
+int offsetY;
+int offsetZ;
+
+float Remap(float value, float oldMin, float oldMax, float newMin, float newMax)
+{
+    return (((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+}
 
 int IndexFromCoord(int x, int y, int z)
 {
@@ -28,7 +33,7 @@ int IndexFromCoord(int x, int y, int z)
 }
 
 [numthreads(numthreads,numthreads,numthreads)]
-void GenerateNoise (uint3 id : SV_DispatchThreadID)
+void GenerateNoise (uint3 v : SV_DispatchThreadID)
 {
     fnl_state noise = fnlCreateState(seed);
     noise.noise_type = noiseType;
@@ -36,20 +41,25 @@ void GenerateNoise (uint3 id : SV_DispatchThreadID)
     noise.frequency = frequency;
     noise.octaves = octaves;
 
-    float3 pos = id * noiseScale;
+    float3 pos = v + int3(offsetX, offsetY, offsetZ) * chunkSize;
+    if(offsetX > 0 && v.x == 0) pos.x--;
+    if(offsetY > 0 && v.y == 0) pos.y--;
+    if(offsetZ > 0 && v.z == 0) pos.z--;
+
+    pos *= noiseScale;
+
     float n;
     if(is3D)
     {
-        n = fnlGetNoise3D(noise, pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ) * amplitude;
+        n = fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
     }
     else
     {
         float ground = -pos.y + (groundPercent * chunkSize);
-        n = ground + fnlGetNoise3D(noise, pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ) * amplitude;
+        float maxValue = amplitude * octaves;
+        n = ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
     }
 
-
-    
-    weights[IndexFromCoord(id.x, id.y, id.z)] = n;
+    weights[IndexFromCoord(v.x, v.y, v.z)] = n;
     
 }

@@ -27,8 +27,8 @@ public class LevelMeshGenerator : MonoBehaviour
     public Dictionary<Vector3Int, LevelMeshChunk> map = new Dictionary<Vector3Int, LevelMeshChunk>();
     [SerializeField] GameObject chunkPrefab;
     public string seed = string.Empty;
-    [Min(10)] public int worldSize = 160;
-    [Min(1)] public int chunkSize = 64;
+    public int worldSize = 160;
+    public int chunkSize = 80;
     [HideInInspector] public int numberOfChunks;
     NoiseCPU noiseCPU;
 
@@ -56,11 +56,12 @@ public class LevelMeshGenerator : MonoBehaviour
     [Header("NOISE SETTINGS")]
     public NoiseType noiseType;
     public FractalType fractalType;
-    public float groundPercent = 0.5f;
+    [Range(0,1)] public float groundPercent = 0.5f;
     public int octaves = 1;
     public float frequency = 0.5f;
     public float amplitude = 1;
     public float noiseScale = 1;
+    public float threshold = 1.5f;
 
     [Header("DEBUG")]
     [SerializeField] bool showBounds = false;
@@ -96,13 +97,7 @@ public class LevelMeshGenerator : MonoBehaviour
             }
         }
     }
-
-    void OnValidate()
-    {
-        if(transform.childCount > 0) this.InvokeNextFrame(() => DestroyKids());
-        Generate(false);
-    }
-
+    
     public void Generate(bool random)
     {
         if (random) seed = DateTime.Now.ToString();
@@ -123,8 +118,7 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for(int chunkZ = 0; chunkZ < numberOfChunks; chunkZ++)
                 {
-                    Vector3 chunkPosition = new Vector3(chunkX * chunkSize, chunkY * chunkSize, chunkZ * chunkSize) * LevelMeshChunk.chunkScale;
-                    GameObject chunkObject = Instantiate(chunkPrefab,chunkPosition,Quaternion.identity, transform);
+                    GameObject chunkObject = Instantiate(chunkPrefab,Vector3.zero,Quaternion.identity, transform);
                     LevelMeshChunk chunk = chunkObject.transform.GetComponent<LevelMeshChunkGPU>();
                     if(!chunk)
                     {

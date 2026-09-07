@@ -25,6 +25,7 @@ public class NoiseGPU : MonoBehaviour
     [HideInInspector] public FractalType fractalType;
     [HideInInspector] public string seed;
     [HideInInspector] public bool is3D = false;
+    [HideInInspector] public int worldSize;
     [HideInInspector ] public int chunkSize = 256;
     [HideInInspector] public float noiseScale = 1f;
     [HideInInspector] public float amplitude = 5f;
@@ -45,7 +46,7 @@ public class NoiseGPU : MonoBehaviour
         weightsBuffer.Release();
     }
 
-    public float[] GetNoise(Vector3 index)
+    public float[] GetNoise(Vector3Int index)
     {
         CreateBuffers();
 
@@ -61,9 +62,9 @@ public class NoiseGPU : MonoBehaviour
         noiseShader.SetFloat("frequency", frequency);
         noiseShader.SetInt("octaves", octaves);
         noiseShader.SetFloat("groundPercent", groundPercent);
-        noiseShader.SetFloat("offsetX", index.x);
-        noiseShader.SetFloat("offsetY", index.y);
-        noiseShader.SetFloat("offsetZ", index.z);
+        noiseShader.SetInt("offsetX", index.x);
+        noiseShader.SetInt("offsetY", index.y);
+        noiseShader.SetInt("offsetZ", index.z);
         noiseShader.Dispatch(0, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads);
         weightsBuffer.GetData(weights);
         ReleaseBuffers();

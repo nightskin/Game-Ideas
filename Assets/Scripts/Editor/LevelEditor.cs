@@ -10,12 +10,12 @@ public class LevelEditor : Editor
         LevelMeshGenerator level = (LevelMeshGenerator)target;
         if(GUILayout.Button("Create Random"))
         {
-            if(level.transform.childCount > 0) level.InvokeNextFrame(() => level.DestroyKids());
+            level.DestroyKids();
             level.Generate(true);
         }
         if(GUILayout.Button("Clear"))
         {
-            if(level.transform.childCount > 0) level.InvokeNextFrame(() => level.DestroyKids());
+            level.DestroyKids();
         }
     }
 }
