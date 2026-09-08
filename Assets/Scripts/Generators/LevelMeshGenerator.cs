@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public static class MonoBehaviourExt
 {
@@ -61,7 +60,6 @@ public class LevelMeshGenerator : MonoBehaviour
     public float frequency = 0.5f;
     public float amplitude = 1;
     public float noiseScale = 1;
-    public float threshold = 1.5f;
 
     [Header("DEBUG")]
     [SerializeField] bool showBounds = false;
@@ -74,6 +72,15 @@ public class LevelMeshGenerator : MonoBehaviour
         {
             Gizmos.color = boundColor;
             Gizmos.DrawWireCube(transform.position + (Vector3.one * worldSize * LevelMeshChunk.chunkScale / 2 ), Vector3.one * worldSize * LevelMeshChunk.chunkScale);
+        }
+    }
+
+    void OnValidate()
+    {
+        if(transform.childCount > 0 && chunkSize == worldSize)
+        {
+            MonoBehaviourExt.InvokeNextFrame(this, DestroyKids);
+            Generate(false);
         }
     }
 

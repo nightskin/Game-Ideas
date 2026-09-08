@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class LevelMeshChunkGPU : LevelMeshChunk
 {
-    public int scale = 10;
     public ComputeShader marchingShader;
     struct Triangle 
     {
@@ -50,6 +49,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
     void CreateBuffers()
     {
         trianglesBuffer = new ComputeBuffer(5 * (int)Mathf.Pow(chunkSize,3), Triangle.SizeOf, ComputeBufferType.Append);
+        if(generator.style == LevelStyle.BLOCKY) trianglesBuffer = new ComputeBuffer(12 * (int)Mathf.Pow(chunkSize,3), Triangle.SizeOf, ComputeBufferType.Append);
         triangleCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
         weightsBuffer = new ComputeBuffer((int)Mathf.Pow(chunkSize,3), sizeof(float));
     }
@@ -81,20 +81,6 @@ public class LevelMeshChunkGPU : LevelMeshChunk
             for (int i = 0; i < triangles.Length; i++) 
             {
                 int startIndex = i * 3; 
-                vertices[startIndex] = triangles[i].c + offset;
-                vertices[startIndex + 1] = triangles[i].b + offset;
-                vertices[startIndex + 2] = triangles[i].a + offset; 
-                indices[startIndex] = startIndex;
-                indices[startIndex + 1] = startIndex + 1;
-                indices[startIndex + 2] = startIndex + 2;
-                uvs.AddRange(VoxelHelper.GetUVs(triangles[i].c, triangles[i].b, triangles[i].a));
-            }
-        }
-        else
-        {
-            for (int i = 0; i < triangles.Length; i++) 
-            {
-                int startIndex = i * 3; 
                 vertices[startIndex] = triangles[i].a + offset;
                 vertices[startIndex + 1] = triangles[i].b + offset;
                 vertices[startIndex + 2] = triangles[i].c + offset; 
@@ -102,6 +88,20 @@ public class LevelMeshChunkGPU : LevelMeshChunk
                 indices[startIndex + 1] = startIndex + 1;
                 indices[startIndex + 2] = startIndex + 2;
                 uvs.AddRange(VoxelHelper.GetUVs(triangles[i].a, triangles[i].b, triangles[i].c));
+            }
+        }
+        else
+        {
+            for (int i = 0; i < triangles.Length; i++) 
+            {
+                int startIndex = i * 3; 
+                vertices[startIndex] = triangles[i].c + offset;
+                vertices[startIndex + 1] = triangles[i].b + offset;
+                vertices[startIndex + 2] = triangles[i].a + offset; 
+                indices[startIndex] = startIndex;
+                indices[startIndex + 1] = startIndex + 1;
+                indices[startIndex + 2] = startIndex + 2;
+                uvs.AddRange(VoxelHelper.GetUVs(triangles[i].c, triangles[i].b, triangles[i].a));
             }
         }
 
@@ -120,14 +120,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         marchingShader.SetBuffer(0, "weights", weightsBuffer);
         marchingShader.SetInt("chunkSize", chunkSize);
         marchingShader.SetFloat("isoLevel", generator.isoLevel);
-        if(generator.style == LevelStyle.CHUNKY)
-        {
-            marchingShader.SetBool("chunky", true);
-        }
-        else
-        {
-            marchingShader.SetBool("chunky",false);
-        }
+        marchingShader.SetInt("style", (int)generator.style);
 
 
         weightsBuffer.SetData(grid);

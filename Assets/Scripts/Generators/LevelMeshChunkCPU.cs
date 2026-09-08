@@ -18,7 +18,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
         if (generator.style == LevelStyle.BLOCKY)
             {
-                for (int x = 0; x < chunkSize; x++)
+            for (int x = 0; x < chunkSize; x++)
             {
                 for (int y = 0; y < chunkSize; y++)
                 {
@@ -160,7 +160,7 @@ public class LevelMeshChunkCPU : LevelMeshChunk
                                 int a = MarchingCubesTables.edgeConnections[edgeIndex][0];
                                 int b = MarchingCubesTables.edgeConnections[edgeIndex][1];
 
-                                Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 0.5f);
+                                Vector3 vertexPos = Vector3.Lerp(points[a], points[b], 1);
                                 if(generator.style == LevelStyle.SMOOTH) vertexPos = VoxelHelper.LerpPoint(values[a], values[b], points[a], points[b], generator.isoLevel);
                                 
                                 verts.Add(vertexPos);
@@ -206,10 +206,10 @@ public class LevelMeshChunkCPU : LevelMeshChunk
     
     void DrawQuadTop(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f)    + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f)     + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f)   + position);
+        verts.Add(new Vector3(0, 1, 1)    + position);
+        verts.Add(new Vector3(1, 1, 1)     + position);
+        verts.Add(new Vector3(1, 1, 0)    + position);
+        verts.Add(new Vector3(0, 1, 0)   + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -229,10 +229,10 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
     void DrawQuadFront(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f)   + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f)     + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f)   + position);
+        verts.Add(new Vector3(0, 1, 1) + position);
+        verts.Add(new Vector3(1, 1, 1) + position);
+        verts.Add(new Vector3(1, 0, 1) + position);
+        verts.Add(new Vector3(0, 0, 1)   + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -252,10 +252,10 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
     void DrawQuadBack(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f)   + position);
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f)     + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f)   + position);
+        verts.Add(new Vector3(0, 1, 0) + position);
+        verts.Add(new Vector3(1, 1, 0) + position);
+        verts.Add(new Vector3(1, 0, 0) + position);
+        verts.Add(new Vector3(0, 0, 0) + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -275,10 +275,10 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
     void DrawQuadLeft(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, 0.5f, -0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, 0.5f, 0.5f)     + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f)   + position);
+        verts.Add(new Vector3(0, 1, 0)    + position);
+        verts.Add(new Vector3(0, 1, 1)     + position);
+        verts.Add(new Vector3(0, 0, 1)    + position);
+        verts.Add(new Vector3(0, 0, 0)   + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
@@ -298,10 +298,10 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
     void DrawQuadRight(Vector3 position)
     {
-        verts.Add(new Vector3(0.5f, 0.5f, -0.5f)  + position);
-        verts.Add(new Vector3(0.5f, 0.5f, 0.5f)   + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f)  + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f) + position);
+        verts.Add(new Vector3(1, 1, 0)  + position);
+        verts.Add(new Vector3(1, 1, 1)   + position);
+        verts.Add(new Vector3(1, 0, 1)  + position);
+        verts.Add(new Vector3(1, 0, 0) + position);
 
         tris.Add(buffer + 2);
         tris.Add(buffer + 1);
@@ -321,14 +321,15 @@ public class LevelMeshChunkCPU : LevelMeshChunk
 
     void DrawQuadBottom(Vector3 position)
     {
-        verts.Add(new Vector3(-0.5f, -0.5f, 0.5f)    + position);
-        verts.Add(new Vector3(0.5f, -0.5f, 0.5f)     + position);
-        verts.Add(new Vector3(0.5f, -0.5f, -0.5f)    + position);
-        verts.Add(new Vector3(-0.5f, -0.5f, -0.5f)   + position);
+        verts.Add(new Vector3(0, 0, 1)    + position);
+        verts.Add(new Vector3(1, 0, 1)     + position);
+        verts.Add(new Vector3(1, 0, 0)    + position);
+        verts.Add(new Vector3(0, 0, 0)   + position);
 
         tris.Add(buffer + 0);
         tris.Add(buffer + 1);
         tris.Add(buffer + 2);
+        
         tris.Add(buffer + 3);
         tris.Add(buffer + 0);
         tris.Add(buffer + 2);
