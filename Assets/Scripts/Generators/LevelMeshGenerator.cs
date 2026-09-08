@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public static class MonoBehaviourExt
 {
@@ -34,8 +35,7 @@ public class LevelMeshGenerator : MonoBehaviour
 
     
     public float isoLevel = 0.5f;
-    public static float[] dungeonGrid;
-    public static int voxelIndex;
+    [HideInInspector] public float[] dungeonGrid;
 
     [Space]
     [Header("DUNGEON SETTINGS")]
@@ -81,19 +81,27 @@ public class LevelMeshGenerator : MonoBehaviour
     {
         if(!player) player = GameObject.Find("Player").transform;
         
-        for(int x = 0; x < chunkSize; x++)
+        if(type == LevelType.DUNGEON || type == LevelType.CAVES)
         {
-            for(int y = 0; y < chunkSize; y++)
+            for(int x = 0; x < worldSize; x++)
             {
-                for(int z = 0; z < chunkSize; z++)
+                for(int z = 0; z < worldSize; z++)
                 {
-                    Ray ray = new Ray(new Vector3(x,y,z) * LevelMeshChunk.chunkScale, Vector3.down);
+                    Ray ray = new Ray(new Vector3(x,worldSize,z) * LevelMeshChunk.chunkScale, Vector3.down);
                     if(Physics.Raycast(ray, out RaycastHit hit))
                     {
                         player.position = hit.point;
                         break;
                     }
                 }
+            }
+        }
+        else if(type == LevelType.TERRAIN)
+        {
+            Ray ray = new Ray(new Vector3(worldSize/2,worldSize,worldSize/2) * LevelMeshChunk.chunkScale, Vector3.down);
+            if(Physics.Raycast(ray, out RaycastHit hit))
+            {
+                player.position = hit.point;
             }
         }
     }
@@ -104,13 +112,15 @@ public class LevelMeshGenerator : MonoBehaviour
         UnityEngine.Random.InitState(seed.GetHashCode());
         noiseCPU = new NoiseCPU(seed.GetHashCode());
 
-        numberOfChunks = worldSize/chunkSize;
-        voxelIndex = 0;
+        
         if(type == LevelType.DUNGEON)
         {
             dungeonGrid = new float[worldSize * worldSize * worldSize];
+            chunkSize = worldSize;
             GenerateDungeonData(useBoxShapedRooms);
         }
+        
+        numberOfChunks = worldSize/chunkSize;
         
         for(int chunkX = 0; chunkX < numberOfChunks; chunkX++)
         {

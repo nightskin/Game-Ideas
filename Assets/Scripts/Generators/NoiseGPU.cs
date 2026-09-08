@@ -24,7 +24,7 @@ public class NoiseGPU : MonoBehaviour
     [HideInInspector] public NoiseType noiseType;
     [HideInInspector] public FractalType fractalType;
     [HideInInspector] public string seed;
-    [HideInInspector] public bool is3D = false;
+    [HideInInspector] public bool isCave = false;
     [HideInInspector] public int worldSize;
     [HideInInspector ] public int chunkSize = 256;
     [HideInInspector] public float noiseScale = 1f;
@@ -55,8 +55,9 @@ public class NoiseGPU : MonoBehaviour
         noiseShader.SetInt("fractalType",(int)fractalType);
         noiseShader.SetInt("noiseType",(int)noiseType);
         noiseShader.SetInt("seed",seed.GetHashCode());
-        noiseShader.SetBool("is3D", is3D);
+        noiseShader.SetBool("is3D", isCave);
         noiseShader.SetInt("chunkSize",chunkSize);
+        noiseShader.SetInt("worldSize", worldSize);
         noiseShader.SetFloat("noiseScale",noiseScale);
         noiseShader.SetFloat("amplitude", amplitude);
         noiseShader.SetFloat("frequency", frequency);

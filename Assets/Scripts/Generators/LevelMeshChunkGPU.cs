@@ -24,12 +24,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
 
         if(generator.type == LevelType.DUNGEON)
         {
-            grid = new float[chunkSize * chunkSize * chunkSize];
-            for(int i = 0; i < chunkSize * chunkSize * chunkSize; i++)
-            {
-                grid[i] = LevelMeshGenerator.dungeonGrid[LevelMeshGenerator.voxelIndex];
-                LevelMeshGenerator.voxelIndex++;
-            }
+            grid = generator.dungeonGrid;
         }
         else
         {
@@ -44,7 +39,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
             Game.get.noise.frequency = generator.frequency;
             Game.get.noise.octaves = generator.octaves;
             Game.get.noise.groundPercent = generator.groundPercent;
-            Game.get.noise.is3D = generator.type == LevelType.CAVES;
+            Game.get.noise.isCave = generator.type == LevelType.CAVES;
             grid = Game.get.noise.GetNoise(index);
         }
         
@@ -79,7 +74,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         Vector3[] vertices = new Vector3[triangles.Length * 3];
         int[] indices = new int[triangles.Length * 3];
         List<Vector2> uvs = new List<Vector2>();
-        Vector3 offset = new Vector3(index.x, 0, index.z) * (chunkSize-1);
+        Vector3 offset = new Vector3(index.x, index.y, index.z) * (chunkSize-1);
 
         if(insideOut)
         {
