@@ -23,12 +23,14 @@ public class LevelMeshGenerator : MonoBehaviour
     [Header("General Settings")]
     public LevelType type = LevelType.DUNGEON;
     public LevelStyle style = LevelStyle.CHUNKY;
+    [SerializeField] GameObject chunkPrefab;
+    [SerializeField] Material chunkMaterial;
     public Transform player;
     public Dictionary<Vector3Int, LevelMeshChunk> map = new Dictionary<Vector3Int, LevelMeshChunk>();
-    [SerializeField] GameObject chunkPrefab;
     public string seed = string.Empty;
     public int worldSize = 160;
     public int chunkSize = 80;
+    public float chunkScale = 1;
     [HideInInspector] public int numberOfChunks;
     NoiseCPU noiseCPU;
 
@@ -71,7 +73,7 @@ public class LevelMeshGenerator : MonoBehaviour
         if (showBounds)
         {
             Gizmos.color = boundColor;
-            Gizmos.DrawWireCube(transform.position + (Vector3.one * worldSize * LevelMeshChunk.chunkScale / 2 ), Vector3.one * worldSize * LevelMeshChunk.chunkScale);
+            Gizmos.DrawWireCube(transform.position + (Vector3.one * worldSize * chunkScale / 2 ), Vector3.one * worldSize * chunkScale);
         }
     }
 
@@ -94,7 +96,7 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for(int z = 0; z < worldSize; z++)
                 {
-                    Ray ray = new Ray(new Vector3(x,worldSize,z) * LevelMeshChunk.chunkScale, Vector3.down);
+                    Ray ray = new Ray(new Vector3(x,worldSize,z) * chunkScale, Vector3.down);
                     if(Physics.Raycast(ray, out RaycastHit hit))
                     {
                         player.position = hit.point;
@@ -105,7 +107,7 @@ public class LevelMeshGenerator : MonoBehaviour
         }
         else if(type == LevelType.TERRAIN)
         {
-            Ray ray = new Ray(new Vector3(worldSize/2,worldSize,worldSize/2) * LevelMeshChunk.chunkScale, Vector3.down);
+            Ray ray = new Ray(new Vector3(worldSize/2,worldSize,worldSize/2) * chunkScale, Vector3.down);
             if(Physics.Raycast(ray, out RaycastHit hit))
             {
                 player.position = hit.point;
@@ -145,11 +147,12 @@ public class LevelMeshGenerator : MonoBehaviour
                     chunk.index = new Vector3Int(chunkX,chunkY,chunkZ);
                     chunk.name = chunk.index.ToString();
                     chunk.generator = this;
+                    if(chunkMaterial) chunk.renderer.material = chunkMaterial;
                     chunk.Generate();
                 }
             }
         }
-        transform.localScale = Vector3.one * LevelMeshChunk.chunkScale;
+        transform.localScale = Vector3.one * chunkScale;
     }
 
     public void AddWater()
