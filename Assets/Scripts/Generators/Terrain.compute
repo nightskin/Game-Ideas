@@ -17,7 +17,7 @@ AppendStructuredBuffer<Triangle> triangles;
 
 int indexFromCoord(int x, int y, int z)
 {
-    return x + chunkSize * (y + chunkSize * z);
+    return (x) + (y * chunkSize) + (z * (chunkSize * chunkSize));
 }
 
 float3 interp(float3 edgeVertex1, float valueAtVertex1, float3 edgeVertex2, float valueAtVertex2)
@@ -44,10 +44,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x, id.y, id.z + 1)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
                     t1.a = float3(0,1,1) + id;
                     t1.b = float3(1,1,1) + id;
                     t1.c = float3(1,0,1) + id;
-                    Triangle t2;
                     t2.a = float3(0,0,1) + id;
                     t2.b = float3(0,1,1) + id;
                     t2.c = float3(1,0,1) + id;
@@ -61,10 +61,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x, id.y, id.z - 1)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
                     t1.a = float3(1,0,0) + id;
                     t1.b = float3(1,1,0) + id;
                     t1.c = float3(0,1,0) + id;
-                    Triangle t2;
                     t2.a = float3(1,0,0) + id;
                     t2.b = float3(0,1,0) + id;
                     t2.c = float3(0,0,0) + id;
@@ -79,10 +79,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x, id.y + 1, id.z)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
                     t1.a = float3(1,1,0) + id;
                     t1.b = float3(1,1,1) + id;
                     t1.c = float3(0,1,1) + id;
-                    Triangle t2;
                     t2.a = float3(1,1,0) + id;
                     t2.b = float3(0,1,1) + id;
                     t2.c = float3(0,1,0) + id;
@@ -96,11 +96,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x, id.y - 1, id.z)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
+                    
                     t1.a = float3(0,0,1) + id;
                     t1.b = float3(1,0,1) + id;
                     t1.c = float3(1,0,0) + id;
-                    
-                    Triangle t2;
                     t2.a = float3(0,0,0) + id;
                     t2.b = float3(0,0,1) + id;
                     t2.c = float3(1,0,0) + id;
@@ -115,10 +115,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x + 1, id.y, id.z)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
+
                     t1.a = float3(1,0,1) + id;
                     t1.b = float3(1,1,1) + id;
                     t1.c = float3(1,1,0) + id;
-                    Triangle t2;
                     t2.a = float3(1,0,1) + id;
                     t2.b = float3(1,1,0) + id;
                     t2.c = float3(1,0,0) + id;
@@ -132,10 +133,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 if(weights[indexFromCoord(id.x - 1, id.y, id.z)] <= isoLevel)
                 {
                     Triangle t1;
+                    Triangle t2;
+                    
                     t1.a = float3(0,1,0) + id;
                     t1.b = float3(0,1,1) + id;
                     t1.c = float3(0,0,1) + id;
-                    Triangle t2;
                     t2.a = float3(0,0,0) + id;
                     t2.b = float3(0,1,0) + id;
                     t2.c = float3(0,0,1) + id;

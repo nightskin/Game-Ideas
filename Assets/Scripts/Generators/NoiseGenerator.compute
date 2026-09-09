@@ -30,7 +30,7 @@ float Remap(float value, float oldMin, float oldMax, float newMin, float newMax)
 
 int IndexFromCoord(int x, int y, int z)
 {
-    return x + chunkSize * (y + chunkSize * z);
+    return (x) + (y * chunkSize) + (z * (chunkSize * chunkSize));
 }
 
 [numthreads(numthreads,numthreads,numthreads)]

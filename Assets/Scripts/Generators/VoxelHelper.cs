@@ -4,8 +4,7 @@ public static class VoxelHelper
 {    
     public static int Index3DToIndex(Vector3Int index3d, int chunkSize)
     {
-        return index3d.x + chunkSize * (index3d.y + chunkSize * index3d.z);
-        //return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
+        return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
     }
 
     public static Vector3Int IndexToIndex3D(int index, int chunkSize)
