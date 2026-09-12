@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7236707900064891567}
   - component: {fileID: -6113562458817700002}
   m_Layer: 0
-  m_Name: ChunkGPU
+  m_Name: Chunk_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

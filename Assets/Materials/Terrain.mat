@@ -124,7 +124,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _GroundPercent: 0.25
+    - _GroundPercent: 0.4
     - _IsoLevel: 0.534
     - _MaxY: 175
     - _Metallic: 0

@@ -1,23 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class LevelMeshChunkGPU : LevelMeshChunk
+public class Chunk : MonoBehaviour
 {
-    public ComputeShader marchingShader;
-    struct Triangle 
-    {
-        public Vector3 a;
-        public Vector3 b;
-        public Vector3 c;
+    public MeshFilter meshFilter;
+    public MeshRenderer renderer;
+    public MeshCollider collider;
+    public Vector3Int index;
+    public LevelMeshGenerator generator;
+    [HideInInspector] public float[] grid;
 
-        public static int SizeOf => sizeof(float) * 3 * 3;
-    }
+    public int size;
+    public static int numThreads = 8;
+    public ComputeShader marchingShader;
     ComputeBuffer trianglesBuffer;
     ComputeBuffer triangleCountBuffer;
     ComputeBuffer weightsBuffer;
 
     
-    public override void Generate()
+    public void Generate()
     {
         CreateBuffers();
 
@@ -31,14 +32,13 @@ public class LevelMeshChunkGPU : LevelMeshChunk
             Game.get.noise.fractalType = generator.fractalType;
             Game.get.noise.noiseType = generator.noiseType;
             Game.get.noise.seed = generator.seed;
-            Game.get.noise.chunkSize = chunkSize;
-            Game.get.noise.worldSize = generator.worldSize;
+            Game.get.noise.chunkSize = size;
+            Game.get.noise.worldSize = generator.worldSizeInVoxels;
             Game.get.noise.noiseScale = generator.noiseScale;
             Game.get.noise.amplitude = generator.amplitude;
             Game.get.noise.frequency = generator.frequency;
             Game.get.noise.octaves = generator.octaves;
             Game.get.noise.groundPercent = generator.groundPercent;
-            Game.get.noise.isCave = generator.type == LevelType.CAVES;
             grid = Game.get.noise.GetNoise(index);
         }
         
@@ -48,10 +48,10 @@ public class LevelMeshChunkGPU : LevelMeshChunk
 
     void CreateBuffers()
     {
-        trianglesBuffer = new ComputeBuffer(5 * (int)Mathf.Pow(chunkSize,3), Triangle.SizeOf, ComputeBufferType.Append);
-        if(generator.style == LevelStyle.BLOCKY) trianglesBuffer = new ComputeBuffer(12 * (int)Mathf.Pow(chunkSize,3), Triangle.SizeOf, ComputeBufferType.Append);
+        trianglesBuffer = new ComputeBuffer(5 * (int)Mathf.Pow(size,3), Triangle.SizeOf, ComputeBufferType.Append);
+        if(generator.style == LevelStyle.BLOCKY) trianglesBuffer = new ComputeBuffer(12 * (int)Mathf.Pow(size,3), Triangle.SizeOf, ComputeBufferType.Append);
         triangleCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
-        weightsBuffer = new ComputeBuffer((int)Mathf.Pow(chunkSize,3), sizeof(float));
+        weightsBuffer = new ComputeBuffer((int)Mathf.Pow(size,3), sizeof(float));
     }
 
     void ReleaseBuffers()
@@ -74,7 +74,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         Vector3[] vertices = new Vector3[triangles.Length * 3];
         int[] indices = new int[triangles.Length * 3];
         List<Vector2> uvs = new List<Vector2>();
-        Vector3 offset = new Vector3(index.x, index.y, index.z) * (chunkSize-1);
+        Vector3 offset = new Vector3(index.x, index.y, index.z) * (size-1);
 
         if(insideOut)
         {
@@ -118,7 +118,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
     {
         marchingShader.SetBuffer(0,"triangles", trianglesBuffer);
         marchingShader.SetBuffer(0, "weights", weightsBuffer);
-        marchingShader.SetInt("chunkSize", chunkSize);
+        marchingShader.SetInt("chunkSize", size);
         marchingShader.SetFloat("isoLevel", generator.isoLevel);
         marchingShader.SetInt("style", (int)generator.style);
 
@@ -126,7 +126,7 @@ public class LevelMeshChunkGPU : LevelMeshChunk
         weightsBuffer.SetData(grid);
         trianglesBuffer.SetCounterValue(0);
 
-        marchingShader.Dispatch(0, chunkSize / numThreads, chunkSize / numThreads, chunkSize / numThreads);
+        marchingShader.Dispatch(0, size / numThreads, size / numThreads, size / numThreads);
         Triangle[] triangles = new Triangle[ReadTriangleCount()];
         
         trianglesBuffer.GetData(triangles);

@@ -66,7 +66,7 @@ public class NoiseGPU : MonoBehaviour
         noiseShader.SetInt("offsetX", index.x);
         noiseShader.SetInt("offsetY", index.y);
         noiseShader.SetInt("offsetZ", index.z);
-        noiseShader.Dispatch(0, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads, chunkSize / LevelMeshChunk.numThreads);
+        noiseShader.Dispatch(0, chunkSize / Chunk.numThreads, chunkSize / Chunk.numThreads, chunkSize / Chunk.numThreads);
         weightsBuffer.GetData(weights);
         ReleaseBuffers();
         return weights;

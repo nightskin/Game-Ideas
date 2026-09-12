@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct Triangle 
+{
+    public Vector3 a;
+    public Vector3 b;
+    public Vector3 c;
+    public static int SizeOf => sizeof(float) * 3 * 3;
+}
+
 public enum LevelStyle
 {
     BLOCKY,
@@ -11,7 +19,6 @@ public enum LevelStyle
 public enum LevelType
 {
     DUNGEON,
-    CAVES,
     TERRAIN,
 }
 

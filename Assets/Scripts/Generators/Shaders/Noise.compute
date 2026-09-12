@@ -6,7 +6,6 @@
 static const uint numthreads = 8;
 
 RWStructuredBuffer<float> weights;
-bool is3D;
 int seed;
 int chunkSize;
 int worldSize;
@@ -47,35 +46,20 @@ void GenerateNoise (uint3 v : SV_DispatchThreadID)
     if(offsetX > 0 && v.x == 0) pos.x--;
     if(offsetY > 0 && v.y == 0) pos.y--;
     if(offsetZ > 0 && v.z == 0) pos.z--;
-    pos *= noiseScale;
 
     float n;
-    if(is3D)
+    float minHeight = -pos.y + (groundPercent * chunkSize);
+    float height = minHeight + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
+        
+    if(pos.y <= height)
     {
-        int numberOfChunks = worldSize/chunkSize;
-        if((offsetY == 0 && v.y == 0) || (offsetX == 0 && v.x == 0) || (offsetZ == 0 && v.z == 0) || (offsetY == numberOfChunks-1 && v.y == chunkSize-1) || (offsetX == numberOfChunks-1 && v.x == chunkSize-1) || (offsetZ == numberOfChunks-1 && v.z == chunkSize-1))
-        {
-            n = 1;
-        }
-        else
-        {
-            n = fnlGetNoise3D(noise, pos.x, pos.y, pos.z);
-        }
-
+        n = fnlGetNoise3D(noise,pos.x,pos.y,pos.z) * noiseScale;
     }
     else
     {
-        if(offsetY == 0 && v.y == 0) 
-        {
-            n = 1;
-        }
-        else
-        {
-            float ground = -pos.y + (groundPercent * chunkSize);
-            n = ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
-        }
-
+        n = height;
     }
+
 
     weights[IndexFromCoord(v.x, v.y, v.z)] = n;
     

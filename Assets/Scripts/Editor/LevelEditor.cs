@@ -11,7 +11,7 @@ public class LevelEditor : Editor
         if(GUILayout.Button("Create Random"))
         {
             level.DestroyKids();
-            level.Generate(true);
+            level.Init(true);
         }
         if(GUILayout.Button("Clear"))
         {
