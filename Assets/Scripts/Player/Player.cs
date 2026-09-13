@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public Image reticle;
     public Animator animator;
     public Transform armPivot;
-    public List<PlayerAbility> perks = new List<PlayerAbility>();
+    public List<PlayerAbility> abilities = new List<PlayerAbility>();
 
 
     [Header("Movement")]
@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     bool crouching = false;
     bool jumping = false;
     int jumpsTaken = 0;
+    float cameraBobTime = 0;
 
 
     [Header("Looking Around")]
@@ -53,7 +54,7 @@ public class Player : MonoBehaviour
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
 
-        foreach(PlayerAbility perk in perks)
+        foreach(PlayerAbility perk in abilities)
         {
             perk.Init();
         }
@@ -62,9 +63,9 @@ public class Player : MonoBehaviour
     void Update()
     {
         
-        foreach(PlayerAbility perk in perks)
+        foreach(PlayerAbility ability in abilities)
         {
-            perk.Update();
+            ability.Update();
         }
 
         Combat();
@@ -76,7 +77,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         
-        foreach(PlayerAbility perk in perks)
+        foreach(PlayerAbility perk in abilities)
         {
             perk.FixedUpdate();
         }
@@ -144,7 +145,8 @@ public class Player : MonoBehaviour
         {
             if(Game.settings.cameraBob && onGround)
             {
-                float offset = Mathf.Sin(Time.time * Game.settings.cameraBobSpeed) * Game.settings.cameraBobMaxHeight;
+                cameraBobTime += Time.deltaTime;
+                float offset = Mathf.Sin(cameraBobTime * Game.settings.cameraBobSpeed) * Game.settings.cameraBobMaxHeight;
                 Camera.main.transform.localPosition = Camera.main.transform.up * offset;
             }
 

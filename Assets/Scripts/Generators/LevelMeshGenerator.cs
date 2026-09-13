@@ -1,17 +1,16 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class MonoBehaviourExt
 {
-    public static void InvokeNextFrame(this MonoBehaviour self, Action callback)
+    public static void InvokeNextFrame(this MonoBehaviour self, System.Action callback)
     {
         if (self.gameObject.activeInHierarchy && self.enabled)
             self.StartCoroutine(DelayedCall(callback));
     }
 
-    private static IEnumerator DelayedCall(Action callback)
+    private static IEnumerator DelayedCall(System.Action callback)
     {
         yield return null;
         callback?.Invoke();
@@ -24,9 +23,8 @@ public class LevelMeshGenerator : MonoBehaviour
     public LevelType type = LevelType.DUNGEON;
     public LevelStyle style = LevelStyle.CHUNKY;
     [SerializeField] GameObject chunkPrefab;
-    [SerializeField] Material chunkMaterial;
+    public Material chunkMaterial;
     public Transform player;
-    public Dictionary<Vector3Int, Chunk> map = new Dictionary<Vector3Int, Chunk>();
     public string seed = string.Empty;
     
     [Min(32)] public int worldSizeInVoxels = 128;
@@ -41,7 +39,7 @@ public class LevelMeshGenerator : MonoBehaviour
 
     [Space]
     [Header("DUNGEON SETTINGS")]
-    [SerializeField] bool useBoxShapedRooms = false;
+    public bool useBoxShapedRooms = false;
     [SerializeField] bool useRoundedHallways = false;
     [SerializeField][Min(1)] int numberOfSteps = 200;
     [SerializeField] bool walk3D = false;
@@ -68,7 +66,6 @@ public class LevelMeshGenerator : MonoBehaviour
     [SerializeField] bool showBounds = false;
     [SerializeField] Color boundColor = Color.rebeccaPurple;
 
-
     void OnDrawGizmos()
     {
         if (showBounds)
@@ -80,10 +77,14 @@ public class LevelMeshGenerator : MonoBehaviour
 
     void OnValidate()
     {
-        if(transform.childCount > 0 && voxelsInChunk == worldSizeInVoxels)
+        if(transform.childCount > 0)
         {
-            MonoBehaviourExt.InvokeNextFrame(this, DestroyKids);
-            Init(false);
+            for(int i = 0; i < transform.childCount; i++)
+            {
+                Chunk chunk = transform.GetChild(i).GetComponent<Chunk>();
+                chunk.renderer.material = chunkMaterial;
+                chunk.Generate();
+            }
         }
     }
 
@@ -118,13 +119,12 @@ public class LevelMeshGenerator : MonoBehaviour
     
     public void Init(bool random)
     {
-        if (random) seed = DateTime.Now.ToString();
-        UnityEngine.Random.InitState(seed.GetHashCode());
+        if (random) seed = System.DateTime.Now.ToString();
+        Random.InitState(seed.GetHashCode());
 
         if(type == LevelType.DUNGEON)
         {
             worldSizeInVoxels = 128;
-            dungeonGrid = new float[worldSizeInVoxels * worldSizeInVoxels * worldSizeInVoxels];
             voxelsInChunk = worldSizeInVoxels;
             GenerateDungeonData(useBoxShapedRooms);
 
@@ -186,20 +186,21 @@ public class LevelMeshGenerator : MonoBehaviour
 
     }
 
-    void GenerateDungeonData(bool boxRooms)
+    public void GenerateDungeonData(bool boxRooms)
     {
+        dungeonGrid = new float[worldSizeInVoxels * worldSizeInVoxels * worldSizeInVoxels];
         if(boxRooms)
         {
             //Create Rooms
             List<Vector3Int> rooms = new List<Vector3Int>();
             for (int r = 0; r < numberOfRooms; r++)
             {
-                int roomSizeX = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
-                int roomSizeZ = UnityEngine.Random.Range(minRoomSize, maxRoomSize);
+                int roomSizeX = Random.Range(minRoomSize, maxRoomSize);
+                int roomSizeZ = Random.Range(minRoomSize, maxRoomSize);
 
-                int rx = UnityEngine.Random.Range(roomSizeX, worldSizeInVoxels - roomSizeX);
-                int ry = UnityEngine.Random.Range(ceilngHeight, worldSizeInVoxels/squash - ceilngHeight);
-                int rz = UnityEngine.Random.Range(roomSizeZ, worldSizeInVoxels - roomSizeZ);
+                int rx = Random.Range(roomSizeX, worldSizeInVoxels - roomSizeX);
+                int ry = Random.Range(ceilngHeight, worldSizeInVoxels/squash - ceilngHeight);
+                int rz = Random.Range(roomSizeZ, worldSizeInVoxels - roomSizeZ);
                 Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
                 ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
                 rooms.Add(roomPosition);
@@ -220,18 +221,18 @@ public class LevelMeshGenerator : MonoBehaviour
             List<Vector3Int> exits = new List<Vector3Int>();
             for (int r = 0; r < numberOfRooms; r++)
             {
-                int xi = UnityEngine.Random.Range(0, worldSizeInVoxels);
-                int yi = UnityEngine.Random.Range(0, worldSizeInVoxels/squash);
-                int zi = UnityEngine.Random.Range(0, worldSizeInVoxels);
+                int xi = Random.Range(0, worldSizeInVoxels);
+                int yi = Random.Range(0, worldSizeInVoxels/squash);
+                int zi = Random.Range(0, worldSizeInVoxels);
 
                 Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
                 entrances.Add(currentIndex);
                 for (int s = 0; s < numberOfSteps; s++)
                 {
-                    int x = UnityEngine.Random.Range(-1, 2);
+                    int x = Random.Range(-1, 2);
                     int y = 0;
-                    if (walk3D) y = UnityEngine.Random.Range(-1, 2);
-                    int z = UnityEngine.Random.Range(-1, 2);
+                    if (walk3D) y = Random.Range(-1, 2);
+                    int z = Random.Range(-1, 2);
 
                     if (x == -1 && currentIndex.x <= 0) x = 1;
                     if (x == 1 && currentIndex.x >= worldSizeInVoxels - 1) x = -1;
@@ -373,11 +374,4 @@ public class LevelMeshGenerator : MonoBehaviour
         }
     } 
     
-    public void DestroyKids()
-    {
-        for(int i = 0; i < transform.childCount; i++)
-        {
-           DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-    }
 }

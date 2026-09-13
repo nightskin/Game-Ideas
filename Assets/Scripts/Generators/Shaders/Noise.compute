@@ -47,20 +47,19 @@ void GenerateNoise (uint3 v : SV_DispatchThreadID)
     if(offsetY > 0 && v.y == 0) pos.y--;
     if(offsetZ > 0 && v.z == 0) pos.z--;
 
-    float n;
     float minHeight = -pos.y + (groundPercent * chunkSize);
-    float height = minHeight + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
+    float terrain = minHeight + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
         
-    if(pos.y <= height)
+    if(pos.y <= terrain)
     {
-        n = fnlGetNoise3D(noise,pos.x,pos.y,pos.z) * noiseScale;
+        //Make Caves
+        weights[IndexFromCoord(v.x, v.y, v.z)] = fnlGetNoise3D(noise,pos.x,pos.y,pos.z) * noiseScale;
     }
     else
     {
-        n = height;
+        //Make Terrain
+        weights[IndexFromCoord(v.x, v.y, v.z)] = terrain;
     }
 
-
-    weights[IndexFromCoord(v.x, v.y, v.z)] = n;
     
 }
