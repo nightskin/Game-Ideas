@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 public class Player : MonoBehaviour
@@ -9,20 +8,21 @@ public class Player : MonoBehaviour
     [Header("Components")]
     public Transform cameraHolder;
     public CharacterController controller;
-    public Image reticle;
     public Animator animator;
     public Transform armPivot;
-    public List<PlayerAbility> abilities = new List<PlayerAbility>();
+    [HideInInspector] public List<PlayerAbility> abilities = new List<PlayerAbility>();
 
 
     [Header("Movement")]
+    [HideInInspector] public bool canMove = true;
     [Min(0)] public int maxNumberOfJumps = 1;
     [Min(1)] public float jumpHeight = 1;
     [HideInInspector] public Vector3 velocity = Vector3.zero;
     [Min(2)] public float normalSpeed = 20;
     [Min(1)] public float crouchSpeed = 10;
-    [HideInInspector] public float targetSpeed = 0;
+    [HideInInspector ] public float targetSpeed = 0;
     [HideInInspector] public float currentSpeed = 0;
+    
     bool crouching = false;
     bool jumping = false;
     int jumpsTaken = 0;
@@ -30,13 +30,14 @@ public class Player : MonoBehaviour
 
 
     [Header("Looking Around")]
+    [HideInInspector] public bool canLook = true;
     [Range(0,90)] public float maxLookY = 45;
     [HideInInspector] public float lookSpeed;
     [HideInInspector] public float rotx = 0;
     [HideInInspector] public float roty = 0;
 
     [Header("Physics")]
-    public bool gravityOn = true; 
+    [HideInInspector] public bool gravityOn = true; 
     public float gravityStrength = 10;
     [SerializeField][Min(0)] float groundDistance = 0.5f;
     [HideInInspector] public bool onGround;
@@ -44,7 +45,6 @@ public class Player : MonoBehaviour
     [Header("Combat")]
     Vector2 atkVector;
     float atkAngle = 0;
-    bool rotateReticle = true;
     [HideInInspector] public bool isAttacking = false;
 
 
@@ -53,6 +53,9 @@ public class Player : MonoBehaviour
     {
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
+        abilities.Add(new WallRunning(this));
+        abilities.Add(new LockOnSystem(this));
+        abilities.Add(new Evasion(this));
 
         foreach(PlayerAbility perk in abilities)
         {
@@ -68,10 +71,11 @@ public class Player : MonoBehaviour
             ability.Update();
         }
 
-        Combat();
-        FreeLook();
+        if(canLook) FreeLook();
         ApplyPhysics();
-        Movement();
+        if(canMove) Movement();
+
+        MeleeCombat();
     }
 
     void FixedUpdate()
@@ -82,23 +86,21 @@ public class Player : MonoBehaviour
             perk.FixedUpdate();
         }
 
-        currentSpeed = Mathf.Lerp(currentSpeed,targetSpeed, 10 * Time.deltaTime);
+        currentSpeed = Mathf.Lerp(currentSpeed,targetSpeed, 10 * Time.fixedDeltaTime);
         // Checks If player is grounded
         Ray groundRay = new Ray(transform.position, Vector3.down);
         onGround = Physics.Raycast(groundRay, out RaycastHit hit, groundDistance);
     }
 
     //Helper Functions
-    void Combat()
+    void MeleeCombat()
     {
         atkVector = Game.input.Player.Look.ReadValue<Vector2>();
         atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * Mathf.Rad2Deg;
-        atkAngle = Mathf.Clamp(atkAngle,-135,135);
-        if(rotateReticle) reticle.rectTransform.rotation = Quaternion.Euler(0,0,atkAngle);
         
-        if(Game.input.Player.Attack.WasPerformedThisFrame())
-        {   
-            animator.SetTrigger("atk");
+        if(Game.input.Player.Attack.WasPressedThisFrame())
+        {
+           animator.SetTrigger("atk");
         }
     }
     
@@ -196,12 +198,11 @@ public class Player : MonoBehaviour
     {
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
         isAttacking = true;
-        rotateReticle = false;
+
     }
     public void EndAttack()
     {
         armPivot.localEulerAngles = Vector3.zero;
         isAttacking = false;
-        rotateReticle = true;
     }
 }

@@ -10,17 +10,13 @@ public class LevelEditor : Editor
         LevelMeshGenerator level = (LevelMeshGenerator)target;
         if(GUILayout.Button("Create Random"))
         {
-            level.seed = System.DateTime.Now.ToString();
-            if(level.type == LevelType.DUNGEON)
-            {
-                Random.InitState(level.seed.GetHashCode());
-                level.GenerateDungeonData(level.useBoxShapedRooms);
-            }
-            
             if(level.transform.childCount > 0)
             {
                 for(int i = 0; i < level.transform.childCount; i++)
                 {
+                    level.seed = System.DateTime.Now.ToString();
+                    Random.InitState(level.seed.GetHashCode());
+                    if(level.type == LevelType.DUNGEON) level.GenerateDungeonData(level.useBoxShapedRooms);
                     Chunk chunk = level.transform.GetChild(i).GetComponent<Chunk>();
                     chunk.Generate();
                 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class LockOnSystem : PlayerAbility
@@ -8,6 +7,11 @@ public class LockOnSystem : PlayerAbility
     public LayerMask lockOnLayerMask;
     [HideInInspector] public Transform target = null;
     float lockOnLerp = 0;
+
+    public LockOnSystem(Player player) : base(player)
+    {
+        
+    }
 
     public override void Init()
     {
@@ -21,7 +25,7 @@ public class LockOnSystem : PlayerAbility
 
     public override void Update()
     {
-        if(Gamepad.current.rightStick.IsActuated())
+        if(Game.input.Player.LockOn.WasPressedThisFrame())
         {
             if(target)
             {

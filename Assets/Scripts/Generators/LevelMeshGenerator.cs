@@ -81,6 +81,11 @@ public class LevelMeshGenerator : MonoBehaviour
         {
             for(int i = 0; i < transform.childCount; i++)
             {
+                if(type == LevelType.DUNGEON)
+                {
+                    Random.InitState(seed.GetHashCode());
+                    GenerateDungeonData(useBoxShapedRooms);
+                }
                 Chunk chunk = transform.GetChild(i).GetComponent<Chunk>();
                 chunk.renderer.material = chunkMaterial;
                 chunk.Generate();

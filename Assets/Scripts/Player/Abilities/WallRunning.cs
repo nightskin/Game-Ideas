@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 [System.Serializable]
 public class WallRunning : PlayerAbility
@@ -17,6 +16,11 @@ public class WallRunning : PlayerAbility
     bool isWallRunning = false;
     bool canWallRun = false;
     bool canWallJump = false;
+
+    public WallRunning(Player player) : base(player)
+    {
+        
+    }
 
     public override void Init()
     {

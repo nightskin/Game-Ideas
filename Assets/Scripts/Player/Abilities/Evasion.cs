@@ -1,11 +1,11 @@
 using UnityEngine;
 
-
+[System.Serializable]
 public class Evasion : PlayerAbility
 {
-    public bool active = false;
-    public float dashSpeed = 150;
-    float maxKeyboardPressTime = 0.25f; 
+    bool isEvading = false;
+    float evadeSpeed = 100;
+    float maxKeyboardPressTime = 0.2f; 
     float keyboardPressTime = 0;
     float evadeTimer = 0;
     float maxEvadeTime = 0.1f;
@@ -14,6 +14,10 @@ public class Evasion : PlayerAbility
     Vector2 evadeInput = Vector2.zero;
     Vector2 prevMoveInput = Vector2.zero;
 
+    public Evasion(Player player) : base(player)
+    {
+        
+    }
 
     public override void Init()
     {
@@ -22,42 +26,55 @@ public class Evasion : PlayerAbility
 
     public override void FixedUpdate()
     {
-        
+        if(isEvading)
+        {
+            owner.targetSpeed = evadeSpeed;
+        }
+        else
+        {
+            owner.targetSpeed = owner.normalSpeed;
+        }
     }
 
     public override void Update()
     {
-        Vector2 moveInput = Game.input.Player.Move.ReadValue<Vector2>();
+        if(owner.onGround)
+        {
+            Vector2 moveInput = Game.input.Player.Move.ReadValue<Vector2>();
 
-        if(EvadeKeyboardInput() && !active)
-        {
-            evadeTimer = 0;
-            active = true;
-            evadeInput = prevMoveInput;
-            dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
-        }
-        else if(Game.input.Player.EvadeG.WasPerformedThisFrame() && !active)
-        {
-            evadeTimer = 0;
-            active = true;
-            evadeInput = moveInput;
-            dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
-        }
-
-        if(active)
-        {
-            if(evadeTimer < maxEvadeTime)
+            if(EvadeKeyboardInput() && !isEvading)
             {
-                owner.controller.Move(dashDirection * owner.currentSpeed * Time.deltaTime);
-                evadeTimer += Time.deltaTime;
+                evadeTimer = 0;
+                isEvading = true;
+                evadeInput = prevMoveInput;
+                dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
             }
-            else
+            else if(Game.input.Player.EvadeG.WasPerformedThisFrame() && !isEvading)
             {
-                active = false;
+                evadeTimer = 0;
+                isEvading = true;
+                evadeInput = moveInput;
+                dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
             }
-        }
 
-        prevMoveInput = moveInput;
+            if(isEvading)
+            {
+                if(evadeTimer < maxEvadeTime)
+                {
+                    owner.canMove = false;
+                    owner.controller.Move(dashDirection * owner.currentSpeed * Time.deltaTime);
+                    evadeTimer += Time.deltaTime;
+                }
+                else
+                {
+                    isEvading = false;
+                    owner.targetSpeed = 0;
+                    owner.canMove = true;
+                }
+            }
+
+            prevMoveInput = moveInput;
+        }
     }
     
 
