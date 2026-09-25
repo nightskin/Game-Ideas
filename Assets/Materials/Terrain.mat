@@ -124,12 +124,12 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _GroundPercent: 0.4
+    - _GroundPercent: 0.2
     - _IsoLevel: 0.534
     - _MaxY: 175
     - _Metallic: 0
     - _MinY: 0
-    - _NumberOfShades: 5
+    - _NumberOfShades: 10
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0

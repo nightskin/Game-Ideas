@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class Game : MonoBehaviour
     public static Input input;
     public static GameSettings settings;
     
+    public Image reticle;
     public PauseMenu pauseMenu;
     public GameObject player;
     public NoiseGPU noise;

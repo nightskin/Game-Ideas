@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class PlayerAbility
+public abstract class PlayerAbility
 {
     public Player owner;
 
@@ -10,7 +10,7 @@ public class PlayerAbility
         owner = player;
     }
 
-    public virtual void Init(){}
-    public virtual void FixedUpdate(){}
-    public virtual void Update(){}
+    public abstract void Init();
+    public abstract void FixedUpdate();
+    public abstract void Update();
 }

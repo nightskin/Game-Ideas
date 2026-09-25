@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public CharacterController controller;
     public Animator animator;
     public Transform armPivot;
+    public Weapon weapon;
     [HideInInspector] public List<PlayerAbility> abilities = new List<PlayerAbility>();
 
 
@@ -45,7 +46,8 @@ public class Player : MonoBehaviour
     [Header("Combat")]
     Vector2 atkVector;
     float atkAngle = 0;
-    [HideInInspector] public bool isAttacking = false;
+    bool rotateReticle = false;
+    [HideInInspector] public bool attacking = false;
 
 
     //Events
@@ -53,8 +55,8 @@ public class Player : MonoBehaviour
     {
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
-        abilities.Add(new WallRunning(this));
-        abilities.Add(new LockOnSystem(this));
+        //abilities.Add(new WallRunning(this));
+        //abilities.Add(new LockOnSystem(this));
         abilities.Add(new Evasion(this));
 
         foreach(PlayerAbility perk in abilities)
@@ -97,11 +99,12 @@ public class Player : MonoBehaviour
     {
         atkVector = Game.input.Player.Look.ReadValue<Vector2>();
         atkAngle = Mathf.Atan2(atkVector.x, -atkVector.y) * Mathf.Rad2Deg;
-        
+
         if(Game.input.Player.Attack.WasPressedThisFrame())
         {
-           animator.SetTrigger("atk");
+            animator.SetTrigger("atk");
         }
+        
     }
     
     void FreeLook()
@@ -196,13 +199,14 @@ public class Player : MonoBehaviour
     //Animation events
     public void StartAttack()
     {
+        attacking = true;
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
-        isAttacking = true;
-
+        weapon.trail.SetActive(true);
     }
     public void EndAttack()
     {
         armPivot.localEulerAngles = Vector3.zero;
-        isAttacking = false;
+        attacking = false;
+        weapon.trail.SetActive(false);
     }
 }

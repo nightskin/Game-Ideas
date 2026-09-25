@@ -2,18 +2,20 @@ using UnityEngine;
 
 public static class VoxelHelper
 {    
-    public static int Index3DToIndex(Vector3Int index3d, int chunkSize)
+    public static int Index3DToIndex(Vector3Int index, Vector3Int chunkSize)
     {
-        return (index3d.x) + (index3d.y * chunkSize) + (index3d.z * (chunkSize * chunkSize));
+        return (index.z * chunkSize.x * chunkSize.y) + (index.y * chunkSize.x) + index.x;
     }
 
-    public static Vector3Int IndexToIndex3D(int index, int chunkSize)
+    public static Vector3Int IndexToIndex3D(int index, Vector3Int chunkSize)
     {
-        int x = index % chunkSize;
-        int y = (index / chunkSize) % chunkSize;
-        int z = ((index /chunkSize)/ chunkSize) % chunkSize;
-        return new Vector3Int(x,y,z); 
+        int z = index / (chunkSize.x * chunkSize.y);
+        index -= z * chunkSize.x * chunkSize.y;
+        int y = index / chunkSize.x;
+        int x = index % chunkSize.x;
+        return new Vector3Int(x,y,z);
     }
+
 
     public static int GetState(float[] values, float isoLevel)
     {

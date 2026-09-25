@@ -9,15 +9,19 @@ public class Chunk : MonoBehaviour
     public Vector3Int index;
     public LevelMeshGenerator generator;
     [HideInInspector] public float[] grid;
+    public Vector3Int offset;
 
-    public int size;
     public static int numThreads = 8;
     public ComputeShader marchingShader;
     ComputeBuffer trianglesBuffer;
     ComputeBuffer triangleCountBuffer;
     ComputeBuffer weightsBuffer;
 
-    
+    void OnValidate()
+    {
+        if(meshFilter.sharedMesh) Generate();
+    }
+
     public void Generate()
     {
         CreateBuffers();
@@ -29,16 +33,7 @@ public class Chunk : MonoBehaviour
         else
         {
             Game.get = GameObject.Find("GameManager").GetComponent<Game>();
-            Game.get.noise.fractalType = generator.fractalType;
-            Game.get.noise.noiseType = generator.noiseType;
-            Game.get.noise.seed = generator.seed;
-            Game.get.noise.chunkSize = size;
-            Game.get.noise.worldSize = generator.worldSizeInVoxels;
-            Game.get.noise.noiseScale = generator.noiseScale;
-            Game.get.noise.amplitude = generator.amplitude;
-            Game.get.noise.frequency = generator.frequency;
-            Game.get.noise.octaves = generator.octaves;
-            Game.get.noise.groundPercent = generator.groundPercent;
+            Game.get.noise.generator = generator;
             grid = Game.get.noise.GetNoise(index);
         }
         
@@ -48,10 +43,10 @@ public class Chunk : MonoBehaviour
 
     void CreateBuffers()
     {
-        trianglesBuffer = new ComputeBuffer(5 * (int)Mathf.Pow(size,3), Triangle.SizeOf, ComputeBufferType.Append);
-        if(generator.style == LevelStyle.BLOCKY) trianglesBuffer = new ComputeBuffer(12 * (int)Mathf.Pow(size,3), Triangle.SizeOf, ComputeBufferType.Append);
+        trianglesBuffer = new ComputeBuffer(5 * generator.chunkSize.x * generator.chunkSize.y * generator.chunkSize.z, Triangle.SizeOf, ComputeBufferType.Append);
+        if(generator.style == LevelStyle.BLOCKY) trianglesBuffer = new ComputeBuffer(12 * generator.chunkSize.x * generator.chunkSize.y * generator.chunkSize.z, Triangle.SizeOf, ComputeBufferType.Append);
         triangleCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
-        weightsBuffer = new ComputeBuffer((int)Mathf.Pow(size,3), sizeof(float));
+        weightsBuffer = new ComputeBuffer(generator.chunkSize.x * generator.chunkSize.y * generator.chunkSize.z, sizeof(float));
     }
 
     void ReleaseBuffers()
@@ -74,7 +69,7 @@ public class Chunk : MonoBehaviour
         Vector3[] vertices = new Vector3[triangles.Length * 3];
         int[] indices = new int[triangles.Length * 3];
         List<Vector2> uvs = new List<Vector2>();
-        Vector3 offset = new Vector3(index.x, index.y, index.z) * (size-1);
+        Vector3 offset = new Vector3(index.x * (generator.chunkSize.x-1), index.y * (generator.chunkSize.y-1), index.z *  (generator.chunkSize.z-1));
 
         if(insideOut)
         {
@@ -118,26 +113,18 @@ public class Chunk : MonoBehaviour
     {
         marchingShader.SetBuffer(0,"triangles", trianglesBuffer);
         marchingShader.SetBuffer(0, "weights", weightsBuffer);
-        marchingShader.SetInt("chunkSize", size);
+        int[] chunkSize = {generator.chunkSize.x, generator.chunkSize.y, generator.chunkSize.z};
+        marchingShader.SetInts("chunkSize", chunkSize);
         marchingShader.SetFloat("isoLevel", generator.isoLevel);
         marchingShader.SetInt("style", (int)generator.style);
-
-
         weightsBuffer.SetData(grid);
         trianglesBuffer.SetCounterValue(0);
 
-        marchingShader.Dispatch(0, size / numThreads, size / numThreads, size / numThreads);
+        marchingShader.Dispatch(0, generator.chunkSize.x / numThreads, generator.chunkSize.y / numThreads, generator.chunkSize.z / numThreads);
         Triangle[] triangles = new Triangle[ReadTriangleCount()];
         
         trianglesBuffer.GetData(triangles);
-        if(generator.type == LevelType.DUNGEON)
-        {
-            return CreateMeshFromTriangles(triangles, true);
-        }
-        else
-        {
-            return CreateMeshFromTriangles(triangles);
-        }
+        return CreateMeshFromTriangles(triangles);
 
     }
 }

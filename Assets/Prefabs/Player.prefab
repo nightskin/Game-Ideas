@@ -226,7 +226,7 @@ MonoBehaviour:
   controller: {fileID: 6230495934831919866}
   animator: {fileID: 1927410449195285833}
   armPivot: {fileID: 5519108838918269802}
-  abilities: []
+  weapon: {fileID: 117013990579215231}
   canMove: 1
   maxNumberOfJumps: 2
   jumpHeight: 3
@@ -244,7 +244,7 @@ MonoBehaviour:
   gravityStrength: 10
   groundDistance: 0.5
   onGround: 0
-  isAttacking: 0
+  attacking: 0
 --- !u!1 &1321405500393634581
 GameObject:
   m_ObjectHideFlags: 0

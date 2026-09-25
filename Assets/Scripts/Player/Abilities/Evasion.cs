@@ -44,14 +44,12 @@ public class Evasion : PlayerAbility
 
             if(EvadeKeyboardInput() && !isEvading)
             {
-                evadeTimer = 0;
                 isEvading = true;
                 evadeInput = prevMoveInput;
                 dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
             }
             else if(Game.input.Player.EvadeG.WasPerformedThisFrame() && !isEvading)
             {
-                evadeTimer = 0;
                 isEvading = true;
                 evadeInput = moveInput;
                 dashDirection = (owner.transform.right * evadeInput.x + owner.transform.forward * evadeInput.y).normalized;
@@ -67,9 +65,9 @@ public class Evasion : PlayerAbility
                 }
                 else
                 {
-                    isEvading = false;
-                    owner.targetSpeed = 0;
                     owner.canMove = true;
+                    isEvading = false;
+                    evadeTimer = 0;
                 }
             }
 

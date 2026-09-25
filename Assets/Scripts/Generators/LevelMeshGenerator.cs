@@ -27,10 +27,10 @@ public class LevelMeshGenerator : MonoBehaviour
     public Transform player;
     public string seed = string.Empty;
     
-    [Min(32)] public int worldSizeInVoxels = 128;
-    [HideInInspector] public int worldSizeInChunks;
-    [Min(8)]public int voxelsInChunk = 32;
-    [Min(1)] public int startNumberOfChunks = 2;
+    [Min(8)] public Vector3Int worldSize = Vector3Int.one * 64;
+    [HideInInspector] public Vector3Int maxNumberOfChunks;
+    [Min(8)]public Vector3Int chunkSize = new Vector3Int(32,32,32);
+    [Min(1)] public Vector3Int startNumberOfChunks = new Vector3Int(2,2,2);
 
     [Min(0.01f)] public float worldScale = 1;
 
@@ -39,6 +39,7 @@ public class LevelMeshGenerator : MonoBehaviour
 
     [Space]
     [Header("DUNGEON SETTINGS")]
+    [HideInInspector] public int dungeonIndex = 0;
     public bool useBoxShapedRooms = false;
     [SerializeField] bool useRoundedHallways = false;
     [SerializeField][Min(1)] int numberOfSteps = 200;
@@ -48,7 +49,6 @@ public class LevelMeshGenerator : MonoBehaviour
     [SerializeField][Min(1)] int minRoomSize = 2;
     [SerializeField][Min(1)] int maxRoomSize = 10;
     [Min(1)] public int hallwaySize = 2;
-    [Min(1)] public int squash = 2;
     
 
 
@@ -71,7 +71,7 @@ public class LevelMeshGenerator : MonoBehaviour
         if (showBounds)
         {
             Gizmos.color = boundColor;
-            Gizmos.DrawWireCube(transform.position + (Vector3.one * worldSizeInVoxels * worldScale / 2 ), Vector3.one * worldSizeInVoxels * worldScale);
+            Gizmos.DrawWireCube(transform.position + ((Vector3)worldSize * worldScale / 2 ), (Vector3)worldSize * worldScale);
         }
     }
 
@@ -81,11 +81,7 @@ public class LevelMeshGenerator : MonoBehaviour
         {
             for(int i = 0; i < transform.childCount; i++)
             {
-                if(type == LevelType.DUNGEON)
-                {
-                    Random.InitState(seed.GetHashCode());
-                    GenerateDungeonData(useBoxShapedRooms);
-                }
+                transform.localScale = Vector3.one * worldScale;
                 Chunk chunk = transform.GetChild(i).GetComponent<Chunk>();
                 chunk.renderer.material = chunkMaterial;
                 chunk.Generate();
@@ -99,11 +95,11 @@ public class LevelMeshGenerator : MonoBehaviour
         
         if(type == LevelType.DUNGEON)
         {
-            for(int x = 0; x < worldSizeInVoxels; x++)
+            for(int x = 0; x < worldSize.x; x++)
             {
-                for(int z = 0; z < worldSizeInVoxels; z++)
+                for(int z = 0; z < worldSize.z; z++)
                 {
-                    Ray ray = new Ray(new Vector3(x,worldSizeInVoxels,z) * worldScale, Vector3.down);
+                    Ray ray = new Ray(new Vector3(x,worldSize.y,z) * worldScale, Vector3.down);
                     if(Physics.Raycast(ray, out RaycastHit hit))
                     {
                         player.position = hit.point;
@@ -114,7 +110,7 @@ public class LevelMeshGenerator : MonoBehaviour
         }
         else if(type == LevelType.TERRAIN)
         {
-            Ray ray = new Ray(new Vector3(worldSizeInVoxels/2,worldSizeInVoxels,worldSizeInVoxels/2) * worldScale, Vector3.down);
+            Ray ray = new Ray(new Vector3(worldSize.x/2,worldSize.y,worldSize.z/2) * worldScale, Vector3.down);
             if(Physics.Raycast(ray, out RaycastHit hit))
             {
                 player.position = hit.point;
@@ -124,39 +120,38 @@ public class LevelMeshGenerator : MonoBehaviour
     
     public void Init(bool random)
     {
-        if (random) seed = System.DateTime.Now.ToString();
-        Random.InitState(seed.GetHashCode());
-
+        if (random)
+        {
+            seed = System.DateTime.Now.ToString();
+        }
+        
+        maxNumberOfChunks = new Vector3Int(worldSize.x/chunkSize.x, worldSize.y/chunkSize.y, worldSize.z/chunkSize.z);
+        transform.localScale = Vector3.one * worldScale;
+        Vector3Int halfPoint = maxNumberOfChunks/2;
+        
         if(type == LevelType.DUNGEON)
         {
-            worldSizeInVoxels = 128;
-            voxelsInChunk = worldSizeInVoxels;
             GenerateDungeonData(useBoxShapedRooms);
-
+            startNumberOfChunks = Vector3Int.one;
             GameObject chunkObject = Instantiate(chunkPrefab,Vector3.zero,Quaternion.identity, transform);
             Chunk chunk = chunkObject.transform.GetComponent<Chunk>();
-            chunk.size = voxelsInChunk;
-            chunk.index = Vector3Int.zero;
-            chunk.name = chunk.index.ToString();
+            chunkSize = worldSize;
+            chunk.name = "Dungeon";
             chunk.generator = this;
             if(chunkMaterial) chunk.renderer.material = chunkMaterial;
             chunk.Generate();
         }
         else
         {
-            worldSizeInChunks = worldSizeInVoxels/voxelsInChunk;
-            int halfPoint = worldSizeInChunks/2;
-            
-            for(int chunkX = -startNumberOfChunks/2; chunkX < startNumberOfChunks/2; chunkX++)
+            for(int chunkX = -startNumberOfChunks.x/2; chunkX < startNumberOfChunks.x/2; chunkX++)
             {
-                for(int chunkY = -startNumberOfChunks/2; chunkY < startNumberOfChunks/2; chunkY++)
+                for(int chunkY = -startNumberOfChunks.y/2; chunkY < startNumberOfChunks.y/2; chunkY++)
                 {
-                    for(int chunkZ = -startNumberOfChunks/2; chunkZ < startNumberOfChunks/2; chunkZ++)
+                    for(int chunkZ = -startNumberOfChunks.z/2; chunkZ < startNumberOfChunks.z/2; chunkZ++)
                     {
                         GameObject chunkObject = Instantiate(chunkPrefab,Vector3.zero,Quaternion.identity, transform);
                         Chunk chunk = chunkObject.transform.GetComponent<Chunk>();
-                        chunk.size = voxelsInChunk;
-                        chunk.index = new Vector3Int(halfPoint, 0, halfPoint) + new Vector3Int(chunkX,chunkY,chunkZ);
+                        chunk.index = halfPoint + new Vector3Int(chunkX,chunkY,chunkZ);
                         chunk.name = chunk.index.ToString();
                         chunk.generator = this;
                         if(chunkMaterial) chunk.renderer.material = chunkMaterial;
@@ -165,20 +160,17 @@ public class LevelMeshGenerator : MonoBehaviour
                 }
             }
         }
-        
-        transform.localScale = Vector3.one * worldScale;
     }
 
     public void AddChunk(Vector3Int indexPosition)
     {
-        if(indexPosition.x < 0 || indexPosition.x > worldSizeInChunks || indexPosition.z < 0 || indexPosition.z > worldSizeInVoxels)
+        if(indexPosition.x < 0 || indexPosition.x > maxNumberOfChunks.x || indexPosition.z < 0 || indexPosition.z > worldSize.z)
         {
             return;
         }
 
         GameObject chunkObject = Instantiate(chunkPrefab,Vector3.zero,Quaternion.identity, transform);
         Chunk chunk = chunkObject.transform.GetComponent<Chunk>();
-        chunk.size = voxelsInChunk;
         chunk.index = indexPosition;
         chunk.name = chunk.index.ToString();
         chunk.generator = this;
@@ -193,7 +185,12 @@ public class LevelMeshGenerator : MonoBehaviour
 
     public void GenerateDungeonData(bool boxRooms)
     {
-        dungeonGrid = new float[worldSizeInVoxels * worldSizeInVoxels * worldSizeInVoxels];
+        dungeonGrid = new float[worldSize.x * worldSize.y * worldSize.z];
+        for(int i = 0; i < worldSize.x * worldSize.y * worldSize.z; i++)
+        {
+            dungeonGrid[i] = 1;
+        }
+        Random.InitState(seed.GetHashCode());
         if(boxRooms)
         {
             //Create Rooms
@@ -203,9 +200,9 @@ public class LevelMeshGenerator : MonoBehaviour
                 int roomSizeX = Random.Range(minRoomSize, maxRoomSize);
                 int roomSizeZ = Random.Range(minRoomSize, maxRoomSize);
 
-                int rx = Random.Range(roomSizeX, worldSizeInVoxels - roomSizeX);
-                int ry = Random.Range(ceilngHeight, worldSizeInVoxels/squash - ceilngHeight);
-                int rz = Random.Range(roomSizeZ, worldSizeInVoxels - roomSizeZ);
+                int rx = Random.Range(roomSizeX, worldSize.x - roomSizeX);
+                int ry = Random.Range(ceilngHeight, worldSize.y - ceilngHeight);
+                int rz = Random.Range(roomSizeZ, worldSize.z - roomSizeZ);
                 Vector3Int roomPosition = new Vector3Int(rx, ry, rz);
                 ActivateBox(roomPosition, roomSizeX, ceilngHeight, roomSizeZ);
                 rooms.Add(roomPosition);
@@ -226,9 +223,9 @@ public class LevelMeshGenerator : MonoBehaviour
             List<Vector3Int> exits = new List<Vector3Int>();
             for (int r = 0; r < numberOfRooms; r++)
             {
-                int xi = Random.Range(0, worldSizeInVoxels);
-                int yi = Random.Range(0, worldSizeInVoxels/squash);
-                int zi = Random.Range(0, worldSizeInVoxels);
+                int xi = Random.Range(0, worldSize.x);
+                int yi = Random.Range(0, worldSize.y);
+                int zi = Random.Range(0, worldSize.z);
 
                 Vector3Int currentIndex = new Vector3Int(xi, yi, zi);
                 entrances.Add(currentIndex);
@@ -240,13 +237,13 @@ public class LevelMeshGenerator : MonoBehaviour
                     int z = Random.Range(-1, 2);
 
                     if (x == -1 && currentIndex.x <= 0) x = 1;
-                    if (x == 1 && currentIndex.x >= worldSizeInVoxels - 1) x = -1;
+                    if (x == 1 && currentIndex.x >= worldSize.x - 1) x = -1;
 
                     if (z == -1 && currentIndex.z <= 0) z = 1;
-                    if (z == 1 && currentIndex.z >= worldSizeInVoxels - 1) z = -1;
+                    if (z == 1 && currentIndex.z >= worldSize.z - 1) z = -1;
 
                     if (y == -1 && currentIndex.y <= 0) y = 1;
-                    if (y == 1 && currentIndex.y >= worldSizeInVoxels - 1) y = -1;
+                    if (y == 1 && currentIndex.y >= worldSize.y - 1) y = -1;
 
 
                     currentIndex += new Vector3Int(x, y, z);
@@ -277,15 +274,15 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= worldSizeInVoxels - 1 || cell.x + x <= 0)
+                    if (cell.x + x >= worldSize.x - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
-                    if (cell.y + y >= worldSizeInVoxels - 1 || cell.y + y <= 0)
+                    if (cell.y + y >= worldSize.y - 1 || cell.y + y <= 0)
                     {
                         continue;
                     }
-                    if (cell.z + z >= worldSizeInVoxels - 1 || cell.z + z <= 0)
+                    if (cell.z + z >= worldSize.z - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
@@ -293,8 +290,8 @@ public class LevelMeshGenerator : MonoBehaviour
                     float maxDistance = Vector3Int.Distance(new Vector3Int(-maxX,-maxY,-maxZ), new Vector3Int(maxX,maxY,maxZ));
                     float distance = Vector3Int.Distance(cell, cell + new Vector3Int(x,y,z));
                     
-                    int index = VoxelHelper.Index3DToIndex(new Vector3Int(cell.x + x, cell.y + y, cell.z + z), voxelsInChunk);
-                    dungeonGrid[index] += Util.Remap(distance,0,maxDistance,0,1);
+                    int index = VoxelHelper.Index3DToIndex(new Vector3Int(cell.x + x, cell.y + y, cell.z + z), chunkSize);
+                    dungeonGrid[index] -= Util.Remap(distance,0,maxDistance,0,1);
                     dungeonGrid[index] = Mathf.Clamp01(dungeonGrid[index]);
                 }
             }
@@ -312,27 +309,27 @@ public class LevelMeshGenerator : MonoBehaviour
             {
                 for (int z = -maxZ; z <= maxZ; z++)
                 {
-                    if (cell.x + x >= worldSizeInVoxels - 1 || cell.x + x <= 0)
+                    if (cell.x + x >= worldSize.x - 1 || cell.x + x <= 0)
                     {
                         continue;
                     }
-                    if (cell.y + y >= worldSizeInVoxels - 1 || cell.y + y <= 0)
+                    if (cell.y + y >= worldSize.y - 1 || cell.y + y <= 0)
                     {
                         continue;
                     }
-                    if (cell.z + z >= worldSizeInVoxels - 1 || cell.z + z <= 0)
+                    if (cell.z + z >= worldSize.z - 1 || cell.z + z <= 0)
                     {
                         continue;
                     }
 
-                    int index = VoxelHelper.Index3DToIndex(new Vector3Int(cell.x + x, cell.y + y, cell.z + z), voxelsInChunk);
+                    int index = VoxelHelper.Index3DToIndex(new Vector3Int(cell.x + x, cell.y + y, cell.z + z), worldSize);
                     if(dungeonGrid[index] < isoLevel)
                     {
-                        dungeonGrid[index] = isoLevel + 0.01f;
+                        dungeonGrid[index] = isoLevel - 0.01f;
                     }
                     else
                     {
-                         dungeonGrid[index] += 0.2f;
+                         dungeonGrid[index] -= 0.2f;
                     }
                 }
             }
