@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] GameObject hitEffectPrefab;
     [SerializeField] LayerMask hitLayer;
     [SerializeField] BoxCollider collider;
-    public GameObject trail;
+    //public GameObject trail;
 
     public bool isMagical;
     public int damage = 1;
@@ -20,7 +20,7 @@ public class Weapon : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(player.attacking)
+        if(player.state == Player.CombatState.ATK)
         {
             
         }

@@ -1,24 +1,24 @@
 fileFormatVersion: 2
-guid: a23b5057e2356da48ac5e1d51cdf2f20
+guid: 3cc16ec32f70903419d8216c3afda888
 ModelImporter:
-  serializedVersion: 24501
+  serializedVersion: 24600
   internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: 7d511adf1f66315449ec4394179b8bc7, type: 2}
+      name: Glove
+    second: {fileID: 2100000, guid: c1812035dda70e24d86ccc68ec8c853f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Skin
-    second: {fileID: 2100000, guid: 355f4ff52e0592543b6ba3a77e5b538c, type: 2}
+      name: LowerSleeve
+    second: {fileID: 2100000, guid: 1b955f68845a0ab47a8f789489a52e4e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Sleeve
-    second: {fileID: 2100000, guid: 18083004cfc022c43abe83ba2f17edbb, type: 2}
+      name: UpperSleeve
+    second: {fileID: 2100000, guid: ce832a7c931f2ec4d96fa944ffc8d53e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -54,6 +54,8 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    preBakeConvexCollisionMesh: 0
+    preBakeTriangleCollisionMesh: 0
     importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1

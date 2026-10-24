@@ -46,17 +46,22 @@ public class Player : MonoBehaviour
     [Header("Combat")]
     Vector2 atkVector;
     float atkAngle = 0;
-    bool rotateReticle = false;
-    [HideInInspector] public bool attacking = false;
+    float defAngle = 0;
 
+    public enum CombatState
+    {
+        IDLE,
+        ATK,
+        DEF,
+    }
+    public CombatState state = CombatState.IDLE;
 
     //Events
     void Start()
     {
         lookSpeed = Game.settings.aimSense;
         Cursor.lockState = CursorLockMode.Locked;
-        //abilities.Add(new WallRunning(this));
-        //abilities.Add(new LockOnSystem(this));
+        abilities.Add(new LockOnSystem(this));
         abilities.Add(new Evasion(this));
 
         foreach(PlayerAbility perk in abilities)
@@ -199,14 +204,15 @@ public class Player : MonoBehaviour
     //Animation events
     public void StartAttack()
     {
-        attacking = true;
+        state = CombatState.ATK;
         armPivot.localEulerAngles = new Vector3(0,0,atkAngle);
-        weapon.trail.SetActive(true);
     }
     public void EndAttack()
     {
+        state = CombatState.IDLE;
+    }
+    public void ResetArm()
+    {
         armPivot.localEulerAngles = Vector3.zero;
-        attacking = false;
-        weapon.trail.SetActive(false);
     }
 }

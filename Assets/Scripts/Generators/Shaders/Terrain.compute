@@ -20,6 +20,10 @@ int fractalType;
 int noiseType;
 
 
+float Remap(float value, float oldMin, float oldMax, float newMin, float newMax)
+{
+    return (((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+}
 
 int IndexFromCoord(int x, int y, int z)
 {
@@ -40,17 +44,9 @@ void GenerateTerrain (uint3 v : SV_DispatchThreadID)
     if(chunkIndex.y > 0 && v.y == 0) pos.y--;
     if(chunkIndex.z > 0 && v.z == 0) pos.z--;
 
-    float minHeight = -pos.y + (groundPercent * chunkSize.y);
-    float terrain = minHeight + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * amplitude;
+    float minHeight = -pos.y + (groundPercent * worldSize.y);
+    float terrain = minHeight + fnlGetNoise2D(noise, pos.x, pos.z) * amplitude;
+    float caves =  Remap(fnlGetNoise3D(noise,pos.x,pos.y,pos.z) * noiseScale,-1,1,0,1);
         
-    if(pos.y <= terrain)
-    {
-        //Make Caves
-        weights[IndexFromCoord(v.x, v.y, v.z)] = fnlGetNoise3D(noise,pos.x,pos.y,pos.z) * noiseScale;
-    }
-    else
-    {
-        //Make Terrain
-        weights[IndexFromCoord(v.x, v.y, v.z)] = terrain;
-    }
+    weights[IndexFromCoord(v.x, v.y, v.z)] = terrain - caves; 
 }

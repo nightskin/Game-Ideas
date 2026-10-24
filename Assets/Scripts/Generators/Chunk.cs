@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
 public class Chunk : MonoBehaviour
 {
     public MeshFilter meshFilter;

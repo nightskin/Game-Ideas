@@ -143,11 +143,11 @@ public class LevelMeshGenerator : MonoBehaviour
         }
         else
         {
-            for(int chunkX = -startNumberOfChunks.x/2; chunkX < startNumberOfChunks.x/2; chunkX++)
+            for(int chunkX = 0; chunkX < startNumberOfChunks.x; chunkX++)
             {
-                for(int chunkY = -startNumberOfChunks.y/2; chunkY < startNumberOfChunks.y/2; chunkY++)
+                for(int chunkY = 0; chunkY < startNumberOfChunks.y; chunkY++)
                 {
-                    for(int chunkZ = -startNumberOfChunks.z/2; chunkZ < startNumberOfChunks.z/2; chunkZ++)
+                    for(int chunkZ = 0; chunkZ < startNumberOfChunks.z; chunkZ++)
                     {
                         GameObject chunkObject = Instantiate(chunkPrefab,Vector3.zero,Quaternion.identity, transform);
                         Chunk chunk = chunkObject.transform.GetComponent<Chunk>();
